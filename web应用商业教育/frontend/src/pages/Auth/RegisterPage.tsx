@@ -1,12 +1,11 @@
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuthStore } from '../../stores/authStore';
-import { authService } from '../../services/authService';
-import { Mail, Lock, User, Eye, EyeOff, Loader2 } from 'lucide-react';
+import { Mail, Lock, User, Eye, EyeOff, Loader2, Compass } from 'lucide-react';
 
 export default function RegisterPage() {
   const navigate = useNavigate();
-  const { setAuth, setLoading, setError, isLoading, error } = useAuthStore();
+  const { register, isLoading, error, clearError } = useAuthStore();
   const [showPassword, setShowPassword] = useState(false);
   const [formData, setFormData] = useState({
     email: '',
@@ -17,33 +16,29 @@ export default function RegisterPage() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setLoading(true);
-    setError(null);
+    clearError();
 
     if (formData.password !== formData.confirmPassword) {
-      setError('两次输入的密码不一致');
-      setLoading(false);
+      // 使用store的setError需要暴露，但我们用clearError了
+      // 这里直接在组件状态处理简单校验
+      alert('两次输入的密码不一致');
       return;
     }
 
     if (formData.password.length < 6) {
-      setError('密码长度至少为6位');
-      setLoading(false);
+      alert('密码长度至少为 6 位');
       return;
     }
 
     try {
-      const auth = await authService.register({
+      await register({
         email: formData.email,
         username: formData.username,
         password: formData.password,
       });
-      setAuth(auth);
-      navigate('/dashboard');
-    } catch (err: any) {
-      setError(err.response?.data?.error || '注册失败，请稍后重试');
-    } finally {
-      setLoading(false);
+      navigate('/career', { replace: true });
+    } catch {
+      // 错误已在store中设置
     }
   };
 
@@ -51,13 +46,16 @@ export default function RegisterPage() {
     <div className="min-h-[80vh] flex items-center justify-center">
       <div className="w-full max-w-md">
         <div className="text-center mb-8">
-          <h1 className="text-3xl font-bold text-foreground">创建账户</h1>
-          <p className="text-foreground-muted mt-2">开始你的商业学习之旅</p>
+          <div className="w-14 h-14 mx-auto rounded-2xl bg-gradient-to-br from-primary to-amber-600 flex items-center justify-center shadow-lg shadow-primary/20 mb-4">
+            <Compass className="w-7 h-7 text-background" />
+          </div>
+          <h1 className="text-2xl font-bold text-foreground tracking-tight">创建账户</h1>
+          <p className="text-foreground-muted mt-2 text-sm">开启你的商业学习之旅</p>
         </div>
 
         <div className="glass-card p-8">
           {error && (
-            <div className="mb-6 p-4 rounded-lg bg-danger/10 border border-danger/20 text-danger text-sm">
+            <div className="mb-6 p-4 rounded-xl bg-danger/10 border border-danger/20 text-danger text-sm">
               {error}
             </div>
           )}
@@ -71,8 +69,11 @@ export default function RegisterPage() {
                   type="text"
                   required
                   value={formData.username}
-                  onChange={(e) => setFormData({ ...formData, username: e.target.value })}
-                  className="w-full pl-10 pr-4 py-3 rounded-lg bg-background-hover border border-border-subtle text-foreground placeholder:text-foreground-muted focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-colors"
+                  onChange={(e) => {
+                    setFormData({ ...formData, username: e.target.value });
+                    if (error) clearError();
+                  }}
+                  className="w-full pl-10 pr-4 py-3 rounded-xl bg-background-secondary border border-border-subtle text-foreground placeholder:text-foreground-muted focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-colors"
                   placeholder="输入用户名"
                 />
               </div>
@@ -86,8 +87,11 @@ export default function RegisterPage() {
                   type="email"
                   required
                   value={formData.email}
-                  onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                  className="w-full pl-10 pr-4 py-3 rounded-lg bg-background-hover border border-border-subtle text-foreground placeholder:text-foreground-muted focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-colors"
+                  onChange={(e) => {
+                    setFormData({ ...formData, email: e.target.value });
+                    if (error) clearError();
+                  }}
+                  className="w-full pl-10 pr-4 py-3 rounded-xl bg-background-secondary border border-border-subtle text-foreground placeholder:text-foreground-muted focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-colors"
                   placeholder="your@email.com"
                 />
               </div>
@@ -101,14 +105,17 @@ export default function RegisterPage() {
                   type={showPassword ? 'text' : 'password'}
                   required
                   value={formData.password}
-                  onChange={(e) => setFormData({ ...formData, password: e.target.value })}
-                  className="w-full pl-10 pr-12 py-3 rounded-lg bg-background-hover border border-border-subtle text-foreground placeholder:text-foreground-muted focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-colors"
-                  placeholder="至少6位密码"
+                  onChange={(e) => {
+                    setFormData({ ...formData, password: e.target.value });
+                    if (error) clearError();
+                  }}
+                  className="w-full pl-10 pr-12 py-3 rounded-xl bg-background-secondary border border-border-subtle text-foreground placeholder:text-foreground-muted focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-colors"
+                  placeholder="至少 6 位密码"
                 />
                 <button
                   type="button"
                   onClick={() => setShowPassword(!showPassword)}
-                  className="absolute right-3 top-1/2 -translate-y-1/2 text-foreground-muted hover:text-foreground"
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-foreground-muted hover:text-foreground transition-colors"
                 >
                   {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
                 </button>
@@ -123,8 +130,11 @@ export default function RegisterPage() {
                   type={showPassword ? 'text' : 'password'}
                   required
                   value={formData.confirmPassword}
-                  onChange={(e) => setFormData({ ...formData, confirmPassword: e.target.value })}
-                  className="w-full pl-10 pr-4 py-3 rounded-lg bg-background-hover border border-border-subtle text-foreground placeholder:text-foreground-muted focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-colors"
+                  onChange={(e) => {
+                    setFormData({ ...formData, confirmPassword: e.target.value });
+                    if (error) clearError();
+                  }}
+                  className="w-full pl-10 pr-4 py-3 rounded-xl bg-background-secondary border border-border-subtle text-foreground placeholder:text-foreground-muted focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-colors"
                   placeholder="再次输入密码"
                 />
               </div>
@@ -133,7 +143,7 @@ export default function RegisterPage() {
             <button
               type="submit"
               disabled={isLoading}
-              className="w-full py-3 rounded-lg bg-primary text-white font-semibold hover:bg-primary/90 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+              className="w-full py-3.5 rounded-xl bg-primary text-background font-semibold hover:bg-primary/90 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
             >
               {isLoading ? (
                 <>
@@ -148,7 +158,7 @@ export default function RegisterPage() {
 
           <div className="mt-6 text-center text-sm text-foreground-muted">
             已有账户？{' '}
-            <Link to="/login" className="text-primary hover:underline font-medium">
+            <Link to="/login" className="text-primary hover:text-primary/80 font-semibold transition-colors">
               立即登录
             </Link>
           </div>

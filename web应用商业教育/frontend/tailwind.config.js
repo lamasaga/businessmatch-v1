@@ -8,40 +8,46 @@ export default {
   theme: {
     extend: {
       colors: {
-        background: '#0f172a',
-        'background-secondary': '#1e293b',
-        'background-card': '#1e293b',
-        'background-hover': '#334155',
-        foreground: '#f8fafc',
-        'foreground-muted': '#94a3b8',
-        'foreground-secondary': '#cbd5e1',
+        background: '#0a0a0b',
+        'background-secondary': '#111113',
+        'background-card': '#141416',
+        'background-hover': '#1c1c1f',
+        foreground: '#f2f0eb',
+        'foreground-muted': '#8a8a92',
+        'foreground-secondary': '#b4b4be',
         primary: {
-          DEFAULT: '#6366f1',
-          soft: 'rgba(99,102,241,0.15)',
-          glow: 'rgba(99,102,241,0.4)',
+          DEFAULT: '#d4a853',
+          soft: 'rgba(212,168,83,0.12)',
+          glow: 'rgba(212,168,83,0.35)',
         },
-        success: '#22c55e',
+        success: '#2dd4a0',
         warning: '#f59e0b',
-        danger: '#ef4444',
-        info: '#3b82f6',
+        danger: '#f87171',
+        info: '#60a5fa',
         border: {
-          subtle: 'rgba(148,163,184,0.1)',
+          subtle: 'rgba(255,255,255,0.055)',
         },
+        accent: {
+          teal: '#2dd4a0',
+          rose: '#f43f5e',
+          gold: '#d4a853',
+        }
       },
       fontFamily: {
-        sans: ['Inter', 'system-ui', '-apple-system', 'sans-serif'],
+        sans: ['Inter', 'SF Pro Display', 'system-ui', '-apple-system', 'sans-serif'],
         mono: ['JetBrains Mono', 'Fira Code', 'monospace'],
       },
       borderRadius: {
-        sm: '6px',
-        md: '10px',
-        lg: '14px',
-        xl: '18px',
+        sm: '8px',
+        md: '12px',
+        lg: '16px',
+        xl: '20px',
       },
       animation: {
         'fade-in': 'fadeIn 0.5s ease-out',
         'slide-up': 'slideUp 0.5s ease-out',
         'pulse-slow': 'pulse 3s ease-in-out infinite',
+        'float': 'float 6s ease-in-out infinite',
       },
       keyframes: {
         fadeIn: {
@@ -49,8 +55,12 @@ export default {
           '100%': { opacity: '1' },
         },
         slideUp: {
-          '0%': { opacity: '0', transform: 'translateY(20px)' },
+          '0%': { opacity: '0', transform: 'translateY(16px)' },
           '100%': { opacity: '1', transform: 'translateY(0)' },
+        },
+        float: {
+          '0%, 100%': { transform: 'translateY(0)' },
+          '50%': { transform: 'translateY(-8px)' },
         },
       },
     },

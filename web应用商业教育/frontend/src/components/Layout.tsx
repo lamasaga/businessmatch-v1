@@ -1,103 +1,124 @@
 import { Outlet, Link, useLocation } from 'react-router-dom';
 import { useAuthStore } from '../stores/authStore';
+import { useCareerStore } from '../stores/careerStore';
 import {
   Home,
-  BookOpen,
   Gamepad2,
   GraduationCap,
   Network,
-  User,
   LogOut,
   Menu,
   X,
+  Sparkles,
+  Flame,
+  Award,
+  Compass,
+  Zap,
+  Rocket,
 } from 'lucide-react';
 import { useState } from 'react';
 
 const navItems = [
   { path: '/', label: '首页', icon: Home },
+  { path: '/career', label: '生涯中枢', icon: Sparkles, highlight: true },
+  { path: '/quests', label: '每日任务', icon: Flame },
   { path: '/games', label: '商赛大厅', icon: Gamepad2 },
-  { path: '/courses', label: '课程中心', icon: GraduationCap },
+  { path: '/courses', label: '课程学院', icon: GraduationCap },
   { path: '/wiki', label: '知识图谱', icon: Network },
+  { path: '/achievements', label: '成就中心', icon: Award },
+  { path: '/ohb', label: '一人公司', icon: Rocket, highlight: true },
 ];
 
 export default function Layout() {
   const { user, isAuthenticated, logout } = useAuthStore();
+  const { careerActive } = useCareerStore();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const location = useLocation();
 
+  const isActive = (path: string) => {
+    if (path === '/') return location.pathname === '/';
+    return location.pathname.startsWith(path);
+  };
+
   return (
     <div className="min-h-screen bg-background flex">
-      {/* Sidebar - Desktop */}
+      {/* Desktop Sidebar */}
       <aside className="hidden lg:flex flex-col w-64 bg-background-secondary border-r border-border-subtle fixed h-full z-40">
         <div className="p-6">
-          <Link to="/" className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-lg bg-primary flex items-center justify-center">
-              <BookOpen className="w-5 h-5 text-white" />
+          <Link to="/" className="flex items-center gap-3 group">
+            <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-primary to-amber-600 flex items-center justify-center shadow-lg shadow-primary/20 group-hover:shadow-primary/30 transition-shadow">
+              <Compass className="w-5 h-5 text-background" />
             </div>
             <div>
-              <h1 className="font-bold text-lg text-foreground">商业模拟</h1>
-              <p className="text-xs text-foreground-muted">BizSim Edu</p>
+              <h1 className="font-bold text-lg text-foreground tracking-tight">商域</h1>
+              <p className="text-[11px] text-foreground-muted tracking-wide uppercase">BizSim Edu</p>
             </div>
           </Link>
         </div>
 
-        <nav className="flex-1 px-4 py-4 space-y-1">
+        <nav className="flex-1 px-3 py-2 space-y-0.5 overflow-y-auto">
           {navItems.map((item) => {
             const Icon = item.icon;
-            const isActive = location.pathname === item.path;
+            const active = isActive(item.path);
             return (
               <Link
                 key={item.path}
                 to={item.path}
-                className={`flex items-center gap-3 px-4 py-3 rounded-lg transition-all duration-200 ${
-                  isActive
-                    ? 'bg-primary-soft text-primary'
+                className={`flex items-center gap-3 px-4 py-2.5 rounded-lg transition-all duration-200 ${
+                  active
+                    ? 'bg-primary-soft text-primary nav-item-active'
                     : 'text-foreground-secondary hover:bg-background-hover hover:text-foreground'
-                }`}
+                } ${item.highlight && !active ? 'ring-1 ring-primary/10' : ''}`}
               >
-                <Icon className="w-5 h-5" />
-                <span className="font-medium">{item.label}</span>
+                <Icon className="w-[18px] h-[18px]" />
+                <span className="font-medium text-sm">{item.label}</span>
+                {item.highlight && (
+                  <Zap className="w-3 h-3 text-primary/60 ml-auto" />
+                )}
               </Link>
             );
           })}
         </nav>
 
-        <div className="p-4 border-t border-border-subtle">
+        <div className="p-3 border-t border-border-subtle">
+          {careerActive ? (
+            <Link
+              to="/career"
+              className="flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-background-hover transition-colors mb-2"
+            >
+              <div className="w-9 h-9 rounded-full bg-gradient-to-br from-primary/30 to-primary/10 flex items-center justify-center ring-1 ring-primary/20">
+                <Sparkles className="w-4 h-4 text-primary" />
+              </div>
+              <div className="flex-1 min-w-0">
+                <p className="text-sm font-medium text-foreground truncate">
+                  {user?.username ?? '学员'}
+                </p>
+                <p className="text-xs text-foreground-muted">赛季进行中</p>
+              </div>
+            </Link>
+          ) : null}
           {isAuthenticated && user ? (
-            <div className="space-y-3">
-              <Link
-                to="/dashboard"
-                className="flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-background-hover transition-colors"
-              >
-                <div className="w-8 h-8 rounded-full bg-primary-soft flex items-center justify-center">
-                  <User className="w-4 h-4 text-primary" />
-                </div>
-                <div className="flex-1 min-w-0">
-                  <p className="text-sm font-medium text-foreground truncate">{user.username}</p>
-                  <p className="text-xs text-foreground-muted capitalize">{user.role}</p>
-                </div>
-              </Link>
-              <button
-                onClick={logout}
-                className="flex items-center gap-3 px-4 py-3 rounded-lg w-full text-foreground-secondary hover:bg-danger/10 hover:text-danger transition-colors"
-              >
-                <LogOut className="w-5 h-5" />
-                <span>退出登录</span>
-              </button>
-            </div>
+            <button
+              type="button"
+              onClick={logout}
+              className="flex items-center gap-3 px-4 py-2.5 rounded-lg w-full text-foreground-secondary hover:bg-danger/10 hover:text-danger transition-colors text-sm"
+            >
+              <LogOut className="w-4 h-4" />
+              <span>退出登录</span>
+            </button>
           ) : (
             <div className="space-y-2">
               <Link
-                to="/login"
-                className="block w-full text-center py-2.5 rounded-lg border border-primary text-primary hover:bg-primary-soft transition-colors font-medium"
+                to="/career/start"
+                className="block w-full text-center py-2.5 rounded-xl bg-primary text-background hover:bg-primary/90 transition-colors font-semibold text-sm"
               >
-                登录
+                开启生涯
               </Link>
               <Link
-                to="/register"
-                className="block w-full text-center py-2.5 rounded-lg bg-primary text-white hover:bg-primary/90 transition-colors font-medium"
+                to="/showcase"
+                className="block w-full text-center py-2.5 rounded-xl border border-border-subtle text-foreground-secondary text-sm hover:bg-background-hover transition-colors"
               >
-                注册
+                新手指引
               </Link>
             </div>
           )}
@@ -105,35 +126,35 @@ export default function Layout() {
       </aside>
 
       {/* Mobile Header */}
-      <div className="lg:hidden fixed top-0 left-0 right-0 h-16 bg-background-secondary/95 backdrop-blur-lg border-b border-border-subtle z-50 flex items-center justify-between px-4">
-        <Link to="/" className="flex items-center gap-2">
-          <div className="w-8 h-8 rounded-lg bg-primary flex items-center justify-center">
-            <BookOpen className="w-4 h-4 text-white" />
+      <div className="lg:hidden fixed top-0 left-0 right-0 h-16 bg-background-secondary/95 backdrop-blur-xl border-b border-border-subtle z-50 flex items-center justify-between px-4">
+        <Link to="/" className="flex items-center gap-2.5">
+          <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-primary to-amber-600 flex items-center justify-center">
+            <Compass className="w-4 h-4 text-background" />
           </div>
-          <span className="font-bold text-foreground">商业模拟</span>
+          <span className="font-bold text-foreground text-sm tracking-tight">商域</span>
         </Link>
         <button
+          type="button"
           onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-          className="p-2 rounded-lg hover:bg-background-hover"
+          className="p-2 rounded-lg hover:bg-background-hover transition-colors"
         >
-          {mobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
+          {mobileMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
         </button>
       </div>
 
       {/* Mobile Menu */}
       {mobileMenuOpen && (
-        <div className="lg:hidden fixed inset-0 top-16 bg-background z-40 p-4">
+        <div className="lg:hidden fixed inset-0 top-16 bg-background z-40 p-4 overflow-y-auto">
           <nav className="space-y-1">
             {navItems.map((item) => {
               const Icon = item.icon;
-              const isActive = location.pathname === item.path;
               return (
                 <Link
                   key={item.path}
                   to={item.path}
                   onClick={() => setMobileMenuOpen(false)}
-                  className={`flex items-center gap-3 px-4 py-3 rounded-lg transition-all ${
-                    isActive
+                  className={`flex items-center gap-3 px-4 py-3 rounded-lg ${
+                    isActive(item.path)
                       ? 'bg-primary-soft text-primary'
                       : 'text-foreground-secondary hover:bg-background-hover'
                   }`}
@@ -147,7 +168,6 @@ export default function Layout() {
         </div>
       )}
 
-      {/* Main Content */}
       <main className="flex-1 lg:ml-64 pt-16 lg:pt-0">
         <div className="max-w-7xl mx-auto p-6 lg:p-8">
           <Outlet />

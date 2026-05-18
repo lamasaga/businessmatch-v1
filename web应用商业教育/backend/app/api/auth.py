@@ -1,135 +1,104 @@
-from fastapi import APIRouter, Depends, HTTPException, status
-from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
+"""认证路由 - 注册、登录、刷新Token、获取当前用户"""
+
+from fastapi import APIRouter, Depends, status
 from sqlalchemy.orm import Session
 from datetime import timedelta
+
 from app.db.database import get_db
 from app.models.user import User, UserRole
-from app.schemas.user import UserCreate, UserResponse, Token, UserLogin
+from app.schemas.user import UserCreate, UserLogin, UserResponse, AuthResponse, RefreshTokenRequest
 from app.core.security import verify_password, get_password_hash, create_access_token, decode_token
 from app.core.config import get_settings
+from app.core.response import ApiResponse, BusinessException, ErrorCode
+from app.core.dependencies import get_current_active_user
 
-router = APIRouter(prefix="/auth", tags=["auth"])
-oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/api/v1/auth/login")
+router = APIRouter(prefix="/auth", tags=["认证"])
 settings = get_settings()
 
 
-def get_current_user(token: str = Depends(oauth2_scheme), db: Session = Depends(get_db)) -> User:
-    credentials_exception = HTTPException(
-        status_code=status.HTTP_401_UNAUTHORIZED,
-        detail="Could not validate credentials",
-        headers={"WWW-Authenticate": "Bearer"},
-    )
-    payload = decode_token(token)
-    if payload is None:
-        raise credentials_exception
-    user_id: int = payload.get("sub")
-    if user_id is None:
-        raise credentials_exception
-    user = db.query(User).filter(User.id == user_id).first()
-    if user is None:
-        raise credentials_exception
-    return user
-
-
-def get_current_active_user(current_user: User = Depends(get_current_user)) -> User:
-    return current_user
-
-
-@router.post("/register", response_model=dict)
+@router.post("/register", response_model=ApiResponse[AuthResponse], status_code=status.HTTP_201_CREATED)
 def register(user_data: UserCreate, db: Session = Depends(get_db)):
-    # Check if email exists
-    db_user = db.query(User).filter(User.email == user_data.email).first()
-    if db_user:
-        raise HTTPException(status_code=400, detail="Email already registered")
-    
-    # Check if username exists
-    db_user = db.query(User).filter(User.username == user_data.username).first()
-    if db_user:
-        raise HTTPException(status_code=400, detail="Username already taken")
-    
-    # Create user
-    hashed_password = get_password_hash(user_data.password)
+    """用户注册"""
+    if db.query(User).filter(User.email == user_data.email).first():
+        raise BusinessException(
+            message="该邮箱已被注册",
+            code=ErrorCode.DUPLICATE_ENTRY,
+            status_code=status.HTTP_409_CONFLICT,
+        )
+    if db.query(User).filter(User.username == user_data.username).first():
+        raise BusinessException(
+            message="该用户名已被使用",
+            code=ErrorCode.DUPLICATE_ENTRY,
+            status_code=status.HTTP_409_CONFLICT,
+        )
+
     db_user = User(
         email=user_data.email,
         username=user_data.username,
-        hashed_password=hashed_password,
+        hashed_password=get_password_hash(user_data.password),
         role=UserRole.student,
     )
     db.add(db_user)
     db.commit()
     db.refresh(db_user)
-    
-    # Create tokens
+
     access_token = create_access_token(data={"sub": db_user.id})
     refresh_token = create_access_token(data={"sub": db_user.id}, expires_delta=timedelta(days=30))
-    
-    return {
-        "success": True,
-        "data": {
-            "accessToken": access_token,
-            "refreshToken": refresh_token,
-            "user": {
-                "id": db_user.id,
-                "email": db_user.email,
-                "username": db_user.username,
-                "role": db_user.role.value,
-            },
-        },
-    }
+
+    return ApiResponse.ok(data=AuthResponse(
+        user=UserResponse.model_validate(db_user),
+        tokens={"access_token": access_token, "refresh_token": refresh_token, "token_type": "bearer"},
+    ))
 
 
-@router.post("/login", response_model=dict)
-def login(form_data: OAuth2PasswordRequestForm = Depends(), db: Session = Depends(get_db)):
-    user = db.query(User).filter(User.email == form_data.username).first()
-    if not user or not verify_password(form_data.password, user.hashed_password):
-        raise HTTPException(status_code=400, detail="Incorrect email or password")
-    
+@router.post("/login", response_model=ApiResponse[AuthResponse])
+def login(credentials: UserLogin, db: Session = Depends(get_db)):
+    """用户登录（JSON格式）——支持邮箱或用户名登录"""
+    # 先尝试按邮箱查找，如果找不到则按用户名查找
+    user = db.query(User).filter(User.email == credentials.email).first()
+    if not user:
+        user = db.query(User).filter(User.username == credentials.email).first()
+    if not user or not verify_password(credentials.password, user.hashed_password):
+        raise BusinessException(
+            message="邮箱/用户名或密码错误",
+            code=ErrorCode.UNAUTHORIZED,
+            status_code=status.HTTP_401_UNAUTHORIZED,
+        )
+
     access_token = create_access_token(data={"sub": user.id})
     refresh_token = create_access_token(data={"sub": user.id}, expires_delta=timedelta(days=30))
-    
-    return {
-        "success": True,
-        "data": {
-            "accessToken": access_token,
-            "refreshToken": refresh_token,
-            "user": {
-                "id": user.id,
-                "email": user.email,
-                "username": user.username,
-                "role": user.role.value,
-            },
-        },
-    }
+
+    return ApiResponse.ok(data=AuthResponse(
+        user=UserResponse.model_validate(user),
+        tokens={"access_token": access_token, "refresh_token": refresh_token, "token_type": "bearer"},
+    ))
 
 
-@router.get("/me", response_model=dict)
+@router.get("/me", response_model=ApiResponse[UserResponse])
 def get_me(current_user: User = Depends(get_current_active_user)):
-    return {
-        "success": True,
-        "data": {
-            "id": current_user.id,
-            "email": current_user.email,
-            "username": current_user.username,
-            "role": current_user.role.value,
-            "avatar": current_user.avatar,
-            "createdAt": current_user.created_at.isoformat() if current_user.created_at else None,
-        },
-    }
+    """获取当前登录用户信息"""
+    return ApiResponse.ok(data=UserResponse.model_validate(current_user))
 
 
-@router.post("/refresh", response_model=dict)
-def refresh_token(refresh_token: str, db: Session = Depends(get_db)):
-    payload = decode_token(refresh_token)
+@router.post("/refresh", response_model=ApiResponse[dict])
+def refresh_token(body: RefreshTokenRequest, db: Session = Depends(get_db)):
+    """刷新访问Token"""
+    payload = decode_token(body.refresh_token)
     if payload is None:
-        raise HTTPException(status_code=401, detail="Invalid refresh token")
-    
-    user_id: int = payload.get("sub")
+        raise BusinessException(
+            message="刷新令牌无效或已过期",
+            code=ErrorCode.TOKEN_INVALID,
+            status_code=status.HTTP_401_UNAUTHORIZED,
+        )
+
+    user_id = payload.get("sub")
     user = db.query(User).filter(User.id == user_id).first()
     if user is None:
-        raise HTTPException(status_code=401, detail="User not found")
-    
+        raise BusinessException(
+            message="用户不存在",
+            code=ErrorCode.UNAUTHORIZED,
+            status_code=status.HTTP_401_UNAUTHORIZED,
+        )
+
     access_token = create_access_token(data={"sub": user.id})
-    return {
-        "success": True,
-        "data": {"accessToken": access_token},
-    }
+    return ApiResponse.ok(data={"access_token": access_token})

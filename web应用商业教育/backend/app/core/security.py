@@ -1,3 +1,5 @@
+"""安全工具 - 密码哈希、JWT Token"""
+
 from datetime import datetime, timedelta, timezone
 from typing import Optional
 from jose import JWTError, jwt
@@ -18,6 +20,10 @@ def get_password_hash(password: str) -> str:
 
 def create_access_token(data: dict, expires_delta: Optional[timedelta] = None) -> str:
     to_encode = data.copy()
+    # jose 库要求 sub 为字符串
+    if "sub" in to_encode and not isinstance(to_encode["sub"], str):
+        to_encode["sub"] = str(to_encode["sub"])
+
     if expires_delta:
         expire = datetime.now(timezone.utc) + expires_delta
     else:
@@ -30,6 +36,12 @@ def create_access_token(data: dict, expires_delta: Optional[timedelta] = None) -
 def decode_token(token: str) -> Optional[dict]:
     try:
         payload = jwt.decode(token, settings.SECRET_KEY, algorithms=[settings.ALGORITHM])
+        # 将 sub 转回整数（如果是数字字符串）
+        if payload.get("sub") is not None:
+            try:
+                payload["sub"] = int(payload["sub"])
+            except ValueError:
+                pass
         return payload
     except JWTError:
         return None

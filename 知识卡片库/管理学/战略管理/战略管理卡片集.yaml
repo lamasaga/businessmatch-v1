@@ -181,8 +181,8 @@ knowledge:
       description: "Costco（成本领先：极致效率）vs Apple（差异化：设计+生态）vs Lululemon（集中化：高端瑜伽服）。"
   
   non_examples:
-    - misconception: "竞争优势就是"比别人好""
-      correction: "竞争优势是"消费者愿意为此付溢价"或"我能以更低的成本提供同样价值"。技术领先如果不是消费者需要的，就不是竞争优势。"
+    - misconception: "竞争优势就是'比别人好'"
+      correction: "竞争优势是'消费者愿意为此付溢价'或'我能以更低的成本提供同样价值'。技术领先如果不是消费者需要的，就不是竞争优势。"
     - misconception: "小企业无法建立竞争优势"
       correction: "小企业的优势是灵活、专注、快速响应。在细分市场中，小企业完全可以打败大企业。"
 

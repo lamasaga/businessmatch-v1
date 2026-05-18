@@ -280,8 +280,8 @@ export default function WealthOfNationsPage() {
                 </div>
               </div>
               <div className="flex items-start gap-3">
-                <div className="w-10 h-10 rounded-lg bg-success/10 flex items-center justify-center flex-shrink-0">
-                  <Factory className="w-5 h-5 text-success" />
+                <div className="w-10 h-10 rounded-lg bg-accent-teal/10 flex items-center justify-center flex-shrink-0">
+                  <Factory className="w-5 h-5 text-accent-teal" />
                 </div>
                 <div>
                   <h3 className="font-medium text-foreground">增加分工</h3>
@@ -312,7 +312,7 @@ export default function WealthOfNationsPage() {
           </div>
         </div>
 
-        <div className="glass-card p-6 bg-primary-soft/20 border-primary/20">
+        <div className="glass-card p-6 bg-primary/5 border-primary/15">
           <p className="text-foreground-secondary italic text-center leading-relaxed">
             "劳动生产力上最大的增进，以及运用劳动时所表现的更大的熟练、技巧和判断力，似乎都是分工的结果。"
           </p>
@@ -353,7 +353,7 @@ export default function WealthOfNationsPage() {
 
       {/* Quote */}
       {showQuote && (
-        <div className="glass-card p-4 bg-primary-soft/10 border-primary/20 relative">
+        <div className="glass-card p-4 bg-primary/5 border-primary/15 relative">
           <button
             onClick={() => setShowQuote(false)}
             className="absolute top-2 right-2 text-foreground-muted hover:text-foreground"
@@ -377,7 +377,7 @@ export default function WealthOfNationsPage() {
           <div className="text-xs text-foreground-muted">库存</div>
         </div>
         <div className="glass-card p-4 text-center">
-          <TrendingUp className="w-6 h-6 mx-auto mb-2 text-success" />
+          <TrendingUp className="w-6 h-6 mx-auto mb-2 text-accent-teal" />
           <div className="text-2xl font-bold text-foreground">{production}</div>
           <div className="text-xs text-foreground-muted">日产</div>
         </div>
@@ -407,7 +407,7 @@ export default function WealthOfNationsPage() {
           </div>
           <div>
             <span className="text-xs text-foreground-muted">累计资本</span>
-            <div className="text-xl font-bold text-success">{state.capital} 金币</div>
+            <div className="text-xl font-bold text-accent-teal">{state.capital} 金币</div>
           </div>
         </div>
       </div>
@@ -435,7 +435,7 @@ export default function WealthOfNationsPage() {
                   )}
                   <span className="font-medium text-foreground">{division.name}</span>
                   {division.efficiencyBonus > 0 && (
-                    <span className="px-2 py-0.5 rounded-full bg-success/10 text-success text-xs">
+                    <span className="px-2 py-0.5 rounded-full bg-accent-teal/10 text-accent-teal text-xs">
                       +{Math.round(division.efficiencyBonus * 100)}%
                     </span>
                   )}
@@ -481,7 +481,7 @@ export default function WealthOfNationsPage() {
           onClick={addDivision}
           className="glass-card p-4 text-center hover:bg-background-hover/50 transition-colors group"
         >
-          <Factory className="w-8 h-8 mx-auto mb-2 text-success group-hover:scale-110 transition-transform" />
+          <Factory className="w-8 h-8 mx-auto mb-2 text-accent-teal group-hover:scale-110 transition-transform" />
           <div className="font-medium text-foreground">增加分工</div>
           <div className="text-xs text-foreground-muted">50 金币</div>
         </button>

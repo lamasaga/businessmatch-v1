@@ -8,6 +8,7 @@ import {
   Clock,
   ChevronRight,
   Filter,
+  BookOpen,
 } from 'lucide-react';
 
 interface Course {
@@ -92,13 +93,13 @@ const courses: Course[] = [
   },
   {
     id: '5',
-    title: 'ESG与可持续经营',
+    title: 'ESG 与可持续经营',
     description: '引入环保、社会、治理三维指标，理解可持续发展与商业成功的共生关系',
     price: 179,
     thumbnail: '🌱',
-    category: 'ESG专题',
+    category: 'ESG 专题',
     tags: ['ESG', '可持续', '伦理'],
-    instructor: 'ESG研究中心',
+    instructor: 'ESG 研究中心',
     rating: 4.6,
     studentCount: 420,
     lessonCount: 12,
@@ -122,7 +123,7 @@ const courses: Course[] = [
   },
 ];
 
-const categories = ['全部', '经济学基础', '商赛实战', '创业管理', 'ESG专题', '宏观经济学'];
+const categories = ['全部', '经济学基础', '商赛实战', '创业管理', 'ESG 专题', '宏观经济学'];
 const levels = ['全部', '入门', '中级', '进阶'];
 
 export default function CoursesPage() {
@@ -147,18 +148,16 @@ export default function CoursesPage() {
 
   return (
     <div className="space-y-8 animate-fade-in-up">
-      {/* Header */}
-      <div className="text-center space-y-4">
-        <h1 className="text-3xl font-bold text-foreground flex items-center justify-center gap-3">
-          <GraduationCap className="w-8 h-8 text-primary" />
-          课程中心
-        </h1>
-        <p className="text-foreground-muted max-w-xl mx-auto">
+      <header className="text-center space-y-4">
+        <div className="w-14 h-14 mx-auto rounded-2xl bg-gradient-to-br from-primary/20 to-primary/5 flex items-center justify-center ring-1 ring-primary/10 mb-2">
+          <GraduationCap className="w-7 h-7 text-primary" />
+        </div>
+        <h1 className="text-3xl font-bold text-foreground tracking-tight">课程学院</h1>
+        <p className="text-foreground-muted max-w-md mx-auto text-sm">
           从经济学基础到高阶商赛策略，系统化的商业教育课程体系
         </p>
-      </div>
+      </header>
 
-      {/* Search */}
       <div className="max-w-2xl mx-auto">
         <div className="relative">
           <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-foreground-muted" />
@@ -167,12 +166,11 @@ export default function CoursesPage() {
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             placeholder="搜索课程..."
-            className="w-full pl-12 pr-4 py-4 rounded-xl bg-background-secondary border border-border-subtle text-foreground placeholder:text-foreground-muted focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-colors text-lg"
+            className="w-full pl-12 pr-4 py-4 rounded-xl bg-background-secondary border border-border-subtle text-foreground placeholder:text-foreground-muted focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-colors"
           />
         </div>
       </div>
 
-      {/* Filters */}
       <div className="space-y-4">
         <div className="flex items-center gap-2 text-sm text-foreground-muted">
           <Filter className="w-4 h-4" />
@@ -185,7 +183,7 @@ export default function CoursesPage() {
               onClick={() => setActiveCategory(cat)}
               className={`px-4 py-2 rounded-lg text-sm font-medium transition-all ${
                 activeCategory === cat
-                  ? 'bg-primary text-white'
+                  ? 'bg-primary text-background'
                   : 'bg-background-secondary text-foreground-secondary hover:bg-background-hover'
               }`}
             >
@@ -200,7 +198,7 @@ export default function CoursesPage() {
               onClick={() => setActiveLevel(level)}
               className={`px-4 py-2 rounded-lg text-sm font-medium transition-all ${
                 activeLevel === level
-                  ? 'bg-primary text-white'
+                  ? 'bg-primary text-background'
                   : 'bg-background-secondary text-foreground-secondary hover:bg-background-hover'
               }`}
             >
@@ -210,73 +208,71 @@ export default function CoursesPage() {
         </div>
       </div>
 
-      {/* Courses Grid */}
-      <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+      <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-5">
         {filteredCourses.map((course) => (
           <Link
             key={course.id}
             to={`/courses/${course.id}`}
-            className="glass-card overflow-hidden hover:bg-background-hover/50 transition-all duration-300 group"
+            className="glass-card overflow-hidden hover:bg-background-hover/30 transition-all duration-300 group card-hover"
           >
-            {/* Thumbnail */}
-            <div className="h-48 bg-gradient-to-br from-primary/20 to-purple-500/20 flex items-center justify-center text-6xl relative overflow-hidden">
+            <div className="h-44 bg-gradient-to-br from-primary/10 to-amber-500/10 flex items-center justify-center text-5xl relative overflow-hidden">
               <span className="relative z-10">{course.thumbnail}</span>
               <div className="absolute inset-0 bg-gradient-to-t from-background-card to-transparent" />
-              <div className="absolute top-4 right-4">
-                <span className="px-2 py-1 rounded-full bg-background-card/80 text-xs font-medium text-foreground">
+              <div className="absolute top-3 right-3">
+                <span className="px-2 py-1 rounded-lg bg-background-card/80 text-[10px] font-medium text-foreground">
                   {course.level}
                 </span>
               </div>
               {course.originalPrice && (
-                <div className="absolute top-4 left-4">
-                  <span className="px-2 py-1 rounded-full bg-danger/20 text-xs font-medium text-danger">
+                <div className="absolute top-3 left-3">
+                  <span className="px-2 py-1 rounded-lg bg-accent-rose/15 text-[10px] font-medium text-accent-rose">
                     限时优惠
                   </span>
                 </div>
               )}
             </div>
 
-            <div className="p-6">
+            <div className="p-5">
               <div className="flex items-center gap-2 mb-2">
-                <span className="px-2 py-0.5 rounded-full bg-primary/10 text-primary text-xs">
+                <span className="text-[10px] px-2 py-0.5 rounded-full bg-primary/10 text-primary font-medium">
                   {course.category}
                 </span>
               </div>
 
-              <h3 className="text-lg font-bold text-foreground mb-2 group-hover:text-primary transition-colors line-clamp-2">
+              <h3 className="text-base font-bold text-foreground mb-2 group-hover:text-primary transition-colors line-clamp-2">
                 {course.title}
               </h3>
               <p className="text-sm text-foreground-secondary leading-relaxed mb-4 line-clamp-2">
                 {course.description}
               </p>
 
-              <div className="flex items-center gap-4 text-sm text-foreground-muted mb-4">
+              <div className="flex items-center gap-4 text-xs text-foreground-muted mb-4">
                 <span className="flex items-center gap-1">
-                  <Star className="w-4 h-4 text-warning fill-warning" />
+                  <Star className="w-3.5 h-3.5 text-warning fill-warning" />
                   {course.rating}
                 </span>
                 <span className="flex items-center gap-1">
-                  <Users className="w-4 h-4" />
+                  <Users className="w-3.5 h-3.5" />
                   {course.studentCount}
                 </span>
                 <span className="flex items-center gap-1">
-                  <Clock className="w-4 h-4" />
+                  <Clock className="w-3.5 h-3.5" />
                   {formatDuration(course.duration)}
                 </span>
               </div>
 
               <div className="flex items-center justify-between pt-4 border-t border-border-subtle">
                 <div className="flex items-center gap-2">
-                  <span className="text-2xl font-bold text-primary">¥{course.price}</span>
+                  <span className="text-xl font-bold text-primary">¥{course.price}</span>
                   {course.originalPrice && (
-                    <span className="text-sm text-foreground-muted line-through">
+                    <span className="text-xs text-foreground-muted line-through">
                       ¥{course.originalPrice}
                     </span>
                   )}
                 </div>
-                <span className="flex items-center gap-1 text-sm text-primary group-hover:translate-x-1 transition-transform">
+                <span className="flex items-center gap-1 text-xs text-primary group-hover:translate-x-0.5 transition-transform font-medium">
                   查看详情
-                  <ChevronRight className="w-4 h-4" />
+                  <ChevronRight className="w-3.5 h-3.5" />
                 </span>
               </div>
             </div>
@@ -286,7 +282,7 @@ export default function CoursesPage() {
 
       {filteredCourses.length === 0 && (
         <div className="text-center py-20">
-          <GraduationCap className="w-16 h-16 mx-auto text-foreground-muted mb-4" />
+          <BookOpen className="w-16 h-16 mx-auto text-foreground-muted mb-4" />
           <p className="text-foreground-muted">没有找到匹配的课程</p>
         </div>
       )}

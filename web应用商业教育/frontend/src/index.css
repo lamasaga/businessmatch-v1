@@ -4,21 +4,23 @@
 
 @layer base {
   :root {
-    --background: #0f172a;
-    --background-secondary: #1e293b;
-    --background-card: #1e293b;
-    --background-hover: #334155;
-    --foreground: #f8fafc;
-    --foreground-muted: #94a3b8;
-    --foreground-secondary: #cbd5e1;
-    --primary: #6366f1;
-    --primary-soft: rgba(99,102,241,0.15);
-    --primary-glow: rgba(99,102,241,0.4);
-    --success: #22c55e;
+    --background: #0a0a0b;
+    --background-secondary: #111113;
+    --background-card: #141416;
+    --background-hover: #1c1c1f;
+    --foreground: #f2f0eb;
+    --foreground-muted: #8a8a92;
+    --foreground-secondary: #b4b4be;
+    --primary: #d4a853;
+    --primary-soft: rgba(212,168,83,0.12);
+    --primary-glow: rgba(212,168,83,0.35);
+    --success: #2dd4a0;
     --warning: #f59e0b;
-    --danger: #ef4444;
-    --info: #3b82f6;
-    --border-subtle: rgba(148,163,184,0.1);
+    --danger: #f87171;
+    --info: #60a5fa;
+    --border-subtle: rgba(255,255,255,0.055);
+    --accent-teal: #2dd4a0;
+    --accent-rose: #f43f5e;
   }
 
   * {
@@ -27,17 +29,18 @@
 
   body {
     @apply bg-background text-foreground antialiased;
-    font-family: 'Inter', system-ui, -apple-system, sans-serif;
+    font-family: 'Inter', 'SF Pro Display', system-ui, -apple-system, sans-serif;
+    letter-spacing: -0.01em;
   }
 
   ::selection {
-    background: rgba(99, 102, 241, 0.3);
-    color: #f8fafc;
+    background: rgba(212, 168, 83, 0.25);
+    color: #f2f0eb;
   }
 
   ::-webkit-scrollbar {
-    width: 8px;
-    height: 8px;
+    width: 6px;
+    height: 6px;
   }
 
   ::-webkit-scrollbar-track {
@@ -45,47 +48,81 @@
   }
 
   ::-webkit-scrollbar-thumb {
-    background: var(--background-hover);
-    border-radius: 4px;
+    background: #2a2a2e;
+    border-radius: 3px;
   }
 
   ::-webkit-scrollbar-thumb:hover {
-    background: var(--foreground-muted);
+    background: #3a3a3e;
   }
 }
 
 @layer components {
   .glass-card {
-    @apply bg-background-card/80 backdrop-blur-xl border border-border-subtle rounded-lg;
+    @apply bg-background-card/90 backdrop-blur-xl border border-border-subtle rounded-xl;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.3), 0 0 0 1px rgba(255,255,255,0.03) inset;
   }
 
   .glow-button {
     @apply relative overflow-hidden transition-all duration-300;
-    box-shadow: 0 0 20px var(--primary-glow);
+    box-shadow: 0 0 24px var(--primary-glow), 0 4px 12px rgba(0,0,0,0.2);
   }
 
   .glow-button:hover {
-    box-shadow: 0 0 30px var(--primary-glow), 0 0 60px var(--primary-soft);
+    box-shadow: 0 0 36px var(--primary-glow), 0 0 72px var(--primary-soft), 0 6px 20px rgba(0,0,0,0.3);
     transform: translateY(-2px);
   }
 
   .text-gradient {
     @apply bg-clip-text text-transparent;
-    background-image: linear-gradient(135deg, #6366f1, #a855f7);
+    background-image: linear-gradient(135deg, #d4a853 0%, #f0d696 50%, #d4a853 100%);
+  }
+
+  .text-gradient-teal {
+    @apply bg-clip-text text-transparent;
+    background-image: linear-gradient(135deg, #2dd4a0, #34d399);
   }
 
   .animate-fade-in-up {
     animation: fadeInUp 0.6s ease-out forwards;
   }
 
+  .card-hover {
+    @apply transition-all duration-300;
+  }
+  .card-hover:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 12px 40px rgba(0,0,0,0.4), 0 0 0 1px rgba(212,168,83,0.08) inset;
+  }
+
+  .nav-item-active {
+    background: linear-gradient(90deg, rgba(212,168,83,0.10) 0%, rgba(212,168,83,0.04) 100%);
+    border-left: 2px solid var(--primary);
+  }
+
+  .stat-glow {
+    box-shadow: 0 0 20px rgba(45,212,160,0.15);
+  }
+
   @keyframes fadeInUp {
     from {
       opacity: 0;
-      transform: translateY(20px);
+      transform: translateY(16px);
     }
     to {
       opacity: 1;
       transform: translateY(0);
     }
+  }
+
+  @keyframes shimmer {
+    0% { background-position: -200% 0; }
+    100% { background-position: 200% 0; }
+  }
+
+  .shimmer {
+    background: linear-gradient(90deg, transparent, rgba(212,168,83,0.08), transparent);
+    background-size: 200% 100%;
+    animation: shimmer 3s ease-in-out infinite;
   }
 }

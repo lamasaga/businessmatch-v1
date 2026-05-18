@@ -1,30 +1,46 @@
-// User types
-export interface User {
-  id: string;
-  email: string;
-  username: string;
-  role: 'student' | 'teacher' | 'admin';
-  avatar?: string;
-  createdAt: string;
+// ==================== 统一API响应类型 ====================
+
+export interface ApiResponse<T> {
+  success: boolean;
+  code: number;
+  message: string;
+  data?: T;
 }
 
-export interface Profile {
-  userId: string;
+export interface PaginatedResponse<T> {
+  items: T[];
+  total: number;
+  page: number;
+  page_size: number;
+  total_pages: number;
+}
+
+// ==================== 用户类型 ====================
+
+export type UserRole = 'student' | 'teacher' | 'admin';
+
+export interface User {
+  id: number;
+  email: string;
+  username: string;
+  role: UserRole;
+  avatar?: string;
   bio?: string;
   experience: number;
   level: number;
-  badges: Badge[];
+  created_at: string;
 }
 
-export interface Badge {
-  id: string;
-  name: string;
-  icon: string;
-  description: string;
-  earnedAt: string;
+export interface UserPublic {
+  id: number;
+  username: string;
+  avatar?: string;
+  role: UserRole;
+  level: number;
 }
 
-// Auth types
+// ==================== 认证类型 ====================
+
 export interface LoginRequest {
   email: string;
   password: string;
@@ -36,27 +52,38 @@ export interface RegisterRequest {
   password: string;
 }
 
-export interface AuthResponse {
-  accessToken: string;
-  refreshToken: string;
-  user: User;
+export interface TokenPair {
+  access_token: string;
+  refresh_token: string;
+  token_type: string;
 }
 
-// Course types
+export interface AuthResponse {
+  user: User;
+  tokens: TokenPair;
+}
+
+export interface RefreshTokenRequest {
+  refresh_token: string;
+}
+
+// ==================== 课程类型 ====================
+
 export interface Course {
   id: string;
   title: string;
   description: string;
   price: number;
-  originalPrice?: number;
+  original_price?: number;
   thumbnail?: string;
   category: string;
   tags: string[];
-  lessons: Lesson[];
   instructor: string;
   rating: number;
-  studentCount: number;
-  createdAt: string;
+  student_count: number;
+  lesson_count: number;
+  duration: number;
+  level: string;
 }
 
 export interface Lesson {
@@ -65,160 +92,107 @@ export interface Lesson {
   duration: number;
   type: 'video' | 'text' | 'quiz';
   content?: string;
-  videoUrl?: string;
+  video_url?: string;
 }
 
-// Order types
-export interface Order {
-  id: string;
-  userId: string;
-  courseId: string;
-  amount: number;
-  status: 'pending' | 'paid' | 'cancelled';
-  createdAt: string;
-}
+// ==================== 知识图谱类型 ====================
 
-// Wiki types
-export interface WikiArticle {
+export interface KnowledgeCard {
   id: string;
   title: string;
-  content: string;
+  subtitle: string;
   category: string;
+  discipline: string;
   tags: string[];
-  parentId?: string;
-  relatedIds: string[];
-  viewCount: number;
-  createdAt: string;
-  updatedAt: string;
+  difficulty: number;
+  definition?: string;
+  explanation?: string;
+  analogy?: string;
+  examples?: string[];
+  prerequisites?: string[];
+  extensions?: string[];
+  related_cards?: RelatedCard[];
 }
 
-export interface WikiRelation {
-  fromId: string;
-  toId: string;
-  relationType: string;
-}
-
-export interface KnowledgeGraph {
-  nodes: KnowledgeNode[];
-  edges: KnowledgeEdge[];
+export interface RelatedCard {
+  id: string;
+  title: string;
+  discipline: string;
 }
 
 export interface KnowledgeNode {
   id: string;
-  label: string;
+  title: string;
   category: string;
-  x?: number;
-  y?: number;
+  discipline: string;
+  difficulty: number;
 }
 
 export interface KnowledgeEdge {
   source: string;
   target: string;
-  label?: string;
+  type: string;
 }
 
-// Game types
+export interface KnowledgeGraphData {
+  nodes: KnowledgeNode[];
+  edges: KnowledgeEdge[];
+}
+
+export interface DisciplineMap {
+  [discipline: string]: string[];
+}
+
+// ==================== 商赛类型 ====================
+
 export interface GameSession {
   id: string;
   name: string;
   status: 'waiting' | 'playing' | 'finished';
-  gameType: string;
-  config: GameConfig;
-  createdBy: string;
+  game_type: string;
+  current_round: number;
+  total_rounds: number;
   participants: GameParticipant[];
-  currentRound: number;
-  totalRounds: number;
-  createdAt: string;
-}
-
-export interface GameConfig {
-  gameType: string;
-  maxPlayers: number;
-  totalRounds: number;
-  timePerRound: number;
-  parameters: Record<string, any>;
+  created_at: string;
 }
 
 export interface GameParticipant {
-  userId: string;
+  user_id: string;
   username: string;
-  teamId?: string;
-  teamName?: string;
-  role?: string;
-  isReady: boolean;
+  team_id?: string;
+  team_name?: string;
+  is_ready: boolean;
   score?: number;
 }
 
-export interface GameRound {
-  roundNumber: number;
-  status: 'waiting' | 'decision' | 'settled';
-  decisions: Record<string, RoundDecision>;
-  result?: RoundResult;
-  startedAt?: string;
-  endedAt?: string;
-}
+// ==================== 国富论游戏类型 ====================
 
-export interface RoundDecision {
-  userId: string;
-  teamId: string;
-  allocations: Record<string, number>;
-  timestamp: string;
-}
-
-export interface RoundResult {
-  scores: Record<string, number>;
-  rankings: string[];
-  details: Record<string, any>;
-}
-
-// Wealth of Nations game types
-export interface WorkshopState {
-  id: string;
-  day: number;
-  workers: Worker[];
-  divisions: Division[];
-  inventory: number;
-  cash: number;
-  totalRevenue: number;
-  totalCosts: number;
-  marketPrice: number;
-  marketDemand: number;
-  capital: number;
-}
-
-export interface Worker {
-  id: string;
+export interface WorkshopWorker {
+  id: number;
   name: string;
   wage: number;
-  divisionId?: string;
+  division_id: number | null;
   productivity: number;
 }
 
-export interface Division {
-  id: string;
+export interface WorkshopDivision {
+  id: number;
   name: string;
   stage: number;
-  efficiencyBonus: number;
-  workerCount: number;
+  efficiency_bonus: number;
+  workers: number[];
 }
 
-export interface WONGameAction {
-  type: 'hire' | 'fire' | 'divide' | 'invest' | 'produce' | 'sell';
-  payload: Record<string, any>;
+// ==================== UI 状态类型 ====================
+
+export interface ToastMessage {
+  id: string;
+  type: 'success' | 'error' | 'warning' | 'info';
+  message: string;
+  duration?: number;
 }
 
-// API response types
-export interface ApiResponse<T> {
-  success: boolean;
-  data?: T;
-  error?: string;
-  message?: string;
-}
-
-export interface PaginatedResponse<T> {
-  items: T[];
-  total: number;
-  page: number;
-  pageSize: number;
-  totalPages: number;
+export interface ApiError {
+  code: number;
+  message: string;
 }
