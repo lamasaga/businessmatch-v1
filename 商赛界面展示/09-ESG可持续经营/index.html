@@ -1,0 +1,590 @@
+<!DOCTYPE html>
+<html lang="zh-CN" data-theme="esg">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ESG可持续经营 - 商业模拟平台</title>
+  <link rel="stylesheet" href="../shared-styles.css">
+  <style>
+    :root {
+      --theme: #22c55e;
+      --theme-soft: rgba(34,197,94,0.15);
+      --theme-glow: rgba(34,197,94,0.4);
+    }
+    
+    .esg-dashboard {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: var(--space-lg);
+      margin-bottom: var(--space-xl);
+    }
+    .esg-pillar {
+      background: var(--bg-card);
+      border-radius: var(--radius-lg);
+      padding: var(--space-xl);
+      text-align: center;
+      border: 2px solid var(--border-subtle);
+      transition: all var(--transition-base);
+    }
+    .esg-pillar:hover {
+      transform: translateY(-4px);
+      box-shadow: var(--shadow-md);
+    }
+    .esg-pillar.e { border-color: rgba(34,197,94,0.3); }
+    .esg-pillar.s { border-color: rgba(59,130,246,0.3); }
+    .esg-pillar.g { border-color: rgba(245,158,11,0.3); }
+    .pillar-icon {
+      width: 64px;
+      height: 64px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 2rem;
+      margin: 0 auto var(--space-md);
+    }
+    .pillar-icon.e { background: rgba(34,197,94,0.2); }
+    .pillar-icon.s { background: rgba(59,130,246,0.2); }
+    .pillar-icon.g { background: rgba(245,158,11,0.2); }
+    .pillar-score {
+      font-family: var(--font-mono);
+      font-size: 3rem;
+      font-weight: 800;
+      margin-bottom: var(--space-sm);
+    }
+    .pillar-score.e { color: #22c55e; }
+    .pillar-score.s { color: #3b82f6; }
+    .pillar-score.g { color: #f59e0b; }
+    .pillar-name {
+      font-weight: 700;
+      font-size: 1.125rem;
+      margin-bottom: 4px;
+    }
+    .pillar-desc {
+      font-size: 0.75rem;
+      color: var(--text-muted);
+    }
+    
+    .triple-bottom {
+      background: linear-gradient(135deg, var(--bg-card), var(--bg-secondary));
+      border-radius: var(--radius-lg);
+      padding: var(--space-2xl);
+      text-align: center;
+      border: 1px solid var(--border-subtle);
+      margin-bottom: var(--space-xl);
+    }
+    .triple-title {
+      font-size: 1.5rem;
+      font-weight: 700;
+      margin-bottom: var(--space-lg);
+    }
+    .triple-chart {
+      display: flex;
+      justify-content: center;
+      align-items: flex-end;
+      gap: var(--space-xl);
+      height: 200px;
+      margin-bottom: var(--space-lg);
+    }
+    .triple-bar {
+      width: 80px;
+      border-radius: 8px 8px 0 0;
+      transition: height 1s ease;
+      position: relative;
+    }
+    .triple-bar-label {
+      position: absolute;
+      bottom: -30px;
+      left: 50%;
+      transform: translateX(-50%);
+      font-size: 0.875rem;
+      font-weight: 600;
+      white-space: nowrap;
+    }
+    .triple-bar-value {
+      position: absolute;
+      top: -30px;
+      left: 50%;
+      transform: translateX(-50%);
+      font-family: var(--font-mono);
+      font-weight: 700;
+      font-size: 1.125rem;
+    }
+    
+    .stakeholder-map {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: var(--space-md);
+    }
+    .stakeholder-card {
+      background: var(--bg-card);
+      border-radius: var(--radius-md);
+      padding: var(--space-lg);
+      border: 1px solid var(--border-subtle);
+      text-align: center;
+    }
+    .stakeholder-emoji {
+      font-size: 2rem;
+      margin-bottom: var(--space-sm);
+    }
+    .stakeholder-name {
+      font-weight: 600;
+      margin-bottom: var(--space-xs);
+    }
+    .stakeholder-satisfaction {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: var(--space-sm);
+      margin-top: var(--space-sm);
+    }
+    .satisfaction-bar {
+      width: 80px;
+      height: 8px;
+      background: var(--bg-hover);
+      border-radius: 9999px;
+      overflow: hidden;
+    }
+    .satisfaction-fill {
+      height: 100%;
+      border-radius: 9999px;
+    }
+    
+    .dilemma-card {
+      background: var(--bg-card);
+      border-radius: var(--radius-md);
+      padding: var(--space-xl);
+      border: 2px solid var(--border-subtle);
+      margin-bottom: var(--space-lg);
+    }
+    .dilemma-header {
+      display: flex;
+      align-items: center;
+      gap: var(--space-sm);
+      margin-bottom: var(--space-md);
+    }
+    .dilemma-badge {
+      padding: 0.25rem 0.75rem;
+      border-radius: 9999px;
+      font-size: 0.75rem;
+      font-weight: 600;
+    }
+    .dilemma-options {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: var(--space-md);
+      margin-top: var(--space-lg);
+    }
+    .dilemma-option {
+      padding: var(--space-md);
+      background: var(--bg-hover);
+      border-radius: var(--radius-sm);
+      cursor: pointer;
+      transition: all var(--transition-fast);
+      border: 2px solid transparent;
+    }
+    .dilemma-option:hover {
+      border-color: var(--theme);
+    }
+    .option-title {
+      font-weight: 600;
+      margin-bottom: var(--space-xs);
+    }
+    .option-impact {
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      margin-top: var(--space-sm);
+    }
+    
+    .sdg-grid {
+      display: grid;
+      grid-template-columns: repeat(6, 1fr);
+      gap: var(--space-sm);
+    }
+    .sdg-item {
+      aspect-ratio: 1;
+      border-radius: var(--radius-sm);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.5rem;
+      opacity: 0.3;
+      transition: all var(--transition-fast);
+    }
+    .sdg-item.active {
+      opacity: 1;
+      transform: scale(1.1);
+      box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+    }
+    
+    .report-preview {
+      background: var(--bg-card);
+      border-radius: var(--radius-md);
+      padding: var(--space-lg);
+      border: 1px solid var(--border-subtle);
+    }
+    .report-section {
+      padding: var(--space-md) 0;
+      border-bottom: 1px solid var(--border-subtle);
+    }
+    .report-section:last-child { border-bottom: none; }
+    .report-metric {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .report-bar {
+      width: 120px;
+      height: 8px;
+      background: var(--bg-hover);
+      border-radius: 9999px;
+      overflow: hidden;
+    }
+  </style>
+</head>
+<body>
+  <nav class="navbar">
+    <div class="container navbar-inner">
+      <a href="#" class="navbar-brand">
+        <div class="logo-icon" style="background: var(--theme);">🌱</div>
+        <span>商业模拟平台</span>
+      </a>
+      <ul class="navbar-nav">
+        <li><a href="#overview" class="active">赛制概览</a></li>
+        <li><a href="#esg">ESG评分</a></li>
+        <li><a href="#dilemma">伦理困境</a></li>
+        <li><a href="#report">可持续报告</a></li>
+      </ul>
+    </div>
+  </nav>
+
+  <section class="hero">
+    <div class="hero-bg" style="background-image: url('cover.svg');"></div>
+    <div class="container hero-content">
+      <div class="hero-badge" style="border-color: var(--theme); color: var(--theme);">
+        <span>🌱</span>
+        <span>Triple Bottom Line · 人、地球、利润</span>
+      </div>
+      <h1 class="hero-title">ESG可持续经营</h1>
+      <p class="hero-subtitle">引入环保、社会、治理三维指标，企业价值不再只看利润。训练长期主义思维，理解可持续发展与商业成功的共生关系。</p>
+      <div class="hero-meta">
+        <div class="hero-meta-item">
+          <span class="hero-meta-value" style="color: var(--theme);">3维度</span>
+          <span class="hero-meta-label">ESG评分</span>
+        </div>
+        <div class="hero-meta-item">
+          <span class="hero-meta-value" style="color: var(--theme);">长期</span>
+          <span class="hero-meta-label">价值评估</span>
+        </div>
+        <div class="hero-meta-item">
+          <span class="hero-meta-value" style="color: var(--theme);">伦理</span>
+          <span class="hero-meta-label">决策训练</span>
+        </div>
+        <div class="hero-meta-item">
+          <span class="hero-meta-value" style="color: var(--theme);">大学+</span>
+          <span class="hero-meta-label">适合学段</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" id="overview">
+    <div class="container">
+      <div class="section-header">
+        <div class="section-label">Triple Bottom Line</div>
+        <h2 class="section-title">三重底线</h2>
+        <p class="section-desc">利润(People)、地球(Planet)、繁荣(Profit)的平衡艺术</p>
+      </div>
+      
+      <div class="triple-bottom">
+        <div class="triple-title">公司价值构成</div>
+        <div class="triple-chart">
+          <div class="triple-bar" style="height: 60%; background: linear-gradient(180deg, #22c55e, #16a34a);">
+            <div class="triple-bar-value" style="color: #22c55e;">¥320万</div>
+            <div class="triple-bar-label">🌍 环境价值</div>
+          </div>
+          <div class="triple-bar" style="height: 75%; background: linear-gradient(180deg, #3b82f6, #2563eb);">
+            <div class="triple-bar-value" style="color: #3b82f6;">¥480万</div>
+            <div class="triple-bar-label">👥 社会价值</div>
+          </div>
+          <div class="triple-bar" style="height: 100%; background: linear-gradient(180deg, #f59e0b, #d97706);">
+            <div class="triple-bar-value" style="color: #f59e0b;">¥680万</div>
+            <div class="triple-bar-label">💰 财务利润</div>
+          </div>
+        </div>
+        <div style="font-size: 0.875rem; color: var(--text-muted);">
+          综合企业价值 = <span style="color: #22c55e;">环境</span> + <span style="color: #3b82f6;">社会</span> + <span style="color: #f59e0b;">财务</span> = <strong>¥1,480万</strong>
+        </div>
+      </div>
+      
+      <div class="stakeholder-map">
+        <div class="stakeholder-card">
+          <div class="stakeholder-emoji">👨‍💼</div>
+          <div class="stakeholder-name">员工</div>
+          <div style="font-size: 0.75rem; color: var(--text-muted);">满意度 78%</div>
+          <div class="stakeholder-satisfaction">
+            <div class="satisfaction-bar"><div class="satisfaction-fill" style="width: 78%; background: var(--success);"></div></div>
+          </div>
+        </div>
+        <div class="stakeholder-card">
+          <div class="stakeholder-emoji">🏘️</div>
+          <div class="stakeholder-name">社区</div>
+          <div style="font-size: 0.75rem; color: var(--text-muted);">满意度 65%</div>
+          <div class="stakeholder-satisfaction">
+            <div class="satisfaction-bar"><div class="satisfaction-fill" style="width: 65%; background: var(--warning);"></div></div>
+          </div>
+        </div>
+        <div class="stakeholder-card">
+          <div class="stakeholder-emoji">🏛️</div>
+          <div class="stakeholder-name">政府/监管</div>
+          <div style="font-size: 0.75rem; color: var(--text-muted);">合规度 92%</div>
+          <div class="stakeholder-satisfaction">
+            <div class="satisfaction-bar"><div class="satisfaction-fill" style="width: 92%; background: var(--success);"></div></div>
+          </div>
+        </div>
+        <div class="stakeholder-card">
+          <div class="stakeholder-emoji">📦</div>
+          <div class="stakeholder-name">供应商</div>
+          <div style="font-size: 0.75rem; color: var(--text-muted);">公平度 70%</div>
+          <div class="stakeholder-satisfaction">
+            <div class="satisfaction-bar"><div class="satisfaction-fill" style="width: 70%; background: var(--warning);"></div></div>
+          </div>
+        </div>
+        <div class="stakeholder-card">
+          <div class="stakeholder-emoji">🌍</div>
+          <div class="stakeholder-name">环境</div>
+          <div style="font-size: 0.75rem; color: var(--text-muted);">影响度 -45%</div>
+          <div class="stakeholder-satisfaction">
+            <div class="satisfaction-bar"><div class="satisfaction-fill" style="width: 55%; background: var(--warning);"></div></div>
+          </div>
+        </div>
+        <div class="stakeholder-card">
+          <div class="stakeholder-emoji">💰</div>
+          <div class="stakeholder-name">股东</div>
+          <div style="font-size: 0.75rem; color: var(--text-muted);">回报率 +18%</div>
+          <div class="stakeholder-satisfaction">
+            <div class="satisfaction-bar"><div class="satisfaction-fill" style="width: 85%; background: var(--success);"></div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" id="esg" style="background: var(--bg-secondary);">
+    <div class="container">
+      <div class="section-header">
+        <div class="section-label">ESG Scorecard</div>
+        <h2 class="section-title">ESG三维评分</h2>
+        <p class="section-desc">每个维度的决策都会影响最终评分</p>
+      </div>
+      
+      <div class="esg-dashboard">
+        <div class="esg-pillar e">
+          <div class="pillar-icon e">🌍</div>
+          <div class="pillar-score e">72</div>
+          <div class="pillar-name">环境 (E)</div>
+          <div class="pillar-desc">碳排放 · 资源利用 · 废物管理</div>
+          <div style="margin-top: var(--space-md);">
+            <div class="progress-bar"><div class="progress-fill" style="width: 72%; background: #22c55e;"></div></div>
+          </div>
+        </div>
+        <div class="esg-pillar s">
+          <div class="pillar-icon s">👥</div>
+          <div class="pillar-score s">68</div>
+          <div class="pillar-name">社会 (S)</div>
+          <div class="pillar-desc">员工福利 · 社区关系 · 供应链伦理</div>
+          <div style="margin-top: var(--space-md);">
+            <div class="progress-bar"><div class="progress-fill" style="width: 68%; background: #3b82f6;"></div></div>
+          </div>
+        </div>
+        <div class="esg-pillar g">
+          <div class="pillar-icon g">⚖️</div>
+          <div class="pillar-score g">85</div>
+          <div class="pillar-name">治理 (G)</div>
+          <div class="pillar-desc">透明度 · 董事会 · 合规性</div>
+          <div style="margin-top: var(--space-md);">
+            <div class="progress-bar"><div class="progress-fill" style="width: 85%; background: #f59e0b;"></div></div>
+          </div>
+        </div>
+      </div>
+      
+      <div class="card">
+        <h4 style="margin-bottom: var(--space-lg);">🎯 SDGs 贡献地图</h4>
+        <div class="sdg-grid">
+          <div class="sdg-item active" style="background: #e5243b;">🎯</div>
+          <div class="sdg-item" style="background: #dda63a;">🍞</div>
+          <div class="sdg-item active" style="background: #4c9f38;">🏥</div>
+          <div class="sdg-item" style="background: #c5192d;">📚</div>
+          <div class="sdg-item active" style="background: #ff3a21;">♀️</div>
+          <div class="sdg-item" style="background: #26bde2;">💧</div>
+          <div class="sdg-item" style="background: #fcc30b;">⚡</div>
+          <div class="sdg-item active" style="background: #a21942;">💼</div>
+          <div class="sdg-item" style="background: #fd6925;">🏭</div>
+          <div class="sdg-item" style="background: #dd1367;">📉</div>
+          <div class="sdg-item active" style="background: #fd9d24;">🏙️</div>
+          <div class="sdg-item active" style="background: #bf8b2e;">♻️</div>
+          <div class="sdg-item" style="background: #3f7e44;">🌳</div>
+          <div class="sdg-item" style="background: #0a97d9;">🐟</div>
+          <div class="sdg-item" style="background: #56c02b;">🦅</div>
+          <div class="sdg-item" style="background: #00689d;">🏛️</div>
+          <div class="sdg-item" style="background: #19486a;">🤝</div>
+        </div>
+        <div style="text-align: center; margin-top: var(--space-md); font-size: 0.75rem; color: var(--text-muted);">
+          高亮为当前公司已贡献的可持续发展目标
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" id="dilemma">
+    <div class="container">
+      <div class="section-header">
+        <div class="section-label">Ethical Dilemmas</div>
+        <h2 class="section-title">可持续伦理困境</h2>
+        <p class="section-desc">利润与责任之间的艰难选择</p>
+      </div>
+      
+      <div class="dilemma-card">
+        <div class="dilemma-header">
+          <span class="dilemma-badge" style="background: var(--theme-soft); color: var(--theme);">环境伦理</span>
+          <span style="font-size: 0.75rem; color: var(--text-muted);">决策 3 / 8</span>
+        </div>
+        <h3 style="margin-bottom: var(--space-md);">污水处理系统升级</h3>
+        <p style="color: var(--text-secondary); line-height: 1.7; margin-bottom: var(--space-lg);">
+          你的工厂每天排放 500 吨工业废水。当前的处理系统只能达到国家最低标准。环保组织正在调查你所在的行业，如果被发现"仅达标"，可能引发公关危机。升级处理系统需要一次性投入 ¥200万，但可将排放降至行业领先水平。
+        </p>
+        <div style="background: var(--bg-hover); border-radius: var(--radius-sm); padding: var(--space-md); margin-bottom: var(--space-lg);">
+          <div style="font-size: 0.75rem; color: var(--text-muted); margin-bottom: var(--space-sm);">当前财务状况</div>
+          <div style="display: flex; gap: var(--space-xl);">
+            <div><span style="font-family: var(--font-mono); font-weight: 700;">¥450万</span> <span style="font-size: 0.75rem; color: var(--text-muted);">现金</span></div>
+            <div><span style="font-family: var(--font-mono); font-weight: 700;">¥80万</span> <span style="font-size: 0.75rem; color: var(--text-muted);">月利润</span></div>
+            <div><span style="font-family: var(--font-mono); font-weight: 700;">72分</span> <span style="font-size: 0.75rem; color: var(--text-muted);">环境评分</span></div>
+          </div>
+        </div>
+        
+        <div class="dilemma-options">
+          <div class="dilemma-option">
+            <div class="option-title">💰 维持现状</div>
+            <p style="font-size: 0.875rem; color: var(--text-secondary);">"我们已经在合法范围内，不需要额外投入。"</p>
+            <div class="option-impact">
+              <span>💰 利润 +¥200万</span> · <span>🌍 环境 -15分</span> · <span>⚠️ 50% 概率公关危机</span>
+            </div>
+          </div>
+          <div class="dilemma-option">
+            <div class="option-title">🌍 全面升级</div>
+            <p style="font-size: 0.875rem; color: var(--text-secondary);">"投资未来，成为行业环保标杆。"</p>
+            <div class="option-impact">
+              <span>💰 利润 -¥200万</span> · <span>🌍 环境 +25分</span> · <span>🏆 获得绿色认证</span>
+            </div>
+          </div>
+          <div class="dilemma-option">
+            <div class="option-title">⚖️ 渐进升级</div>
+            <p style="font-size: 0.875rem; color: var(--text-secondary);">"分阶段投入，平衡财务与环保。"</p>
+            <div class="option-impact">
+              <span>💰 利润 -¥80万/季度</span> · <span>🌍 环境 +10分/季度</span> · <span>⏱️ 6个月完成</span>
+            </div>
+          </div>
+          <div class="dilemma-option">
+            <div class="option-title">🤝 联合行动</div>
+            <p style="font-size: 0.875rem; color: var(--text-secondary);">"联合同行共建处理中心，分摊成本。"</p>
+            <div class="option-impact">
+              <span>💰 利润 -¥60万</span> · <span>🌍 环境 +20分</span> · <span>🔗 依赖合作伙伴</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" id="report" style="background: var(--bg-secondary);">
+    <div class="container">
+      <div class="section-header">
+        <div class="section-label">Sustainability Report</div>
+        <h2 class="section-title">可持续发展报告</h2>
+        <p class="section-desc">自动生成ESG报告，量化企业社会价值</p>
+      </div>
+      
+      <div class="report-preview">
+        <div style="text-align: center; margin-bottom: var(--space-xl);">
+          <div style="font-size: 1.25rem; font-weight: 700;">绿源科技</div>
+          <div style="font-size: 0.875rem; color: var(--text-muted);">2024年度可持续发展报告</div>
+        </div>
+        
+        <div class="report-section">
+          <div style="font-size: 0.75rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: var(--space-md);">环境指标 (E)</div>
+          <div class="report-metric">
+            <span>碳排放量</span>
+            <div style="display: flex; align-items: center; gap: var(--space-sm);">
+              <span style="font-family: var(--font-mono);">1,240吨</span>
+              <div class="report-bar"><div class="progress-fill" style="width: 60%; background: var(--warning);"></div></div>
+            </div>
+          </div>
+          <div class="report-metric">
+            <span>可再生能源占比</span>
+            <div style="display: flex; align-items: center; gap: var(--space-sm);">
+              <span style="font-family: var(--font-mono);">35%</span>
+              <div class="report-bar"><div class="progress-fill" style="width: 35%; background: var(--info);"></div></div>
+            </div>
+          </div>
+          <div class="report-metric">
+            <span>水资源循环利用率</span>
+            <div style="display: flex; align-items: center; gap: var(--space-sm);">
+              <span style="font-family: var(--font-mono);">68%</span>
+              <div class="report-bar"><div class="progress-fill" style="width: 68%; background: var(--success);"></div></div>
+            </div>
+          </div>
+        </div>
+        
+        <div class="report-section">
+          <div style="font-size: 0.75rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: var(--space-md);">社会指标 (S)</div>
+          <div class="report-metric">
+            <span>员工培训时长/人</span>
+            <div style="display: flex; align-items: center; gap: var(--space-sm);">
+              <span style="font-family: var(--font-mono);">42小时</span>
+              <div class="report-bar"><div class="progress-fill" style="width: 70%; background: var(--success);"></div></div>
+            </div>
+          </div>
+          <div class="report-metric">
+            <span>女性管理层占比</span>
+            <div style="display: flex; align-items: center; gap: var(--space-sm);">
+              <span style="font-family: var(--font-mono);">38%</span>
+              <div class="report-bar"><div class="progress-fill" style="width: 38%; background: var(--warning);"></div></div>
+            </div>
+          </div>
+          <div class="report-metric">
+            <span>社区投资金额</span>
+            <div style="display: flex; align-items: center; gap: var(--space-sm);">
+              <span style="font-family: var(--font-mono);">¥12万</span>
+              <div class="report-bar"><div class="progress-fill" style="width: 25%; background: var(--info);"></div></div>
+            </div>
+          </div>
+        </div>
+        
+        <div class="report-section">
+          <div style="font-size: 0.75rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: var(--space-md);">治理指标 (G)</div>
+          <div class="report-metric">
+            <span>信息披露透明度</span>
+            <div style="display: flex; align-items: center; gap: var(--space-sm);">
+              <span style="font-family: var(--font-mono);">92%</span>
+              <div class="report-bar"><div class="progress-fill" style="width: 92%; background: var(--success);"></div></div>
+            </div>
+          </div>
+          <div class="report-metric">
+            <span>独立董事占比</span>
+            <div style="display: flex; align-items: center; gap: var(--space-sm);">
+              <span style="font-family: var(--font-mono);">40%</span>
+              <div class="report-bar"><div class="progress-fill" style="width: 40%; background: var(--warning);"></div></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <footer style="padding: var(--space-xl) 0; border-top: 1px solid var(--border-subtle); text-align: center;">
+    <div class="container">
+      <p style="color: var(--text-muted); font-size: 0.875rem;">商业模拟平台 · ESG可持续经营 · 适合大学及以上学段 · 社会责任与长期价值训练</p>
+    </div>
+  </footer>
+</body>
+</html>

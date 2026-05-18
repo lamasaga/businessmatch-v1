@@ -1,0 +1,29 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" viewBox="0 0 1200 630">
+        <defs>
+            <linearGradient id="grad10" x1="0%" y1="0%" x2="100%" y2="100%">
+                <stop offset="0%" style="stop-color:#1e1b4b;stop-opacity:1" />
+                <stop offset="100%" style="stop-color:#6366f1;stop-opacity:0.3" />
+            </linearGradient>
+            <pattern id="grid10" width="60" height="60" patternUnits="userSpaceOnUse">
+                <path d="M 60 0 L 0 0 0 60" fill="none" stroke="#6366f1" stroke-opacity="0.08" stroke-width="1"/>
+            </pattern>
+        </defs>
+        <rect width="1200" height="630" fill="url(#grad10)"/>
+        <rect width="1200" height="630" fill="url(#grid10)"/>
+        <rect x="0" y="0" width="1200" height="6" fill="#6366f1"/>
+        <rect x="0" y="624" width="1200" height="6" fill="#6366f1"/>
+        
+        <circle cx="1000" cy="150" r="200" fill="#6366f1" fill-opacity="0.05"/>
+        <circle cx="1100" cy="500" r="120" fill="#6366f1" fill-opacity="0.08"/>
+        <rect x="80" y="480" width="200" height="4" fill="#6366f1" fill-opacity="0.3"/>
+        <rect x="80" y="495" width="120" height="4" fill="#6366f1" fill-opacity="0.2"/>
+        
+        <text x="80" y="140" font-family="system-ui, -apple-system, sans-serif" font-size="28" font-weight="600" fill="#6366f1" letter-spacing="4">GLOBAL TRADE</text>
+        <text x="80" y="220" font-family="system-ui, -apple-system, sans-serif" font-size="56" font-weight="800" fill="white">跨国贸易博弈</text>
+        <text x="80" y="290" font-family="system-ui, -apple-system, sans-serif" font-size="26" fill="rgba(255,255,255,0.7)">汇率风险 · 关税壁垒 · 文化差异</text>
+        
+        <rect x="80" y="360" width="180" height="44" rx="22" fill="#6366f1" fill-opacity="0.2" stroke="#6366f1" stroke-width="1.5"/>
+        <text x="170" y="388" text-anchor="middle" font-family="system-ui, sans-serif" font-size="16" font-weight="600" fill="#6366f1">商业模拟平台</text>
+        
+        <rect x="920" y="280" width="200" height="200" rx="20" fill="#6366f1" fill-opacity="0.08" stroke="#6366f1" stroke-width="1" stroke-opacity="0.3"/>
+    </svg>

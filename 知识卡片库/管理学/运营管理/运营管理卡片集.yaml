@@ -1,0 +1,192 @@
+# ============================================
+# 运营管理知识卡片集（3张）
+# ============================================
+
+---
+content_type: KN
+content_id: "KN-MG-OP-001-v1.0"
+title: "供应链管理"
+subtitle: "从原材料到消费者手中的旅程"
+
+target_level: "高中及以上"
+target_age: [15, 22]
+difficulty: 3
+competencies: ["SL-2", "CL-2"]
+bloom_level: "apply"
+
+tags: ["运营", "供应链", "流程", "进阶概念"]
+ai_generable: true
+author: "平台教研团队"
+reviewer: "管理学顾问"
+version: "1.0.0"
+created_at: "2026-05-12"
+updated_at: "2026-05-12"
+
+knowledge:
+  definition: "供应链管理（SCM）是对从原材料采购、生产制造、仓储物流到最终交付给消费者的全过程进行规划、协调和优化的管理活动。目标是：在正确的时间、正确的地点、以正确的成本提供正确的产品。"
+  explanation: "就像送外卖：接单（需求）→厨房做菜（生产）→打包（仓储）→骑手配送（物流）→送到你手中（交付）。供应链管理就是让整个过程更快、更便宜、更可靠。"
+  analogy: "就像接力赛：供应链的每个环节（供应商→制造商→分销商→零售商→消费者）都是一棒选手。交接棒慢了、掉了，整个团队的成绩就受影响。"
+  
+  examples:
+    - context: "生活"
+      description: "你网购一件衣服：下单（你）→仓库备货（仓储）→快递运输（物流）→送货上门（配送）。任何一个环节出问题，你就收不到货。"
+    - context: "平台赛事"
+      description: "在'产业链角色扮演'中，学生分别扮演供应商、制造商、分销商、零售商，体验供应链的协调与挑战。"
+    - context: "现实商业"
+      description: "2021年全球芯片短缺：汽车制造商因为缺少芯片停产——供应链一个环节的断裂影响了整个行业。"
+  
+  non_examples:
+    - misconception: "供应链管理就是物流"
+      correction: "物流只是供应链的一部分。供应链还包括采购、生产计划、库存管理、需求预测等。"
+    - misconception: "供应链越短越好"
+      correction: "缩短供应链可能增加风险（如单一供应商依赖）。关键是平衡效率与韧性。"
+
+level_adaptations:
+  high:
+    explanation: "供应链的关键指标：库存周转率、订单满足率、供应链成本占比、牛鞭效应（需求信息在供应链中放大）。"
+    example: "在'产业链角色扮演'中，为什么零售商的小波动会导致供应商的大波动？这就是牛鞭效应。"
+  university:
+    explanation: "供应链的数字化转型、供应链金融、可持续供应链、风险管理与韧性设计。"
+    example: "分析Zara的'快时尚'供应链：如何在2周内完成设计-生产-上架？"
+
+platform_mapping:
+  game_modes:
+    - mode_id: "supply_chain_rpg_v1"
+      application: "核心机制——体验供应链各环节的协调与博弈"
+    - mode_id: "real_time_challenge_v1"
+      application: "实时物流与库存决策"
+  
+  ai_tutor_hints:
+    - trigger: "供应链某环节库存积压"
+      hint: "你的库存积压了！供应链管理的核心是'信息流、物流、资金流的同步'。上游信息传递滞后导致了你的过度备货。考虑与上下游建立信息共享机制。"
+
+related_content:
+  prerequisites: ["KN-EC-MI-001"]
+  extensions: ["KN-MG-OP-002", "KN-MG-OP-003", "KN-MG-ST-005"]
+  game_mode_applications: ["supply_chain_rpg_v1", "real_time_challenge_v1"]
+
+---
+content_type: KN
+content_id: "KN-MG-OP-002-v1.0"
+title: "精益生产"
+subtitle: "消灭一切浪费"
+
+target_level: "高中及以上"
+target_age: [16, 22]
+difficulty: 4
+competencies: ["SL-2", "FL-1"]
+bloom_level: "apply"
+
+tags: ["运营", "效率", "精益", "进阶概念"]
+ai_generable: true
+author: "平台教研团队"
+reviewer: "管理学顾问"
+version: "1.0.0"
+created_at: "2026-05-12"
+updated_at: "2026-05-12"
+
+knowledge:
+  definition: "精益生产（Lean Production）起源于丰田生产方式，核心思想是'消灭一切不创造价值的活动（浪费）'。七大浪费包括：过量生产、等待、运输、过度加工、库存、动作、缺陷。"
+  explanation: "就像整理书桌：精益不是'做更多'，而是'去掉不需要的'。你的书桌上堆满了没用的东西（浪费），找到它们并清除，效率自然就提升了。"
+  analogy: "就像河流：传统的生产方式是'大坝蓄水'（大量库存），精益生产是'小坝导流'（刚好够用）。水流（生产）更顺畅，洪水（库存积压）风险更低。"
+  
+  examples:
+    - context: "生活"
+      description: "你复习考试：过量生产（做了太多超纲题）、等待（等同学给答案）、过度加工（笔记做得太漂亮但没记住）——这些都是学习中的'浪费'。"
+    - context: "平台赛事"
+      description: "在'实时经营挑战'中，精益思维帮助识别哪些操作是浪费（如不必要的库存、重复的数据录入）。"
+    - context: "现实商业"
+      description: "丰田的'看板'系统：只在需要时生产需要的数量。库存是万恶之源——它掩盖了问题（质量问题被库存稀释了）。"
+  
+  non_examples:
+    - misconception: "精益=裁员"
+      correction: "精益是消灭浪费，不是消灭人。人的智慧是精益最重要的资源。"
+    - misconception: "精益只适用于制造业"
+      correction: "精益原则广泛应用于服务业（精益医疗）、软件开发（敏捷/精益创业）、教育等领域。"
+
+level_adaptations:
+  high:
+    explanation: "精益工具：5S、看板、价值流图、PDCA循环、持续改善（Kaizen）。"
+    example: "在'创业生存战'中，如何用精益思维优化运营流程？"
+  university:
+    explanation: "精益与六西格玛的结合（精益六西格玛）、服务业的精益应用、精益供应链、精益创业与精益生产的联系。"
+    example: "分析亚马逊的'精益物流'：如何通过技术和流程优化实现当日达？"
+
+platform_mapping:
+  game_modes:
+    - mode_id: "real_time_challenge_v1"
+      application: "实时识别和消除运营浪费"
+    - mode_id: "startup_survival_v1"
+      application: "精益思维优化成本结构"
+  
+  ai_tutor_hints:
+    - trigger: "学生运营中存在明显浪费"
+      hint: "精益生产思维：你目前的运营中可能存在'七大浪费'之一。检查一下：是否有过量生产？是否有不必要的等待？是否有过度加工？"
+
+related_content:
+  prerequisites: ["KN-MG-OP-001"]
+  extensions: ["KN-MG-OP-003", "KN-BS-EN-005"]
+  game_mode_applications: ["real_time_challenge_v1", "startup_survival_v1"]
+
+---
+content_type: KN
+content_id: "KN-MG-OP-003-v1.0"
+title: "质量管理"
+subtitle: "质量不是检查出来的，是设计出来的"
+
+target_level: "高中及以上"
+target_age: [15, 22]
+difficulty: 3
+competencies: ["SL-2", "EL-1"]
+bloom_level: "apply"
+
+tags: ["运营", "质量", "标准", "进阶概念"]
+ai_generable: true
+author: "平台教研团队"
+reviewer: "管理学顾问"
+version: "1.0.0"
+created_at: "2026-05-12"
+updated_at: "2026-05-12"
+
+knowledge:
+  definition: "质量管理是指通过系统化的方法确保产品或服务满足或超越客户期望的管理活动。从'事后检查'（QC）发展到'过程控制'（QA）再到'全员参与'（TQM）和'六西格玛'（追求近乎零缺陷）。"
+  explanation: "就像做饭：质量管理不是'做完后尝一口看咸不咸'（事后检查），而是'从买菜开始就选新鲜食材'（源头控制）和'按照菜谱精确操作'（过程控制）。"
+  analogy: "就像盖房子：传统方式是盖完再检查有没有裂缝（QC）。现代方式是从设计（蓝图）、材料（钢筋水泥）、施工（每道工序）全程控制（TQM）——这样盖出来的房子更可靠。"
+  
+  examples:
+    - context: "生活"
+      description: "你写作业：检查错别字是QC，写作时先列提纲是QA，平时多读书提升写作能力就是TQM。"
+    - context: "平台赛事"
+      description: "在'品牌造物坊'中，质量管理体现在品牌一致性：每次传播是否都符合品牌标准？"
+    - context: "现实商业"
+      description: "丰田'安灯'系统：任何工人发现质量问题都可以拉停整条生产线——质量优先于产量。"
+  
+  non_examples:
+    - misconception: "质量管理就是多检查"
+      correction: "过度检查本身就是浪费。质量管理的目标是让问题不发生，而不是发生后发现。"
+    - misconception: "高质量一定高成本"
+      correction: "'质量是免费的'（Crosby）。预防缺陷的成本远低于修复缺陷的成本。"
+
+level_adaptations:
+  high:
+    explanation: "质量成本模型：预防成本、鉴定成本、内部故障成本、外部故障成本。PDCA与DMAIC方法论。"
+    example: "在'产业链角色扮演'中，如何在成本和质量的权衡中找到最优解？"
+  university:
+    explanation: "六西格玛的统计基础、全面质量管理（TQM）的文化维度、ISO标准、服务质量管理（SERVQUAL模型）。"
+    example: "分析波音737 MAX的质量危机：质量管理的系统性失败如何发生？"
+
+platform_mapping:
+  game_modes:
+    - mode_id: "real_time_challenge_v1"
+      application: "质量与速度的平衡决策"
+    - mode_id: "brand_workshop_v1"
+      application: "品牌一致性的质量管理"
+  
+  ai_tutor_hints:
+    - trigger: "学生牺牲质量换取短期成本节约"
+      hint: "你在用长期的品牌声誉换取短期的成本节约。质量管理告诉我们：外部故障成本（品牌受损、客户流失）往往远高于预防成本。"
+
+related_content:
+  prerequisites: ["KN-MG-OP-001"]
+  extensions: ["KN-MG-OP-002", "KN-MG-ET-003"]
+  game_mode_applications: ["real_time_challenge_v1", "brand_workshop_v1"]

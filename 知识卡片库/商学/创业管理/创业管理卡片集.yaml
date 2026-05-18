@@ -1,0 +1,323 @@
+# ============================================
+# 创业管理知识卡片集（5张）
+# ============================================
+
+---
+content_type: KN
+content_id: "KN-BS-EN-001-v1.0"
+title: "商业模式画布"
+subtitle: "一张纸说清楚你的生意怎么做"
+
+target_level: "高中及以上"
+target_age: [15, 22]
+difficulty: 3
+competencies: ["SL-1", "SL-2"]
+bloom_level: "apply"
+
+tags: ["创业", "商业模式", "策略", "进阶概念"]
+ai_generable: true
+author: "平台教研团队"
+reviewer: "商学顾问"
+version: "1.0.0"
+created_at: "2026-05-12"
+updated_at: "2026-05-12"
+
+knowledge:
+  definition: "商业模式画布（Business Model Canvas）是描述、分析和设计商业模式的工具，包含9个核心模块：客户细分、价值主张、渠道通路、客户关系、收入来源、核心资源、关键业务、重要合作、成本结构。"
+  explanation: "就像画一张地图：谁在买（客户细分）、卖什么（价值主张）、怎么卖（渠道通路）、怎么赚钱（收入来源）、需要什么资源（核心资源）、花多少钱（成本结构）。"
+  analogy: "就像开一家餐厅前的规划图：目标客户（学生/白领）、卖什么（快餐/正餐）、怎么卖（堂食/外卖）、怎么留客（会员/优惠）、收入来源（餐费/酒水）、需要什么（厨师/场地）、合作伙伴（供应商/外卖平台）、成本（租金/原料/人工）。"
+  
+  examples:
+    - context: "生活"
+      description: "你的'个人商业模式画布'：客户（老师/同学）、价值（帮写作业/组织活动）、渠道（班级群/朋友圈）、收入（零花钱/经验）。"
+    - context: "平台赛事"
+      description: "在'创业生存战'开始前，学生需要先用画布设计商业模式，再进入模拟。"
+    - context: "现实商业"
+      description: "滴滴的商业模式画布：客户（乘客+司机）、价值（便捷出行/灵活收入）、渠道（App）、收入（抽成）、资源（技术平台+数据）。"
+  
+  non_examples:
+    - misconception: "画布就是商业计划书"
+      correction: "画布是'骨架'，计划书是'血肉'。画布帮助你快速验证想法，计划书用于融资和详细执行。"
+    - misconception: "画布拉满9个格就是好的"
+      correction: "好的画布是各模块之间的'匹配度'，不是填满。客户细分和价值主张不匹配，再满的 canvas 也没用。"
+
+level_adaptations:
+  high:
+    explanation: "画布的创新应用：从BMC到价值主张画布、社会商业模式画布、 lean canvas（精益画布）。"
+    example: "在'创业生存战'中，为什么有的商业模式在第一轮就失败了？分析画布中的致命缺陷。"
+  university:
+    explanation: "商业模式的演化理论、平台商业模式、订阅商业模式、商业模式与战略的关系。"
+    example: "分析SHEIN的商业模式创新：快时尚+小单快反+社交媒体+独立站，如何重构传统服装行业的商业模式画布？"
+
+platform_mapping:
+  game_modes:
+    - mode_id: "startup_survival_v1"
+      application: "赛前工具——学生必须用画布设计商业模式"
+    - mode_id: "investor_pitch_v1"
+      application: "路演核心——投资人通过画布快速理解企业"
+  
+  ai_tutor_hints:
+    - trigger: "学生画布中客户细分与价值主张不匹配"
+      hint: "你的价值主张是'高端定制'，但客户细分是'价格敏感的学生'。这是画布中最常见的致命错误——价值主张与客户不匹配。考虑调整其中之一。"
+
+related_content:
+  prerequisites: ["KN-BS-MK-001"]
+  extensions: ["KN-BS-EN-002", "KN-BS-EN-003", "KN-MG-ST-001"]
+  game_mode_applications: ["startup_survival_v1", "investor_pitch_v1"]
+
+---
+content_type: KN
+content_id: "KN-BS-EN-002-v1.0"
+title: "MVP（最小可行产品）"
+subtitle: "不要等完美，先做一个'足够好'的试试"
+
+target_level: "高中及以上"
+target_age: [15, 22]
+difficulty: 3
+competencies: ["SL-5"]
+bloom_level: "apply"
+
+tags: ["创业", "产品", "敏捷", "进阶概念"]
+ai_generable: true
+author: "平台教研团队"
+reviewer: "商学顾问"
+version: "1.0.0"
+created_at: "2026-05-12"
+updated_at: "2026-05-12"
+
+knowledge:
+  definition: "MVP（Minimum Viable Product）是指用最少的时间和资源，开发出一个具备核心功能、可以验证关键假设的产品版本。"
+  explanation: "不要花一年做一个'完美产品'再上市，而是花一个月做一个'能用'的版本，让用户告诉你方向对不对。"
+  analogy: "就像做蛋糕：不要等所有配料和装饰都完美了再请人品尝。先做一个最简单的原型（面粉+蛋），让人尝尝味道，再决定要不要加奶油和水果。"
+  
+  examples:
+    - context: "生活"
+      description: "你想卖手工饼干。MVP不是设计精美包装、租店铺，而是先烤一炉让同学试吃、收集反馈。"
+    - context: "平台赛事"
+      description: "在'创业生存战'中，第一轮只投入核心功能（一种产品+一个城市），验证后再扩展。"
+    - context: "现实商业"
+      description: "Dropbox的MVP：创始人先做了一个演示视频，看有没有人感兴趣。视频爆红后才开发产品。"
+  
+  non_examples:
+    - misconception: "MVP就是粗制滥造"
+      correction: "MVP要有足够的质量来验证假设。如果质量太差导致用户拒绝，你无法判断是产品方向错还是质量差。"
+    - misconception: "MVP只做一次"
+      correction: "MVP是一个循环：构建→测量→学习→下一个MVP。持续迭代。"
+
+level_adaptations:
+  high:
+    explanation: "MVP的关键指标：哪些假设需要验证？如何设计验证实验？A/B测试与MVP的关系。"
+    example: "在'回合制策略'中，第一轮的小规模投入就是一种MVP思维——用最小成本验证市场反应。"
+  university:
+    explanation: "MVP的批判性反思：MVP在不同行业的适用性、技术债务的积累、从MVP到规模化产品的鸿沟。"
+    example: "分析微信的MVP策略：为什么第一个版本只有简单的即时通讯功能？"
+
+platform_mapping:
+  game_modes:
+    - mode_id: "startup_survival_v1"
+      application: "核心策略——用最小投入验证商业模式"
+    - mode_id: "real_time_challenge_v1"
+      application: "快速迭代中的MVP思维"
+  
+  ai_tutor_hints:
+    - trigger: "学生在第一轮过度投入"
+      hint: "你似乎在追求'完美开局'。创业中的MVP思维告诉我们：先用最小成本验证方向。如果方向错了，过度投入只会扩大损失。"
+
+related_content:
+  prerequisites: ["KN-BS-EN-001"]
+  extensions: ["KN-BS-EN-003", "KN-BS-EN-005"]
+  game_mode_applications: ["startup_survival_v1", "real_time_challenge_v1"]
+
+---
+content_type: KN
+content_id: "KN-BS-EN-003-v1.0"
+title: "产品-市场匹配（PMF）"
+subtitle: "你的产品，真的有人需要吗？"
+
+target_level: "高中及以上"
+target_age: [15, 22]
+difficulty: 4
+competencies: ["ML-2", "SL-5"]
+bloom_level: "evaluate"
+
+tags: ["创业", "市场", "产品", "进阶概念"]
+ai_generable: true
+author: "平台教研团队"
+reviewer: "商学顾问"
+version: "1.0.0"
+created_at: "2026-05-12"
+updated_at: "2026-05-12"
+
+knowledge:
+  definition: "产品-市场匹配（Product-Market Fit）是指产品满足了一个真实、足够大的市场需求的状态。达到PMF的标志：用户主动推荐、留存率高、需求增长自然。"
+  explanation: "就像钥匙和锁：你的产品（钥匙）刚好能解决市场（锁）的问题。如果钥匙不对，再漂亮的钥匙也打不开门。"
+  analogy: "就像钓鱼：PMF是你找到了鱼多的地方（市场），而且你的鱼饵（产品）正好是鱼爱吃的。鱼竿再贵、技术再好，如果鱼不吃饵，一切都是白费。"
+  
+  examples:
+    - context: "生活"
+      description: "你做的手工饰品在同学中很受欢迎，大家都主动来问——这就是PMF的信号。"
+    - context: "平台赛事"
+      description: "在'创业生存战'中，PMF的信号是：复购率高、口碑传播、不需要大量推广就有订单。"
+    - context: "现实商业"
+      description: "Zoom的PMF：疫情前就已实现，疫情只是加速器。真正的PMF让用户离不开你。"
+  
+  non_examples:
+    - misconception: "PMF就是销量高"
+      correction: "靠大量补贴换来的销量不是PMF。PMF的核心是'有机增长'——用户因为产品本身好而留下来。"
+    - misconception: "PMF一旦达到就永远存在"
+      correction: "市场会变化，竞争对手会出现。PMF需要持续维护和提升。"
+
+level_adaptations:
+  high:
+    explanation: "PMF的衡量指标：Sean Ellis测试（40%用户表示'非常失望'如果产品消失）、NPS、留存率曲线、自然增长率。"
+    example: "在'创业生存战'中，如何判断你的产品是否达到了PMF？看哪些指标？"
+  university:
+    explanation: "PMF与商业模式匹配、技术-产品-市场三层匹配框架、PMF的阶段性特征（早期vs成长期）。"
+    example: "分析Notion的PMF演进：从个人笔记工具到团队协作平台的匹配扩展。"
+
+platform_mapping:
+  game_modes:
+    - mode_id: "startup_survival_v1"
+      application: "核心目标——在有限轮次内找到PMF"
+    - mode_id: "user_anthropology_v1"
+      application: "深度调研帮助识别PMF的信号和障碍"
+  
+  ai_tutor_hints:
+    - trigger: "学生靠补贴/低价维持销量"
+      hint: "你的销量很大程度上依赖低价补贴。这是PMF的'假阳性'——一旦补贴停止，用户可能流失。真正的PMF是：即使价格正常，用户仍然选择你。"
+
+related_content:
+  prerequisites: ["KN-BS-EN-002"]
+  extensions: ["KN-BS-MK-001", "KN-BS-MK-004"]
+  game_mode_applications: ["startup_survival_v1", "user_anthropology_v1"]
+
+---
+content_type: KN
+content_id: "KN-BS-EN-004-v1.0"
+title: "融资轮次"
+subtitle: "创业公司如何找钱？"
+
+target_level: "高中及以上"
+target_age: [16, 22]
+difficulty: 4
+competencies: ["FL-5"]
+bloom_level: "understand"
+
+tags: ["创业", "融资", "投资", "进阶概念"]
+ai_generable: true
+author: "平台教研团队"
+reviewer: "商学顾问"
+version: "1.0.0"
+created_at: "2026-05-12"
+updated_at: "2026-05-12"
+
+knowledge:
+  definition: "融资轮次是创业公司在不同发展阶段向投资者募集资金的标准化流程，通常包括：种子轮（验证想法）→天使轮（产品上市）→A轮（规模化）→B轮（扩张）→C轮及以后（市场领导地位）→IPO（公开上市）。"
+  explanation: |
+    - 种子轮：只有想法，找亲友或加速器拿小钱验证
+    - 天使轮：产品有了雏形，找天使投资人
+    - A轮：产品验证成功，需要资金扩张团队和市场
+    - B轮：已经盈利或接近盈利，需要资金加速增长
+    - C轮+：准备上市或被收购前的最后冲刺
+  analogy: "就像游戏升级：种子轮是'新手村'（拿初始装备），天使轮是'出村打怪'（验证能打），A轮是'组队刷副本'（规模化），B轮是'挑战Boss'（扩张），IPO是'通关上榜'（公开上市）。"
+  
+  examples:
+    - context: "生活"
+      description: "你想开 lemonade 摊位：向爸妈借50元是'种子轮'，赚了钱证明可行后向同学融资扩大是'天使轮'。"
+    - context: "平台赛事"
+      description: "在'创业生存战'中，第2轮开启融资选项——模拟的就是天使轮到A轮的决策。"
+    - context: "现实商业"
+      description: "小米的融资历程：2010年雷军等人出资（天使轮）→2011年晨兴/启明投资（A轮）→2014年云峰/All-Stars（C轮）→2018年IPO。"
+  
+  non_examples:
+    - misconception: "融资越多越好"
+      correction: "融资意味着出让股权。过度融资会稀释创始团队控制权，且增加退出压力。"
+    - misconception: "只有科技创业需要融资"
+      correction: "传统行业的扩张同样需要融资。只是科技公司通常更需要早期资金（因为前期没有现金流）。"
+
+level_adaptations:
+  high:
+    explanation: "估值与股权稀释：每轮融资创始人持股比例下降。对赌协议、反稀释条款、清算优先权等关键条款。"
+    example: "在'投资人对决'中，如果你估值1000万出让20%，下一轮估值5000万再出让20%，创始人还剩多少股份？"
+  university:
+    explanation: "VC的投资逻辑、尽职调查、term sheet谈判、不同轮次的投资者画像和关注点差异。"
+    example: "分析为什么2022年后VC对'烧钱换增长'的模式变得更谨慎？"
+
+platform_mapping:
+  game_modes:
+    - mode_id: "startup_survival_v1"
+      application: "第2轮开启融资选项，模拟早期融资决策"
+    - mode_id: "investor_pitch_v1"
+      application: "核心机制——估值谈判+融资决策"
+  
+  ai_tutor_hints:
+    - trigger: "学生在天使轮出让过多股权"
+      hint: "你在早期出让了太多股权。虽然拿到了钱，但未来几轮稀释后，你可能失去对公司的控制权。早期融资要'够活就行'，不是越多越好。"
+
+related_content:
+  prerequisites: ["KN-BS-FI-001"]
+  extensions: ["KN-BS-FI-006", "KN-BS-EN-001"]
+  game_mode_applications: ["startup_survival_v1", "investor_pitch_v1"]
+
+---
+content_type: KN
+content_id: "KN-BS-EN-005-v1.0"
+title: "精益创业"
+subtitle: "用科学的方法创业，而不是靠运气"
+
+target_level: "高中及以上"
+target_age: [15, 22]
+difficulty: 4
+competencies: ["SL-5", "SL-4"]
+bloom_level: "apply"
+
+tags: ["创业", "方法论", "敏捷", "进阶概念"]
+ai_generable: true
+author: "平台教研团队"
+reviewer: "商学顾问"
+version: "1.0.0"
+created_at: "2026-05-12"
+updated_at: "2026-05-12"
+
+knowledge:
+  definition: "精益创业（Lean Startup）是由Eric Ries提出的创业方法论，核心循环是：构建（Build）→测量（Measure）→学习（Learn）。通过快速实验和迭代，降低创业失败的风险和成本。"
+  explanation: "传统创业：先花大量时间和钱做完美产品，然后上市。精益创业：先做最小可行产品（MVP），让真实用户验证，快速调整方向。"
+  analogy: "就像学骑自行车：传统方法是先看100本骑车书（计划），再上车。精益创业是：先上车（MVP）、摔几次（测量反馈）、调整姿势（学习迭代）、最后学会。"
+  
+  examples:
+    - context: "生活"
+      description: "你想做一个学习App。传统做法：花半年开发全部功能。精益做法：先做一个微信群，手动帮10个同学解决问题，验证需求后再开发。"
+    - context: "平台赛事"
+      description: "在'实时经营挑战'中，每轮都是一次Build-Measure-Learn循环——快速调整策略。"
+    - context: "现实商业"
+      description: "Zappos的精益实验：创始人先在网站上挂鞋的照片（没有库存），有人下单就去实体店买再寄出——用最小成本验证在线卖鞋的需求。"
+  
+  non_examples:
+    - misconception: "精益创业=不做计划"
+      correction: "精益创业也需要计划，但计划是基于假设而非确定。关键是'验证假设'而非'执行计划'。"
+    - misconception: "精益创业只适用于互联网"
+      correction: "精益原则可应用于硬件（Tesla）、服务业（星巴克）、社会企业等任何领域。"
+
+level_adaptations:
+  high:
+    explanation: "精益创业的工具：假设板、实验板、创新会计（Innovation Accounting）、转型（Pivot）vs坚持（Persevere）的决策框架。"
+    example: "在'创业生存战'中，第2轮数据不好，你是'转型'（换方向）还是'坚持'（优化当前方向）？"
+  university:
+    explanation: "精益创业的批判与演进：精益创业的局限（颠覆性创新）、精益与敏捷/设计思维的关系、大型企业如何应用精益创业（内部创业）。"
+    example: "分析亚马逊的'两个披萨团队'：如何用精益原则管理大型企业创新？"
+
+platform_mapping:
+  game_modes:
+    - mode_id: "startup_survival_v1"
+      application: "核心方法论——每轮都是验证假设的机会"
+    - mode_id: "real_time_challenge_v1"
+      application: "高频Build-Measure-Learn循环"
+  
+  ai_tutor_hints:
+    - trigger: "学生连续多轮不调整策略"
+      hint: "精益创业的核心是'快速迭代'。你的策略连续多轮没有变化，这意味着你在'执行'而非'学习'。问问自己：上一轮的数据告诉了你什么？"
+
+related_content:
+  prerequisites: ["KN-BS-EN-002"]
+  extensions: ["KN-BS-EN-003", "KN-MG-OP-002"]
+  game_mode_applications: ["startup_survival_v1", "real_time_challenge_v1"]

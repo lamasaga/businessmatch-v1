@@ -1,0 +1,563 @@
+<!DOCTYPE html>
+<html lang="zh-CN" data-theme="roleplay">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>产业链角色扮演 - 商业模拟平台</title>
+  <link rel="stylesheet" href="../shared-styles.css">
+  <style>
+    /* 角色扮演特有样式 */
+    .role-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: var(--space-sm);
+      padding: 0.5rem 1rem;
+      border-radius: var(--radius-md);
+      font-weight: 600;
+      font-size: 0.875rem;
+    }
+    .role-supplier { background: rgba(59,130,246,0.15); color: #60a5fa; }
+    .role-manufacturer { background: rgba(16,185,129,0.15); color: #34d399; }
+    .role-distributor { background: rgba(245,158,11,0.15); color: #fbbf24; }
+    .role-retailer { background: rgba(236,72,153,0.15); color: #f472b6; }
+    
+    .role-card-large {
+      background: var(--bg-card);
+      border-radius: var(--radius-lg);
+      padding: var(--space-xl);
+      border: 2px solid var(--border-subtle);
+      transition: all var(--transition-base);
+      position: relative;
+      overflow: hidden;
+    }
+    .role-card-large:hover {
+      transform: translateY(-4px);
+      box-shadow: var(--shadow-lg);
+    }
+    .role-card-large.supplier { border-color: rgba(96,165,250,0.3); }
+    .role-card-large.manufacturer { border-color: rgba(52,211,153,0.3); }
+    .role-card-large.distributor { border-color: rgba(251,191,36,0.3); }
+    .role-card-large.retailer { border-color: rgba(244,114,182,0.3); }
+    
+    .role-icon-large {
+      width: 64px;
+      height: 64px;
+      border-radius: var(--radius-lg);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 2rem;
+      margin-bottom: var(--space-md);
+    }
+    .supplier .role-icon-large { background: rgba(59,130,246,0.2); }
+    .manufacturer .role-icon-large { background: rgba(16,185,129,0.2); }
+    .distributor .role-icon-large { background: rgba(245,158,11,0.2); }
+    .retailer .role-icon-large { background: rgba(236,72,153,0.2); }
+    
+    .contract-card {
+      background: var(--bg-card);
+      border-radius: var(--radius-md);
+      padding: var(--space-lg);
+      border: 1px solid var(--border-subtle);
+      margin-bottom: var(--space-md);
+    }
+    .contract-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: var(--space-md);
+      padding-bottom: var(--space-md);
+      border-bottom: 1px solid var(--border-subtle);
+    }
+    .contract-status {
+      padding: 0.25rem 0.75rem;
+      border-radius: 9999px;
+      font-size: 0.75rem;
+      font-weight: 600;
+    }
+    .status-negotiating { background: rgba(245,158,11,0.15); color: var(--warning); }
+    .status-signed { background: rgba(16,185,129,0.15); color: var(--success); }
+    .status-disputed { background: rgba(239,68,68,0.15); color: var(--danger); }
+    
+    .contract-terms {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: var(--space-md);
+    }
+    .term-item {
+      text-align: center;
+    }
+    .term-value {
+      font-family: var(--font-mono);
+      font-weight: 700;
+      font-size: 1.125rem;
+      color: var(--text-primary);
+    }
+    .term-label {
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      margin-top: 2px;
+    }
+    
+    .chat-panel {
+      background: var(--bg-card);
+      border-radius: var(--radius-md);
+      overflow: hidden;
+      border: 1px solid var(--border-subtle);
+    }
+    .chat-header {
+      padding: var(--space-md);
+      background: var(--bg-hover);
+      border-bottom: 1px solid var(--border-subtle);
+      display: flex;
+      align-items: center;
+      gap: var(--space-sm);
+    }
+    .chat-messages {
+      padding: var(--space-md);
+      max-height: 300px;
+      overflow-y: auto;
+    }
+    .chat-message {
+      display: flex;
+      gap: var(--space-sm);
+      margin-bottom: var(--space-md);
+    }
+    .chat-message.own {
+      flex-direction: row-reverse;
+    }
+    .chat-avatar {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.875rem;
+      flex-shrink: 0;
+    }
+    .chat-bubble {
+      background: var(--bg-hover);
+      padding: var(--space-sm) var(--space-md);
+      border-radius: var(--radius-md);
+      max-width: 70%;
+      font-size: 0.875rem;
+    }
+    .chat-message.own .chat-bubble {
+      background: var(--theme-soft);
+      color: var(--theme);
+    }
+    .chat-input {
+      display: flex;
+      gap: var(--space-sm);
+      padding: var(--space-md);
+      border-top: 1px solid var(--border-subtle);
+    }
+    .chat-input input {
+      flex: 1;
+      background: var(--bg-hover);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-md);
+      padding: 0.5rem 1rem;
+      color: var(--text-primary);
+      font-family: inherit;
+    }
+    
+    .negotiation-meter {
+      display: flex;
+      align-items: center;
+      gap: var(--space-md);
+      padding: var(--space-md);
+      background: var(--bg-hover);
+      border-radius: var(--radius-md);
+      margin-bottom: var(--space-md);
+    }
+    .meter-bar {
+      flex: 1;
+      height: 8px;
+      background: var(--bg-card);
+      border-radius: 9999px;
+      overflow: hidden;
+    }
+    .meter-fill {
+      height: 100%;
+      border-radius: 9999px;
+      transition: width 0.5s ease;
+    }
+    .meter-fill.positive { background: var(--success); }
+    .meter-fill.negative { background: var(--danger); }
+    .meter-fill.neutral { background: var(--warning); }
+    
+    .profit-flow {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: var(--space-lg);
+      padding: var(--space-xl);
+      background: var(--bg-card);
+      border-radius: var(--radius-lg);
+    }
+    .flow-node {
+      text-align: center;
+      padding: var(--space-lg);
+      border-radius: var(--radius-md);
+      min-width: 140px;
+    }
+    .flow-node.supplier-bg { background: rgba(59,130,246,0.1); }
+    .flow-node.manufacturer-bg { background: rgba(16,185,129,0.1); }
+    .flow-node.distributor-bg { background: rgba(245,158,11,0.1); }
+    .flow-node.retailer-bg { background: rgba(236,72,153,0.1); }
+    .flow-profit {
+      font-family: var(--font-mono);
+      font-weight: 800;
+      font-size: 1.5rem;
+      margin-top: var(--space-sm);
+    }
+    .flow-arrow {
+      font-size: 1.5rem;
+      color: var(--text-muted);
+    }
+  </style>
+</head>
+<body>
+  <nav class="navbar">
+    <div class="container navbar-inner">
+      <a href="#" class="navbar-brand">
+        <div class="logo-icon">🎭</div>
+        <span>商业模拟平台</span>
+      </a>
+      <ul class="navbar-nav">
+        <li><a href="#overview" class="active">赛制概览</a></li>
+        <li><a href="#roles">角色分工</a></li>
+        <li><a href="#contract">合同系统</a></li>
+        <li><a href="#negotiate">谈判协商</a></li>
+      </ul>
+    </div>
+  </nav>
+
+  <section class="hero">
+    <div class="hero-bg" style="background-image: url('cover.svg');"></div>
+    <div class="container hero-content">
+      <div class="hero-badge">
+        <span>🎭</span>
+        <span>自由协商 · 20-40分钟一轮</span>
+      </div>
+      <h1 class="hero-title">产业链角色扮演</h1>
+      <p class="hero-subtitle">将16人分为供应商、制造商、分销商、零售商四组。每组内部竞争，组间必须交易。平台提供"合同系统"，双方确认条款后系统执行。</p>
+      <div class="hero-meta">
+        <div class="hero-meta-item">
+          <span class="hero-meta-value">4组</span>
+          <span class="hero-meta-label">产业链角色</span>
+        </div>
+        <div class="hero-meta-item">
+          <span class="hero-meta-value">20-40分钟</span>
+          <span class="hero-meta-label">每轮协商</span>
+        </div>
+        <div class="hero-meta-item">
+          <span class="hero-meta-value">16人</span>
+          <span class="hero-meta-label">标准规模</span>
+        </div>
+        <div class="hero-meta-item">
+          <span class="hero-meta-value">信息不对称</span>
+          <span class="hero-meta-label">核心机制</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" id="overview">
+    <div class="container">
+      <div class="section-header">
+        <div class="section-label">Overview</div>
+        <h2 class="section-title">产业链利润分配</h2>
+        <p class="section-desc">每个角色掌握不同信息，合作中蕴含竞争</p>
+      </div>
+      
+      <div class="profit-flow">
+        <div class="flow-node supplier-bg">
+          <div style="font-size: 2rem; margin-bottom: var(--space-sm);">🌾</div>
+          <div style="font-weight: 600;">原材料供应商</div>
+          <div style="font-size: 0.75rem; color: var(--text-muted); margin-top: 4px;">成本: ¥10/单位</div>
+          <div class="flow-profit" style="color: #60a5fa;">+¥50万</div>
+        </div>
+        <div class="flow-arrow">→</div>
+        <div class="flow-node manufacturer-bg">
+          <div style="font-size: 2rem; margin-bottom: var(--space-sm);">🏭</div>
+          <div style="font-weight: 600;">制造商</div>
+          <div style="font-size: 0.75rem; color: var(--text-muted); margin-top: 4px;">加工费: ¥15/单位</div>
+          <div class="flow-profit" style="color: #34d399;">+¥80万</div>
+        </div>
+        <div class="flow-arrow">→</div>
+        <div class="flow-node distributor-bg">
+          <div style="font-size: 2rem; margin-bottom: var(--space-sm);">🚚</div>
+          <div style="font-weight: 600;">分销商</div>
+          <div style="font-size: 0.75rem; color: var(--text-muted); margin-top: 4px;">物流费: ¥8/单位</div>
+          <div class="flow-profit" style="color: #fbbf24;">+¥60万</div>
+        </div>
+        <div class="flow-arrow">→</div>
+        <div class="flow-node retailer-bg">
+          <div style="font-size: 2rem; margin-bottom: var(--space-sm);">🛒</div>
+          <div style="font-weight: 600;">零售商</div>
+          <div style="font-size: 0.75rem; color: var(--text-muted); margin-top: 4px;">售价: ¥50/单位</div>
+          <div class="flow-profit" style="color: #f472b6;">+¥100万</div>
+        </div>
+      </div>
+      
+      <div style="text-align: center; margin-top: var(--space-lg); color: var(--text-muted); font-size: 0.875rem;">
+        终端售价 ¥50 = 原材料 ¥10 + 加工 ¥15 + 物流 ¥8 + 零售利润 ¥17
+      </div>
+    </div>
+  </section>
+
+  <section class="section" id="roles" style="background: var(--bg-secondary);">
+    <div class="container">
+      <div class="section-header">
+        <div class="section-label">Roles</div>
+        <h2 class="section-title">四大角色</h2>
+        <p class="section-desc">每个角色有独特目标与信息优势</p>
+      </div>
+      
+      <div class="grid-2">
+        <div class="role-card-large supplier">
+          <div class="role-icon-large">🌾</div>
+          <span class="role-badge role-supplier">原材料供应商</span>
+          <h3 style="margin-top: var(--space-md); margin-bottom: var(--space-sm);">掌握成本底线</h3>
+          <p style="color: var(--text-secondary); font-size: 0.875rem; line-height: 1.7;">你知道原材料的真实成本，但不知道下游能卖出什么价格。目标是以尽可能高的价格卖出原材料，同时维持长期供应关系。</p>
+          <div style="margin-top: var(--space-md);">
+            <div style="font-size: 0.75rem; color: var(--text-muted); margin-bottom: 4px;">核心能力</div>
+            <div style="display: flex; gap: var(--space-sm); flex-wrap: wrap;">
+              <span class="tag tag-theme">成本控制</span>
+              <span class="tag tag-success">批量谈判</span>
+            </div>
+          </div>
+        </div>
+        
+        <div class="role-card-large manufacturer">
+          <div class="role-icon-large">🏭</div>
+          <span class="role-badge role-manufacturer">制造商</span>
+          <h3 style="margin-top: var(--space-md); margin-bottom: var(--space-sm);">连接上下游</h3>
+          <p style="color: var(--text-secondary); font-size: 0.875rem; line-height: 1.7;">你同时面对上游供应商和下游分销商。需要在采购成本和销售价格之间找到利润空间，还要管理产能利用率。</p>
+          <div style="margin-top: var(--space-md);">
+            <div style="font-size: 0.75rem; color: var(--text-muted); margin-bottom: 4px;">核心能力</div>
+            <div style="display: flex; gap: var(--space-sm); flex-wrap: wrap;">
+              <span class="tag tag-theme">产能管理</span>
+              <span class="tag tag-success">双边谈判</span>
+            </div>
+          </div>
+        </div>
+        
+        <div class="role-card-large distributor">
+          <div class="role-icon-large">🚚</div>
+          <span class="role-badge role-distributor">分销商</span>
+          <h3 style="margin-top: var(--space-md); margin-bottom: var(--space-sm);">物流与渠道</h3>
+          <p style="color: var(--text-secondary); font-size: 0.875rem; line-height: 1.7;">你掌握各区域市场的渠道信息，知道哪里好卖、哪里滞销。目标是以最优物流方案连接制造与零售，赚取渠道差价。</p>
+          <div style="margin-top: var(--space-md);">
+            <div style="font-size: 0.75rem; color: var(--text-muted); margin-bottom: 4px;">核心能力</div>
+            <div style="display: flex; gap: var(--space-sm); flex-wrap: wrap;">
+              <span class="tag tag-theme">渠道信息</span>
+              <span class="tag tag-success">物流优化</span>
+            </div>
+          </div>
+        </div>
+        
+        <div class="role-card-large retailer">
+          <div class="role-icon-large">🛒</div>
+          <span class="role-badge role-retailer">零售商</span>
+          <h3 style="margin-top: var(--space-md); margin-bottom: var(--space-sm);">直面消费者</h3>
+          <p style="color: var(--text-secondary); font-size: 0.875rem; line-height: 1.7;">你掌握终端市场需求数据，知道消费者愿意付多少钱。但你的利润取决于上游给什么价格。需要在售价和进货价之间博弈。</p>
+          <div style="margin-top: var(--space-md);">
+            <div style="font-size: 0.75rem; color: var(--text-muted); margin-bottom: 4px;">核心能力</div>
+            <div style="display: flex; gap: var(--space-sm); flex-wrap: wrap;">
+              <span class="tag tag-theme">市场洞察</span>
+              <span class="tag tag-success">定价权</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" id="contract">
+    <div class="container">
+      <div class="section-header">
+        <div class="section-label">Contract System</div>
+        <h2 class="section-title">智能合同系统</h2>
+        <p class="section-desc">双方确认条款后，系统自动执行合同内容</p>
+      </div>
+      
+      <div class="contract-card">
+        <div class="contract-header">
+          <div>
+            <div style="font-weight: 700;">合同 #C-2024-089</div>
+            <div style="font-size: 0.75rem; color: var(--text-muted);">原材料供应协议</div>
+          </div>
+          <span class="contract-status status-negotiating">协商中</span>
+        </div>
+        <div class="contract-terms">
+          <div class="term-item">
+            <div class="term-value">1,000</div>
+            <div class="term-label">供应数量(件)</div>
+          </div>
+          <div class="term-item">
+            <div class="term-value">¥18</div>
+            <div class="term-label">单价</div>
+          </div>
+          <div class="term-item">
+            <div class="term-value">¥18,000</div>
+            <div class="term-label">合同总额</div>
+          </div>
+        </div>
+        <div style="margin-top: var(--space-md); padding-top: var(--space-md); border-top: 1px solid var(--border-subtle);">
+          <div style="font-size: 0.75rem; color: var(--text-muted); margin-bottom: var(--space-sm);">协商进度</div>
+          <div class="negotiation-meter">
+            <span style="font-size: 0.75rem;">供应商</span>
+            <div class="meter-bar">
+              <div class="meter-fill positive" style="width: 75%;"></div>
+            </div>
+            <span style="font-size: 0.75rem; color: var(--success);">满意</span>
+          </div>
+          <div class="negotiation-meter">
+            <span style="font-size: 0.75rem;">制造商</span>
+            <div class="meter-bar">
+              <div class="meter-fill neutral" style="width: 45%;"></div>
+            </div>
+            <span style="font-size: 0.75rem; color: var(--warning);">犹豫</span>
+          </div>
+        </div>
+        <div style="display: flex; gap: var(--space-md); margin-top: var(--space-lg);">
+          <button class="btn btn-secondary" style="flex: 1;">修改条款</button>
+          <button class="btn btn-primary" style="flex: 1;">确认签署</button>
+        </div>
+      </div>
+      
+      <div class="contract-card">
+        <div class="contract-header">
+          <div>
+            <div style="font-weight: 700;">合同 #C-2024-076</div>
+            <div style="font-size: 0.75rem; color: var(--text-muted);">分销代理协议</div>
+          </div>
+          <span class="contract-status status-signed">已签署</span>
+        </div>
+        <div class="contract-terms">
+          <div class="term-item">
+            <div class="term-value">500</div>
+            <div class="term-label">代理数量(件)</div>
+          </div>
+          <div class="term-item">
+            <div class="term-value">¥35</div>
+            <div class="term-label">代理价</div>
+          </div>
+          <div class="term-item">
+            <div class="term-value">¥17,500</div>
+            <div class="term-label">合同总额</div>
+          </div>
+        </div>
+        <div style="margin-top: var(--space-md); padding-top: var(--space-md); border-top: 1px solid var(--border-subtle); font-size: 0.8125rem; color: var(--text-secondary);">
+          ✅ 已执行 320/500 件 · 预计 2 轮后完成
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" id="negotiate" style="background: var(--bg-secondary);">
+    <div class="container">
+      <div class="section-header">
+        <div class="section-label">Negotiation</div>
+        <h2 class="section-title">谈判协商室</h2>
+        <p class="section-desc">实时沟通，利益权衡，话术博弈</p>
+      </div>
+      
+      <div class="grid-2">
+        <div class="chat-panel">
+          <div class="chat-header">
+            <div class="chat-avatar" style="background: rgba(59,130,246,0.2);">🌾</div>
+            <div>
+              <div style="font-weight: 600; font-size: 0.875rem;">与 原材料供应商-A 的谈判</div>
+              <div style="font-size: 0.75rem; color: var(--text-muted);">合同 #C-2024-089</div>
+            </div>
+          </div>
+          <div class="chat-messages">
+            <div class="chat-message">
+              <div class="chat-avatar" style="background: rgba(59,130,246,0.2);">🌾</div>
+              <div class="chat-bubble">我们原材料成本最近上涨了，¥18/件是最低价格了。</div>
+            </div>
+            <div class="chat-message own">
+              <div class="chat-avatar" style="background: rgba(16,185,129,0.2);">🏭</div>
+              <div class="chat-bubble">理解，但如果我一次性订购2000件，能否降到¥16？</div>
+            </div>
+            <div class="chat-message">
+              <div class="chat-avatar" style="background: rgba(59,130,246,0.2);">🌾</div>
+              <div class="chat-bubble">2000件的话... ¥17 吧，但需预付30%定金。</div>
+            </div>
+            <div class="chat-message own">
+              <div class="chat-avatar" style="background: rgba(16,185,129,0.2);">🏭</div>
+              <div class="chat-bubble">¥16.5，预付20%，这是我能接受的上限。</div>
+            </div>
+            <div class="chat-message">
+              <div class="chat-avatar" style="background: rgba(59,130,246,0.2);">🌾</div>
+              <div class="chat-bubble">让我考虑一下...</div>
+            </div>
+          </div>
+          <div class="chat-input">
+            <input type="text" placeholder="输入消息...">
+            <button class="btn btn-primary">发送</button>
+          </div>
+        </div>
+        
+        <div>
+          <div class="card" style="margin-bottom: var(--space-lg);">
+            <h4 style="margin-bottom: var(--space-md);">💡 谈判技巧提示</h4>
+            <div style="font-size: 0.875rem; color: var(--text-secondary); line-height: 1.8;">
+              <div style="margin-bottom: var(--space-sm);">• <strong>锚定效应</strong>：先出价的一方往往掌握主动权</div>
+              <div style="margin-bottom: var(--space-sm);">• <strong>BATNA</strong>：始终清楚自己的最佳替代方案</div>
+              <div style="margin-bottom: var(--space-sm);">• <strong>利益而非立场</strong>：关注双方真正的利益点</div>
+              <div>• <strong>创造选项</strong>：用非货币条件增加谈判空间</div>
+            </div>
+          </div>
+          
+          <div class="card">
+            <h4 style="margin-bottom: var(--space-md);">📊 市场参考价格</h4>
+            <table class="data-table">
+              <thead>
+                <tr>
+                  <th>交易类型</th>
+                  <th>市场均价</th>
+                  <th>浮动区间</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>原材料采购</td>
+                  <td>¥17/件</td>
+                  <td>¥15-¥20</td>
+                </tr>
+                <tr>
+                  <td>加工服务</td>
+                  <td>¥14/件</td>
+                  <td>¥12-¥18</td>
+                </tr>
+                <tr>
+                  <td>物流配送</td>
+                  <td>¥8/件</td>
+                  <td>¥6-¥12</td>
+                </tr>
+                <tr>
+                  <td>零售代理</td>
+                  <td>¥34/件</td>
+                  <td>¥30-¥40</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <footer style="padding: var(--space-xl) 0; border-top: 1px solid var(--border-subtle); text-align: center;">
+    <div class="container">
+      <p style="color: var(--text-muted); font-size: 0.875rem;">商业模拟平台 · 产业链角色扮演 · 适合高中及以上学段 · 沟通与谈判训练</p>
+    </div>
+  </footer>
+</body>
+</html>

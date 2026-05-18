@@ -1,0 +1,467 @@
+<!DOCTYPE html>
+<html lang="zh-CN" data-theme="real-time">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>实时经营挑战 - 商业模拟平台</title>
+  <link rel="stylesheet" href="../shared-styles.css">
+  <style>
+    /* 实时经营特有样式 */
+    .status-bar {
+      display: flex;
+      gap: var(--space-md);
+      padding: var(--space-md);
+      background: var(--bg-card);
+      border-radius: var(--radius-md);
+      margin-bottom: var(--space-lg);
+    }
+    .status-item {
+      display: flex;
+      align-items: center;
+      gap: var(--space-sm);
+    }
+    .status-indicator {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: var(--success);
+      animation: pulse 2s infinite;
+    }
+    
+    .event-card {
+      background: linear-gradient(135deg, rgba(239,68,68,0.15), rgba(245,158,11,0.1));
+      border: 1px solid rgba(239,68,68,0.3);
+      border-radius: var(--radius-md);
+      padding: var(--space-lg);
+      margin-bottom: var(--space-lg);
+      position: relative;
+      overflow: hidden;
+    }
+    .event-card::before {
+      content: '⚡';
+      position: absolute;
+      right: -10px;
+      top: -10px;
+      font-size: 4rem;
+      opacity: 0.1;
+    }
+    .event-timer {
+      font-family: var(--font-mono);
+      font-size: 2rem;
+      font-weight: 800;
+      color: var(--danger);
+    }
+    
+    .metric-card {
+      background: var(--bg-card);
+      border-radius: var(--radius-md);
+      padding: var(--space-lg);
+      text-align: center;
+      border: 1px solid var(--border-subtle);
+    }
+    .metric-card .value {
+      font-size: 2rem;
+      font-weight: 800;
+      font-family: var(--font-mono);
+    }
+    .metric-card .label {
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+    .metric-card .trend {
+      font-size: 0.875rem;
+      margin-top: 4px;
+    }
+    .trend-up { color: var(--success); }
+    .trend-down { color: var(--danger); }
+    
+    .action-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: var(--space-md);
+    }
+    .action-btn {
+      padding: var(--space-lg);
+      background: var(--bg-hover);
+      border: 2px solid var(--border-subtle);
+      border-radius: var(--radius-md);
+      color: var(--text-primary);
+      font-family: inherit;
+      cursor: pointer;
+      transition: all var(--transition-fast);
+      text-align: left;
+    }
+    .action-btn:hover {
+      border-color: var(--theme);
+      background: var(--theme-soft);
+    }
+    .action-btn .icon {
+      font-size: 1.5rem;
+      margin-bottom: var(--space-sm);
+    }
+    .action-btn .name {
+      font-weight: 600;
+      font-size: 0.875rem;
+    }
+    .action-btn .desc {
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      margin-top: 2px;
+    }
+    
+    .log-stream {
+      background: var(--bg-card);
+      border-radius: var(--radius-md);
+      padding: var(--space-md);
+      max-height: 300px;
+      overflow-y: auto;
+    }
+    .log-item {
+      display: flex;
+      gap: var(--space-sm);
+      padding: var(--space-sm) 0;
+      border-bottom: 1px solid var(--border-subtle);
+      font-size: 0.8125rem;
+    }
+    .log-time {
+      color: var(--text-muted);
+      font-family: var(--font-mono);
+      white-space: nowrap;
+    }
+    .log-type { font-weight: 600; }
+    .log-type.info { color: var(--info); }
+    .log-type.warning { color: var(--warning); }
+    .log-type.danger { color: var(--danger); }
+    .log-type.success { color: var(--success); }
+    
+    .supply-chain-visual {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: var(--space-xl);
+      background: var(--bg-card);
+      border-radius: var(--radius-lg);
+    }
+    .chain-node {
+      text-align: center;
+      padding: var(--space-md);
+      background: var(--bg-hover);
+      border-radius: var(--radius-md);
+      min-width: 120px;
+    }
+    .chain-node .node-icon {
+      font-size: 2rem;
+      margin-bottom: var(--space-sm);
+    }
+    .chain-node .node-name {
+      font-weight: 600;
+      font-size: 0.875rem;
+    }
+    .chain-node .node-status {
+      font-size: 0.75rem;
+      color: var(--success);
+      margin-top: 2px;
+    }
+    .chain-arrow {
+      font-size: 1.5rem;
+      color: var(--text-muted);
+    }
+    
+    .news-ticker {
+      background: var(--bg-card);
+      border-radius: var(--radius-md);
+      padding: var(--space-md);
+      overflow: hidden;
+    }
+    .ticker-content {
+      display: flex;
+      gap: var(--space-xl);
+      animation: ticker 20s linear infinite;
+      white-space: nowrap;
+    }
+    @keyframes ticker {
+      0% { transform: translateX(0); }
+      100% { transform: translateX(-50%); }
+    }
+  </style>
+</head>
+<body>
+  <nav class="navbar">
+    <div class="container navbar-inner">
+      <a href="#" class="navbar-brand">
+        <div class="logo-icon">⚡</div>
+        <span>商业模拟平台</span>
+      </a>
+      <ul class="navbar-nav">
+        <li><a href="#overview" class="active">赛制概览</a></li>
+        <li><a href="#mechanics">实时机制</a></li>
+        <li><a href="#interface">经营界面</a></li>
+        <li><a href="#events">突发事件</a></li>
+      </ul>
+    </div>
+  </nav>
+
+  <section class="hero">
+    <div class="hero-bg" style="background-image: url('cover.svg');"></div>
+    <div class="container hero-content">
+      <div class="hero-badge">
+        <span>⚡</span>
+        <span>沙盒练习模式 · 24小时游戏年</span>
+      </div>
+      <h1 class="hero-title">实时经营挑战</h1>
+      <p class="hero-subtitle">持续运转的经营模拟，决策即时生效。随机事件不断发生，训练多线程操作、应急响应与效率优化能力。</p>
+      <div class="hero-meta">
+        <div class="hero-meta-item">
+          <span class="hero-meta-value">实时</span>
+          <span class="hero-meta-label">决策生效</span>
+        </div>
+        <div class="hero-meta-item">
+          <span class="hero-meta-value">24h</span>
+          <span class="hero-meta-label">= 1游戏年</span>
+        </div>
+        <div class="hero-meta-item">
+          <span class="hero-meta-value">5分钟</span>
+          <span class="hero-meta-label">应急决策时限</span>
+        </div>
+        <div class="hero-meta-item">
+          <span class="hero-meta-value">1人</span>
+          <span class="hero-meta-label">个人挑战</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" id="overview">
+    <div class="container">
+      <div class="section-header">
+        <div class="section-label">Overview</div>
+        <h2 class="section-title">经营模式</h2>
+        <p class="section-desc">不同于回合制的"暂停思考"，实时模式要求持续关注和快速反应</p>
+      </div>
+      
+      <div class="grid-3">
+        <div class="card">
+          <div class="card-header">
+            <div class="card-icon">🏭</div>
+            <h3 class="card-title">持续运营</h3>
+          </div>
+          <p class="card-desc">公司24小时不间断运转，收入、支出、库存实时变化。你需要随时关注现金流，避免断裂。</p>
+        </div>
+        <div class="card">
+          <div class="card-header">
+            <div class="card-icon">🎲</div>
+            <h3 class="card-title">随机事件</h3>
+          </div>
+          <p class="card-desc">供应链断裂、竞品发布、舆情危机...事件随机发生，必须在5分钟内做出应急决策。</p>
+        </div>
+        <div class="card">
+          <div class="card-header">
+            <div class="card-icon">📊</div>
+            <h3 class="card-title">效率优化</h3>
+          </div>
+          <p class="card-desc">同时管理多个业务线，在有限时间内做出最优资源配置。训练多任务处理能力。</p>
+        </div>
+      </div>
+      
+      <div class="card mt-xl">
+        <h3 class="card-title mb-lg">🔗 供应链可视化</h3>
+        <div class="supply-chain-visual">
+          <div class="chain-node">
+            <div class="node-icon">🌾</div>
+            <div class="node-name">原材料</div>
+            <div class="node-status">库存充足</div>
+          </div>
+          <div class="chain-arrow">→</div>
+          <div class="chain-node">
+            <div class="node-icon">🏭</div>
+            <div class="node-name">生产制造</div>
+            <div class="node-status">运转正常</div>
+          </div>
+          <div class="chain-arrow">→</div>
+          <div class="chain-node">
+            <div class="node-icon">📦</div>
+            <div class="node-name">仓储物流</div>
+            <div class="node-status">配送中</div>
+          </div>
+          <div class="chain-arrow">→</div>
+          <div class="chain-node">
+            <div class="node-icon">🛒</div>
+            <div class="node-name">销售渠道</div>
+            <div class="node-status">热销中</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" id="mechanics" style="background: var(--bg-secondary);">
+    <div class="container">
+      <div class="section-header">
+        <div class="section-label">Real-Time Mechanics</div>
+        <h2 class="section-title">核心指标监控</h2>
+        <p class="section-desc">四大核心指标实时跳动，任何一项失控都可能导致经营失败</p>
+      </div>
+      
+      <div class="grid-4">
+        <div class="metric-card">
+          <div class="value" style="color: var(--theme);">¥892万</div>
+          <div class="label">现金流</div>
+          <div class="trend trend-up">▲ +12% / 小时</div>
+        </div>
+        <div class="metric-card">
+          <div class="value" style="color: var(--success);">94%</div>
+          <div class="label">客户满意度</div>
+          <div class="trend trend-down">▼ -2% / 小时</div>
+        </div>
+        <div class="metric-card">
+          <div class="value" style="color: var(--warning);">68%</div>
+          <div class="label">产能利用率</div>
+          <div class="trend trend-up">▲ +5% / 小时</div>
+        </div>
+        <div class="metric-card">
+          <div class="value" style="color: var(--info);">1,240</div>
+          <div class="label">库存量</div>
+          <div class="trend trend-down">▼ -15% / 小时</div>
+        </div>
+      </div>
+      
+      <div class="news-ticker mt-xl">
+        <div style="font-size: 0.75rem; color: var(--text-muted); margin-bottom: var(--space-sm);">📰 市场快讯</div>
+        <div class="ticker-content">
+          <span>🔥 竞品「星辰科技」发布新品，市场份额受到冲击</span>
+          <span>📈 原材料价格上涨 15%，建议调整采购策略</span>
+          <span>🌟 客户满意度调查显示：物流速度是最大痛点</span>
+          <span>⚠️ 某供应商出现产能问题，建议寻找备选方案</span>
+          <span>🔥 竞品「星辰科技」发布新品，市场份额受到冲击</span>
+          <span>📈 原材料价格上涨 15%，建议调整采购策略</span>
+          <span>🌟 客户满意度调查显示：物流速度是最大痛点</span>
+          <span>⚠️ 某供应商出现产能问题，建议寻找备选方案</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" id="interface">
+    <div class="container">
+      <div class="section-header">
+        <div class="section-label">Interface</div>
+        <h2 class="section-title">经营指挥中心</h2>
+        <p class="section-desc">多线程操作界面，同时监控多个业务模块</p>
+      </div>
+      
+      <div class="mockup-frame">
+        <div class="mockup-header">
+          <div class="mockup-dots"><span></span><span></span><span></span></div>
+          <span style="color: var(--text-muted); font-size: 0.75rem;">经营指挥中心 · 第 47 游戏日 · 运营中</span>
+          <div class="status-bar" style="margin: 0; padding: 0; background: transparent; margin-left: auto;">
+            <div class="status-item">
+              <div class="status-indicator"></div>
+              <span style="font-size: 0.75rem; color: var(--success);">系统正常</span>
+            </div>
+          </div>
+        </div>
+        <div class="mockup-body">
+          <div class="event-card">
+            <div style="display: flex; justify-content: space-between; align-items: center;">
+              <div>
+                <div style="font-size: 0.75rem; color: var(--danger); font-weight: 600; margin-bottom: var(--space-sm);">🚨 突发事件</div>
+                <div style="font-size: 1.125rem; font-weight: 700; margin-bottom: var(--space-sm);">供应链断裂：主要供应商工厂停工</div>
+                <div style="font-size: 0.875rem; color: var(--text-secondary);">你的主要原材料供应商因设备故障停工，预计恢复时间未知。库存将在 3 小时后耗尽。</div>
+              </div>
+              <div style="text-align: center;">
+                <div style="font-size: 0.75rem; color: var(--text-muted); margin-bottom: 4px;">决策倒计时</div>
+                <div class="event-timer">04:32</div>
+              </div>
+            </div>
+          </div>
+          
+          <h4 style="margin-bottom: var(--space-md);">⚡ 应急决策选项</h4>
+          <div class="action-grid">
+            <button class="action-btn">
+              <div class="icon">🔍</div>
+              <div class="name">紧急寻找替代供应商</div>
+              <div class="desc">成本+20%，但可立即恢复供应</div>
+            </button>
+            <button class="action-btn">
+              <div class="icon">📉</div>
+              <div class="name">降低产能消化库存</div>
+              <div class="desc">收入-30%，但可维持运营</div>
+            </button>
+            <button class="action-btn">
+              <div class="icon">🤝</div>
+              <div class="name">向竞争对手采购</div>
+              <div class="desc">成本+35%，可能泄露信息</div>
+            </button>
+            <button class="action-btn">
+              <div class="icon">⏸️</div>
+              <div class="name">暂停部分产品线</div>
+              <div class="desc">聚焦核心产品，损失最小化</div>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" id="events" style="background: var(--bg-secondary);">
+    <div class="container">
+      <div class="section-header">
+        <div class="section-label">Event Log</div>
+        <h2 class="section-title">事件日志流</h2>
+        <p class="section-desc">所有经营决策与市场反馈的实时记录</p>
+      </div>
+      
+      <div class="log-stream">
+        <div class="log-item">
+          <span class="log-time">14:32:05</span>
+          <span class="log-type danger">[危机]</span>
+          <span>主要供应商工厂设备故障，供应中断</span>
+        </div>
+        <div class="log-item">
+          <span class="log-time">14:28:12</span>
+          <span class="log-type warning">[市场]</span>
+          <span>竞品「星辰科技」发布新品，价格低于我方15%</span>
+        </div>
+        <div class="log-item">
+          <span class="log-time">14:15:33</span>
+          <span class="log-type success">[运营]</span>
+          <span>杭州仓库扩建完成，物流效率提升20%</span>
+        </div>
+        <div class="log-item">
+          <span class="log-time">13:58:01</span>
+          <span class="log-type info">[财务]</span>
+          <span>Q3季度财报生成，净利润同比增长8%</span>
+        </div>
+        <div class="log-item">
+          <span class="log-time">13:42:18</span>
+          <span class="log-type warning">[舆情]</span>
+          <span>社交媒体上出现产品质量负面讨论</span>
+        </div>
+        <div class="log-item">
+          <span class="log-time">13:20:45</span>
+          <span class="log-type success">[销售]</span>
+          <span>双十一预售订单突破10,000单</span>
+        </div>
+        <div class="log-item">
+          <span class="log-time">12:55:22</span>
+          <span class="log-type info">[人事]</span>
+          <span>技术团队扩招完成，新增5名工程师</span>
+        </div>
+        <div class="log-item">
+          <span class="log-time">12:30:00</span>
+          <span class="log-type warning">[库存]</span>
+          <span>原材料库存降至警戒线以下</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <footer style="padding: var(--space-xl) 0; border-top: 1px solid var(--border-subtle); text-align: center;">
+    <div class="container">
+      <p style="color: var(--text-muted); font-size: 0.875rem;">商业模拟平台 · 实时经营挑战 · 适合初中及以上学段 · 沙盒练习模式</p>
+    </div>
+  </footer>
+</body>
+</html>

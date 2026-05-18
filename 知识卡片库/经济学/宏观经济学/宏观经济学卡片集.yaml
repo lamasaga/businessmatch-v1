@@ -1,0 +1,258 @@
+# ============================================
+# 宏观经济学知识卡片集（4张）
+# ============================================
+
+---
+content_type: KN
+content_id: "KN-EC-MA-001-v1.0"
+title: "GDP（国内生产总值）"
+subtitle: "一个国家一年内创造了多少价值？"
+
+target_level: "高中及以上"
+target_age: [16, 22]
+difficulty: 3
+competencies: ["FL-2"]
+bloom_level: "understand"
+
+tags: ["宏观经济", "国家经济", "指标", "进阶概念"]
+ai_generable: true
+author: "平台教研团队"
+reviewer: "经济学顾问"
+version: "1.0.0"
+created_at: "2026-05-12"
+updated_at: "2026-05-12"
+
+knowledge:
+  definition: "GDP（Gross Domestic Product）是一个国家或地区在一定时期内（通常是一年）生产的所有最终商品和服务的市场价值总和。"
+  explanation: "就像一个班级的'总成绩'——把所有科目（产业）的分数加起来，就是全班的经济实力。"
+  analogy: "GDP就像一家餐厅一年的总营业额——所有菜品销售额加起来，但不包括进货成本（只算最终价值）。"
+  formula: "GDP = C（消费）+ I（投资）+ G（政府支出）+ (X - M)（净出口）"
+  
+  examples:
+    - context: "生活"
+      description: "你买奶茶、企业建工厂、政府修马路、出口手机——这些都计入GDP。"
+    - context: "平台赛事"
+      description: "在'宏观经济沙盘'中，所有企业的产出之和就是虚拟经济的GDP。"
+    - context: "现实商业"
+      description: "中国GDP世界第二，但人均GDP还有提升空间。"
+  
+  non_examples:
+    - misconception: "GDP越高人民生活越幸福"
+      correction: "GDP不衡量收入分配、环境质量、工作时长、幸福感。一个污染严重的工厂增加GDP但降低生活质量。"
+    - misconception: "二手交易计入GDP"
+      correction: "GDP只计算新生产的价值。二手房交易不计入，但中介服务费计入。"
+
+level_adaptations:
+  high:
+    explanation: "GDP的三种核算方法：生产法、收入法、支出法。名义GDP vs 实际GDP的区别。"
+    example: "为什么日本GDP增长缓慢但人均收入仍很高？人口减少导致总量停滞，但人均稳定。"
+  university:
+    explanation: "GDP的局限性、绿色GDP、福利经济学指标（HDI）、索洛增长模型中的GDP决定因素。"
+    example: "比较GDP与GNH（国民幸福总值）：不丹为什么提出GNH？"
+
+platform_mapping:
+  game_modes:
+    - mode_id: "macro_sandbox_v1"
+      application: "核心指标——所有玩家的总产出构成虚拟GDP，政策目标之一"
+    - mode_id: "global_trade_v1"
+      application: "跨国贸易对各国GDP的影响"
+  
+  ai_tutor_hints:
+    - trigger: "学生只关注企业利润忽视整体经济"
+      hint: "从GDP的视角看，你的企业利润只是整体经济的一部分。如果所有企业都裁员保利润，消费下降反而会导致GDP萎缩，最终影响所有人。"
+
+related_content:
+  prerequisites: ["KN-EC-MI-001"]
+  extensions: ["KN-EC-MA-003", "KN-EC-MA-004"]
+  game_mode_applications: ["macro_sandbox_v1"]
+
+---
+content_type: KN
+content_id: "KN-EC-MA-002-v1.0"
+title: "通货膨胀"
+subtitle: "为什么钱越来越不值钱？"
+
+target_level: "高中及以上"
+target_age: [16, 22]
+difficulty: 3
+competencies: ["FL-4"]
+bloom_level: "understand"
+
+tags: ["宏观经济", "货币", "价格", "进阶概念"]
+ai_generable: true
+author: "平台教研团队"
+reviewer: "经济学顾问"
+version: "1.0.0"
+created_at: "2026-05-12"
+updated_at: "2026-05-12"
+
+knowledge:
+  definition: "通货膨胀是指一段时间内物价总水平持续上涨，导致货币购买力下降的现象。"
+  explanation: "如果去年一杯奶茶8元，今年10元，奶茶的价格上涨了25%。当大多数商品都这样涨价时，就是通货膨胀。"
+  analogy: "就像游泳池的水被慢慢稀释——池子（经济体）还是那么大，但水（货币）越来越多，每滴水的'浓度'就降低了。"
+  formula: "通货膨胀率 = (本期物价水平 - 上期物价水平) / 上期物价水平 × 100%"
+  
+  examples:
+    - context: "生活"
+      description: "爷爷奶奶说'以前1分钱能买糖，现在1块钱才能买'——这就是几十年的通货膨胀累积效应。"
+    - context: "平台赛事"
+      description: "在'宏观经济沙盘'中，央行印钞过多会导致虚拟通货膨胀，企业需要调整定价策略。"
+    - context: "现实商业"
+      description: "2021-2022年全球通胀：疫情后货币宽松 + 供应链断裂 = 物价飞涨。"
+  
+  non_examples:
+    - misconception: "个别商品涨价就是通胀"
+      correction: "通胀是物价总水平持续上涨。单一商品涨价可能是供需变化，不是通胀。"
+    - misconception: "通胀总是坏事"
+      correction: "适度通胀（2-3%）有利于经济——鼓励消费和投资。通缩（物价下跌）反而更危险。"
+
+level_adaptations:
+  high:
+    explanation: "通胀的类型：需求拉动型、成本推动型、结构性。通胀的影响：再分配效应（固定收入者受损，债务人受益）。"
+    example: "为什么贷款买房在通胀时期更划算？因为你的收入会随通胀增长，但还款额固定。"
+  university:
+    explanation: "菲利普斯曲线（通胀与失业的权衡）、货币数量论、通胀预期、恶性通胀的社会后果。"
+    example: "津巴布韦和魏玛德国的恶性通胀：当货币变成废纸时，社会会发生什么？"
+
+platform_mapping:
+  game_modes:
+    - mode_id: "macro_sandbox_v1"
+      application: "核心变量——通胀率影响企业成本结构和消费者购买力"
+    - mode_id: "global_trade_v1"
+      application: "汇率与通胀的关系——高通胀国家货币贬值"
+  
+  ai_tutor_hints:
+    - trigger: "通胀环境下学生保持价格不变"
+      hint: "注意：虚拟经济中出现了通货膨胀信号。如果你的价格不变，实际收入在下降。考虑调整定价策略以应对通胀。"
+
+related_content:
+  prerequisites: ["KN-EC-MA-001"]
+  extensions: ["KN-EC-MA-004", "KN-BS-FI-005"]
+  game_mode_applications: ["macro_sandbox_v1", "global_trade_v1"]
+
+---
+content_type: KN
+content_id: "KN-EC-MA-003-v1.0"
+title: "经济周期"
+subtitle: "为什么经济像过山车一样起伏？"
+
+target_level: "高中及以上"
+target_age: [16, 22]
+difficulty: 4
+competencies: ["SL-3", "SL-5"]
+bloom_level: "analyze"
+
+tags: ["宏观经济", "周期", "策略", "高阶概念"]
+ai_generable: true
+author: "平台教研团队"
+reviewer: "经济学顾问"
+version: "1.0.0"
+created_at: "2026-05-12"
+updated_at: "2026-05-12"
+
+knowledge:
+  definition: "经济周期是指经济活动沿着长期增长趋势所经历的扩张、顶峰、收缩、谷底四个阶段的循环波动。"
+  explanation: "就像四季轮回：春天（复苏）→夏天（繁荣）→秋天（衰退）→冬天（萧条）→春天又来了。企业在不同阶段需要不同的策略。"
+  analogy: "就像海边的潮汐——有涨潮（经济繁荣，大家赚钱），也有退潮（经济衰退，企业倒闭）。聪明的渔民知道什么时候出海，什么时候修船。"
+  
+  examples:
+    - context: "生活"
+      description: "2008年金融危机是衰退期，之后2020年疫情是又一次冲击。疫情期间旅游餐饮业寒冬，但在线教育和电商爆发。"
+    - context: "平台赛事"
+      description: "在'宏观经济沙盘'中，经济周期直接影响所有企业的市场环境——繁荣期扩张，衰退期收缩。"
+    - context: "现实商业"
+      description: "万科的'冬天论'：在房地产市场繁荣时储备现金，等待冬天收购优质资产。"
+  
+  non_examples:
+    - misconception: "经济周期可以完全预测"
+      correction: "周期的大致规律可识别，但具体转折点和幅度难以精确预测。"
+    - misconception: "政府可以消除经济周期"
+      correction: "政策可以平滑周期，但无法消除。人为压制波动可能导致更大的危机。"
+
+level_adaptations:
+  high:
+    explanation: "经济周期的四个阶段特征、领先指标（PMI、消费者信心）、滞后指标（失业率）。"
+    example: "为什么股市往往在经济最差的时候开始上涨？因为股市预期的是未来6-12个月的经济。"
+  university:
+    explanation: "真实经济周期理论、凯恩斯主义vs货币主义的政策争论、金融周期与实体经济的互动。"
+    example: "中国房地产周期的独特性：政策主导型周期 vs 市场主导型周期。"
+
+platform_mapping:
+  game_modes:
+    - mode_id: "macro_sandbox_v1"
+      application: "核心机制——系统模拟四阶段经济周期，玩家需要根据周期调整战略"
+    - mode_id: "slow_company_challenge_v1"
+      application: "长期经营中经历完整周期，考验跨周期战略能力"
+  
+  ai_tutor_hints:
+    - trigger: "学生在繁荣期过度扩张"
+      hint: "繁荣期就像涨潮，但也意味着退潮即将到来。你的高杠杆扩张在衰退期可能成为致命负担。考虑'反周期操作'。"
+    - trigger: "学生在衰退期完全停止投资"
+      hint: "衰退期虽然艰难，但也是低成本扩张的机会。有现金的企业可以在冬天收购优质资产，等待春天。"
+
+related_content:
+  prerequisites: ["KN-EC-MA-001", "KN-EC-MA-002"]
+  extensions: ["KN-MG-ST-003", "KN-BS-FI-005"]
+  game_mode_applications: ["macro_sandbox_v1", "slow_company_challenge_v1"]
+
+---
+content_type: KN
+content_id: "KN-EC-MA-004-v1.0"
+title: "货币政策与财政政策"
+subtitle: "政府如何调节经济？"
+
+target_level: "大学职校"
+target_age: [18, 22]
+difficulty: 5
+competencies: ["SL-5", "FL-5"]
+bloom_level: "evaluate"
+
+tags: ["宏观经济", "政策", "政府", "高阶概念"]
+ai_generable: true
+author: "平台教研团队"
+reviewer: "经济学顾问"
+version: "1.0.0"
+created_at: "2026-05-12"
+updated_at: "2026-05-12"
+
+knowledge:
+  definition: |
+    - 货币政策：央行通过调节利率、存款准备金率、公开市场操作等手段影响货币供应量和信贷成本。
+    - 财政政策：政府通过调整税收和政府支出（基建、福利等）来影响总需求。
+  explanation: "货币政策像'油门和刹车'（央行控制钱的速度），财政政策像'方向盘'（政府决定钱投向哪里）。两者配合调节经济这辆大车。"
+  analogy: "货币政策是中央空调（调节整个房间的温度），财政政策是局部加热器（给特定区域加热）。"
+  
+  examples:
+    - context: "生活"
+      description: "房贷利率下调（货币政策）→你更愿意买房了。政府发消费券（财政政策）→你更愿意消费了。"
+    - context: "平台赛事"
+      description: "在'宏观经济沙盘'中，玩家可以扮演央行行长或财政部长，制定政策影响虚拟经济。"
+    - context: "现实商业"
+      description: "2020年疫情：全球央行降息+量化宽松（货币政策），各国政府发钱+基建（财政政策）。"
+  
+  non_examples:
+    - misconception: "货币政策和财政政策效果一样快"
+      correction: "货币政策传导快（几个月），财政政策传导慢（建设周期）。"
+    - misconception: "政府可以无限刺激经济"
+      correction: "过度刺激会导致通胀、债务累积、资产泡沫。政策空间是有限的。"
+
+level_adaptations:
+  university:
+    explanation: "IS-LM模型、货币传导机制、政策时滞、政策效果的不确定性、政治经济学视角。"
+    example: "比较中美政策差异：美国更依赖货币政策（美联储独立），中国更依赖财政政策（政府主导投资）。"
+
+platform_mapping:
+  game_modes:
+    - mode_id: "macro_sandbox_v1"
+      application: "核心玩法——政策制定者vs企业经营者，体验政策如何传导到微观决策"
+    - mode_id: "global_trade_v1"
+      application: "不同国家的政策差异如何影响汇率和贸易"
+  
+  ai_tutor_hints:
+    - trigger: "学生制定过于激进的宽松政策"
+      hint: "大幅降息和印钞短期内刺激经济，但3-4轮后可能引发通胀和资产泡沫。政策效果有滞后性，需要考虑长期后果。"
+
+related_content:
+  prerequisites: ["KN-EC-MA-001", "KN-EC-MA-002", "KN-EC-MA-003"]
+  extensions: ["KN-MG-ST-001", "KN-EC-MI-008"]
+  game_mode_applications: ["macro_sandbox_v1"]

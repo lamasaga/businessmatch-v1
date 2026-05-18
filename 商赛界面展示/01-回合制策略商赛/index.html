@@ -1,0 +1,530 @@
+<!DOCTYPE html>
+<html lang="zh-CN" data-theme="turn-based">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>回合制策略商赛 - 商业模拟平台</title>
+  <link rel="stylesheet" href="../shared-styles.css">
+  <style>
+    /* 本页特有样式 */
+    .route-card {
+      position: relative;
+      padding: var(--space-lg);
+      border-radius: var(--radius-md);
+      border: 2px solid var(--border-subtle);
+      cursor: pointer;
+      transition: all var(--transition-base);
+    }
+    .route-card:hover, .route-card.active {
+      border-color: var(--theme);
+      background: var(--theme-soft);
+    }
+    .route-card.active::after {
+      content: '✓';
+      position: absolute;
+      top: -10px;
+      right: -10px;
+      width: 28px;
+      height: 28px;
+      background: var(--theme);
+      color: white;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.875rem;
+      font-weight: 700;
+    }
+    .route-icon {
+      width: 48px;
+      height: 48px;
+      border-radius: var(--radius-md);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.5rem;
+      margin-bottom: var(--space-sm);
+    }
+    .route-tech .route-icon { background: rgba(59,130,246,0.2); }
+    .route-user .route-icon { background: rgba(16,185,129,0.2); }
+    .route-brand .route-icon { background: rgba(245,158,11,0.2); }
+    .route-path .route-icon { background: rgba(236,72,153,0.2); }
+    
+    .round-indicator {
+      display: flex;
+      gap: var(--space-sm);
+      margin-bottom: var(--space-lg);
+    }
+    .round-dot {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+      font-size: 0.875rem;
+      background: var(--bg-hover);
+      color: var(--text-muted);
+      border: 2px solid transparent;
+    }
+    .round-dot.completed { background: var(--success); color: white; }
+    .round-dot.current { border-color: var(--theme); color: var(--theme); background: var(--theme-soft); }
+    
+    .city-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: var(--space-md);
+    }
+    .city-item {
+      padding: var(--space-md);
+      background: var(--bg-hover);
+      border-radius: var(--radius-md);
+      text-align: center;
+      border: 2px solid transparent;
+      transition: all var(--transition-fast);
+    }
+    .city-item:hover, .city-item.selected {
+      border-color: var(--theme);
+      background: var(--theme-soft);
+    }
+    .city-name { font-weight: 600; font-size: 0.875rem; }
+    .city-pop { font-size: 0.75rem; color: var(--text-muted); margin-top: 2px; }
+    
+    .investment-allocation {
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-lg);
+    }
+    
+    .leaderboard-item {
+      display: flex;
+      align-items: center;
+      gap: var(--space-md);
+      padding: var(--space-md);
+      background: var(--bg-hover);
+      border-radius: var(--radius-md);
+      margin-bottom: var(--space-sm);
+    }
+    .rank-number {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+      font-size: 0.875rem;
+    }
+    .rank-1 { background: linear-gradient(135deg, #fbbf24, #f59e0b); color: #451a03; }
+    .rank-2 { background: linear-gradient(135deg, #e5e7eb, #9ca3af); color: #1f2937; }
+    .rank-3 { background: linear-gradient(135deg, #fdba74, #ea580c); color: #451a03; }
+    .rank-other { background: var(--bg-card); color: var(--text-muted); }
+    
+    .spy-panel {
+      background: linear-gradient(135deg, rgba(239,68,68,0.1), rgba(239,68,68,0.05));
+      border: 1px solid rgba(239,68,68,0.3);
+      border-radius: var(--radius-md);
+      padding: var(--space-md);
+    }
+  </style>
+</head>
+<body>
+  <!-- 导航栏 -->
+  <nav class="navbar">
+    <div class="container navbar-inner">
+      <a href="#" class="navbar-brand">
+        <div class="logo-icon">⚡</div>
+        <span>商业模拟平台</span>
+      </a>
+      <ul class="navbar-nav">
+        <li><a href="#overview" class="active">赛制概览</a></li>
+        <li><a href="#mechanics">核心机制</a></li>
+        <li><a href="#interface">决策界面</a></li>
+        <li><a href="#features">特色玩法</a></li>
+      </ul>
+    </div>
+  </nav>
+
+  <!-- Hero区域 -->
+  <section class="hero">
+    <div class="hero-bg" style="background-image: url('cover.svg');"></div>
+    <div class="container hero-content">
+      <div class="hero-badge">
+        <span>🎯</span>
+        <span>经典竞技模式 · 4轮标准赛制</span>
+      </div>
+      <h1 class="hero-title">回合制策略商赛</h1>
+      <p class="hero-subtitle">四轮回合制竞技，队伍选择路线并投资技术/用户匹配/品牌展示，基于复杂引擎结算排名。训练资源分配、战略预判与博弈推理能力。</p>
+      <div class="hero-meta">
+        <div class="hero-meta-item">
+          <span class="hero-meta-value">4轮</span>
+          <span class="hero-meta-label">标准回合</span>
+        </div>
+        <div class="hero-meta-item">
+          <span class="hero-meta-value">5-15分钟</span>
+          <span class="hero-meta-label">每轮决策</span>
+        </div>
+        <div class="hero-meta-item">
+          <span class="hero-meta-value">4-10队</span>
+          <span class="hero-meta-label">同场竞技</span>
+        </div>
+        <div class="hero-meta-item">
+          <span class="hero-meta-value">16-40人</span>
+          <span class="hero-meta-label">班级联赛</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 赛制概览 -->
+  <section class="section" id="overview">
+    <div class="container">
+      <div class="section-header">
+        <div class="section-label">Overview</div>
+        <h2 class="section-title">赛制流程</h2>
+        <p class="section-desc">每轮包含情境导入、决策提交、结算动画、复盘反馈四个阶段</p>
+      </div>
+      
+      <div class="timeline">
+        <div class="timeline-item animate-fadeInUp delay-1">
+          <div class="timeline-title">Round 1 · 开局布局</div>
+          <div class="timeline-desc">选择经营路线（TECH/USER/BRAND/PATHFINDER），确定首座城市，分配初始预算。建立战略基线。</div>
+        </div>
+        <div class="timeline-item animate-fadeInUp delay-2">
+          <div class="timeline-title">Round 2 · 市场渗透</div>
+          <div class="timeline-desc">根据首轮反馈调整策略。可选择扩展新城市或深耕已有市场。首次感受到竞争压力。</div>
+        </div>
+        <div class="timeline-item animate-fadeInUp delay-3">
+          <div class="timeline-title">Round 3 · 战略博弈</div>
+          <div class="timeline-desc">市场格局初现，需预判对手动作。可启用"间谍"机制查看对手上回合决策摘要，或发起临时联盟。</div>
+        </div>
+        <div class="timeline-item animate-fadeInUp delay-4">
+          <div class="timeline-title">Round 4 · 终局冲刺</div>
+          <div class="timeline-desc">最后一轮，所有预算必须投出。结算引擎基于softmax效用、排名竞争、BQI调节计算最终排名。</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 核心机制 -->
+  <section class="section" id="mechanics" style="background: var(--bg-secondary);">
+    <div class="container">
+      <div class="section-header">
+        <div class="section-label">Core Mechanics</div>
+        <h2 class="section-title">四大路线与三维投资</h2>
+        <p class="section-desc">每条路线有独特优势，三维投资决定市场影响力</p>
+      </div>
+      
+      <div class="grid-2" style="margin-bottom: var(--space-xl);">
+        <div class="card route-card route-tech active">
+          <div class="route-icon">🔬</div>
+          <h3 class="card-title">TECH 技术驱动</h3>
+          <p class="card-desc">技术投入效率+30%，适合Geek群体占比高的城市。后期收益递增，但需要时间积累。</p>
+          <div class="mt-md">
+            <span class="tag tag-theme">高成长</span>
+            <span class="tag tag-success">长周期</span>
+          </div>
+        </div>
+        <div class="card route-card route-user">
+          <div class="route-icon">🎯</div>
+          <h3 class="card-title">USER 用户匹配</h3>
+          <p class="card-desc">用户匹配投入效率+30%，精准触达目标群体。适合Show群体活跃的市场，见效快。</p>
+          <div class="mt-md">
+            <span class="tag tag-theme">精准</span>
+            <span class="tag tag-warning">中周期</span>
+          </div>
+        </div>
+        <div class="card route-card route-brand">
+          <div class="route-icon">📢</div>
+          <h3 class="card-title">BRAND 品牌展示</h3>
+          <p class="card-desc">品牌展示投入效率+30%，在Show竞争中获得加成。适合市场成熟、竞争激烈的城市。</p>
+          <div class="mt-md">
+            <span class="tag tag-theme">爆发</span>
+            <span class="tag tag-warning">高风险</span>
+          </div>
+        </div>
+        <div class="card route-card route-path">
+          <div class="route-icon">🚀</div>
+          <h3 class="card-title">PATHFINDER 探索者</h3>
+          <p class="card-desc">无路线加成，但独占红利触发概率提升。适合敢于冒险、追求差异化策略的队伍。</p>
+          <div class="mt-md">
+            <span class="tag tag-theme">博弈</span>
+            <span class="tag tag-success">灵活</span>
+          </div>
+        </div>
+      </div>
+      
+      <div class="card">
+        <h3 class="card-title mb-md">🏙️ 城市市场参数</h3>
+        <div class="city-grid">
+          <div class="city-item selected">
+            <div class="city-name">杭州</div>
+            <div class="city-pop">Geek 35% | Show 40%</div>
+          </div>
+          <div class="city-item">
+            <div class="city-name">南京</div>
+            <div class="city-pop">Geek 25% | Show 50%</div>
+          </div>
+          <div class="city-item">
+            <div class="city-name">合肥</div>
+            <div class="city-pop">Geek 45% | Show 25%</div>
+          </div>
+          <div class="city-item">
+            <div class="city-name">苏州</div>
+            <div class="city-pop">Geek 20% | Show 55%</div>
+          </div>
+          <div class="city-item">
+            <div class="city-name">宁波</div>
+            <div class="city-pop">Geek 30% | Show 35%</div>
+          </div>
+          <div class="city-item">
+            <div class="city-name">无锡</div>
+            <div class="city-pop">Geek 28% | Show 42%</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 决策界面 -->
+  <section class="section" id="interface">
+    <div class="container">
+      <div class="section-header">
+        <div class="section-label">Interface</div>
+        <h2 class="section-title">决策舱界面</h2>
+        <p class="section-desc">可视化滑块替代数字输入，实时显示预估效果与竞争排名</p>
+      </div>
+      
+      <div class="mockup-frame">
+        <div class="mockup-header">
+          <div class="mockup-dots"><span></span><span></span><span></span></div>
+          <span style="color: var(--text-muted); font-size: 0.75rem;">决策舱 · Round 3 · 剩余 5:23</span>
+        </div>
+        <div class="mockup-body">
+          <div class="decision-panel">
+            <!-- 左侧：我的状态 -->
+            <div class="panel-sidebar">
+              <h4 style="margin-bottom: var(--space-md); font-size: 0.875rem; color: var(--text-muted); text-transform: uppercase;">我的状态</h4>
+              <div style="margin-bottom: var(--space-lg);">
+                <div style="font-size: 0.75rem; color: var(--text-muted); margin-bottom: 4px;">当前路线</div>
+                <div style="font-weight: 700; color: var(--theme);">🔬 TECH 技术驱动</div>
+              </div>
+              <div style="margin-bottom: var(--space-lg);">
+                <div style="font-size: 0.75rem; color: var(--text-muted); margin-bottom: 4px;">已开通城市</div>
+                <div style="font-weight: 600;">杭州 ★ 南京</div>
+              </div>
+              <div style="margin-bottom: var(--space-lg);">
+                <div style="font-size: 0.75rem; color: var(--text-muted); margin-bottom: 4px;">可用资金</div>
+                <div style="font-size: 1.5rem; font-weight: 800; font-family: var(--font-mono); color: var(--theme);">¥142.5万</div>
+              </div>
+              <div>
+                <div style="font-size: 0.75rem; color: var(--text-muted); margin-bottom: 4px;">当前排名</div>
+                <div style="font-size: 1.25rem; font-weight: 700;">第 3 名</div>
+              </div>
+            </div>
+            
+            <!-- 中部：投资分配 -->
+            <div class="panel-main">
+              <div class="round-indicator">
+                <div class="round-dot completed">1</div>
+                <div class="round-dot completed">2</div>
+                <div class="round-dot current">3</div>
+                <div class="round-dot">4</div>
+              </div>
+              
+              <h4 style="margin-bottom: var(--space-lg);">💰 投资分配</h4>
+              
+              <div class="investment-allocation">
+                <div class="resource-slider">
+                  <div class="resource-header">
+                    <span class="resource-name">🔬 技术投入</span>
+                    <span class="resource-value">50万</span>
+                  </div>
+                  <div class="slider-track">
+                    <div class="slider-fill" style="width: 35%;"></div>
+                    <div class="slider-thumb" style="left: 35%;"></div>
+                  </div>
+                  <div style="font-size: 0.75rem; color: var(--text-muted); margin-top: 4px;">预估增长: +0.8 | 过载状态: 正常</div>
+                </div>
+                
+                <div class="resource-slider">
+                  <div class="resource-header">
+                    <span class="resource-name">🎯 用户匹配 - 杭州</span>
+                    <span class="resource-value">20万</span>
+                  </div>
+                  <div class="slider-track">
+                    <div class="slider-fill" style="width: 14%;"></div>
+                    <div class="slider-thumb" style="left: 14%;"></div>
+                  </div>
+                </div>
+                
+                <div class="resource-slider">
+                  <div class="resource-header">
+                    <span class="resource-name">🎯 用户匹配 - 南京</span>
+                    <span class="resource-value">15万</span>
+                  </div>
+                  <div class="slider-track">
+                    <div class="slider-fill" style="width: 10%;"></div>
+                    <div class="slider-thumb" style="left: 10%;"></div>
+                  </div>
+                </div>
+                
+                <div class="resource-slider">
+                  <div class="resource-header">
+                    <span class="resource-name">📢 品牌展示 - 杭州</span>
+                    <span class="resource-value">20万</span>
+                  </div>
+                  <div class="slider-track">
+                    <div class="slider-fill" style="width: 14%;"></div>
+                    <div class="slider-thumb" style="left: 14%;"></div>
+                  </div>
+                  <div style="font-size: 0.75rem; color: var(--warning); margin-top: 4px;">⚠️ 提示：南京 Show 竞争激烈</div>
+                </div>
+                
+                <div class="resource-slider">
+                  <div class="resource-header">
+                    <span class="resource-name">📢 品牌展示 - 南京</span>
+                    <span class="resource-value">10万</span>
+                  </div>
+                  <div class="slider-track">
+                    <div class="slider-fill" style="width: 7%;"></div>
+                    <div class="slider-thumb" style="left: 7%;"></div>
+                  </div>
+                </div>
+              </div>
+              
+              <div style="margin-top: var(--space-xl); padding-top: var(--space-lg); border-top: 1px solid var(--border-subtle);">
+                <div style="display: flex; gap: var(--space-md);">
+                  <button class="btn btn-secondary" style="flex: 1;">预览效果</button>
+                  <button class="btn btn-primary" style="flex: 1;">确认提交</button>
+                </div>
+                <div style="text-align: center; margin-top: var(--space-sm); font-size: 0.75rem; color: var(--text-muted);">
+                  预算已使用 79% · 剩余 ¥27.5万
+                </div>
+              </div>
+            </div>
+            
+            <!-- 右侧：实时情报 -->
+            <div class="panel-sidebar">
+              <h4 style="margin-bottom: var(--space-md); font-size: 0.875rem; color: var(--text-muted); text-transform: uppercase;">实时情报</h4>
+              
+              <div class="spy-panel" style="margin-bottom: var(--space-lg);">
+                <div style="font-size: 0.75rem; color: var(--danger); font-weight: 600; margin-bottom: var(--space-sm);">🕵️ 间谍情报</div>
+                <div style="font-size: 0.8125rem; color: var(--text-secondary);">
+                  队伍「星辰科技」上回合 TECH 投入 65万，专注杭州市场
+                </div>
+              </div>
+              
+              <div style="margin-bottom: var(--space-lg);">
+                <div style="font-size: 0.75rem; color: var(--text-muted); margin-bottom: var(--space-sm);">市场动态</div>
+                <div style="font-size: 0.8125rem; color: var(--text-secondary); line-height: 1.8;">
+                  <div>• 杭州 Geek 群体增长 +12%</div>
+                  <div>• 南京 Show 竞争加剧</div>
+                  <div>• 技术突破浪潮来临</div>
+                </div>
+              </div>
+              
+              <div>
+                <div style="font-size: 0.75rem; color: var(--text-muted); margin-bottom: var(--space-sm);">预计排名</div>
+                <div style="font-size: 2rem; font-weight: 800; color: var(--theme);">第 2 名</div>
+                <div style="font-size: 0.75rem; color: var(--text-muted);">基于当前投入估算</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 特色玩法 -->
+  <section class="section" id="features" style="background: var(--bg-secondary);">
+    <div class="container">
+      <div class="section-header">
+        <div class="section-label">Special Features</div>
+        <h2 class="section-title">特色机制</h2>
+        <p class="section-desc">在经典回合制基础上，增加博弈深度与社交互动</p>
+      </div>
+      
+      <div class="grid-3">
+        <div class="card card-accent">
+          <div class="card-header">
+            <div class="card-icon">🕵️</div>
+            <h3 class="card-title">间谍机制</h3>
+          </div>
+          <p class="card-desc">投入一定预算可查看某队上回合决策摘要。信息即力量，但间谍行为本身也消耗资源——是投资情报还是投资实力？</p>
+        </div>
+        <div class="card card-accent">
+          <div class="card-header">
+            <div class="card-icon">🤝</div>
+            <h3 class="card-title">联盟系统</h3>
+          </div>
+          <p class="card-desc">两队可临时合作共享某城市 Fit 属性。联盟可以随时背叛，信任与算计并存，体验真实商业博弈。</p>
+        </div>
+        <div class="card card-accent">
+          <div class="card-header">
+            <div class="card-icon">🔨</div>
+            <h3 class="card-title">暗标拍卖</h3>
+          </div>
+          <p class="card-desc">每轮开始前，各城市置顶展示位进行密封报价拍卖。价高者得，但出价过高会挤压其他投资预算。</p>
+        </div>
+      </div>
+      
+      <div class="card mt-xl">
+        <h3 class="card-title mb-lg">🏆 实时排行榜</h3>
+        <div class="leaderboard-item">
+          <div class="rank-number rank-1">1</div>
+          <div style="flex: 1;">
+            <div style="font-weight: 600;">星辰科技</div>
+            <div style="font-size: 0.75rem; color: var(--text-muted);">TECH路线 · 杭州+南京</div>
+          </div>
+          <div style="text-align: right;">
+            <div style="font-weight: 700; font-family: var(--font-mono);">8,420</div>
+            <div style="font-size: 0.75rem; color: var(--success);">▲ 12%</div>
+          </div>
+        </div>
+        <div class="leaderboard-item">
+          <div class="rank-number rank-2">2</div>
+          <div style="flex: 1;">
+            <div style="font-weight: 600;">蓝海先锋</div>
+            <div style="font-size: 0.75rem; color: var(--text-muted);">BRAND路线 · 杭州+苏州</div>
+          </div>
+          <div style="text-align: right;">
+            <div style="font-weight: 700; font-family: var(--font-mono);">7,890</div>
+            <div style="font-size: 0.75rem; color: var(--success);">▲ 8%</div>
+          </div>
+        </div>
+        <div class="leaderboard-item">
+          <div class="rank-number rank-3">3</div>
+          <div style="flex: 1;">
+            <div style="font-weight: 600;">未来视界</div>
+            <div style="font-size: 0.75rem; color: var(--text-muted);">USER路线 · 南京+合肥</div>
+          </div>
+          <div style="text-align: right;">
+            <div style="font-weight: 700; font-family: var(--font-mono);">7,560</div>
+            <div style="font-size: 0.75rem; color: var(--danger);">▼ 3%</div>
+          </div>
+        </div>
+        <div class="leaderboard-item">
+          <div class="rank-number rank-other">4</div>
+          <div style="flex: 1;">
+            <div style="font-weight: 600;">极光探索</div>
+            <div style="font-size: 0.75rem; color: var(--text-muted);">PATHFINDER · 合肥</div>
+          </div>
+          <div style="text-align: right;">
+            <div style="font-weight: 700; font-family: var(--font-mono);">6,230</div>
+            <div style="font-size: 0.75rem; color: var(--success);">▲ 15%</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 页脚 -->
+  <footer style="padding: var(--space-xl) 0; border-top: 1px solid var(--border-subtle); text-align: center;">
+    <div class="container">
+      <p style="color: var(--text-muted); font-size: 0.875rem;">商业模拟平台 · 回合制策略商赛 · 适合高中及以上学段</p>
+    </div>
+  </footer>
+</body>
+</html>

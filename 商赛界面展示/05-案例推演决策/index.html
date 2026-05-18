@@ -1,0 +1,616 @@
+<!DOCTYPE html>
+<html lang="zh-CN" data-theme="casestudy">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>案例推演决策 - 商业模拟平台</title>
+  <link rel="stylesheet" href="../shared-styles.css">
+  <style>
+    /* 案例推演特有样式 */
+    .story-card {
+      background: linear-gradient(135deg, var(--bg-card), var(--bg-secondary));
+      border-radius: var(--radius-lg);
+      padding: var(--space-2xl);
+      border: 1px solid var(--border-subtle);
+      position: relative;
+      overflow: hidden;
+    }
+    .story-card::before {
+      content: '"';
+      position: absolute;
+      top: -20px;
+      left: 20px;
+      font-size: 8rem;
+      color: var(--theme);
+      opacity: 0.1;
+      font-family: Georgia, serif;
+    }
+    .story-chapter {
+      display: inline-block;
+      padding: 0.375rem 1rem;
+      border-radius: 9999px;
+      background: var(--theme-soft);
+      color: var(--theme);
+      font-size: 0.75rem;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      margin-bottom: var(--space-md);
+    }
+    .story-title {
+      font-size: 1.75rem;
+      font-weight: 700;
+      margin-bottom: var(--space-md);
+      line-height: 1.3;
+    }
+    .story-content {
+      font-size: 1rem;
+      color: var(--text-secondary);
+      line-height: 1.8;
+      margin-bottom: var(--space-xl);
+    }
+    .story-context {
+      background: var(--bg-hover);
+      border-radius: var(--radius-md);
+      padding: var(--space-md);
+      margin-bottom: var(--space-xl);
+    }
+    .context-label {
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      margin-bottom: var(--space-sm);
+    }
+    .context-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: var(--space-md);
+    }
+    .context-item {
+      text-align: center;
+    }
+    .context-value {
+      font-family: var(--font-mono);
+      font-weight: 700;
+      font-size: 1.25rem;
+      color: var(--text-primary);
+    }
+    .context-desc {
+      font-size: 0.75rem;
+      color: var(--text-muted);
+    }
+    
+    .decision-tree {
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-lg);
+    }
+    .decision-node {
+      background: var(--bg-card);
+      border-radius: var(--radius-md);
+      padding: var(--space-lg);
+      border: 2px solid var(--border-subtle);
+      cursor: pointer;
+      transition: all var(--transition-base);
+      position: relative;
+    }
+    .decision-node:hover {
+      border-color: var(--theme);
+      background: var(--theme-soft);
+    }
+    .decision-node.selected {
+      border-color: var(--theme);
+      background: var(--theme-soft);
+    }
+    .decision-node.selected::after {
+      content: '✓';
+      position: absolute;
+      top: -10px;
+      right: -10px;
+      width: 28px;
+      height: 28px;
+      background: var(--theme);
+      color: white;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.875rem;
+      font-weight: 700;
+    }
+    .decision-letter {
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      background: var(--theme-soft);
+      color: var(--theme);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+      font-size: 0.875rem;
+      margin-bottom: var(--space-sm);
+    }
+    .decision-title {
+      font-weight: 600;
+      margin-bottom: var(--space-xs);
+    }
+    .decision-desc {
+      font-size: 0.875rem;
+      color: var(--text-secondary);
+      line-height: 1.6;
+    }
+    .decision-consequence {
+      margin-top: var(--space-md);
+      padding-top: var(--space-md);
+      border-top: 1px solid var(--border-subtle);
+      font-size: 0.8125rem;
+      color: var(--text-muted);
+    }
+    
+    .branch-visual {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: var(--space-xl) 0;
+    }
+    .branch-line {
+      width: 2px;
+      height: 40px;
+      background: var(--border-subtle);
+    }
+    .branch-connector {
+      width: 60%;
+      height: 2px;
+      background: var(--border-subtle);
+      position: relative;
+    }
+    .branch-connector::before,
+    .branch-connector::after {
+      content: '';
+      position: absolute;
+      width: 2px;
+      height: 20px;
+      background: var(--border-subtle);
+      bottom: 0;
+    }
+    .branch-connector::before { left: 0; }
+    .branch-connector::after { right: 0; }
+    
+    .ethics-scale {
+      display: flex;
+      align-items: center;
+      gap: var(--space-md);
+      padding: var(--space-md);
+      background: var(--bg-hover);
+      border-radius: var(--radius-md);
+    }
+    .scale-label {
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      white-space: nowrap;
+    }
+    .scale-track {
+      flex: 1;
+      height: 8px;
+      background: var(--bg-card);
+      border-radius: 9999px;
+      position: relative;
+    }
+    .scale-marker {
+      position: absolute;
+      top: 50%;
+      transform: translate(-50%, -50%);
+      width: 16px;
+      height: 16px;
+      background: var(--theme);
+      border-radius: 50%;
+      box-shadow: 0 0 10px var(--theme-glow);
+    }
+    .scale-ends {
+      display: flex;
+      justify-content: space-between;
+      margin-top: 4px;
+      font-size: 0.625rem;
+      color: var(--text-muted);
+    }
+    
+    .outcome-card {
+      background: var(--bg-card);
+      border-radius: var(--radius-md);
+      padding: var(--space-lg);
+      border-left: 4px solid var(--theme);
+      margin-bottom: var(--space-md);
+    }
+    .outcome-title {
+      font-weight: 700;
+      margin-bottom: var(--space-sm);
+      display: flex;
+      align-items: center;
+      gap: var(--space-sm);
+    }
+    .outcome-text {
+      font-size: 0.875rem;
+      color: var(--text-secondary);
+      line-height: 1.7;
+    }
+    
+    .concept-tag {
+      display: inline-flex;
+      align-items: center;
+      gap: var(--space-xs);
+      padding: 0.375rem 0.875rem;
+      border-radius: var(--radius-sm);
+      background: var(--theme-soft);
+      color: var(--theme);
+      font-size: 0.8125rem;
+      font-weight: 600;
+      margin-right: var(--space-sm);
+      margin-bottom: var(--space-sm);
+    }
+    
+    .scenario-timeline {
+      display: flex;
+      gap: var(--space-md);
+      overflow-x: auto;
+      padding-bottom: var(--space-md);
+    }
+    .scenario-node {
+      flex-shrink: 0;
+      width: 200px;
+      padding: var(--space-md);
+      background: var(--bg-card);
+      border-radius: var(--radius-md);
+      border: 2px solid var(--border-subtle);
+      text-align: center;
+      transition: all var(--transition-fast);
+    }
+    .scenario-node:hover {
+      border-color: var(--theme);
+    }
+    .scenario-node.completed {
+      border-color: var(--success);
+      background: rgba(16,185,129,0.05);
+    }
+    .scenario-node.current {
+      border-color: var(--theme);
+      box-shadow: 0 0 20px var(--theme-glow);
+    }
+    .scenario-number {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      background: var(--bg-hover);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+      font-size: 0.875rem;
+      margin: 0 auto var(--space-sm);
+    }
+    .scenario-node.completed .scenario-number {
+      background: var(--success);
+      color: white;
+    }
+    .scenario-node.current .scenario-number {
+      background: var(--theme);
+      color: white;
+    }
+    .scenario-name {
+      font-weight: 600;
+      font-size: 0.875rem;
+      margin-bottom: 4px;
+    }
+    .scenario-desc {
+      font-size: 0.75rem;
+      color: var(--text-muted);
+    }
+  </style>
+</head>
+<body>
+  <nav class="navbar">
+    <div class="container navbar-inner">
+      <a href="#" class="navbar-brand">
+        <div class="logo-icon">📖</div>
+        <span>商业模拟平台</span>
+      </a>
+      <ul class="navbar-nav">
+        <li><a href="#overview" class="active">赛制概览</a></li>
+        <li><a href="#story">沉浸故事</a></li>
+        <li><a href="#decisions">决策节点</a></li>
+        <li><a href="#outcomes">分支结局</a></li>
+      </ul>
+    </div>
+  </nav>
+
+  <section class="hero">
+    <div class="hero-bg" style="background-image: url('cover.svg');"></div>
+    <div class="container hero-content">
+      <div class="hero-badge">
+        <span>📖</span>
+        <span>叙事驱动 · 1-2天一个决策点</span>
+      </div>
+      <h1 class="hero-title">案例推演决策</h1>
+      <p class="hero-subtitle">以真实企业改编的互动案例，学生扮演CEO面对10个关键决策点。每个决策影响后续剧情分支，最终看到"如果当初选A，3年后会怎样"。</p>
+      <div class="hero-meta">
+        <div class="hero-meta-item">
+          <span class="hero-meta-value">10个</span>
+          <span class="hero-meta-label">关键决策点</span>
+        </div>
+        <div class="hero-meta-item">
+          <span class="hero-meta-value">多分支</span>
+          <span class="hero-meta-label">剧情走向</span>
+        </div>
+        <div class="hero-meta-item">
+          <span class="hero-meta-value">1-2天</span>
+          <span class="hero-meta-label">决策周期</span>
+        </div>
+        <div class="hero-meta-item">
+          <span class="hero-meta-value">异步</span>
+          <span class="hero-meta-label">在线体验</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" id="overview">
+    <div class="container">
+      <div class="section-header">
+        <div class="section-label">Scenario Timeline</div>
+        <h2 class="section-title">案例时间线</h2>
+        <p class="section-desc">10个决策节点，每个选择都将改变故事走向</p>
+      </div>
+      
+      <div class="scenario-timeline">
+        <div class="scenario-node completed">
+          <div class="scenario-number">1</div>
+          <div class="scenario-name">创业初心</div>
+          <div class="scenario-desc">选择创业方向</div>
+        </div>
+        <div class="scenario-node completed">
+          <div class="scenario-number">2</div>
+          <div class="scenario-name">首轮融资</div>
+          <div class="scenario-desc">接受谁的投资</div>
+        </div>
+        <div class="scenario-node completed">
+          <div class="scenario-number">3</div>
+          <div class="scenario-name">产品定位</div>
+          <div class="scenario-desc">高端vs大众</div>
+        </div>
+        <div class="scenario-node current">
+          <div class="scenario-number">4</div>
+          <div class="scenario-name">危机应对</div>
+          <div class="scenario-desc">当前决策点</div>
+        </div>
+        <div class="scenario-node">
+          <div class="scenario-number">5</div>
+          <div class="scenario-name">扩张策略</div>
+          <div class="scenario-desc">待解锁</div>
+        </div>
+        <div class="scenario-node">
+          <div class="scenario-number">6</div>
+          <div class="scenario-name">竞争博弈</div>
+          <div class="scenario-desc">待解锁</div>
+        </div>
+        <div class="scenario-node">
+          <div class="scenario-number">7</div>
+          <div class="scenario-name">伦理困境</div>
+          <div class="scenario-desc">待解锁</div>
+        </div>
+        <div class="scenario-node">
+          <div class="scenario-number">8</div>
+          <div class="scenario-name">上市抉择</div>
+          <div class="scenario-desc">待解锁</div>
+        </div>
+        <div class="scenario-node">
+          <div class="scenario-number">9</div>
+          <div class="scenario-name">全球化</div>
+          <div class="scenario-desc">待解锁</div>
+        </div>
+        <div class="scenario-node">
+          <div class="scenario-number">10</div>
+          <div class="scenario-name">终局</div>
+          <div class="scenario-desc">待解锁</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" id="story" style="background: var(--bg-secondary);">
+    <div class="container">
+      <div class="section-header">
+        <div class="section-label">Current Chapter</div>
+        <h2 class="section-title">当前章节：危机应对</h2>
+        <p class="section-desc">基于真实企业案例改编，沉浸式叙事体验</p>
+      </div>
+      
+      <div class="story-card">
+        <div class="story-chapter">决策点 4 / 10</div>
+        <h3 class="story-title">供应链丑闻曝光：你会如何选择？</h3>
+        <div class="story-content">
+          <p>你创立的「绿源科技」已经发展三年，主打环保智能家居产品。公司刚刚完成B轮融资，估值达到5亿元，正准备大举扩张。</p>
+          <p style="margin-top: var(--space-md);">然而，今早一家媒体发布调查报道：你的核心供应商「宏达制造」存在严重的环保违规——偷偷向河流排放未经处理的工业废水已持续两年。而「宏达」是你最大的供应商，占你采购量的60%。</p>
+          <p style="margin-top: var(--space-md);">报道中提到了你的名字，暗示你"可能知情"。社交媒体上已经开始出现抵制声音。你的投资人打来电话，要求你"尽快处理，不要影响下一轮融资"。</p>
+        </div>
+        
+        <div class="story-context">
+          <div class="context-label">当前公司状况</div>
+          <div class="context-grid">
+            <div class="context-item">
+              <div class="context-value">¥5亿</div>
+              <div class="context-desc">公司估值</div>
+            </div>
+            <div class="context-item">
+              <div class="context-value">60%</div>
+              <div class="context-desc">宏达采购占比</div>
+            </div>
+            <div class="context-item">
+              <div class="context-value">-12%</div>
+              <div class="context-desc">今日股价波动</div>
+            </div>
+          </div>
+        </div>
+        
+        <div style="margin-bottom: var(--space-md);">
+          <div class="context-label">涉及商业概念</div>
+          <div>
+            <span class="concept-tag">💡 利益相关者理论</span>
+            <span class="concept-tag">💡 企业社会责任</span>
+            <span class="concept-tag">💡 供应链管理</span>
+            <span class="concept-tag">💡 危机公关</span>
+            <span class="concept-tag">💡 长期主义</span>
+          </div>
+        </div>
+        
+        <div class="ethics-scale">
+          <span class="scale-label">伦理倾向</span>
+          <div style="flex: 1;">
+            <div class="scale-track">
+              <div class="scale-marker" style="left: 35%;"></div>
+            </div>
+            <div class="scale-ends">
+              <span>股东利益优先</span>
+              <span>社会责任优先</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" id="decisions">
+    <div class="container">
+      <div class="section-header">
+        <div class="section-label">Your Decision</div>
+        <h2 class="section-title">你的选择</h2>
+        <p class="section-desc">每个选项都有代价，没有标准答案</p>
+      </div>
+      
+      <div class="decision-tree">
+        <div class="decision-node" onclick="this.classList.toggle('selected')">
+          <div class="decision-letter">A</div>
+          <div class="decision-title">立即终止与宏达的合作关系</div>
+          <div class="decision-desc">发布公开声明，宣布立即停止与宏达的所有合作，启动供应商审查程序。承担短期供应链断裂的风险，但树立负责任的企业形象。</div>
+          <div class="decision-consequence">
+            <strong>预估影响：</strong>短期成本+40%，股价可能继续下跌，但长期品牌价值提升
+          </div>
+        </div>
+        
+        <div class="decision-node" onclick="this.classList.toggle('selected')">
+          <div class="decision-letter">B</div>
+          <div class="decision-title">要求宏达限期整改，同时启动备选方案</div>
+          <div class="decision-desc">给宏达90天整改期限，同时秘密寻找替代供应商。对外表示"正在调查中"，既不否认也不承认知情。</div>
+          <div class="decision-consequence">
+            <strong>预估影响：</strong>维持供应链稳定，但可能被批评为"拖延"和"虚伪"
+          </div>
+        </div>
+        
+        <div class="decision-node" onclick="this.classList.toggle('selected')">
+          <div class="decision-letter">C</div>
+          <div class="decision-title">公开为宏达辩护，质疑媒体报道</div>
+          <div class="decision-desc">召开新闻发布会，表示宏达是"被竞争对手恶意中伤"，宣布法律诉讼。全力维护现有供应链和投资人信心。</div>
+          <div class="decision-consequence">
+            <strong>预估影响：</strong>若后续被证实，公司将面临毁灭性信任危机；若成功翻盘，竞争对手受损
+          </div>
+        </div>
+        
+        <div class="decision-node" onclick="this.classList.toggle('selected')">
+          <div class="decision-letter">D</div>
+          <div class="decision-title">主动披露更多信息，邀请第三方审计</div>
+          <div class="decision-desc">超越媒体爆料，主动公开与宏达的合作细节、自己的审计记录，邀请环保NGO参与监督。将危机转化为透明度展示。</div>
+          <div class="decision-consequence">
+            <strong>预估影响：</strong>高风险高回报——若审计结果有利，成为行业标杆；若有瑕疵，后果加倍
+          </div>
+        </div>
+      </div>
+      
+      <div style="text-align: center; margin-top: var(--space-xl);">
+        <button class="btn btn-primary" style="padding: 0.875rem 3rem; font-size: 1rem;">提交决策</button>
+        <p style="font-size: 0.75rem; color: var(--text-muted); margin-top: var(--space-sm);">提交后不可更改，请慎重考虑</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" id="outcomes" style="background: var(--bg-secondary);">
+    <div class="container">
+      <div class="section-header">
+        <div class="section-label">Branch Preview</div>
+        <h2 class="section-title">分支结局预览</h2>
+        <p class="section-desc">不同选择将导向不同的故事走向（部分剧透）</p>
+      </div>
+      
+      <div class="grid-2">
+        <div class="outcome-card">
+          <div class="outcome-title">
+            <span>🌟</span>
+            <span>如果选择 A：行业标杆之路</span>
+          </div>
+          <div class="outcome-text">
+            短期阵痛后，你的果断决策赢得了消费者信任。一年后，你成为行业ESG标杆，获得政府绿色采购资格。但供应链重建花了8个月，期间损失了30%市场份额。
+            <br><br>
+            <strong>3年后：</strong>公司成功上市，市值30亿。宏达在失去你后破产，200名工人失业——这是你没有预料到的代价。
+          </div>
+        </div>
+        
+        <div class="outcome-card" style="border-left-color: var(--warning);">
+          <div class="outcome-title">
+            <span>⚖️</span>
+            <span>如果选择 B：平衡者之路</span>
+          </div>
+          <div class="outcome-text">
+            你成功在稳定与责任之间找到平衡。宏达在期限内完成整改，你逐步降低对其依赖至30%。但媒体批评你的"渐进主义"，激进环保人士持续抵制。
+            <br><br>
+            <strong>3年后：</strong>公司稳健发展，估值15亿。你没有成为英雄，也没有成为反派——只是又一个"普通的成功企业"。
+          </div>
+        </div>
+        
+        <div class="outcome-card" style="border-left-color: var(--danger);">
+          <div class="outcome-title">
+            <span>💥</span>
+            <span>如果选择 C：高风险博弈</span>
+          </div>
+          <div class="outcome-text">
+            这是一场豪赌。如果媒体证据确凿，你的辩护将成为"撒谎"的铁证。但如果媒体确实夸大了事实，你将一战封神。
+            <br><br>
+            <strong>3年后（两种可能）：</strong>
+            <br>• 若赢：市值50亿，成为"对抗虚假新闻"的英雄
+            <br>• 若输：公司倒闭，你成为商学院"伦理反面教材"
+          </div>
+        </div>
+        
+        <div class="outcome-card" style="border-left-color: var(--info);">
+          <div class="outcome-title">
+            <span>🔍</span>
+            <span>如果选择 D：透明革命</span>
+          </div>
+          <div class="outcome-text">
+            你开创了"极端透明"的先例。第三方审计显示你确实不知情，但审计也发现了你供应链管理的其他漏洞。你被迫进行系统性改革。
+            <br><br>
+            <strong>3年后：</strong>你写了一本《透明经营》成为畅销书，公司估值20亿。但你的"过度透明"让竞争对手获得了太多情报。
+          </div>
+        </div>
+      </div>
+      
+      <div class="card mt-xl">
+        <h4 style="margin-bottom: var(--space-md);">🎓 教学锚点</h4>
+        <p style="color: var(--text-secondary); line-height: 1.8; margin-bottom: var(--space-md);">
+          这个决策点对应课程中的<strong>"利益相关者理论"</strong>和<strong>"企业伦理"</strong>单元。无论你选择哪个选项，系统都会在结局后生成个性化报告：
+        </p>
+        <div style="display: flex; gap: var(--space-md); flex-wrap: wrap;">
+          <span class="concept-tag">📊 决策时间轴回放</span>
+          <span class="concept-tag">📈 与其他玩家选择对比</span>
+          <span class="concept-tag">💡 概念锚定讲解</span>
+          <span class="concept-tag">📝 教师点评区</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <footer style="padding: var(--space-xl) 0; border-top: 1px solid var(--border-subtle); text-align: center;">
+    <div class="container">
+      <p style="color: var(--text-muted); font-size: 0.875rem;">商业模拟平台 · 案例推演决策 · 适合大学及以上学段 · 伦理与复杂决策训练</p>
+    </div>
+  </footer>
+</body>
+</html>

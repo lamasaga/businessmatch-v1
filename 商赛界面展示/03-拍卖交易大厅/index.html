@@ -1,0 +1,567 @@
+<!DOCTYPE html>
+<html lang="zh-CN" data-theme="auction">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>拍卖交易大厅 - 商业模拟平台</title>
+  <link rel="stylesheet" href="../shared-styles.css">
+  <style>
+    /* 拍卖交易特有样式 */
+    .auction-hall {
+      background: linear-gradient(180deg, var(--bg-secondary) 0%, var(--bg-primary) 100%);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-lg);
+      overflow: hidden;
+    }
+    .auction-stage {
+      background: linear-gradient(135deg, #451a03, #78350f);
+      padding: var(--space-2xl);
+      text-align: center;
+      position: relative;
+    }
+    .auction-stage::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23f59e0b' fill-opacity='0.05'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+    }
+    .auction-item-name {
+      font-size: 2rem;
+      font-weight: 800;
+      color: #fbbf24;
+      margin-bottom: var(--space-sm);
+    }
+    .auction-item-desc {
+      color: rgba(255,255,255,0.7);
+      margin-bottom: var(--space-lg);
+    }
+    .current-bid {
+      font-size: 3.5rem;
+      font-weight: 900;
+      font-family: var(--font-mono);
+      color: #fbbf24;
+      text-shadow: 0 0 30px rgba(251,191,36,0.5);
+    }
+    .bid-label {
+      font-size: 0.875rem;
+      color: rgba(255,255,255,0.6);
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+    }
+    
+    .bidder-list {
+      padding: var(--space-lg);
+    }
+    .bidder-item {
+      display: flex;
+      align-items: center;
+      gap: var(--space-md);
+      padding: var(--space-md);
+      background: var(--bg-card);
+      border-radius: var(--radius-md);
+      margin-bottom: var(--space-sm);
+      border: 2px solid transparent;
+      transition: all var(--transition-fast);
+    }
+    .bidder-item.leading {
+      border-color: var(--theme);
+      background: var(--theme-soft);
+    }
+    .bidder-avatar {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      background: var(--bg-hover);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.25rem;
+    }
+    .bidder-info {
+      flex: 1;
+    }
+    .bidder-name {
+      font-weight: 600;
+      font-size: 0.875rem;
+    }
+    .bidder-time {
+      font-size: 0.75rem;
+      color: var(--text-muted);
+    }
+    .bidder-amount {
+      font-family: var(--font-mono);
+      font-weight: 700;
+      font-size: 1.125rem;
+      color: var(--theme);
+    }
+    
+    .bid-controls {
+      display: flex;
+      gap: var(--space-md);
+      padding: var(--space-lg);
+      background: var(--bg-card);
+      border-top: 1px solid var(--border-subtle);
+    }
+    .bid-btn {
+      flex: 1;
+      padding: var(--space-md);
+      border-radius: var(--radius-md);
+      border: 2px solid var(--theme);
+      background: var(--theme-soft);
+      color: var(--theme);
+      font-family: inherit;
+      font-weight: 700;
+      font-size: 1rem;
+      cursor: pointer;
+      transition: all var(--transition-fast);
+    }
+    .bid-btn:hover {
+      background: var(--theme);
+      color: white;
+    }
+    .bid-btn.primary {
+      background: var(--theme);
+      color: white;
+      box-shadow: 0 4px 14px var(--theme-glow);
+    }
+    .bid-btn.primary:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px var(--theme-glow);
+    }
+    
+    .lot-card {
+      background: var(--bg-card);
+      border-radius: var(--radius-md);
+      overflow: hidden;
+      border: 1px solid var(--border-subtle);
+      transition: all var(--transition-base);
+    }
+    .lot-card:hover {
+      border-color: var(--theme);
+      transform: translateY(-2px);
+    }
+    .lot-header {
+      padding: var(--space-md);
+      background: var(--bg-hover);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .lot-status {
+      padding: 0.25rem 0.75rem;
+      border-radius: 9999px;
+      font-size: 0.75rem;
+      font-weight: 600;
+    }
+    .lot-status.live {
+      background: rgba(239,68,68,0.15);
+      color: var(--danger);
+      animation: pulse 2s infinite;
+    }
+    .lot-status.upcoming {
+      background: rgba(148,163,184,0.15);
+      color: var(--text-muted);
+    }
+    .lot-body {
+      padding: var(--space-md);
+    }
+    .lot-title {
+      font-weight: 600;
+      margin-bottom: var(--space-xs);
+    }
+    .lot-desc {
+      font-size: 0.8125rem;
+      color: var(--text-secondary);
+      margin-bottom: var(--space-md);
+    }
+    .lot-price {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .lot-current {
+      font-family: var(--font-mono);
+      font-weight: 700;
+      font-size: 1.25rem;
+      color: var(--theme);
+    }
+    .lot-bids {
+      font-size: 0.75rem;
+      color: var(--text-muted);
+    }
+    
+    .price-chart {
+      height: 200px;
+      background: var(--bg-card);
+      border-radius: var(--radius-md);
+      padding: var(--space-md);
+      position: relative;
+    }
+    .chart-line {
+      position: absolute;
+      bottom: var(--space-md);
+      left: var(--space-md);
+      right: var(--space-md);
+      height: 150px;
+    }
+    .chart-bar {
+      position: absolute;
+      bottom: 0;
+      width: 8%;
+      background: var(--theme);
+      border-radius: 4px 4px 0 0;
+      transition: height 0.5s ease;
+    }
+    .chart-bar:hover {
+      opacity: 0.8;
+    }
+    
+    .timer-display {
+      font-family: var(--font-mono);
+      font-size: 3rem;
+      font-weight: 800;
+      color: var(--danger);
+      text-align: center;
+    }
+    
+    .market-depth {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: var(--space-md);
+    }
+    .depth-side {
+      background: var(--bg-card);
+      border-radius: var(--radius-md);
+      padding: var(--space-md);
+    }
+    .depth-side.bids { border-left: 3px solid var(--success); }
+    .depth-side.asks { border-left: 3px solid var(--danger); }
+    .depth-row {
+      display: flex;
+      justify-content: space-between;
+      padding: 4px 0;
+      font-size: 0.8125rem;
+      font-family: var(--font-mono);
+    }
+    .depth-row:hover {
+      background: var(--bg-hover);
+    }
+    .depth-price { font-weight: 600; }
+    .depth-bids .depth-price { color: var(--success); }
+    .depth-asks .depth-price { color: var(--danger); }
+    .depth-amount { color: var(--text-muted); }
+  </style>
+</head>
+<body>
+  <nav class="navbar">
+    <div class="container navbar-inner">
+      <a href="#" class="navbar-brand">
+        <div class="logo-icon">🔨</div>
+        <span>商业模拟平台</span>
+      </a>
+      <ul class="navbar-nav">
+        <li><a href="#overview" class="active">赛制概览</a></li>
+        <li><a href="#auction">拍卖大厅</a></li>
+        <li><a href="#trading">交易市场</a></li>
+        <li><a href="#strategy">策略指南</a></li>
+      </ul>
+    </div>
+  </nav>
+
+  <section class="hero">
+    <div class="hero-bg" style="background-image: url('cover.svg');"></div>
+    <div class="container hero-content">
+      <div class="hero-badge">
+        <span>🔨</span>
+        <span>快节奏竞价 · 1-2分钟一轮</span>
+      </div>
+      <h1 class="hero-title">拍卖交易大厅</h1>
+      <p class="hero-subtitle">公开喊价与密封报价并存的金融模拟。体验价格发现、信息不对称利用与风险控制，直接感受金融市场逻辑。</p>
+      <div class="hero-meta">
+        <div class="hero-meta-item">
+          <span class="hero-meta-value">1-2分钟</span>
+          <span class="hero-meta-label">每轮节奏</span>
+        </div>
+        <div class="hero-meta-item">
+          <span class="hero-meta-value">密封/公开</span>
+          <span class="hero-meta-label">报价方式</span>
+        </div>
+        <div class="hero-meta-item">
+          <span class="hero-meta-value">多品类</span>
+          <span class="hero-meta-label">拍卖标的</span>
+        </div>
+        <div class="hero-meta-item">
+          <span class="hero-meta-value">实时</span>
+          <span class="hero-meta-label">价格发现</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" id="overview">
+    <div class="container">
+      <div class="section-header">
+        <div class="section-label">Overview</div>
+        <h2 class="section-title">拍卖类型</h2>
+        <p class="section-desc">三种核心拍卖机制，体验不同市场逻辑</p>
+      </div>
+      
+      <div class="grid-3">
+        <div class="card">
+          <div class="card-header">
+            <div class="card-icon">🏙️</div>
+            <h3 class="card-title">城市广告位拍卖</h3>
+          </div>
+          <p class="card-desc">每轮开始前，各城市置顶展示位公开竞价。价高者获得该城市品牌曝光加成，但过高出价会挤压其他投资。</p>
+        </div>
+        <div class="card">
+          <div class="card-header">
+            <div class="card-icon">📜</div>
+            <h3 class="card-title">技术专利交易</h3>
+          </div>
+          <p class="card-desc">队伍间可买卖 Tech 属性（一次性转移）。密封报价，双方议价。体验知识产权的价值与谈判艺术。</p>
+        </div>
+        <div class="card">
+          <div class="card-header">
+            <div class="card-icon">📦</div>
+            <h3 class="card-title">供应链竞标</h3>
+          </div>
+          <p class="card-desc">上游原材料供应商角色由 NPC 或教师扮演。多轮密封报价，最低报价者获得供应合同。</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" id="auction" style="background: var(--bg-secondary);">
+    <div class="container">
+      <div class="section-header">
+        <div class="section-label">Live Auction</div>
+        <h2 class="section-title">实时拍卖大厅</h2>
+        <p class="section-desc">当前正在进行的拍卖，倒计时结束前可继续出价</p>
+      </div>
+      
+      <div class="auction-hall">
+        <div class="auction-stage">
+          <div class="auction-item-name">🏙️ 杭州 · 黄金广告位</div>
+          <div class="auction-item-desc">获得杭州市场品牌展示加成 50%，持续 2 轮</div>
+          <div class="bid-label">当前最高出价</div>
+          <div class="current-bid">¥45万</div>
+          <div class="timer-display" style="font-size: 2rem; margin-top: var(--space-md);">00:47</div>
+        </div>
+        
+        <div class="bidder-list">
+          <div class="bidder-item leading">
+            <div class="bidder-avatar">🚀</div>
+            <div class="bidder-info">
+              <div class="bidder-name">未来视界队</div>
+              <div class="bidder-time">2秒前出价</div>
+            </div>
+            <div class="bidder-amount">¥45万</div>
+          </div>
+          <div class="bidder-item">
+            <div class="bidder-avatar">⭐</div>
+            <div class="bidder-info">
+              <div class="bidder-name">星辰科技队</div>
+              <div class="bidder-time">15秒前出价</div>
+            </div>
+            <div class="bidder-amount">¥42万</div>
+          </div>
+          <div class="bidder-item">
+            <div class="bidder-avatar">🌊</div>
+            <div class="bidder-info">
+              <div class="bidder-name">蓝海先锋队</div>
+              <div class="bidder-time">32秒前出价</div>
+            </div>
+            <div class="bidder-amount">¥38万</div>
+          </div>
+          <div class="bidder-item">
+            <div class="bidder-avatar">🌌</div>
+            <div class="bidder-info">
+              <div class="bidder-name">极光探索队</div>
+              <div class="bidder-time">1分钟前出价</div>
+            </div>
+            <div class="bidder-amount">¥35万</div>
+          </div>
+        </div>
+        
+        <div class="bid-controls">
+          <button class="bid-btn">+5万 (¥50万)</button>
+          <button class="bid-btn">+10万 (¥55万)</button>
+          <button class="bid-btn primary">+15万 (¥60万)</button>
+          <button class="bid-btn" style="border-color: var(--danger); color: var(--danger);">放弃</button>
+        </div>
+      </div>
+      
+      <h3 style="margin-top: var(--space-xl); margin-bottom: var(--space-lg);">📋 即将开拍的标的</h3>
+      <div class="grid-3">
+        <div class="lot-card">
+          <div class="lot-header">
+            <span style="font-size: 0.875rem; font-weight: 600;">LOT-002</span>
+            <span class="lot-status upcoming">即将开始</span>
+          </div>
+          <div class="lot-body">
+            <div class="lot-title">南京 · 品牌展示位</div>
+            <div class="lot-desc">南京市场品牌展示加成 40%，持续 2 轮</div>
+            <div class="lot-price">
+              <span class="lot-current">¥30万起</span>
+              <span class="lot-bids">0 次出价</span>
+            </div>
+          </div>
+        </div>
+        <div class="lot-card">
+          <div class="lot-header">
+            <span style="font-size: 0.875rem; font-weight: 600;">LOT-003</span>
+            <span class="lot-status upcoming">即将开始</span>
+          </div>
+          <div class="lot-body">
+            <div class="lot-title">Tech 专利包 A</div>
+            <div class="lot-desc">一次性 Tech 属性 +2.0，可转移至任意队伍</div>
+            <div class="lot-price">
+              <span class="lot-current">¥25万起</span>
+              <span class="lot-bids">0 次出价</span>
+            </div>
+          </div>
+        </div>
+        <div class="lot-card">
+          <div class="lot-header">
+            <span style="font-size: 0.875rem; font-weight: 600;">LOT-004</span>
+            <span class="lot-status upcoming">即将开始</span>
+          </div>
+          <div class="lot-body">
+            <div class="lot-title">合肥 · 原材料供应</div>
+            <div class="lot-desc">供应链成本 -20%，持续 3 轮</div>
+            <div class="lot-price">
+              <span class="lot-current">¥20万起</span>
+              <span class="lot-bids">0 次出价</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" id="trading">
+    <div class="container">
+      <div class="section-header">
+        <div class="section-label">Trading Market</div>
+        <h2 class="section-title">交易市场深度</h2>
+        <p class="section-desc">模拟真实金融市场的订单簿，体验买卖盘博弈</p>
+      </div>
+      
+      <div class="market-depth">
+        <div class="depth-side bids">
+          <div style="font-weight: 600; margin-bottom: var(--space-md); color: var(--success);">📗 买盘 (Bids)</div>
+          <div class="depth-row">
+            <span class="depth-price" style="color: var(--success);">¥42.50</span>
+            <span class="depth-amount">1,200</span>
+          </div>
+          <div class="depth-row">
+            <span class="depth-price" style="color: var(--success);">¥42.30</span>
+            <span class="depth-amount">800</span>
+          </div>
+          <div class="depth-row">
+            <span class="depth-price" style="color: var(--success);">¥42.10</span>
+            <span class="depth-amount">2,500</span>
+          </div>
+          <div class="depth-row">
+            <span class="depth-price" style="color: var(--success);">¥41.90</span>
+            <span class="depth-amount">1,000</span>
+          </div>
+          <div class="depth-row">
+            <span class="depth-price" style="color: var(--success);">¥41.70</span>
+            <span class="depth-amount">3,200</span>
+          </div>
+        </div>
+        <div class="depth-side asks">
+          <div style="font-weight: 600; margin-bottom: var(--space-md); color: var(--danger);">📕 卖盘 (Asks)</div>
+          <div class="depth-row">
+            <span class="depth-price" style="color: var(--danger);">¥42.80</span>
+            <span class="depth-amount">900</span>
+          </div>
+          <div class="depth-row">
+            <span class="depth-price" style="color: var(--danger);">¥43.00</span>
+            <span class="depth-amount">1,500</span>
+          </div>
+          <div class="depth-row">
+            <span class="depth-price" style="color: var(--danger);">¥43.20</span>
+            <span class="depth-amount">2,000</span>
+          </div>
+          <div class="depth-row">
+            <span class="depth-price" style="color: var(--danger);">¥43.50</span>
+            <span class="depth-amount">1,100</span>
+          </div>
+          <div class="depth-row">
+            <span class="depth-price" style="color: var(--danger);">¥43.80</span>
+            <span class="depth-amount">2,800</span>
+          </div>
+        </div>
+      </div>
+      
+      <div class="card mt-xl">
+        <h3 class="card-title mb-lg">📈 价格走势</h3>
+        <div class="price-chart">
+          <div class="chart-line">
+            <div class="chart-bar" style="left: 0%; height: 30%; opacity: 0.4;"></div>
+            <div class="chart-bar" style="left: 10%; height: 45%; opacity: 0.5;"></div>
+            <div class="chart-bar" style="left: 20%; height: 40%; opacity: 0.5;"></div>
+            <div class="chart-bar" style="left: 30%; height: 60%; opacity: 0.6;"></div>
+            <div class="chart-bar" style="left: 40%; height: 55%; opacity: 0.6;"></div>
+            <div class="chart-bar" style="left: 50%; height: 75%; opacity: 0.7;"></div>
+            <div class="chart-bar" style="left: 60%; height: 70%; opacity: 0.7;"></div>
+            <div class="chart-bar" style="left: 70%; height: 85%; opacity: 0.8;"></div>
+            <div class="chart-bar" style="left: 80%; height: 80%; opacity: 0.8;"></div>
+            <div class="chart-bar" style="left: 90%; height: 100%; opacity: 1;"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" id="strategy" style="background: var(--bg-secondary);">
+    <div class="container">
+      <div class="section-header">
+        <div class="section-label">Strategy</div>
+        <h2 class="section-title">拍卖策略指南</h2>
+        <p class="section-desc">不同拍卖机制下的最优策略</p>
+      </div>
+      
+      <div class="grid-2">
+        <div class="card">
+          <div class="card-header">
+            <div class="card-icon">🎯</div>
+            <h3 class="card-title">公开拍卖策略</h3>
+          </div>
+          <p class="card-desc">观察对手出价节奏，判断其预算上限。适时"狙击"——在最后一秒出高价，不给对手反应时间。注意：过度竞价会导致"赢者诅咒"。</p>
+        </div>
+        <div class="card">
+          <div class="card-header">
+            <div class="card-icon">🎭</div>
+            <h3 class="card-title">密封报价策略</h3>
+          </div>
+          <p class="card-desc">基于对标的真实价值的独立判断出价，不受他人影响。最优策略是出价比预估价值略低，保留安全边际。</p>
+        </div>
+        <div class="card">
+          <div class="card-header">
+            <div class="card-icon">⚖️</div>
+            <h3 class="card-title">风险控制原则</h3>
+          </div>
+          <p class="card-desc">设定最高出价上限并严格遵守。拍卖的肾上腺素容易让人冲动，记住：没有拍到的机会不是损失，高价拍错才是。</p>
+        </div>
+        <div class="card">
+          <div class="card-header">
+            <div class="card-icon">💡</div>
+            <h3 class="card-title">信息价值</h3>
+          </div>
+          <p class="card-desc">在拍卖前尽可能收集信息：对手预算、历史出价风格、标的真实价值区间。信息优势是超额收益的来源。</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <footer style="padding: var(--space-xl) 0; border-top: 1px solid var(--border-subtle); text-align: center;">
+    <div class="container">
+      <p style="color: var(--text-muted); font-size: 0.875rem;">商业模拟平台 · 拍卖交易大厅 · 适合高中及以上学段 · 金融素养训练</p>
+    </div>
+  </footer>
+</body>
+</html>

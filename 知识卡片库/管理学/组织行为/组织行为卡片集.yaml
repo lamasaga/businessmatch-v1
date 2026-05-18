@@ -1,0 +1,344 @@
+# ============================================
+# 组织行为知识卡片集（5张）
+# ============================================
+
+---
+content_type: KN
+content_id: "KN-MG-OB-001-v1.0"
+title: "领导力类型"
+subtitle: "不同的领导者，不同的带兵方式"
+
+target_level: "初中及以上"
+target_age: [13, 22]
+difficulty: 2
+competencies: ["CL-1"]
+bloom_level: "understand"
+
+tags: ["管理", "领导力", "团队", "基础概念"]
+ai_generable: true
+author: "平台教研团队"
+reviewer: "管理学顾问"
+version: "1.0.0"
+created_at: "2026-05-12"
+updated_at: "2026-05-12"
+
+knowledge:
+  definition: "领导力类型是对不同领导风格和行为的分类，常见的包括：专制型（命令式）、民主型（参与式）、放任型（授权式）、变革型（激励式）、服务型（支持式）。"
+  explanation: |
+    - 专制型："我说了算"——快速决策，但可能压抑团队创造力
+    - 民主型："大家一起讨论"——集思广益，但决策慢
+    - 放任型："你们自己决定"——充分授权，但可能缺乏方向
+    - 变革型："跟我一起改变世界"——激励愿景，但要求高
+    - 服务型："我来支持你"——关注团队需求，但可能被忽视
+  analogy: "就像开车：专制型是'我来开，你们坐好'；民主型是'大家商量走哪条路'；放任型是'你们开，我睡觉'；变革型是'我们一起去一个 exciting 的地方'；服务型是'我负责导航和加油，你们专心开'。"
+  
+  examples:
+    - context: "生活"
+      description: "小组作业中：有人直接分配任务（专制）、有人让大家讨论分工（民主）、有人什么都不管（放任）。"
+    - context: "平台赛事"
+      description: "在'回合制策略'的团队赛中，队长的领导风格直接影响团队表现——没有最好的风格，只有最适合情境的风格。"
+    - context: "现实商业"
+      description: "乔布斯（变革型+专制型混合）、任正非（变革型）、稻盛和夫（服务型）。"
+  
+  non_examples:
+    - misconception: "有一种'最好的'领导力"
+      correction: "领导力是情境依赖的。危机中需要专制，创新中需要民主，成熟业务中需要放任。"
+    - misconception: "领导力是天生的"
+      correction: "领导力可以通过学习和实践培养。关键是了解自己的风格，并在需要时灵活调整。"
+
+level_adaptations:
+  middle:
+    explanation: "领导者有不同的风格：有的像将军（命令），有的像朋友（商量），有的像教练（支持你）。不同时候需要不同的风格。"
+    example: "在团队活动中，你更倾向于哪种领导风格？你的队友更喜欢哪种风格？"
+  high:
+    explanation: "情境领导理论：根据任务复杂度和团队成熟度选择领导风格。领导力的自我认知与发展路径。"
+    example: "在'组织进化实验室'中，测试不同领导风格对团队绩效的影响。"
+  university:
+    explanation: "变革型领导vs交易型领导、 Authentic Leadership（真实领导）、分布式领导、领导力与组织文化的关系。"
+    example: "分析马斯克的管理风格：为什么他在特斯拉有效，但在Twitter引发争议？"
+
+platform_mapping:
+  game_modes:
+    - mode_id: "turn_based_strategy_v2"
+      application: "团队赛中的领导风格识别与优化"
+    - mode_id: "organization_evolution_v1"
+      application: "核心机制——设计和测试不同的领导模式"
+    - mode_id: "supply_chain_rpg_v1"
+      application: "跨团队谈判中的领导风格影响"
+  
+  ai_tutor_hints:
+    - trigger: "团队决策效率极低"
+      hint: "你们的讨论很充分，但决策效率很低。民主型领导在创意阶段很好，但在执行阶段可能需要更明确的决策机制。考虑设定'讨论时间上限'和'最终决策者'。"
+
+related_content:
+  prerequisites: []
+  extensions: ["KN-MG-OB-002", "KN-MG-OB-003", "KN-MG-OB-004"]
+  game_mode_applications: ["turn_based_strategy_v2", "organization_evolution_v1"]
+
+---
+content_type: KN
+content_id: "KN-MG-OB-002-v1.0"
+title: "马斯洛需求层次"
+subtitle: "人到底想要什么？"
+
+target_level: "初中及以上"
+target_age: [13, 22]
+difficulty: 2
+competencies: ["CL-1", "EL-2"]
+bloom_level: "understand"
+
+tags: ["管理", "动机", "心理", "基础概念"]
+ai_generable: true
+author: "平台教研团队"
+reviewer: "管理学顾问"
+version: "1.0.0"
+created_at: "2026-05-12"
+updated_at: "2026-05-12"
+
+knowledge:
+  definition: "马斯洛需求层次理论将人的需求分为五个层次，从低到高：生理需求（食物、水）→安全需求（安全、稳定）→社交需求（归属、友谊）→尊重需求（认可、成就）→自我实现需求（潜能、成长）。"
+  explanation: "就像游戏升级：必须先满足低级需求，才能追求高级需求。饿了的人不会想着自我实现，安全受威胁的人不会想着社交。"
+  analogy: "就像金字塔：底层是生理和安全（基础），往上是社交和尊重（关系），顶端是自我实现（意义）。地基不稳，上层会塌。"
+  
+  examples:
+    - context: "生活"
+      description: "你加入一个社团：先因为有活动场地和零食（生理）→ 然后觉得社团氛围安全（安全）→ 交到朋友（社交）→ 被认可为优秀成员（尊重）→ 通过社团发现了自己的潜能（自我实现）。"
+    - context: "平台赛事"
+      description: "在'组织进化实验室'中，理解团队成员的需求层次——有的需要明确规则（安全），有的需要认可（尊重），有的需要成长空间（自我实现）。"
+    - context: "现实商业"
+      description: "谷歌的福利：免费食堂（生理）、稳定雇佣（安全）、团队文化（社交）、晋升通道（尊重）、20%创新时间（自我实现）。"
+  
+  non_examples:
+    - misconception: "必须完全满足低层才能追求高层"
+      correction: "需求层次不是严格的阶梯，可以有重叠。艺术家在贫困中（生理未满足）仍追求创作（自我实现）。"
+    - misconception: "所有人都以同样的顺序追求需求"
+      correction: "文化、个人经历会影响需求优先级。"
+
+level_adaptations:
+  middle:
+    explanation: "人需要的东西有层次：先吃饱穿暖，再想要安全，然后想交朋友，接着想得到尊重，最后想实现自己的梦想。"
+    example: "在团队活动中，为什么有的同学更注重'赢'（尊重），有的更注重'开心'（社交）？"
+  high:
+    explanation: "马斯洛理论的现代发展：ERG理论（Existence, Relatedness, Growth）、自我决定理论（SDT：自主、胜任、归属）。"
+    example: "在'组织进化实验室'中，如何设计激励机制满足不同层次的需求？"
+  university:
+    explanation: "马斯洛理论的批判与修正、跨文化适用性、需求层次在组织设计中的应用、内在动机与外在激励的平衡。"
+    example: "分析为什么'996'文化留不住顶尖人才——过度加班侵犯了低层需求，导致高层需求无法满足。"
+
+platform_mapping:
+  game_modes:
+    - mode_id: "organization_evolution_v1"
+      application: "核心机制——根据团队成员需求设计激励体系"
+    - mode_id: "turn_based_strategy_v2"
+      application: "团队内部的动机管理和冲突调解"
+  
+  ai_tutor_hints:
+    - trigger: "团队士气低落"
+      hint: "团队士气可能和需求层次有关。检查一下：大家的基本需求（规则 clarity、公平感）是否满足了？是否有人需要更多认可或成长空间？"
+
+related_content:
+  prerequisites: []
+  extensions: ["KN-MG-OB-001", "KN-MG-OB-003", "KN-MG-OB-005"]
+  game_mode_applications: ["organization_evolution_v1", "turn_based_strategy_v2"]
+
+---
+content_type: KN
+content_id: "KN-MG-OB-003-v1.0"
+title: "团队角色理论"
+subtitle: "一个完美的团队，需要九种不同的人"
+
+target_level: "初中及以上"
+target_age: [13, 22]
+difficulty: 3
+competencies: ["CL-1", "CL-2"]
+bloom_level: "apply"
+
+tags: ["管理", "团队", "角色", "进阶概念"]
+ai_generable: true
+author: "平台教研团队"
+reviewer: "管理学顾问"
+version: "1.0.0"
+created_at: "2026-05-12"
+updated_at: "2026-05-12"
+
+knowledge:
+  definition: "贝尔宾团队角色理论（Belbin Team Roles）识别了9种团队角色：行动导向（推进者、执行者、完成者）、社交导向（协调者、团队工作者、资源调查者）、思维导向（创新者、监控评估者、专家）。一个高效团队需要多种角色的平衡。"
+  explanation: "就像足球队：需要前锋（推进者）、中场（协调者）、后卫（监控评估者）、守门员（完成者）。全是前锋的球队赢不了比赛。"
+  analogy: "就像做菜：需要有人买菜（资源调查者）、有人切菜（执行者）、有人调味（创新者）、有人尝味道（监控评估者）、有人摆盘（完成者）。如果全是尝味道的，菜永远做不出来。"
+  
+  examples:
+    - context: "生活"
+      description: "小组作业中：有人提出创意（创新者）、有人做PPT（执行者）、有人检查错误（监控评估者）、有人上台演讲（推进者）。"
+    - context: "平台赛事"
+      description: "在'回合制策略'的团队赛中，平台根据学生行为自动识别其团队角色倾向，帮助团队优化分工。"
+    - context: "现实商业"
+      description: "创业团队的经典组合：技术专家（专家）+ 产品经理（创新者）+ 运营（执行者）+ CEO（协调者/推进者）。"
+  
+  non_examples:
+    - misconception: "一个人只能有一种角色"
+      correction: "一个人可以有多个角色倾向，但通常有一两个主导角色。"
+    - misconception: "某些角色比其他角色更重要"
+      correction: "每个角色都有其价值。缺少任何一种角色，团队都可能失衡。"
+
+level_adaptations:
+  middle:
+    explanation: "团队需要不同的人：有主意的、有干活的、有检查的、有协调的。如果只有一种人，团队会出问题。"
+    example: "在团队活动中，你更像哪种角色？你们团队缺少哪种角色？"
+  high:
+    explanation: "角色与性格的匹配、角色冲突的管理、虚拟团队中的角色动态、角色随项目阶段的变化。"
+    example: "在'组织进化实验室'中，分析不同角色组合的绩效差异。"
+  university:
+    explanation: "贝尔宾理论的实证研究、Tuckman团队发展阶段（形成-震荡-规范-执行-解散）、团队多样性与绩效的关系。"
+    example: "分析为什么'明星团队'（全是大牛）往往表现不如'平衡团队'？"
+
+platform_mapping:
+  game_modes:
+    - mode_id: "turn_based_strategy_v2"
+      application: "团队赛中的角色分配与优化"
+    - mode_id: "organization_evolution_v1"
+      application: "核心机制——设计团队结构和角色分工"
+    - mode_id: "supply_chain_rpg_v1"
+      application: "跨团队谈判中的角色互补"
+  
+  ai_tutor_hints:
+    - trigger: "团队角色严重失衡（如全是创新者）"
+      hint: "你们团队似乎有很多'出主意'的人，但缺少'把主意变成现实'的人。团队角色理论告诉我们：创意需要执行来落地。考虑调整分工，让一些人专注于执行。"
+
+related_content:
+  prerequisites: ["KN-MG-OB-001"]
+  extensions: ["KN-MG-OB-004", "KN-MG-OB-005", "KN-MG-OP-001"]
+  game_mode_applications: ["turn_based_strategy_v2", "organization_evolution_v1"]
+
+---
+content_type: KN
+content_id: "KN-MG-OB-004-v1.0"
+title: "冲突管理"
+subtitle: "冲突不一定是坏事，关键看怎么处理"
+
+target_level: "初中及以上"
+target_age: [13, 22]
+difficulty: 3
+competencies: ["CL-4"]
+bloom_level: "apply"
+
+tags: ["管理", "冲突", "沟通", "进阶概念"]
+ai_generable: true
+author: "平台教研团队"
+reviewer: "管理学顾问"
+version: "1.0.0"
+created_at: "2026-05-12"
+updated_at: "2026-05-12"
+
+knowledge:
+  definition: "冲突管理是指识别、处理和解决团队或组织内部冲突的过程。冲突分为任务冲突（对事：观点不同）和关系冲突（对人：情感对立）。适度的任务冲突有助于创新，关系冲突则损害团队。"
+  explanation: |
+    - 任务冲突："我觉得应该走A路线" vs "我觉得B更好"——对事不对人，可以激发创意
+    - 关系冲突："你总是不听我的"——对人不对事，破坏信任
+    - 管理策略：竞争、合作、妥协、回避、迁就（Thomas-Kilmann模型）
+  analogy: "就像火锅：适度的辣（任务冲突）让火锅更香，但辣到吵架（关系冲突）就没人想吃了。好的厨师知道怎么控制火候。"
+  
+  examples:
+    - context: "生活"
+      description: "小组作业：有人想做视频（任务冲突），争论后决定做PPT+短视频——这是建设性的。但如果演变成'你总是自作主张'（关系冲突），团队就散了。"
+    - context: "平台赛事"
+      description: "在'产业链角色扮演'中，上下游的价格谈判必然产生冲突——学会将关系冲突转化为任务冲突是关键。"
+    - context: "现实商业"
+      description: "乔布斯和乔纳森·艾夫的设计冲突：对产品方向有激烈争论（任务冲突），但彼此尊重（无关系冲突）——催生了iPhone。"
+  
+  non_examples:
+    - misconception: "好团队没有冲突"
+      correction: "完全没有冲突的团队可能是在'群体思维'（Groupthink）——为了避免冲突而压制不同意见，反而做出错误决策。"
+    - misconception: "冲突管理就是消除冲突"
+      correction: "冲突管理是将破坏性冲突转化为建设性冲突，不是消灭所有分歧。"
+
+level_adaptations:
+  middle:
+    explanation: "冲突有两种：对事的（可以讨论）和对人的（会伤感情）。好的团队善于争论事情，但不攻击人。"
+    example: "在团队活动中，练习用'我觉得...因为...'代替'你总是...'。"
+  high:
+    explanation: "冲突管理策略的选择：根据冲突类型和紧急程度选择竞争、合作、妥协、回避或迁就。"
+    example: "在'产业链角色扮演'中，价格谈判中何时应该竞争、何时应该合作？"
+  university:
+    explanation: "组织冲突的多层次分析（个体-团队-组织-跨组织）、文化差异对冲突管理的影响、数字沟通时代的冲突新特征。"
+    example: "分析远程工作如何改变了冲突的动态——更容易回避，也更难修复关系。"
+
+platform_mapping:
+  game_modes:
+    - mode_id: "supply_chain_rpg_v1"
+      application: "核心机制——产业链谈判中的冲突管理"
+    - mode_id: "turn_based_strategy_v2"
+      application: "团队内部决策冲突的调解"
+    - mode_id: "organization_evolution_v1"
+      application: "设计冲突管理机制（如轮值CEO、投票规则）"
+  
+  ai_tutor_hints:
+    - trigger: "团队出现关系冲突信号"
+      hint: "我注意到你们的讨论从'事情该怎么做'变成了'你这个人怎么样'。冲突管理的第一步是'回归事情'——把对人的不满暂时放一边，先解决事情。"
+
+related_content:
+  prerequisites: ["KN-MG-OB-001", "KN-MG-OB-003"]
+  extensions: ["KN-MG-OB-005", "KN-MG-ET-001"]
+  game_mode_applications: ["supply_chain_rpg_v1", "turn_based_strategy_v2"]
+
+---
+content_type: KN
+content_id: "KN-MG-OB-005-v1.0"
+title: "组织文化"
+subtitle: "看不见的规则，决定了组织的行为"
+
+target_level: "高中及以上"
+target_age: [16, 22]
+difficulty: 4
+competencies: ["CL-1", "EL-3"]
+bloom_level: "analyze"
+
+tags: ["管理", "文化", "组织", "进阶概念"]
+ai_generable: true
+author: "平台教研团队"
+reviewer: "管理学顾问"
+version: "1.0.0"
+created_at: "2026-05-12"
+updated_at: "2026-05-12"
+
+knowledge:
+  definition: "组织文化是指组织成员共享的价值观、信念、行为规范和工作方式，它决定了'在我们这里，事情怎么做'。Schein将文化分为三个层次：人工制品（可见的行为和物质）、信奉的价值观（公开宣称的理念）、基本假设（无意识的信念）。"
+  explanation: "就像家庭的'家风'：有的家庭鼓励冒险（'试试看'），有的家庭强调谨慎（'安全第一'）。这些看不见的规则塑造了每个家庭成员的行为。"
+  analogy: "就像电脑的'操作系统'：你看不到它，但它决定了所有软件（员工行为）怎么运行。同样的软件在不同的操作系统上表现完全不同。"
+  
+  examples:
+    - context: "生活"
+      description: "你们班级的'文化'：是竞争型（排名很重要）还是合作型（互相帮助）？这种文化影响每个人的行为。"
+    - context: "平台赛事"
+      description: "在'组织进化实验室'中，学生需要从零设计组织文化，并观察文化如何影响团队绩效。"
+    - context: "现实商业"
+      description: "华为'狼性文化'（奋斗、竞争）vs Google'创新文化'（自由、试错）vs 海底捞'服务文化'（以客户为中心）。"
+  
+  non_examples:
+    - misconception: "文化就是墙上的标语"
+      correction: "真正的文化体现在'当没人看的时候，人们怎么做'。标语只是人工制品，底层的基本假设才是文化的核心。"
+    - misconception: "文化可以快速改变"
+      correction: "文化像冰山，改变需要很长时间（3-5年）。快速改变的文化往往是表面的。"
+
+level_adaptations:
+  high:
+    explanation: "组织文化的诊断工具：OCAI（竞争型、创新型、层级型、市场型）、文化契合度与绩效的关系。"
+    example: "在'组织进化实验室'中，设计不同文化类型的组织，比较其绩效差异。"
+  university:
+    explanation: "文化的形成与演化、并购中的文化整合、跨文化管理、数字时代的文化变迁。"
+    example: "分析微软从'内斗文化'到'成长型思维文化'的转型：Satya Nadella做了什么？"
+
+platform_mapping:
+  game_modes:
+    - mode_id: "organization_evolution_v1"
+      application: "核心机制——从零设计组织文化并测试效果"
+    - mode_id: "turn_based_strategy_v2"
+      application: "团队内部文化对决策风格的影响"
+  
+  ai_tutor_hints:
+    - trigger: "团队文化导致不健康行为（如过度竞争）"
+      hint: "你们的团队文化似乎偏向'零和竞争'。组织文化理论告诉我们：文化没有绝对的好坏，但需要考虑长期后果。当前的文化是否支持你们的长期目标？"
+
+related_content:
+  prerequisites: ["KN-MG-OB-001", "KN-MG-OB-003"]
+  extensions: ["KN-MG-ET-002", "KN-MG-ST-005"]
+  game_mode_applications: ["organization_evolution_v1", "turn_based_strategy_v2"]

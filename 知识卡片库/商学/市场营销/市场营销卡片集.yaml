@@ -1,0 +1,410 @@
+# ============================================
+# 市场营销知识卡片集（6张）
+# ============================================
+
+---
+content_type: KN
+content_id: "KN-BS-MK-001-v1.0"
+title: "STP模型"
+subtitle: "不要试图卖给所有人"
+
+target_level: "初中及以上"
+target_age: [13, 22]
+difficulty: 3
+competencies: ["ML-5", "SL-1"]
+bloom_level: "apply"
+
+tags: ["营销", "策略", "细分", "进阶概念"]
+ai_generable: true
+author: "平台教研团队"
+reviewer: "商学顾问"
+version: "1.0.0"
+created_at: "2026-05-12"
+updated_at: "2026-05-12"
+
+knowledge:
+  definition: "STP是营销战略的核心框架：Segmentation（市场细分）→ Targeting（目标市场选择）→ Positioning（市场定位）。"
+  explanation: |
+    - 细分：把大市场切成小群体（按年龄、收入、爱好等）
+    - 选择：选1-2个最适合你的群体重点服务
+    - 定位：让你的产品在目标群体心中占据独特位置
+  analogy: "就像射箭：细分是找到靶子（把一个大靶分成几个小靶），选择是选一个靶瞄准，定位是让你的箭在这个靶上留下独特的印记。"
+  
+  examples:
+    - context: "生活"
+      description: "奶茶品牌：喜茶定位年轻潮流群体，蜜雪冰城定位价格敏感学生，茶颜悦色定位国风爱好者。"
+    - context: "平台赛事"
+      description: "在'回合制策略'中，TECH路线定位技术爱好者，BRAND路线定位时尚追求者——这就是STP。"
+    - context: "现实商业"
+      description: "特斯拉早期定位'高端环保科技爱好者'，而非'所有买车的人'。"
+  
+  non_examples:
+    - misconception: "STP只是大企业的事"
+      correction: "无论多小的企业，资源都是有限的。STP帮助小企业集中火力，避免与大企业正面竞争。"
+    - misconception: "定位就是口号"
+      correction: "定位是消费者心智中的位置，口号只是表达方式。真正的定位通过产品、价格、渠道、传播一致性来建立。"
+
+level_adaptations:
+  middle:
+    explanation: "不要想卖给所有人。找到一群最需要你的人，专门为他们设计产品和服务。"
+    example: "如果你卖手工饼干，是卖给所有人，还是专门卖给'注重健康的上班族妈妈'？"
+  high:
+    explanation: "STP的量化工具：市场细分变量（地理、人口、心理、行为）、目标市场评估矩阵（吸引力vs竞争力）。"
+    example: "在'产业链角色扮演'中，你的B2B客户也需要STP——你是做高端定制还是大众批发？"
+  university:
+    explanation: "蓝海战略与STP的结合：不是在同质化市场中竞争，而是通过价值创新创造新的细分市场。"
+    example: "拼多多如何通过STP找到被忽视的'下沉市场'？"
+
+platform_mapping:
+  game_modes:
+    - mode_id: "turn_based_strategy_v2"
+      application: "路线选择本质是STP——选择目标群体并建立定位"
+    - mode_id: "user_anthropology_v1"
+      application: "核心机制——深度理解细分群体的需求和行为"
+    - mode_id: "global_trade_v1"
+      application: "不同国家的市场细分和定位策略"
+  
+  ai_tutor_hints:
+    - trigger: "学生在所有市场采用同一策略"
+      hint: "你似乎在用'一把钥匙开所有锁'。STP告诉我们：不同市场需要不同策略。看看不同城市的消费者特征，也许需要差异化定位。"
+
+related_content:
+  prerequisites: ["KN-EC-MI-001"]
+  extensions: ["KN-BS-MK-002", "KN-BS-MK-006", "KN-MG-ST-004"]
+  game_mode_applications: ["turn_based_strategy_v2", "user_anthropology_v1"]
+
+---
+content_type: KN
+content_id: "KN-BS-MK-002-v1.0"
+title: "4P营销组合"
+subtitle: "营销就是Product、Price、Place、Promotion的组合拳"
+
+target_level: "初中及以上"
+target_age: [13, 22]
+difficulty: 2
+competencies: ["ML-3", "ML-4"]
+bloom_level: "apply"
+
+tags: ["营销", "策略", "基础概念", "入门"]
+ai_generable: true
+author: "平台教研团队"
+reviewer: "商学顾问"
+version: "1.0.0"
+created_at: "2026-05-12"
+updated_at: "2026-05-12"
+
+knowledge:
+  definition: "4P是营销策略的基本框架：Product（产品）、Price（价格）、Place（渠道）、Promotion（推广）。四个要素相互配合，形成完整的营销方案。"
+  explanation: |
+    - 产品：你卖什么？有什么特点？
+    - 价格：卖多少钱？什么定价策略？
+    - 渠道：在哪里卖？线上还是线下？
+    - 推广：怎么让人知道？广告、社交媒体？
+  analogy: "就像做一道菜：Product是食材，Price是定价，Place是在哪家餐厅卖，Promotion是菜单和宣传。四个都要好，菜才卖得好。"
+  
+  examples:
+    - context: "生活"
+      description: "奶茶店的4P：产品（珍珠奶茶）、价格（15元/杯）、渠道（学校门口）、推广（小红书打卡）。"
+    - context: "平台赛事"
+      description: "在'回合制策略'中，你的4P是：Product（路线选择）、Price（预算分配）、Place（城市选择）、Promotion（Show投入）。"
+    - context: "现实商业"
+      description: "苹果的4P：高端产品（Product）、溢价定价（Price）、直营店+官网（Place）、极简广告（Promotion）。"
+  
+  non_examples:
+    - misconception: "4P就是营销的全部"
+      correction: "4P是经典框架，但现代营销还涉及People、Process、Physical Evidence（服务营销的7P），以及数字化时代的增长黑客。"
+    - misconception: "4P是独立的四个决策"
+      correction: "4P必须协调一致。高端产品不能配低价，小众产品不能铺大众渠道。"
+
+level_adaptations:
+  middle:
+    explanation: "卖东西要考虑四个问题：卖什么（产品）、多少钱（价格）、在哪卖（渠道）、怎么让人知道（推广）。"
+    example: "为你班级的义卖活动设计4P：产品（手工饼干）、价格（5元/袋）、渠道（操场摊位）、推广（班级群海报）。"
+  high:
+    explanation: "4P的协同效应和冲突管理。产品生命周期不同阶段的4P策略调整。"
+    example: "在'品牌造物坊'中，如何用4P为一个新品牌制定上市策略？"
+  university:
+    explanation: "从4P到4C（消费者、成本、便利、沟通）的范式转换。数字化时代的营销组合：内容、社群、数据、体验。"
+    example: "分析完美日记的4P/4C：为什么能在短时间内挑战国际大牌？"
+
+platform_mapping:
+  game_modes:
+    - mode_id: "turn_based_strategy_v2"
+      application: "4P在赛事中的映射：Product=路线，Price=投入分配，Place=城市，Promotion=Show投入"
+    - mode_id: "brand_workshop_v1"
+      application: "核心机制——为虚拟品牌设计完整的4P策略"
+  
+  ai_tutor_hints:
+    - trigger: "学生4P要素不协调（如高端定位但低Show投入）"
+      hint: "你的定位是高端，但推广投入不足。4P需要协调一致——高端产品需要匹配的品牌传播才能被消费者认知。"
+
+related_content:
+  prerequisites: ["KN-EC-MI-001"]
+  extensions: ["KN-BS-MK-003", "KN-BS-MK-005"]
+  game_mode_applications: ["turn_based_strategy_v2", "brand_workshop_v1"]
+
+---
+content_type: KN
+content_id: "KN-BS-MK-003-v1.0"
+title: "品牌资产"
+subtitle: "为什么同样的T恤，印上logo就贵十倍？"
+
+target_level: "高中及以上"
+target_age: [15, 22]
+difficulty: 3
+competencies: ["ML-3", "ML-5"]
+bloom_level: "understand"
+
+tags: ["营销", "品牌", "价值", "进阶概念"]
+ai_generable: true
+author: "平台教研团队"
+reviewer: "商学顾问"
+version: "1.0.0"
+created_at: "2026-05-12"
+updated_at: "2026-05-12"
+
+knowledge:
+  definition: "品牌资产是品牌赋予产品超出其功能价值的额外价值，包括品牌知名度、品牌联想、感知质量、品牌忠诚度等维度。"
+  explanation: "同样的白T恤，无牌卖30元，优衣库卖99元，Supreme卖1000元。多出来的价格就是品牌资产——它代表了信任、身份认同、情感连接。"
+  analogy: "就像人的 reputation（名声）——两个能力相同的人，名声好的那个更容易获得机会和更高的报酬。"
+  
+  examples:
+    - context: "生活"
+      description: "你愿意为'明星同款'多付钱——不是因为功能更好，而是因为品牌带来的社交价值。"
+    - context: "平台赛事"
+      description: "在'品牌造物坊'中，学生的品牌故事和视觉设计直接影响消费者的品牌感知和溢价能力。"
+    - context: "现实商业"
+      description: "可口可乐的品牌价值超过其物理资产——即使工厂一夜烧毁，凭品牌就能重建。"
+  
+  non_examples:
+    - misconception: "品牌资产就是logo和广告"
+      correction: "品牌资产存在于消费者心智中。没有消费者认知的logo只是一张图。"
+    - misconception: "品牌资产只能正向"
+      correction: "品牌资产可以为负——负面事件（如食品安全）会摧毁品牌资产。"
+
+level_adaptations:
+  high:
+    explanation: "品牌资产的四个维度（Aaker模型）：品牌忠诚度、品牌知名度、感知质量、品牌联想（包括专利、渠道等其他资产）。"
+    example: "在'回合制策略'中，SHOW投入如何积累品牌资产？品牌资产如何转化为更高的利润率和客户留存？"
+  university:
+    explanation: "品牌资产的财务估值方法、品牌延伸策略的风险、数字化时代的品牌共创（用户参与品牌建设）。"
+    example: "分析李宁的'国潮'品牌重塑：如何通过品牌叙事实现品牌资产的快速提升？"
+
+platform_mapping:
+  game_modes:
+    - mode_id: "brand_workshop_v1"
+      application: "核心机制——学生从零创建品牌，体验品牌资产的积累过程"
+    - mode_id: "turn_based_strategy_v2"
+      application: "SHOW投入的累积效应——品牌资产如何在多轮中发挥作用"
+    - mode_id: "investor_pitch_v1"
+      application: "品牌价值是估值的重要组成部分"
+  
+  ai_tutor_hints:
+    - trigger: "学生忽视品牌投入只关注短期销售"
+      hint: "你专注于短期销售，但忽视了品牌资产的积累。短期看，品牌投入减少了当期利润；长期看，品牌资产能带来溢价和忠诚度。"
+
+related_content:
+  prerequisites: ["KN-BS-MK-002"]
+  extensions: ["KN-BS-MK-006", "KN-EC-BE-001"]
+  game_mode_applications: ["brand_workshop_v1", "turn_based_strategy_v2"]
+
+---
+content_type: KN
+content_id: "KN-BS-MK-004-v1.0"
+title: "消费者决策旅程"
+subtitle: "从'不知道'到'买买买'，消费者经历了什么？"
+
+target_level: "高中及以上"
+target_age: [15, 22]
+difficulty: 3
+competencies: ["ML-2", "ML-5"]
+bloom_level: "understand"
+
+tags: ["营销", "消费者", "行为", "进阶概念"]
+ai_generable: true
+author: "平台教研团队"
+reviewer: "商学顾问"
+version: "1.0.0"
+created_at: "2026-05-12"
+updated_at: "2026-05-12"
+
+knowledge:
+  definition: "消费者决策旅程描述了消费者从产生需求到最终购买的完整过程，通常包括：认知（Awareness）→兴趣（Interest）→考虑（Consideration）→购买（Purchase）→忠诚（Loyalty）。"
+  explanation: "就像追一部剧：先看到预告片（认知）→ 觉得有意思搜评论（兴趣）→ 对比其他剧（考虑）→ 开始追剧（购买）→ 推荐给朋友（忠诚）。"
+  analogy: "就像爬山：山脚是'不知道'，山腰是'在比较'，山顶是'决定了'。营销要在不同阶段提供不同的"路标"。"
+  
+  examples:
+    - context: "生活"
+      description: "买手机：刷到广告（认知）→ 看测评视频（兴趣）→ 对比三款机型（考虑）→ 下单（购买）→ 一年后推荐给同学（忠诚）。"
+    - context: "平台赛事"
+      description: "在'用户人类学'中，学生需要深入理解消费者的决策旅程，找到关键影响点。"
+    - context: "现实商业"
+      description: "奈飞通过数据分析消费者在每个阶段的流失点，优化推荐算法减少'考虑'阶段的犹豫。"
+  
+  non_examples:
+    - misconception: "消费者决策总是理性的"
+      correction: "大多数消费决策受到情感、社交、习惯等非理性因素影响。旅程模型也要考虑情感触点。"
+    - misconception: "旅程是线性的"
+      correction: "现代消费者旅程是环状的、非线性的——可能跳过某些阶段，也可能反复循环。"
+
+level_adaptations:
+  high:
+    explanation: "AIDA模型（注意-兴趣-欲望-行动）与决策旅程的关系。不同产品类别的旅程差异（高涉入vs低涉入）。"
+    example: "在'品牌造物坊'中，如何为新产品设计各阶段的营销策略？"
+  university:
+    explanation: "消费者决策的多元理论：计划行为理论、技术接受模型、体验经济时代的决策特征。"
+    example: "直播电商如何缩短决策旅程？'冲动购买'的心理机制是什么？"
+
+platform_mapping:
+  game_modes:
+    - mode_id: "user_anthropology_v1"
+      application: "核心机制——深度调研消费者在各阶段的需求和痛点"
+    - mode_id: "brand_workshop_v1"
+      application: "设计品牌传播策略覆盖消费者旅程的每个阶段"
+  
+  ai_tutor_hints:
+    - trigger: "学生只关注'购买'阶段忽视前期培育"
+      hint: "你只在'购买'阶段发力，但忽略了消费者的认知和兴趣阶段。品牌需要长期培育——今天的认知是明天的购买。"
+
+related_content:
+  prerequisites: ["KN-BS-MK-001"]
+  extensions: ["KN-EC-BE-001", "KN-EC-BE-003"]
+  game_mode_applications: ["user_anthropology_v1", "brand_workshop_v1"]
+
+---
+content_type: KN
+content_id: "KN-BS-MK-005-v1.0"
+title: "定价策略"
+subtitle: "价格不只是数字，是信号"
+
+target_level: "初中及以上"
+target_age: [13, 22]
+difficulty: 3
+competencies: ["ML-4"]
+bloom_level: "apply"
+
+tags: ["营销", "定价", "策略", "进阶概念"]
+ai_generable: true
+author: "平台教研团队"
+reviewer: "商学顾问"
+version: "1.0.0"
+created_at: "2026-05-12"
+updated_at: "2026-05-12"
+
+knowledge:
+  definition: "定价策略是企业根据成本、竞争、消费者心理和目标市场等因素，制定产品价格的方法和原则。常见策略包括成本加成、竞争导向、价值导向、撇脂定价、渗透定价等。"
+  explanation: |
+    - 成本加成：成本+期望利润 = 价格
+    - 竞争导向：参考竞争对手定价
+    - 价值导向：根据消费者感知的价值定价
+    - 撇脂定价：先定高价收割早期用户，再降价
+    - 渗透定价：先定低价抢占市场，再提价
+  analogy: "就像钓鱼：成本加成是'按鱼饵成本定价'，竞争导向是'看别人钓什么价'，价值导向是'这条鱼对食客值多少钱'。"
+  
+  examples:
+    - context: "生活"
+      description: "iPhone新品发布定价高（撇脂），一年后降价（收割完早期用户）。小米手机低价入场（渗透），建立规模后推高端。"
+    - context: "平台赛事"
+      description: "在'拍卖交易大厅'中，起拍价策略直接影响最终成交价——这是锚定定价的应用。"
+    - context: "现实商业"
+      description: "Costco的定价策略：所有商品毛利率不超过14%，通过会员费盈利——价值导向的极端形式。"
+  
+  non_examples:
+    - misconception: "定价就是成本+利润"
+      correction: "这只是成本加成法，是最基础的定价方式。现代定价更多基于消费者感知价值。"
+    - misconception: "低价总是更好"
+      correction: "过低的价格可能损害品牌形象，引发价格战，或让消费者质疑质量。"
+
+level_adaptations:
+  middle:
+    explanation: "定价有三种思路：按成本定、按对手定、按价值定。聪明的定价师会综合考虑。"
+    example: "在'定价实验室'中，尝试三种定价方式，看哪种利润最高。"
+  high:
+    explanation: "心理定价技巧：尾数定价（9.99）、捆绑定价、诱饵定价（加一个明显不划算的选项让目标选项显得合理）。"
+    example: "分析星巴克的'中杯陷阱'：如何利用诱饵定价影响消费者选择？"
+  university:
+    explanation: "动态定价、收益管理、价格歧视（一级/二级/三级）、订阅经济的定价模型。"
+    example: "Uber的动态定价算法：如何用价格调节供需？消费者接受度如何？"
+
+platform_mapping:
+  game_modes:
+    - mode_id: "pricing_lab_v1"
+      application: "核心机制——实验不同定价策略的效果"
+    - mode_id: "auction_trading_v1"
+      application: "拍卖中的价格发现机制和心理定价"
+    - mode_id: "turn_based_strategy_v2"
+      application: "预算分配中的隐性定价决策"
+  
+  ai_tutor_hints:
+    - trigger: "学生长期采用同一价格不变"
+      hint: "你的价格从未调整。现实商业中，定价是动态的——根据竞争、成本、需求变化而调整。试试在不同情境下调整定价策略。"
+    - trigger: "学生定价远高于价值感知"
+      hint: "你的定价比消费者的感知价值高很多。记住：价格不只是数字，是信号。过高的信号可能是'太贵了，不值得'。"
+
+related_content:
+  prerequisites: ["KN-EC-MI-001", "KN-EC-MI-002"]
+  extensions: ["KN-EC-BE-001", "KN-BS-MK-003"]
+  game_mode_applications: ["pricing_lab_v1", "auction_trading_v1"]
+
+---
+content_type: KN
+content_id: "KN-BS-MK-006-v1.0"
+title: "市场定位"
+subtitle: "在消费者心智中占据一个独特的位置"
+
+target_level: "高中及以上"
+target_age: [15, 22]
+difficulty: 4
+competencies: ["ML-3", "ML-5"]
+bloom_level: "apply"
+
+tags: ["营销", "定位", "差异化", "进阶概念"]
+ai_generable: true
+author: "平台教研团队"
+reviewer: "商学顾问"
+version: "1.0.0"
+created_at: "2026-05-12"
+updated_at: "2026-05-12"
+
+knowledge:
+  definition: "市场定位是指企业通过在目标消费者心智中建立独特、有价值的差异化形象，使自身产品与竞争对手区别开来。"
+  explanation: "定位不是你对产品做什么，而是你对消费者心智做什么。比如：沃尔沃=安全，宝马=驾驶乐趣，奔驰=豪华——同样的车，不同的定位。"
+  analogy: "就像班级里的同学：有人是'学霸'，有人是'体育健将'，有人是'社交达人'。每个人都在别人心中有一个'标签'——这就是定位。"
+  
+  examples:
+    - context: "生活"
+      description: "在同学眼中，你是'数学很好的人'还是'很会组织活动的人'？这就是你个人品牌的定位。"
+    - context: "平台赛事"
+      description: "在'品牌造物坊'中，学生需要为自己的品牌选择一个独特的定位，并在所有传播中保持一致。"
+    - context: "现实商业"
+      description: "瑞幸咖啡的定位：不是'中国星巴克'，而是'年轻人的第一杯咖啡'——完全不同的定位带来不同的策略。"
+  
+  non_examples:
+    - misconception: "定位就是广告语"
+      correction: "广告语是定位的表达，但定位是整个企业的战略方向——产品、价格、渠道、服务都要支撑这个定位。"
+    - misconception: "定位后不能改变"
+      correction: "定位可以调整（ repositioning），但需要时间和资源，且可能有风险（消费者认知惯性）。"
+
+level_adaptations:
+  high:
+    explanation: "定位三角：消费者需求（Want）、竞争对手空白（Gap）、自身能力（Can）。好的定位是这三者的交集。"
+    example: "在'回合制策略'中，如果所有队伍都选TECH，BRAND路线的定位空白就出现了——这就是定位机会。"
+  university:
+    explanation: "定位理论的演进：Ries & Trout的定位 → Kapferer的品牌身份棱镜 → 数字化时代的实时定位（基于大数据的动态调整）。"
+    example: "分析元气森林的'无糖'定位：如何在可口可乐和农夫山泉之间找到空白点？"
+
+platform_mapping:
+  game_modes:
+    - mode_id: "brand_workshop_v1"
+      application: "核心机制——为品牌选择定位并设计支撑策略"
+    - mode_id: "turn_based_strategy_v2"
+      application: "路线选择即定位——如何在竞争中找到差异化空间"
+  
+  ai_tutor_hints:
+    - trigger: "学生的定位与所有竞争对手相同"
+      hint: "你的定位和太多人重叠了。定位的关键是'独特性'——如果所有人都一样，消费者凭什么选你？寻找差异化空间。"
+
+related_content:
+  prerequisites: ["KN-BS-MK-001"]
+  extensions: ["KN-BS-MK-003", "KN-MG-ST-004"]
+  game_mode_applications: ["brand_workshop_v1", "turn_based_strategy_v2"]

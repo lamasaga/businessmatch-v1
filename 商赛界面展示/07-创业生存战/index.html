@@ -1,0 +1,619 @@
+<!DOCTYPE html>
+<html lang="zh-CN" data-theme="survival">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>创业生存战 - 商业模拟平台</title>
+  <link rel="stylesheet" href="../shared-styles.css">
+  <style>
+    :root {
+      --theme: #f97316;
+      --theme-soft: rgba(249,115,22,0.15);
+      --theme-glow: rgba(249,115,22,0.4);
+    }
+    
+    .vitals-bar {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: var(--space-md);
+      margin-bottom: var(--space-xl);
+    }
+    .vital-card {
+      background: var(--bg-card);
+      border-radius: var(--radius-md);
+      padding: var(--space-lg);
+      text-align: center;
+      border: 2px solid var(--border-subtle);
+      position: relative;
+      overflow: hidden;
+    }
+    .vital-card.danger { border-color: var(--danger); }
+    .vital-card.warning { border-color: var(--warning); }
+    .vital-icon { font-size: 2rem; margin-bottom: var(--space-sm); }
+    .vital-value {
+      font-family: var(--font-mono);
+      font-size: 2rem;
+      font-weight: 800;
+    }
+    .vital-label {
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+    .vital-bar {
+      height: 6px;
+      background: var(--bg-hover);
+      border-radius: 9999px;
+      margin-top: var(--space-sm);
+      overflow: hidden;
+    }
+    .vital-fill {
+      height: 100%;
+      border-radius: 9999px;
+      transition: width 0.5s ease;
+    }
+    
+    .crisis-banner {
+      background: linear-gradient(135deg, rgba(239,68,68,0.2), rgba(245,158,11,0.15));
+      border: 2px solid var(--danger);
+      border-radius: var(--radius-lg);
+      padding: var(--space-xl);
+      margin-bottom: var(--space-xl);
+      position: relative;
+      animation: pulse 2s infinite;
+    }
+    .crisis-title {
+      font-size: 1.5rem;
+      font-weight: 800;
+      color: var(--danger);
+      margin-bottom: var(--space-sm);
+    }
+    .crisis-desc {
+      color: var(--text-secondary);
+      margin-bottom: var(--space-md);
+    }
+    .crisis-timer {
+      font-family: var(--font-mono);
+      font-size: 2.5rem;
+      font-weight: 800;
+      color: var(--danger);
+    }
+    
+    .expense-breakdown {
+      background: var(--bg-card);
+      border-radius: var(--radius-md);
+      padding: var(--space-lg);
+    }
+    .expense-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: var(--space-sm) 0;
+      border-bottom: 1px solid var(--border-subtle);
+    }
+    .expense-item:last-child { border-bottom: none; }
+    .expense-name { display: flex; align-items: center; gap: var(--space-sm); }
+    .expense-amount {
+      font-family: var(--font-mono);
+      font-weight: 700;
+    }
+    .expense-bar {
+      width: 100px;
+      height: 6px;
+      background: var(--bg-hover);
+      border-radius: 9999px;
+      overflow: hidden;
+    }
+    
+    .decision-card {
+      background: var(--bg-card);
+      border-radius: var(--radius-md);
+      padding: var(--space-lg);
+      border: 2px solid var(--border-subtle);
+      cursor: pointer;
+      transition: all var(--transition-fast);
+    }
+    .decision-card:hover {
+      border-color: var(--theme);
+      background: var(--theme-soft);
+    }
+    .decision-impact {
+      display: flex;
+      gap: var(--space-md);
+      margin-top: var(--space-md);
+      padding-top: var(--space-md);
+      border-top: 1px solid var(--border-subtle);
+    }
+    .impact-item {
+      text-align: center;
+      flex: 1;
+    }
+    .impact-value {
+      font-family: var(--font-mono);
+      font-weight: 700;
+      font-size: 1rem;
+    }
+    .impact-value.positive { color: var(--success); }
+    .impact-value.negative { color: var(--danger); }
+    .impact-label {
+      font-size: 0.625rem;
+      color: var(--text-muted);
+      text-transform: uppercase;
+    }
+    
+    .burn-rate-chart {
+      height: 200px;
+      background: var(--bg-card);
+      border-radius: var(--radius-md);
+      padding: var(--space-md);
+      position: relative;
+    }
+    .burn-line {
+      position: absolute;
+      bottom: var(--space-md);
+      left: var(--space-md);
+      right: var(--space-md);
+      height: 150px;
+      border-left: 2px solid var(--border-subtle);
+      border-bottom: 2px solid var(--border-subtle);
+    }
+    .burn-point {
+      position: absolute;
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: var(--theme);
+    }
+    .burn-death-line {
+      position: absolute;
+      left: 0;
+      right: 0;
+      height: 1px;
+      background: var(--danger);
+      border-top: 2px dashed var(--danger);
+    }
+    
+    .survival-log {
+      background: var(--bg-card);
+      border-radius: var(--radius-md);
+      padding: var(--space-md);
+      max-height: 250px;
+      overflow-y: auto;
+    }
+    .log-entry {
+      display: flex;
+      gap: var(--space-sm);
+      padding: var(--space-sm) 0;
+      border-bottom: 1px solid var(--border-subtle);
+      font-size: 0.8125rem;
+    }
+    .log-day {
+      color: var(--text-muted);
+      font-family: var(--font-mono);
+      white-space: nowrap;
+      min-width: 50px;
+    }
+    .log-event { color: var(--text-secondary); }
+    .log-amount {
+      margin-left: auto;
+      font-family: var(--font-mono);
+      font-weight: 700;
+    }
+    .log-amount.out { color: var(--danger); }
+    .log-amount.in { color: var(--success); }
+    
+    .runway-display {
+      text-align: center;
+      padding: var(--space-xl);
+      background: linear-gradient(135deg, var(--bg-card), var(--bg-hover));
+      border-radius: var(--radius-lg);
+      border: 2px solid var(--border-subtle);
+    }
+    .runway-number {
+      font-family: var(--font-mono);
+      font-size: 4rem;
+      font-weight: 900;
+      color: var(--theme);
+    }
+    .runway-label {
+      font-size: 1rem;
+      color: var(--text-secondary);
+      margin-top: var(--space-sm);
+    }
+    .runway-warning {
+      font-size: 0.875rem;
+      color: var(--warning);
+      margin-top: var(--space-sm);
+    }
+  </style>
+</head>
+<body>
+  <nav class="navbar">
+    <div class="container navbar-inner">
+      <a href="#" class="navbar-brand">
+        <div class="logo-icon" style="background: var(--theme);">🔥</div>
+        <span>商业模拟平台</span>
+      </a>
+      <ul class="navbar-nav">
+        <li><a href="#overview" class="active">赛制概览</a></li>
+        <li><a href="#vitals">生命体征</a></li>
+        <li><a href="#crisis">危机决策</a></li>
+        <li><a href="#runway">跑道计算</a></li>
+      </ul>
+    </div>
+  </nav>
+
+  <section class="hero">
+    <div class="hero-bg" style="background-image: url('cover.svg');"></div>
+    <div class="container hero-content">
+      <div class="hero-badge" style="border-color: var(--theme); color: var(--theme);">
+        <span>🔥</span>
+        <span>生存制 · 现金流断裂即出局</span>
+      </div>
+      <h1 class="hero-title">创业生存战</h1>
+      <p class="hero-subtitle">模拟真实创业的残酷法则：现金流断裂即出局。没有排名，只有生与死。训练风险意识、成本控制与危机决策能力。</p>
+      <div class="hero-meta">
+        <div class="hero-meta-item">
+          <span class="hero-meta-value" style="color: var(--theme);">生存制</span>
+          <span class="hero-meta-label">胜负规则</span>
+        </div>
+        <div class="hero-meta-item">
+          <span class="hero-meta-value" style="color: var(--theme);">现金流</span>
+          <span class="hero-meta-label">核心指标</span>
+        </div>
+        <div class="hero-meta-item">
+          <span class="hero-meta-value" style="color: var(--theme);">出局</span>
+          <span class="hero-meta-label">失败条件</span>
+        </div>
+        <div class="hero-meta-item">
+          <span class="hero-meta-value" style="color: var(--theme);">高中+</span>
+          <span class="hero-meta-label">适合学段</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" id="overview">
+    <div class="container">
+      <div class="section-header">
+        <div class="section-label">Overview</div>
+        <h2 class="section-title">生存法则</h2>
+        <p class="section-desc">不是比谁赚得多，而是比谁活得久</p>
+      </div>
+      
+      <div class="grid-3">
+        <div class="card">
+          <div class="card-header">
+            <div class="card-icon" style="background: var(--theme-soft); color: var(--theme);">💀</div>
+            <h3 class="card-title">出局机制</h3>
+          </div>
+          <p class="card-desc">现金流归零即出局，没有复活机会。就像真实创业，一旦资金链断裂，公司就倒闭了。最后存活者胜。</p>
+        </div>
+        <div class="card">
+          <div class="card-header">
+            <div class="card-icon" style="background: var(--theme-soft); color: var(--theme);">⏰</div>
+            <h3 class="card-title">时间压力</h3>
+          </div>
+          <p class="card-desc">每轮代表一个月，固定支出自动扣除。收入不确定，支出是确定的。你必须在钱用完之前找到盈利模式。</p>
+        </div>
+        <div class="card">
+          <div class="card-header">
+            <div class="card-icon" style="background: var(--theme-soft); color: var(--theme);">🎲</div>
+            <h3 class="card-title">随机灾难</h3>
+          </div>
+          <p class="card-desc">客户流失、核心员工离职、设备故障、疫情冲击...随机事件不断考验你的韧性。没有安全区。</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" id="vitals" style="background: var(--bg-secondary);">
+    <div class="container">
+      <div class="section-header">
+        <div class="section-label">Vitals</div>
+        <h2 class="section-title">公司生命体征</h2>
+        <p class="section-desc">四大核心指标，任何一项归零都是致命打击</p>
+      </div>
+      
+      <div class="vitals-bar">
+        <div class="vital-card danger">
+          <div class="vital-icon">💰</div>
+          <div class="vital-value" style="color: var(--danger);">¥23万</div>
+          <div class="vital-label">现金流</div>
+          <div class="vital-bar"><div class="vital-fill" style="width: 8%; background: var(--danger);"></div></div>
+        </div>
+        <div class="vital-card warning">
+          <div class="vital-icon">👥</div>
+          <div class="vital-value" style="color: var(--warning);">12人</div>
+          <div class="vital-label">团队规模</div>
+          <div class="vital-bar"><div class="vital-fill" style="width: 60%; background: var(--warning);"></div></div>
+        </div>
+        <div class="vital-card">
+          <div class="vital-icon">📈</div>
+          <div class="vital-value" style="color: var(--success);">¥8万</div>
+          <div class="vital-label">月收入</div>
+          <div class="vital-bar"><div class="vital-fill" style="width: 35%; background: var(--success);"></div></div>
+        </div>
+        <div class="vital-card">
+          <div class="vital-icon">🏃</div>
+          <div class="vital-value" style="color: var(--theme);">2.9月</div>
+          <div class="vital-label">跑道剩余</div>
+          <div class="vital-bar"><div class="vital-fill" style="width: 29%; background: var(--theme);"></div></div>
+        </div>
+      </div>
+      
+      <div class="grid-2">
+        <div class="expense-breakdown">
+          <h4 style="margin-bottom: var(--space-lg);">💸 月度支出明细</h4>
+          <div class="expense-item">
+            <div class="expense-name">
+              <span>👥</span>
+              <span>人员工资</span>
+            </div>
+            <div style="display: flex; align-items: center; gap: var(--space-sm);">
+              <div class="expense-bar"><div class="vital-fill" style="width: 70%; background: var(--danger);"></div></div>
+              <span class="expense-amount">¥4.5万</span>
+            </div>
+          </div>
+          <div class="expense-item">
+            <div class="expense-name">
+              <span>🏢</span>
+              <span>办公租金</span>
+            </div>
+            <div style="display: flex; align-items: center; gap: var(--space-sm);">
+              <div class="expense-bar"><div class="vital-fill" style="width: 30%; background: var(--warning);"></div></div>
+              <span class="expense-amount">¥1.8万</span>
+            </div>
+          </div>
+          <div class="expense-item">
+            <div class="expense-name">
+              <span>🌐</span>
+              <span>服务器/云服务</span>
+            </div>
+            <div style="display: flex; align-items: center; gap: var(--space-sm);">
+              <div class="expense-bar"><div class="vital-fill" style="width: 15%; background: var(--info);"></div></div>
+              <span class="expense-amount">¥0.6万</span>
+            </div>
+          </div>
+          <div class="expense-item">
+            <div class="expense-name">
+              <span>📢</span>
+              <span>市场推广</span>
+            </div>
+            <div style="display: flex; align-items: center; gap: var(--space-sm);">
+              <div class="expense-bar"><div class="vital-fill" style="width: 25%; background: var(--theme);"></div></div>
+              <span class="expense-amount">¥1.2万</span>
+            </div>
+          </div>
+          <div class="expense-item">
+            <div class="expense-name">
+              <span>⚖️</span>
+              <span>法务/财务</span>
+            </div>
+            <div style="display: flex; align-items: center; gap: var(--space-sm);">
+              <div class="expense-bar"><div class="vital-fill" style="width: 10%; background: var(--text-muted);"></div></div>
+              <span class="expense-amount">¥0.4万</span>
+            </div>
+          </div>
+          <div class="expense-item" style="padding-top: var(--space-md); border-top: 2px solid var(--border-subtle);">
+            <div class="expense-name" style="font-weight: 700;">
+              <span>📊</span>
+              <span>月度总支出</span>
+            </div>
+            <span class="expense-amount" style="color: var(--danger);">¥8.5万</span>
+          </div>
+        </div>
+        
+        <div>
+          <div class="runway-display">
+            <div class="runway-number">2.9</div>
+            <div class="runway-label">个月跑道剩余</div>
+            <div class="runway-warning">⚠️ 警告：低于3个月安全线</div>
+          </div>
+          
+          <div class="card mt-lg">
+            <h4 style="margin-bottom: var(--space-md);">📉 现金流走势</h4>
+            <div class="burn-rate-chart">
+              <div class="burn-line">
+                <div class="burn-death-line" style="bottom: 0;"></div>
+                <div class="burn-point" style="left: 0%; bottom: 90%;"></div>
+                <div class="burn-point" style="left: 14%; bottom: 78%;"></div>
+                <div class="burn-point" style="left: 28%; bottom: 65%;"></div>
+                <div class="burn-point" style="left: 42%; bottom: 55%;"></div>
+                <div class="burn-point" style="left: 56%; bottom: 40%;"></div>
+                <div class="burn-point" style="left: 70%; bottom: 25%;"></div>
+                <div class="burn-point" style="left: 84%; bottom: 15%;"></div>
+                <div class="burn-point" style="left: 95%; bottom: 8%; background: var(--danger); width: 12px; height: 12px;"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" id="crisis">
+    <div class="container">
+      <div class="section-header">
+        <div class="section-label">Crisis</div>
+        <h2 class="section-title">危机决策</h2>
+        <p class="section-desc">每个选择都有代价，没有完美答案</p>
+      </div>
+      
+      <div class="crisis-banner">
+        <div class="crisis-title">🚨 重大危机：最大客户流失</div>
+        <div class="crisis-desc">占你收入 40% 的核心客户「宏达集团」通知你，他们将在下月终止合作，转投你的竞争对手。这将导致月收入从 ¥8万 骤降至 ¥4.8万。</div>
+        <div style="display: flex; justify-content: space-between; align-items: center;">
+          <div>
+            <div style="font-size: 0.75rem; color: var(--text-muted);">决策倒计时</div>
+            <div class="crisis-timer">03:00</div>
+          </div>
+          <div style="text-align: right;">
+            <div style="font-size: 0.75rem; color: var(--text-muted);">若不行动，跑道将缩短至</div>
+            <div style="font-family: var(--font-mono); font-size: 1.5rem; font-weight: 800; color: var(--danger);">1.2 个月</div>
+          </div>
+        </div>
+      </div>
+      
+      <div class="grid-2">
+        <div class="decision-card">
+          <h4 style="margin-bottom: var(--space-sm);">✂️ 方案 A：紧急裁员 50%</h4>
+          <p style="font-size: 0.875rem; color: var(--text-secondary); line-height: 1.6;">立即裁掉6名员工，将月度支出从 ¥8.5万 降至 ¥5.5万。需要支付 N+1 补偿金约 ¥6万，但可延长跑道至 4个月。</p>
+          <div class="decision-impact">
+            <div class="impact-item">
+              <div class="impact-value negative">-6人</div>
+              <div class="impact-label">团队</div>
+            </div>
+            <div class="impact-item">
+              <div class="impact-value positive">+1.1月</div>
+              <div class="impact-label">跑道</div>
+            </div>
+            <div class="impact-item">
+              <div class="impact-value negative">-¥6万</div>
+              <div class="impact-label">一次性</div>
+            </div>
+            <div class="impact-item">
+              <div class="impact-value negative">-30%</div>
+              <div class="impact-label">产能</div>
+            </div>
+          </div>
+        </div>
+        
+        <div class="decision-card">
+          <h4 style="margin-bottom: var(--space-sm);">💰 方案 B：紧急融资</h4>
+          <p style="font-size: 0.875rem; color: var(--text-secondary); line-height: 1.6;">以极低估值（稀释 40% 股权）向天使投资人借款 ¥30万。可立即补充现金流，但失去公司控制权的风险极大。</p>
+          <div class="decision-impact">
+            <div class="impact-item">
+              <div class="impact-value positive">+¥30万</div>
+              <div class="impact-label">现金</div>
+            </div>
+            <div class="impact-item">
+              <div class="impact-value positive">+10月</div>
+              <div class="impact-label">跑道</div>
+            </div>
+            <div class="impact-item">
+              <div class="impact-value negative">-40%</div>
+              <div class="impact-label">股权</div>
+            </div>
+            <div class="impact-item">
+              <div class="impact-value negative">高</div>
+              <div class="impact-label">风险</div>
+            </div>
+          </div>
+        </div>
+        
+        <div class="decision-card">
+          <h4 style="margin-bottom: var(--space-sm);">🎯 方案 C：全力挽回客户</h4>
+          <p style="font-size: 0.875rem; color: var(--text-secondary); line-height: 1.6;">派出创始人亲自拜访宏达集团CEO，承诺降价 20% 并提供专属服务团队。有 50% 概率挽回，但利润率将大幅下降。</p>
+          <div class="decision-impact">
+            <div class="impact-item">
+              <div class="impact-value positive">50%</div>
+              <div class="impact-label">挽回率</div>
+            </div>
+            <div class="impact-item">
+              <div class="impact-value negative">-20%</div>
+              <div class="impact-label">利润率</div>
+            </div>
+            <div class="impact-item">
+              <div class="impact-value negative">-¥2万</div>
+              <div class="impact-label">成本</div>
+            </div>
+            <div class="impact-item">
+              <div class="impact-value">?</div>
+              <div class="impact-label">不确定</div>
+            </div>
+          </div>
+        </div>
+        
+        <div class="decision-card">
+          <h4 style="margin-bottom: var(--space-sm);">🚀 方案 D： pivot 转型</h4>
+          <p style="font-size: 0.875rem; color: var(--text-secondary); line-height: 1.6;">放弃现有B端业务，All in C端产品。需要3个月开发期，期间零收入。如果成功，市场空间是现在的10倍。</p>
+          <div class="decision-impact">
+            <div class="impact-item">
+              <div class="impact-value negative">3月零收</div>
+              <div class="impact-label">过渡期</div>
+            </div>
+            <div class="impact-item">
+              <div class="impact-value positive">10x</div>
+              <div class="impact-label">潜在市场</div>
+            </div>
+            <div class="impact-item">
+              <div class="impact-value negative">70%</div>
+              <div class="impact-label">失败率</div>
+            </div>
+            <div class="impact-item">
+              <div class="impact-value">🎲</div>
+              <div class="impact-label">豪赌</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" id="runway" style="background: var(--bg-secondary);">
+    <div class="container">
+      <div class="section-header">
+        <div class="section-label">Runway</div>
+        <h2 class="section-title">生存日志</h2>
+        <p class="section-desc">每一个决策都记录在案，复盘时清晰可见</p>
+      </div>
+      
+      <div class="survival-log">
+        <div class="log-entry">
+          <span class="log-day">M1</span>
+          <span class="log-event">公司成立，获得种子轮 ¥100万</span>
+          <span class="log-amount in">+¥100万</span>
+        </div>
+        <div class="log-entry">
+          <span class="log-day">M2</span>
+          <span class="log-event">招聘首批团队（8人），租用办公室</span>
+          <span class="log-amount out">-¥12万</span>
+        </div>
+        <div class="log-entry">
+          <span class="log-day">M3</span>
+          <span class="log-event">产品上线，获得首批客户</span>
+          <span class="log-amount in">+¥3万</span>
+        </div>
+        <div class="log-entry">
+          <span class="log-day">M4</span>
+          <span class="log-event">签下「宏达集团」大单，月收入翻倍</span>
+          <span class="log-amount in">+¥8万</span>
+        </div>
+        <div class="log-entry">
+          <span class="log-day">M5</span>
+          <span class="log-event">团队扩张至12人，支出增加</span>
+          <span class="log-amount out">-¥8.5万</span>
+        </div>
+        <div class="log-entry">
+          <span class="log-day">M6</span>
+          <span class="log-event">服务器故障，紧急修复费用</span>
+          <span class="log-amount out">-¥3万</span>
+        </div>
+        <div class="log-entry">
+          <span class="log-day">M7</span>
+          <span class="log-event">竞品降价，客户流失 2 家</span>
+          <span class="log-amount out">-¥2万</span>
+        </div>
+        <div class="log-entry" style="background: rgba(239,68,68,0.05);">
+          <span class="log-day">M8</span>
+          <span class="log-event" style="color: var(--danger); font-weight: 600;">🚨 宏达集团通知终止合作</span>
+          <span class="log-amount out" style="color: var(--danger);">-¥3.2万/月</span>
+        </div>
+        <div class="log-entry">
+          <span class="log-day">M8</span>
+          <span class="log-event">当前现金流...</span>
+          <span class="log-amount out" style="color: var(--danger);">¥23万</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <footer style="padding: var(--space-xl) 0; border-top: 1px solid var(--border-subtle); text-align: center;">
+    <div class="container">
+      <p style="color: var(--text-muted); font-size: 0.875rem;">商业模拟平台 · 创业生存战 · 适合高中及以上学段 · 风险教育与韧性训练</p>
+    </div>
+  </footer>
+</body>
+</html>

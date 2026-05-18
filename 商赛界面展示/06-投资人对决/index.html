@@ -1,0 +1,565 @@
+<!DOCTYPE html>
+<html lang="zh-CN" data-theme="investor">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>投资人对决 - 商业模拟平台</title>
+  <link rel="stylesheet" href="../shared-styles.css">
+  <style>
+    :root {
+      --theme: #8b5cf6;
+      --theme-soft: rgba(139,92,246,0.15);
+      --theme-glow: rgba(139,92,246,0.4);
+    }
+    
+    .pitch-stage {
+      background: linear-gradient(135deg, #1e1b4b, #312e81);
+      border-radius: var(--radius-lg);
+      padding: var(--space-2xl);
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+      margin-bottom: var(--space-xl);
+    }
+    .pitch-stage::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%238b5cf6' fill-opacity='0.05'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+    }
+    .pitch-timer {
+      font-family: var(--font-mono);
+      font-size: 3rem;
+      font-weight: 800;
+      color: #a78bfa;
+      margin-bottom: var(--space-md);
+    }
+    .pitch-title {
+      font-size: 1.75rem;
+      font-weight: 700;
+      margin-bottom: var(--space-sm);
+    }
+    
+    .valuation-calculator {
+      background: var(--bg-card);
+      border-radius: var(--radius-lg);
+      padding: var(--space-xl);
+      border: 1px solid var(--border-subtle);
+    }
+    .calc-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: var(--space-md) 0;
+      border-bottom: 1px solid var(--border-subtle);
+    }
+    .calc-row:last-child { border-bottom: none; }
+    .calc-label { color: var(--text-secondary); font-size: 0.875rem; }
+    .calc-value {
+      font-family: var(--font-mono);
+      font-weight: 700;
+      font-size: 1.125rem;
+    }
+    .calc-highlight { color: var(--theme); font-size: 1.5rem; }
+    
+    .term-sheet {
+      background: var(--bg-card);
+      border-radius: var(--radius-md);
+      padding: var(--space-lg);
+      border: 2px solid var(--border-subtle);
+      margin-bottom: var(--space-md);
+    }
+    .term-sheet.selected {
+      border-color: var(--theme);
+      background: var(--theme-soft);
+    }
+    .term-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: var(--space-md);
+    }
+    .term-investor {
+      display: flex;
+      align-items: center;
+      gap: var(--space-sm);
+    }
+    .term-avatar {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      background: var(--theme-soft);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.25rem;
+    }
+    .term-terms {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: var(--space-md);
+    }
+    .term-item {
+      text-align: center;
+      padding: var(--space-md);
+      background: var(--bg-hover);
+      border-radius: var(--radius-sm);
+    }
+    .term-value { font-family: var(--font-mono); font-weight: 700; font-size: 1.125rem; }
+    .term-label { font-size: 0.75rem; color: var(--text-muted); margin-top: 4px; }
+    
+    .portfolio-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: var(--space-md);
+    }
+    .portfolio-card {
+      background: var(--bg-card);
+      border-radius: var(--radius-md);
+      padding: var(--space-md);
+      border: 1px solid var(--border-subtle);
+    }
+    .portfolio-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: var(--space-sm);
+    }
+    .portfolio-return {
+      font-family: var(--font-mono);
+      font-weight: 700;
+    }
+    .return-positive { color: var(--success); }
+    .return-negative { color: var(--danger); }
+    .portfolio-chart {
+      height: 60px;
+      background: var(--bg-hover);
+      border-radius: var(--radius-sm);
+      position: relative;
+      overflow: hidden;
+    }
+    .chart-mini-bar {
+      position: absolute;
+      bottom: 0;
+      width: 14%;
+      background: var(--theme);
+      border-radius: 2px 2px 0 0;
+      opacity: 0.6;
+    }
+    
+    .roadmap-timeline {
+      display: flex;
+      gap: var(--space-md);
+      overflow-x: auto;
+      padding-bottom: var(--space-md);
+    }
+    .roadmap-item {
+      flex-shrink: 0;
+      width: 180px;
+      padding: var(--space-md);
+      background: var(--bg-card);
+      border-radius: var(--radius-md);
+      border: 2px solid var(--border-subtle);
+      text-align: center;
+    }
+    .roadmap-item.completed { border-color: var(--success); }
+    .roadmap-item.current { border-color: var(--theme); box-shadow: 0 0 15px var(--theme-glow); }
+    .roadmap-round {
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      margin-bottom: var(--space-sm);
+    }
+    .roadmap-name {
+      font-weight: 600;
+      font-size: 0.875rem;
+      margin-bottom: 4px;
+    }
+    .roadmap-goal {
+      font-size: 0.75rem;
+      color: var(--text-secondary);
+    }
+  </style>
+</head>
+<body>
+  <nav class="navbar">
+    <div class="container navbar-inner">
+      <a href="#" class="navbar-brand">
+        <div class="logo-icon" style="background: var(--theme);">💰</div>
+        <span>商业模拟平台</span>
+      </a>
+      <ul class="navbar-nav">
+        <li><a href="#overview" class="active">赛制概览</a></li>
+        <li><a href="#pitch">路演环节</a></li>
+        <li><a href="#valuation">估值博弈</a></li>
+        <li><a href="#portfolio">投资组合</a></li>
+      </ul>
+    </div>
+  </nav>
+
+  <section class="hero">
+    <div class="hero-bg" style="background-image: url('cover.svg');"></div>
+    <div class="container hero-content">
+      <div class="hero-badge" style="border-color: var(--theme); color: var(--theme);">
+        <span>💰</span>
+        <span>创业者 vs 投资人 · 双阵营对抗</span>
+      </div>
+      <h1 class="hero-title">投资人对决</h1>
+      <p class="hero-subtitle">学生分为"创业者"和"投资人"两派。创业者需要路演、融资、经营；投资人用虚拟资金投资，按回报率排名。体验投融资、估值谈判、尽职调查与退出机制。</p>
+      <div class="hero-meta">
+        <div class="hero-meta-item">
+          <span class="hero-meta-value" style="color: var(--theme);">双阵营</span>
+          <span class="hero-meta-label">对抗模式</span>
+        </div>
+        <div class="hero-meta-item">
+          <span class="hero-meta-value" style="color: var(--theme);">5分钟</span>
+          <span class="hero-meta-label">路演时限</span>
+        </div>
+        <div class="hero-meta-item">
+          <span class="hero-meta-value" style="color: var(--theme);">虚拟资金</span>
+          <span class="hero-meta-label">投资额度</span>
+        </div>
+        <div class="hero-meta-item">
+          <span class="hero-meta-value" style="color: var(--theme);">大学+</span>
+          <span class="hero-meta-label">适合学段</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" id="overview">
+    <div class="container">
+      <div class="section-header">
+        <div class="section-label">Overview</div>
+        <h2 class="section-title">双阵营机制</h2>
+        <p class="section-desc">同一市场，两种视角，完全不同的获胜逻辑</p>
+      </div>
+      
+      <div class="grid-2">
+        <div class="card" style="border-left: 3px solid var(--theme);">
+          <div class="card-header">
+            <div class="card-icon" style="background: var(--theme-soft); color: var(--theme);">🚀</div>
+            <h3 class="card-title">创业者阵营</h3>
+          </div>
+          <p class="card-desc">你的目标是获得尽可能高的估值，融到足够的资金，并在经营中证明这个估值是合理的。最终按公司估值排名。</p>
+          <div style="margin-top: var(--space-md);">
+            <div style="font-size: 0.75rem; color: var(--text-muted); margin-bottom: var(--space-sm);">核心能力</div>
+            <div style="display: flex; gap: var(--space-sm); flex-wrap: wrap;">
+              <span class="tag" style="background: var(--theme-soft); color: var(--theme);">路演表达</span>
+              <span class="tag" style="background: var(--theme-soft); color: var(--theme);">商业计划</span>
+              <span class="tag" style="background: var(--theme-soft); color: var(--theme);">估值谈判</span>
+              <span class="tag" style="background: var(--theme-soft); color: var(--theme);">经营兑现</span>
+            </div>
+          </div>
+        </div>
+        
+        <div class="card" style="border-left: 3px solid #f59e0b;">
+          <div class="card-header">
+            <div class="card-icon" style="background: rgba(245,158,11,0.15); color: #f59e0b;">💼</div>
+            <h3 class="card-title">投资人阵营</h3>
+          </div>
+          <p class="card-desc">你的目标是用有限的虚拟资金，投资最有潜力的创业项目，获得最高的投资回报率(ROI)。最终按组合回报率排名。</p>
+          <div style="margin-top: var(--space-md);">
+            <div style="font-size: 0.75rem; color: var(--text-muted); margin-bottom: var(--space-sm);">核心能力</div>
+            <div style="display: flex; gap: var(--space-sm); flex-wrap: wrap;">
+              <span class="tag" style="background: rgba(245,158,11,0.15); color: #f59e0b;">项目判断</span>
+              <span class="tag" style="background: rgba(245,158,11,0.15); color: #f59e0b;">估值分析</span>
+              <span class="tag" style="background: rgba(245,158,11,0.15); color: #f59e0b;">风险分散</span>
+              <span class="tag" style="background: rgba(245,158,11,0.15); color: #f59e0b;">投后管理</span>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <div class="card mt-xl">
+        <h3 class="card-title mb-lg">🗺️ 融资路线图</h3>
+        <div class="roadmap-timeline">
+          <div class="roadmap-item completed">
+            <div class="roadmap-round">第一阶段</div>
+            <div class="roadmap-name">种子轮</div>
+            <div class="roadmap-goal">估值 ¥500万</div>
+          </div>
+          <div class="roadmap-item completed">
+            <div class="roadmap-round">第二阶段</div>
+            <div class="roadmap-name">天使轮</div>
+            <div class="roadmap-goal">估值 ¥2000万</div>
+          </div>
+          <div class="roadmap-item current">
+            <div class="roadmap-round">第三阶段</div>
+            <div class="roadmap-name">A轮融资</div>
+            <div class="roadmap-goal">估值 ¥1亿</div>
+          </div>
+          <div class="roadmap-item">
+            <div class="roadmap-round">第四阶段</div>
+            <div class="roadmap-name">B轮融资</div>
+            <div class="roadmap-goal">估值 ¥5亿</div>
+          </div>
+          <div class="roadmap-item">
+            <div class="roadmap-round">终局</div>
+            <div class="roadmap-name">IPO / 并购</div>
+            <div class="roadmap-goal">估值 ¥30亿+</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" id="pitch" style="background: var(--bg-secondary);">
+    <div class="container">
+      <div class="section-header">
+        <div class="section-label">Pitch Session</div>
+        <h2 class="section-title">路演现场</h2>
+        <p class="section-desc">5分钟决定命运，用故事和数据打动投资人</p>
+      </div>
+      
+      <div class="pitch-stage">
+        <div style="position: relative; z-index: 1;">
+          <div class="pitch-timer">02:34</div>
+          <div class="pitch-title">「未来视界」团队正在路演</div>
+          <p style="color: rgba(255,255,255,0.7); max-width: 500px; margin: 0 auto;">AI驱动的个性化教育平台 · 已服务10万学生 · 月收入增长40%</p>
+          <div style="margin-top: var(--space-xl);">
+            <button class="btn btn-primary" style="background: var(--theme); box-shadow: 0 4px 14px var(--theme-glow);">📹 观看路演视频</button>
+          </div>
+        </div>
+      </div>
+      
+      <div class="grid-2">
+        <div class="card">
+          <h4 class="card-title mb-md">📊 创业者评分维度</h4>
+          <div style="display: flex; flex-direction: column; gap: var(--space-md);">
+            <div>
+              <div style="display: flex; justify-content: space-between; margin-bottom: 4px;">
+                <span style="font-size: 0.875rem;">商业逻辑清晰度</span>
+                <span style="font-weight: 700; color: var(--theme);">8.5/10</span>
+              </div>
+              <div class="progress-bar"><div class="progress-fill" style="width: 85%; background: var(--theme);"></div></div>
+            </div>
+            <div>
+              <div style="display: flex; justify-content: space-between; margin-bottom: 4px;">
+                <span style="font-size: 0.875rem;">数据支撑力度</span>
+                <span style="font-weight: 700; color: var(--theme);">7.2/10</span>
+              </div>
+              <div class="progress-bar"><div class="progress-fill" style="width: 72%; background: var(--theme);"></div></div>
+            </div>
+            <div>
+              <div style="display: flex; justify-content: space-between; margin-bottom: 4px;">
+                <span style="font-size: 0.875rem;">团队说服力</span>
+                <span style="font-weight: 700; color: var(--theme);">9.1/10</span>
+              </div>
+              <div class="progress-bar"><div class="progress-fill" style="width: 91%; background: var(--theme);"></div></div>
+            </div>
+            <div>
+              <div style="display: flex; justify-content: space-between; margin-bottom: 4px;">
+                <span style="font-size: 0.875rem;">市场洞察深度</span>
+                <span style="font-weight: 700; color: var(--theme);">6.8/10</span>
+              </div>
+              <div class="progress-bar"><div class="progress-fill" style="width: 68%; background: var(--theme);"></div></div>
+            </div>
+          </div>
+        </div>
+        
+        <div class="card">
+          <h4 class="card-title mb-md">💡 投资人提问环节</h4>
+          <div style="display: flex; flex-direction: column; gap: var(--space-md);">
+            <div style="padding: var(--space-md); background: var(--bg-hover); border-radius: var(--radius-sm);">
+              <div style="font-size: 0.75rem; color: var(--text-muted); margin-bottom: 4px;">投资人 A</div>
+              <div style="font-size: 0.875rem;">"你们的获客成本是多少？与行业平均水平相比如何？"</div>
+            </div>
+            <div style="padding: var(--space-md); background: var(--bg-hover); border-radius: var(--radius-sm);">
+              <div style="font-size: 0.75rem; color: var(--text-muted); margin-bottom: 4px;">投资人 B</div>
+              <div style="font-size: 0.875rem;">"如果腾讯明天推出同类产品，你们的护城河在哪里？"</div>
+            </div>
+            <div style="padding: var(--space-md); background: var(--bg-hover); border-radius: var(--radius-sm);">
+              <div style="font-size: 0.75rem; color: var(--text-muted); margin-bottom: 4px;">投资人 C</div>
+              <div style="font-size: 0.875rem;">"上一轮估值2000万，这一轮要1亿，增长依据是什么？"</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" id="valuation">
+    <div class="container">
+      <div class="section-header">
+        <div class="section-label">Valuation</div>
+        <h2 class="section-title">估值博弈与Term Sheet</h2>
+        <p class="section-desc">估值不是数字游戏，而是对未来的共识</p>
+      </div>
+      
+      <div class="grid-2">
+        <div class="valuation-calculator">
+          <h4 style="margin-bottom: var(--space-lg);">🧮 估值计算器</h4>
+          <div class="calc-row">
+            <span class="calc-label">年营收</span>
+            <span class="calc-value">¥1,200万</span>
+          </div>
+          <div class="calc-row">
+            <span class="calc-label">年增长率</span>
+            <span class="calc-value" style="color: var(--success);">120%</span>
+          </div>
+          <div class="calc-row">
+            <span class="calc-label">毛利率</span>
+            <span class="calc-value">65%</span>
+          </div>
+          <div class="calc-row">
+            <span class="calc-label">行业P/S倍数</span>
+            <span class="calc-value">8-12x</span>
+          </div>
+          <div class="calc-row">
+            <span class="calc-label">团队溢价系数</span>
+            <span class="calc-value">1.3x</span>
+          </div>
+          <div class="calc-row">
+            <span class="calc-label">技术壁垒加成</span>
+            <span class="calc-value">+15%</span>
+          </div>
+          <div class="calc-row">
+            <span class="calc-label" style="font-weight: 600;">合理估值区间</span>
+            <span class="calc-value calc-highlight">¥1.2亿 - ¥1.8亿</span>
+          </div>
+        </div>
+        
+        <div>
+          <h4 style="margin-bottom: var(--space-lg);">📋 收到的Term Sheet</h4>
+          
+          <div class="term-sheet selected">
+            <div class="term-header">
+              <div class="term-investor">
+                <div class="term-avatar">🦁</div>
+                <div>
+                  <div style="font-weight: 600;">红杉资本（模拟）</div>
+                  <div style="font-size: 0.75rem; color: var(--text-muted);">顶级VC · 专注教育科技</div>
+                </div>
+              </div>
+              <span class="tag" style="background: var(--theme-soft); color: var(--theme);">已选中</span>
+            </div>
+            <div class="term-terms">
+              <div class="term-item">
+                <div class="term-value" style="color: var(--theme);">¥1.5亿</div>
+                <div class="term-label">投前估值</div>
+              </div>
+              <div class="term-item">
+                <div class="term-value" style="color: var(--theme);">¥3000万</div>
+                <div class="term-label">投资金额</div>
+              </div>
+              <div class="term-item">
+                <div class="term-value" style="color: var(--theme);">20%</div>
+                <div class="term-label">股权比例</div>
+              </div>
+            </div>
+            <div style="margin-top: var(--space-md); font-size: 0.8125rem; color: var(--text-secondary);">
+              附加条款：反稀释保护 · 优先清算权 · 董事会席位
+            </div>
+          </div>
+          
+          <div class="term-sheet">
+            <div class="term-header">
+              <div class="term-investor">
+                <div class="term-avatar">🦅</div>
+                <div>
+                  <div style="font-weight: 600;">高瓴资本（模拟）</div>
+                  <div style="font-size: 0.75rem; color: var(--text-muted);">长期价值投资</div>
+                </div>
+              </div>
+            </div>
+            <div class="term-terms">
+              <div class="term-item">
+                <div class="term-value">¥1.2亿</div>
+                <div class="term-label">投前估值</div>
+              </div>
+              <div class="term-item">
+                <div class="term-value">¥4000万</div>
+                <div class="term-label">投资金额</div>
+              </div>
+              <div class="term-item">
+                <div class="term-value">25%</div>
+                <div class="term-label">股权比例</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" id="portfolio" style="background: var(--bg-secondary);">
+    <div class="container">
+      <div class="section-header">
+        <div class="section-label">Portfolio</div>
+        <h2 class="section-title">投资人组合看板</h2>
+        <p class="section-desc">分散投资，动态调整，追求组合最优回报</p>
+      </div>
+      
+      <div class="card mb-xl">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: var(--space-lg);">
+          <div>
+            <div style="font-size: 0.75rem; color: var(--text-muted);">组合总价值</div>
+            <div style="font-size: 2rem; font-weight: 800; font-family: var(--font-mono);">¥8,450万</div>
+          </div>
+          <div style="text-align: right;">
+            <div style="font-size: 0.75rem; color: var(--text-muted);">总回报率</div>
+            <div style="font-size: 2rem; font-weight: 800; font-family: var(--font-mono); color: var(--success);">+68.5%</div>
+          </div>
+        </div>
+        <div class="progress-bar" style="height: 12px;">
+          <div class="progress-fill" style="width: 68.5%; background: linear-gradient(90deg, var(--theme), var(--success));"></div>
+        </div>
+      </div>
+      
+      <div class="portfolio-grid">
+        <div class="portfolio-card">
+          <div class="portfolio-header">
+            <span style="font-weight: 600; font-size: 0.875rem;">🚀 未来视界</span>
+            <span class="portfolio-return return-positive">+125%</span>
+          </div>
+          <div style="font-size: 0.75rem; color: var(--text-muted); margin-bottom: var(--space-sm);">AI教育 · 投资 ¥500万</div>
+          <div class="portfolio-chart">
+            <div class="chart-mini-bar" style="left: 0%; height: 30%;"></div>
+            <div class="chart-mini-bar" style="left: 17%; height: 45%;"></div>
+            <div class="chart-mini-bar" style="left: 34%; height: 60%;"></div>
+            <div class="chart-mini-bar" style="left: 51%; height: 80%;"></div>
+            <div class="chart-mini-bar" style="left: 68%; height: 100%;"></div>
+            <div class="chart-mini-bar" style="left: 85%; height: 95%;"></div>
+          </div>
+        </div>
+        <div class="portfolio-card">
+          <div class="portfolio-header">
+            <span style="font-weight: 600; font-size: 0.875rem;">🌿 绿源科技</span>
+            <span class="portfolio-return return-positive">+45%</span>
+          </div>
+          <div style="font-size: 0.75rem; color: var(--text-muted); margin-bottom: var(--space-sm);">环保家居 · 投资 ¥800万</div>
+          <div class="portfolio-chart">
+            <div class="chart-mini-bar" style="left: 0%; height: 50%;"></div>
+            <div class="chart-mini-bar" style="left: 17%; height: 55%;"></div>
+            <div class="chart-mini-bar" style="left: 34%; height: 48%;"></div>
+            <div class="chart-mini-bar" style="left: 51%; height: 65%;"></div>
+            <div class="chart-mini-bar" style="left: 68%; height: 72%;"></div>
+            <div class="chart-mini-bar" style="left: 85%; height: 70%;"></div>
+          </div>
+        </div>
+        <div class="portfolio-card">
+          <div class="portfolio-header">
+            <span style="font-weight: 600; font-size: 0.875rem;">⚡ 闪电配送</span>
+            <span class="portfolio-return return-negative">-15%</span>
+          </div>
+          <div style="font-size: 0.75rem; color: var(--text-muted); margin-bottom: var(--space-sm);">即时物流 · 投资 ¥600万</div>
+          <div class="portfolio-chart">
+            <div class="chart-mini-bar" style="left: 0%; height: 80%;"></div>
+            <div class="chart-mini-bar" style="left: 17%; height: 75%;"></div>
+            <div class="chart-mini-bar" style="left: 34%; height: 60%;"></div>
+            <div class="chart-mini-bar" style="left: 51%; height: 50%;"></div>
+            <div class="chart-mini-bar" style="left: 68%; height: 45%;"></div>
+            <div class="chart-mini-bar" style="left: 85%; height: 40%;"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <footer style="padding: var(--space-xl) 0; border-top: 1px solid var(--border-subtle); text-align: center;">
+    <div class="container">
+      <p style="color: var(--text-muted); font-size: 0.875rem;">商业模拟平台 · 投资人对决 · 适合大学及以上学段 · 投融资与估值训练</p>
+    </div>
+  </footer>
+</body>
+</html>

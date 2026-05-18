@@ -1,0 +1,200 @@
+# ============================================
+# 商业伦理知识卡片集（3张）
+# ============================================
+
+---
+content_type: KN
+content_id: "KN-MG-ET-001-v1.0"
+title: "利益相关者理论"
+subtitle: "企业的决策，影响着谁？"
+
+target_level: "高中及以上"
+target_age: [15, 22]
+difficulty: 3
+competencies: ["EL-2", "SL-1"]
+bloom_level: "analyze"
+
+tags: ["伦理", "利益相关者", "责任", "进阶概念"]
+ai_generable: true
+author: "平台教研团队"
+reviewer: "伦理学顾问"
+version: "1.0.0"
+created_at: "2026-05-12"
+updated_at: "2026-05-12"
+
+knowledge:
+  definition: "利益相关者理论（Stakeholder Theory）认为企业的责任不仅在于股东（Shareholder），还应考虑所有受企业决策影响的群体（Stakeholder），包括员工、客户、供应商、社区、环境等。"
+  explanation: "传统观点：企业只为股东赚钱。利益相关者观点：企业像一个生态系统，股东只是其中一部分。忽视了员工、客户、社区，企业也无法长期生存。"
+  analogy: "就像花园：股东是花园的主人（想要收获），但如果没有土壤（环境）、水（供应商）、阳光（社区支持）、园丁（员工），花园根本长不出果实。"
+  
+  examples:
+    - context: "生活"
+      description: "班级组织活动：不仅要考虑活动效果（股东价值），还要考虑参与同学的安全（员工/参与者）、借用场地的规则（社区）、预算是否合理（财务）。"
+    - context: "平台赛事"
+      description: "在'ESG可持续经营'中，每个决策都会影响多个利益相关者——学生需要权衡多方利益。"
+    - context: "现实商业"
+      description: "Patagonia：把环境作为核心利益相关者，'地球优先，利润其次'——反而获得了更高的品牌忠诚度和长期利润。"
+  
+  non_examples:
+    - misconception: "利益相关者理论就是'好人主义'"
+      correction: "利益相关者理论有坚实的商业逻辑：照顾好利益相关者，长期利润反而更高。这不是道德绑架，而是战略智慧。"
+    - misconception: "所有利益相关者同等重要"
+      correction: "不同情境下，利益相关者的优先级不同。关键是'识别'和'权衡'，不是'平均对待'。"
+
+level_adaptations:
+  high:
+    explanation: "利益相关者映射：权力-利益矩阵（高权力高利益：重点管理；低权力低利益：最小关注）。利益相关者之间的冲突与协调。"
+    example: "在'产业链角色扮演'中，分析每个角色的利益诉求和权力——谁是关键利益相关者？"
+  university:
+    explanation: "利益相关者理论的演进： descriptive（描述企业如何运作）、instrumental（利益相关者管理如何影响绩效）、normative（为何应重视利益相关者）。"
+    example: "分析马斯克收购Twitter后的利益相关者冲突：广告商、用户、员工、监管者，如何平衡？"
+
+platform_mapping:
+  game_modes:
+    - mode_id: "esg_scoring_v1"
+      application: "核心机制——每个决策都会影响不同利益相关者的评分"
+    - mode_id: "case_simulation_v1"
+      application: "案例分析中的利益相关者识别"
+    - mode_id: "supply_chain_rpg_v1"
+      application: "产业链上下游的利益相关者博弈"
+  
+  ai_tutor_hints:
+    - trigger: "学生决策严重损害某利益相关者"
+      hint: "你的决策给某个利益相关者（如员工或环境）带来了很大成本。利益相关者理论提醒我们：短期压榨某一方可能带来长期反弹。考虑更平衡的方案。"
+
+related_content:
+  prerequisites: ["KN-EC-MI-008"]
+  extensions: ["KN-MG-ET-002", "KN-MG-ET-003", "KN-MG-OB-002"]
+  game_mode_applications: ["esg_scoring_v1", "case_simulation_v1", "supply_chain_rpg_v1"]
+
+---
+content_type: KN
+content_id: "KN-MG-ET-002-v1.0"
+title: "CSR与ESG"
+subtitle: "企业不仅要赚钱，还要对社会负责"
+
+target_level: "高中及以上"
+target_age: [16, 22]
+difficulty: 3
+competencies: ["EL-3", "EL-4"]
+bloom_level: "understand"
+
+tags: ["伦理", "社会责任", "可持续", "进阶概念"]
+ai_generable: true
+author: "平台教研团队"
+reviewer: "伦理学顾问"
+version: "1.0.0"
+created_at: "2026-05-12"
+updated_at: "2026-05-12"
+
+knowledge:
+  definition: |
+    - CSR（企业社会责任）：企业自愿承担的对社会和环境的责任，超越法律要求
+    - ESG（环境、社会、治理）：衡量企业可持续性的三个维度——Environmental（环境）、Social（社会）、Governance（治理）
+  explanation: "CSR是'我想做个好人'，ESG是'用可量化的指标证明你是个好人'。ESG让社会责任从模糊的口号变成了可以评估、比较、投资的硬指标。"
+  analogy: "就像学生评价：CSR是'你是个好学生'（模糊评价），ESG是'你的德育分90、体育分85、智育分95'（具体指标）。"
+  
+  examples:
+    - context: "生活"
+      description: "班级公益活动：CSR是'我们班去做志愿者'，ESG是'记录服务时长、受益人数、环境影响'。"
+    - context: "平台赛事"
+      description: "在'ESG可持续经营'中，每个决策都会影响E/S/G三个维度的评分，最终影响企业总价值。"
+    - context: "现实商业"
+      description: "MSCI ESG评级：全球投资者用ESG评分筛选投资标的。ESG评分低的企业可能面临融资成本上升。"
+  
+  non_examples:
+    - misconception: "ESG只是营销噱头"
+      correction: "虽然存在'漂绿'（Greenwashing）现象，但真正的ESG与财务绩效正相关。它是风险管理工具，不是单纯的公关。"
+    - misconception: "ESG意味着牺牲利润"
+      correction: "研究显示ESG表现好的企业长期回报往往更高。ESG帮助识别管理质量和长期风险。"
+
+level_adaptations:
+  high:
+    explanation: "ESG的三个维度细分：E（碳排放、资源利用、生物多样性）、S（员工权益、供应链责任、社区影响）、G（董事会独立性、反腐败、信息披露）。"
+    example: "在'ESG可持续经营'中，如何在E/S/G之间做权衡？"
+  university:
+    explanation: "ESG投资的经济学逻辑、ESG评级的方法论差异、ESG与'股东至上'理论的争论、漂绿的识别与监管。"
+    example: "分析欧盟CSRD（企业可持续发展报告指令）：强制ESG披露如何改变企业行为？"
+
+platform_mapping:
+  game_modes:
+    - mode_id: "esg_scoring_v1"
+      application: "核心机制——ESG三维评分影响企业长期价值"
+    - mode_id: "case_simulation_v1"
+      application: "ESG困境案例分析"
+  
+  ai_tutor_hints:
+    - trigger: "学生完全忽视ESG维度"
+      hint: "你专注于短期利润，但忽视了ESG维度。在现实中，ESG评分低的企业面临监管风险、融资成本上升和声誉损失。长期看，ESG不是成本，而是风险管理。"
+
+related_content:
+  prerequisites: ["KN-MG-ET-001"]
+  extensions: ["KN-MG-ET-003", "KN-EC-MI-008"]
+  game_mode_applications: ["esg_scoring_v1", "case_simulation_v1"]
+
+---
+content_type: KN
+content_id: "KN-MG-ET-003-v1.0"
+title: "商业伦理决策框架"
+subtitle: "当利润和道德冲突时，怎么选？"
+
+target_level: "高中及以上"
+target_age: [16, 22]
+difficulty: 4
+competencies: ["EL-1", "EL-2", "SL-1"]
+bloom_level: "evaluate"
+
+tags: ["伦理", "决策", "道德", "高阶概念"]
+ai_generable: true
+author: "平台教研团队"
+reviewer: "伦理学顾问"
+version: "1.0.0"
+created_at: "2026-05-12"
+updated_at: "2026-05-12"
+
+knowledge:
+  definition: "商业伦理决策框架是帮助决策者在面临道德困境时进行系统思考的工具。常见框架包括：功利主义（最大多数人的最大幸福）、义务论（遵守道德义务和规则）、德性伦理（一个有德性的人会怎么做）、正义论（公平分配）。"
+  explanation: |
+    - 功利主义：这个决策能让最多人受益吗？
+    - 义务论：这个决策是否符合我的道德义务（如不说谎、不伤害）？
+    - 德性伦理：一个诚实、勇敢的人会怎么做？
+    - 正义论：这个决策是否公平？是否考虑了最弱势的群体？
+  analogy: "就像十字路口的四个指示牌：功利主义说'选让最多人开心的路'，义务论说'选不违反规则的路'，德性伦理说'选一个好人会选的路'，正义论说'选对最弱的人公平的路'。"
+  
+  examples:
+    - context: "生活"
+      description: "你发现同学考试作弊：功利主义（举报可能让他受处分，但维护了公平）、义务论（诚实是我的义务）、德性伦理（一个正直的人会怎么做？）、正义论（这对其他努力学习的同学公平吗？）。"
+    - context: "平台赛事"
+      description: "在'案例推演'中，学生面对伦理两难，需要用不同框架分析，然后做出自己的判断。"
+    - context: "现实商业"
+      description: "Facebook的数据隐私争议：功利主义（数据服务让更多人受益）vs 义务论（保护隐私是基本义务）vs 正义论（用户是否知情同意？）。"
+  
+  non_examples:
+    - misconception: "伦理决策有标准答案"
+      correction: "伦理困境之所以是困境，就是因为不同框架可能得出不同结论。关键是'有意识的、系统的思考'，而不是盲目选择。"
+    - misconception: "商业中不需要伦理"
+      correction: "伦理是商业的基石。没有信任，交易无法发生。短期不道德行为可能获利，但长期会摧毁企业。"
+
+level_adaptations:
+  high:
+    explanation: "伦理决策的步骤：识别伦理问题→收集事实→识别利益相关者→应用伦理框架→做出决策→反思。"
+    example: "在'案例推演'中，系统分析一个商业伦理困境。"
+  university:
+    explanation: "商业伦理的哲学基础、文化相对主义vs伦理普遍主义、组织中的'不道德行为'如何被合理化（道德脱离理论）。"
+    example: "分析安然丑闻：一群聪明人如何集体做出不道德的决策？组织文化如何影响个人伦理？"
+
+platform_mapping:
+  game_modes:
+    - mode_id: "case_simulation_v1"
+      application: "核心机制——伦理两难案例的系统分析"
+    - mode_id: "esg_scoring_v1"
+      application: "ESG决策中的伦理权衡"
+  
+  ai_tutor_hints:
+    - trigger: "学生面临明显的伦理两难"
+      hint: "你面临一个伦理两难。试着用不同框架分析：功利主义怎么看？义务论怎么看？没有标准答案，但'有意识的思考'比'无意识的选择'更有价值。"
+
+related_content:
+  prerequisites: ["KN-MG-ET-001", "KN-MG-ET-002"]
+  extensions: ["KN-EC-MI-008", "KN-MG-OB-005"]
+  game_mode_applications: ["case_simulation_v1", "esg_scoring_v1"]

@@ -1,0 +1,534 @@
+<!DOCTYPE html>
+<html lang="zh-CN" data-theme="macro">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>宏观经济沙盘 - 商业模拟平台</title>
+  <link rel="stylesheet" href="../shared-styles.css">
+  <style>
+    :root {
+      --theme: #06b6d4;
+      --theme-soft: rgba(6,182,212,0.15);
+      --theme-glow: rgba(6,182,212,0.4);
+    }
+    
+    .cycle-wheel {
+      width: 280px;
+      height: 280px;
+      margin: 0 auto var(--space-xl);
+      position: relative;
+    }
+    .cycle-wheel svg {
+      width: 100%;
+      height: 100%;
+      transform: rotate(-90deg);
+    }
+    .cycle-label {
+      position: absolute;
+      font-size: 0.875rem;
+      font-weight: 600;
+    }
+    .cycle-center {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      text-align: center;
+    }
+    .cycle-phase {
+      font-size: 1.25rem;
+      font-weight: 800;
+      color: var(--theme);
+    }
+    .cycle-indicator {
+      width: 20px;
+      height: 20px;
+      background: var(--theme);
+      border-radius: 50%;
+      position: absolute;
+      box-shadow: 0 0 15px var(--theme-glow);
+    }
+    
+    .policy-card {
+      background: var(--bg-card);
+      border-radius: var(--radius-md);
+      padding: var(--space-lg);
+      border: 2px solid var(--border-subtle);
+      cursor: pointer;
+      transition: all var(--transition-fast);
+    }
+    .policy-card:hover {
+      border-color: var(--theme);
+      background: var(--theme-soft);
+    }
+    .policy-card.selected {
+      border-color: var(--theme);
+      background: var(--theme-soft);
+    }
+    .policy-icon {
+      width: 48px;
+      height: 48px;
+      border-radius: var(--radius-md);
+      background: var(--theme-soft);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.5rem;
+      margin-bottom: var(--space-sm);
+    }
+    .policy-effects {
+      margin-top: var(--space-md);
+      padding-top: var(--space-md);
+      border-top: 1px solid var(--border-subtle);
+    }
+    .effect-row {
+      display: flex;
+      justify-content: space-between;
+      font-size: 0.8125rem;
+      padding: 2px 0;
+    }
+    .effect-positive { color: var(--success); }
+    .effect-negative { color: var(--danger); }
+    
+    .indicator-panel {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: var(--space-md);
+    }
+    .indicator-item {
+      background: var(--bg-card);
+      border-radius: var(--radius-md);
+      padding: var(--space-lg);
+      text-align: center;
+      border: 1px solid var(--border-subtle);
+    }
+    .indicator-name {
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      margin-bottom: var(--space-sm);
+    }
+    .indicator-value {
+      font-family: var(--font-mono);
+      font-size: 1.75rem;
+      font-weight: 800;
+    }
+    .indicator-trend {
+      font-size: 0.75rem;
+      margin-top: 4px;
+    }
+    
+    .event-banner {
+      background: linear-gradient(135deg, rgba(6,182,212,0.15), rgba(59,130,246,0.1));
+      border: 1px solid var(--theme);
+      border-radius: var(--radius-md);
+      padding: var(--space-lg);
+      margin-bottom: var(--space-lg);
+    }
+    .event-title {
+      font-weight: 700;
+      font-size: 1.125rem;
+      margin-bottom: var(--space-sm);
+      display: flex;
+      align-items: center;
+      gap: var(--space-sm);
+    }
+    
+    .impact-matrix {
+      background: var(--bg-card);
+      border-radius: var(--radius-md);
+      overflow: hidden;
+    }
+    .matrix-header {
+      display: grid;
+      grid-template-columns: 2fr 1fr 1fr 1fr 1fr;
+      padding: var(--space-md);
+      background: var(--bg-hover);
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      font-weight: 600;
+    }
+    .matrix-row {
+      display: grid;
+      grid-template-columns: 2fr 1fr 1fr 1fr 1fr;
+      padding: var(--space-md);
+      border-top: 1px solid var(--border-subtle);
+      font-size: 0.875rem;
+      align-items: center;
+    }
+    .matrix-row:hover { background: var(--bg-hover); }
+    .impact-dot {
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+      margin: 0 auto;
+    }
+    .dot-positive { background: var(--success); }
+    .dot-negative { background: var(--danger); }
+    .dot-neutral { background: var(--text-muted); }
+    .dot-mixed { background: linear-gradient(135deg, var(--success), var(--danger)); }
+    
+    .history-chart {
+      height: 200px;
+      background: var(--bg-card);
+      border-radius: var(--radius-md);
+      padding: var(--space-md);
+      position: relative;
+    }
+    .chart-area {
+      position: absolute;
+      bottom: var(--space-md);
+      left: var(--space-md);
+      right: var(--space-md);
+      top: var(--space-md);
+    }
+    .chart-line-path {
+      fill: none;
+      stroke: var(--theme);
+      stroke-width: 2;
+    }
+    .chart-area-fill {
+      fill: var(--theme-soft);
+      opacity: 0.3;
+    }
+  </style>
+</head>
+<body>
+  <nav class="navbar">
+    <div class="container navbar-inner">
+      <a href="#" class="navbar-brand">
+        <div class="logo-icon" style="background: var(--theme);">🌊</div>
+        <span>商业模拟平台</span>
+      </a>
+      <ul class="navbar-nav">
+        <li><a href="#overview" class="active">赛制概览</a></li>
+        <li><a href="#cycle">经济周期</a></li>
+        <li><a href="#policy">政策调控</a></li>
+        <li><a href="#impact">全局影响</a></li>
+      </ul>
+    </div>
+  </nav>
+
+  <section class="hero">
+    <div class="hero-bg" style="background-image: url('cover.svg');"></div>
+    <div class="container hero-content">
+      <div class="hero-badge" style="border-color: var(--theme); color: var(--theme);">
+        <span>🌊</span>
+        <span>全局事件 · 所有队伍共同面对</span>
+      </div>
+      <h1 class="hero-title">宏观经济沙盘</h1>
+      <p class="hero-subtitle">引入通胀、紧缩、政策调控等宏观变量，所有队伍在同一经济周期中经营。理解宏观环境对微观决策的影响，训练系统性思维。</p>
+      <div class="hero-meta">
+        <div class="hero-meta-item">
+          <span class="hero-meta-value" style="color: var(--theme);">全局</span>
+          <span class="hero-meta-label">共同环境</span>
+        </div>
+        <div class="hero-meta-item">
+          <span class="hero-meta-value" style="color: var(--theme);">周期</span>
+          <span class="hero-meta-label">经济波动</span>
+        </div>
+        <div class="hero-meta-item">
+          <span class="hero-meta-value" style="color: var(--theme);">政策</span>
+          <span class="hero-meta-label">调控工具</span>
+        </div>
+        <div class="hero-meta-item">
+          <span class="hero-meta-value" style="color: var(--theme);">大学+</span>
+          <span class="hero-meta-label">适合学段</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" id="overview">
+    <div class="container">
+      <div class="section-header">
+        <div class="section-label">Overview</div>
+        <h2 class="section-title">宏观变量体系</h2>
+        <p class="section-desc">四大宏观指标，共同塑造经营环境</p>
+      </div>
+      
+      <div class="indicator-panel">
+        <div class="indicator-item">
+          <div class="indicator-name">GDP 增长率</div>
+          <div class="indicator-value" style="color: var(--success);">+4.2%</div>
+          <div class="indicator-trend" style="color: var(--success);">▲ 较上季度 +0.3%</div>
+        </div>
+        <div class="indicator-item">
+          <div class="indicator-name">通货膨胀率</div>
+          <div class="indicator-value" style="color: var(--warning);">3.8%</div>
+          <div class="indicator-trend" style="color: var(--danger);">▲ 较上季度 +0.5%</div>
+        </div>
+        <div class="indicator-item">
+          <div class="indicator-name">基准利率</div>
+          <div class="indicator-value" style="color: var(--info);">3.5%</div>
+          <div class="indicator-trend" style="color: var(--success);">▼ 较上季度 -0.25%</div>
+        </div>
+        <div class="indicator-item">
+          <div class="indicator-name">失业率</div>
+          <div class="indicator-value" style="color: var(--success);">4.1%</div>
+          <div class="indicator-trend" style="color: var(--success);">▼ 较上季度 -0.2%</div>
+        </div>
+        <div class="indicator-item">
+          <div class="indicator-name">汇率 (USD/CNY)</div>
+          <div class="indicator-value" style="color: var(--theme);">7.15</div>
+          <div class="indicator-trend" style="color: var(--danger);">▲ 人民币贬值</div>
+        </div>
+        <div class="indicator-item">
+          <div class="indicator-name">消费者信心</div>
+          <div class="indicator-value" style="color: var(--warning);">102.3</div>
+          <div class="indicator-trend" style="color: var(--warning);">→ 基本持平</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" id="cycle" style="background: var(--bg-secondary);">
+    <div class="container">
+      <div class="section-header">
+        <div class="section-label">Economic Cycle</div>
+        <h2 class="section-title">经济周期轮盘</h2>
+        <p class="section-desc">当前处于复苏期，但通胀压力正在积累</p>
+      </div>
+      
+      <div class="cycle-wheel">
+        <svg viewBox="0 0 100 100">
+          <circle cx="50" cy="50" r="45" fill="none" stroke="var(--bg-hover)" stroke-width="8"/>
+          <circle cx="50" cy="50" r="45" fill="none" stroke="var(--success)" stroke-width="8" stroke-dasharray="70.7 212.1" stroke-linecap="round"/>
+          <circle cx="50" cy="50" r="45" fill="none" stroke="var(--warning)" stroke-width="8" stroke-dasharray="70.7 212.1" stroke-dashoffset="-70.7" stroke-linecap="round"/>
+          <circle cx="50" cy="50" r="45" fill="none" stroke="var(--danger)" stroke-width="8" stroke-dasharray="70.7 212.1" stroke-dashoffset="-141.4" stroke-linecap="round"/>
+          <circle cx="50" cy="50" r="45" fill="none" stroke="var(--info)" stroke-width="8" stroke-dasharray="70.7 212.1" stroke-dashoffset="-212.1" stroke-linecap="round"/>
+        </svg>
+        <div class="cycle-label" style="top: 10px; left: 50%; transform: translateX(-50%);">繁荣</div>
+        <div class="cycle-label" style="top: 50%; right: 10px; transform: translateY(-50%);">衰退</div>
+        <div class="cycle-label" style="bottom: 10px; left: 50%; transform: translateX(-50%);">萧条</div>
+        <div class="cycle-label" style="top: 50%; left: 10px; transform: translateY(-50%);">复苏</div>
+        <div class="cycle-center">
+          <div class="cycle-phase">复苏期</div>
+          <div style="font-size: 0.75rem; color: var(--text-muted);">第 3 季度</div>
+        </div>
+        <div class="cycle-indicator" style="top: 50%; left: 15px;"></div>
+      </div>
+      
+      <div class="event-banner">
+        <div class="event-title">
+          <span>📰</span>
+          <span>季度宏观经济报告</span>
+        </div>
+        <p style="color: var(--text-secondary); font-size: 0.875rem; line-height: 1.7;">
+          本季度经济持续复苏，GDP增长4.2%，但通胀率攀升至3.8%，接近央行警戒线。消费回暖带动零售增长，但原材料价格同步上涨，企业成本压力增大。央行维持宽松货币政策，但市场普遍预期下季度可能加息。
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" id="policy">
+    <div class="container">
+      <div class="section-header">
+        <div class="section-label">Policy Tools</div>
+        <h2 class="section-title">政策工具箱</h2>
+        <p class="section-desc">你是"央行行长"，选择政策组合调控经济</p>
+      </div>
+      
+      <div class="grid-2">
+        <div class="policy-card">
+          <div class="policy-icon">🏦</div>
+          <h4 style="margin-bottom: var(--space-sm);">货币政策 A：加息</h4>
+          <p style="font-size: 0.875rem; color: var(--text-secondary);">将基准利率上调 0.5%，抑制通胀，但可能减缓经济增长。</p>
+          <div class="policy-effects">
+            <div class="effect-row">
+              <span>通胀率</span>
+              <span class="effect-positive">▼ -0.8%</span>
+            </div>
+            <div class="effect-row">
+              <span>GDP增长</span>
+              <span class="effect-negative">▼ -0.5%</span>
+            </div>
+            <div class="effect-row">
+              <span>企业融资成本</span>
+              <span class="effect-negative">▲ +15%</span>
+            </div>
+            <div class="effect-row">
+              <span>消费者支出</span>
+              <span class="effect-negative">▼ -8%</span>
+            </div>
+          </div>
+        </div>
+        
+        <div class="policy-card selected">
+          <div class="policy-icon">💵</div>
+          <h4 style="margin-bottom: var(--space-sm);">货币政策 B：维持现状</h4>
+          <p style="font-size: 0.875rem; color: var(--text-secondary);">保持当前利率不变，观察经济数据变化，给市场稳定预期。</p>
+          <div class="policy-effects">
+            <div class="effect-row">
+              <span>通胀率</span>
+              <span class="effect-negative">▲ +0.3%</span>
+            </div>
+            <div class="effect-row">
+              <span>GDP增长</span>
+              <span class="effect-positive">▲ +0.2%</span>
+            </div>
+            <div class="effect-row">
+              <span>企业融资成本</span>
+              <span>→ 不变</span>
+            </div>
+            <div class="effect-row">
+              <span>消费者支出</span>
+              <span>→ 不变</span>
+            </div>
+          </div>
+        </div>
+        
+        <div class="policy-card">
+          <div class="policy-icon">🏗️</div>
+          <h4 style="margin-bottom: var(--space-sm);">财政政策：基建刺激</h4>
+          <p style="font-size: 0.875rem; color: var(--text-secondary);">增加政府基建支出，拉动内需，但可能推高通胀。</p>
+          <div class="policy-effects">
+            <div class="effect-row">
+              <span>GDP增长</span>
+              <span class="effect-positive">▲ +1.0%</span>
+            </div>
+            <div class="effect-row">
+              <span>就业</span>
+              <span class="effect-positive">▲ +5%</span>
+            </div>
+            <div class="effect-row">
+              <span>通胀率</span>
+              <span class="effect-negative">▲ +0.5%</span>
+            </div>
+            <div class="effect-row">
+              <span>政府赤字</span>
+              <span class="effect-negative">▲ +2%</span>
+            </div>
+          </div>
+        </div>
+        
+        <div class="policy-card">
+          <div class="policy-icon">🛡️</div>
+          <h4 style="margin-bottom: var(--space-sm);">汇率政策：贬值促出口</h4>
+          <p style="font-size: 0.875rem; color: var(--text-secondary);">允许本币适度贬值，提升出口竞争力，但进口成本上升。</p>
+          <div class="policy-effects">
+            <div class="effect-row">
+              <span>出口</span>
+              <span class="effect-positive">▲ +12%</span>
+            </div>
+            <div class="effect-row">
+              <span>进口成本</span>
+              <span class="effect-negative">▲ +8%</span>
+            </div>
+            <div class="effect-row">
+              <span>外资流入</span>
+              <span class="effect-negative">▼ -5%</span>
+            </div>
+            <div class="effect-row">
+              <span>通胀率</span>
+              <span class="effect-negative">▲ +0.3%</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" id="impact" style="background: var(--bg-secondary);">
+    <div class="container">
+      <div class="section-header">
+        <div class="section-label">Impact Matrix</div>
+        <h2 class="section-title">政策影响矩阵</h2>
+        <p class="section-desc">不同政策对不同行业的差异化影响</p>
+      </div>
+      
+      <div class="impact-matrix">
+        <div class="matrix-header">
+          <span>行业</span>
+          <span style="text-align: center;">加息</span>
+          <span style="text-align: center;">基建</span>
+          <span style="text-align: center;">贬值</span>
+          <span style="text-align: center;">减税</span>
+        </div>
+        <div class="matrix-row">
+          <span>🏦 金融/银行</span>
+          <div class="impact-dot dot-positive"></div>
+          <div class="impact-dot dot-neutral"></div>
+          <div class="impact-dot dot-neutral"></div>
+          <div class="impact-dot dot-positive"></div>
+        </div>
+        <div class="matrix-row">
+          <span>🏭 制造业</span>
+          <div class="impact-dot dot-negative"></div>
+          <div class="impact-dot dot-positive"></div>
+          <div class="impact-dot dot-positive"></div>
+          <div class="impact-dot dot-positive"></div>
+        </div>
+        <div class="matrix-row">
+          <span>🏠 房地产</span>
+          <div class="impact-dot dot-negative"></div>
+          <div class="impact-dot dot-positive"></div>
+          <div class="impact-dot dot-neutral"></div>
+          <div class="impact-dot dot-positive"></div>
+        </div>
+        <div class="matrix-row">
+          <span>🛒 零售/消费</span>
+          <div class="impact-dot dot-negative"></div>
+          <div class="impact-dot dot-positive"></div>
+          <div class="impact-dot dot-negative"></div>
+          <div class="impact-dot dot-positive"></div>
+        </div>
+        <div class="matrix-row">
+          <span>💻 科技/互联网</span>
+          <div class="impact-dot dot-negative"></div>
+          <div class="impact-dot dot-neutral"></div>
+          <div class="impact-dot dot-neutral"></div>
+          <div class="impact-dot dot-positive"></div>
+        </div>
+        <div class="matrix-row">
+          <span>🌾 农业</span>
+          <div class="impact-dot dot-negative"></div>
+          <div class="impact-dot dot-positive"></div>
+          <div class="impact-dot dot-positive"></div>
+          <div class="impact-dot dot-positive"></div>
+        </div>
+        <div class="matrix-row">
+          <span>✈️ 旅游/航空</span>
+          <div class="impact-dot dot-negative"></div>
+          <div class="impact-dot dot-neutral"></div>
+          <div class="impact-dot dot-positive"></div>
+          <div class="impact-dot dot-neutral"></div>
+        </div>
+      </div>
+      
+      <div class="card mt-xl">
+        <h4 style="margin-bottom: var(--space-md);">📈 历史周期走势</h4>
+        <div class="history-chart">
+          <div class="chart-area">
+            <svg width="100%" height="100%" viewBox="0 0 400 150" preserveAspectRatio="none">
+              <defs>
+                <linearGradient id="areaGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+                  <stop offset="0%" style="stop-color:var(--theme);stop-opacity:0.3"/>
+                  <stop offset="100%" style="stop-color:var(--theme);stop-opacity:0"/>
+                </linearGradient>
+              </defs>
+              <path class="chart-area-fill" d="M0,120 Q50,100 100,80 T200,60 T300,90 T400,70 L400,150 L0,150 Z"/>
+              <path class="chart-line-path" d="M0,120 Q50,100 100,80 T200,60 T300,90 T400,70"/>
+              <line x1="0" y1="75" x2="400" y2="75" stroke="var(--text-muted)" stroke-width="1" stroke-dasharray="4"/>
+            </svg>
+          </div>
+        </div>
+        <div style="display: flex; justify-content: space-between; margin-top: var(--space-sm); font-size: 0.75rem; color: var(--text-muted);">
+          <span>Q1 萧条</span>
+          <span>Q2 复苏</span>
+          <span>Q3 复苏</span>
+          <span>Q4 繁荣?</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <footer style="padding: var(--space-xl) 0; border-top: 1px solid var(--border-subtle); text-align: center;">
+    <div class="container">
+      <p style="color: var(--text-muted); font-size: 0.875rem;">商业模拟平台 · 宏观经济沙盘 · 适合大学及以上学段 · 系统性思维训练</p>
+    </div>
+  </footer>
+</body>
+</html>

@@ -1,0 +1,597 @@
+# ============================================
+# 微观经济学知识卡片集（8张）
+# ============================================
+
+---
+content_type: KN
+content_id: "KN-EC-MI-001-v1.0"
+title: "供需关系"
+subtitle: "为什么价格会涨涨跌跌？"
+
+target_level: "通用"
+target_age: [10, 22]
+difficulty: 1
+competencies: ["ML-1"]
+bloom_level: "understand"
+
+tags: ["定价", "市场", "基础概念", "入门"]
+ai_generable: true
+author: "平台教研团队"
+reviewer: "经济学顾问"
+version: "1.0.0"
+created_at: "2026-05-12"
+updated_at: "2026-05-12"
+
+knowledge:
+  definition: "商品的价格由市场上供给方愿意出售的数量和需求方愿意购买的数量共同决定。"
+  explanation: "当很多人想买某样东西（需求高），但卖的人很少（供给少），价格就会上涨。反过来，如果卖的人很多但没人买，价格就会下降。"
+  analogy: "就像跷跷板：一头是'想买的人'，一头是'想卖的人'。哪边重，价格就往哪边倾斜。"
+  
+  examples:
+    - context: "生活"
+      description: "暑假冰淇淋涨价——天热大家都想吃（需求增加），但店铺数量没变（供给不变），所以涨价。"
+    - context: "平台赛事"
+      description: "在'小镇集市'中，晴天时 lemonade 需求大增，如果你提前备货就能卖更多；但如果所有摊位都备货，竞争会导致价格下降。"
+    - context: "现实商业"
+      description: "疫情期间口罩价格暴涨——需求暴增而供给跟不上。"
+  
+  non_examples:
+    - misconception: "成本决定价格"
+      correction: "成本影响供给，但不直接决定价格。即使成本很低，如果没人买，价格也上不去。"
+    - misconception: "价格由卖家随意决定"
+      correction: "卖家可以标价，但如果价格太高没人买，最终还是要降下来。"
+
+# 学段适配
+level_adaptations:
+  primary:
+    explanation: "想要的人多，东西就贵；想要的人少，东西就便宜。"
+    example: "学校门口的奶茶，放学时排队人多就会涨价，上午没人时就有折扣。"
+  middle:
+    explanation: "需求曲线和供给曲线的交点决定均衡价格。当需求增加（曲线右移），均衡价格上升。"
+    example: "用图表展示：冰淇淋在夏天需求曲线如何右移。"
+  high:
+    explanation: "供需弹性、市场出清、价格管制（最高限价/最低限价）对市场效率的影响。"
+    example: "分析房租管制政策：房东为什么不愿意出租？"
+  university:
+    explanation: "一般均衡理论、拍卖理论中的供需机制、信息不对称对价格发现的影响。"
+    example: "双边市场中的平台定价：Uber如何平衡司机供给和乘客需求？"
+
+# 平台映射
+platform_mapping:
+  game_modes:
+    - mode_id: "market_fair_v1"
+      application: "核心机制——天气事件改变需求，学生根据供需调整产量和价格"
+    - mode_id: "auction_trading_v1"
+      application: "拍卖是价格发现机制，让学生亲身体验'市场出清'"
+    - mode_id: "turn_based_strategy_v2"
+      application: "不同城市的市场需求差异——学生需要分析各城市的供需特征"
+  
+  ai_tutor_hints:
+    - trigger: "学生连续2轮定价低于成本"
+      hint: "你的价格低于成本，这意味着你在'赔本赚吆喝'。需求确实重要，但供给端（你的成本）也不能忽视。"
+    - trigger: "学生在需求高的城市定价过低"
+      hint: "这个城市的需求很旺盛，但你的定价却和低迷城市一样。供需关系告诉你：高需求可以支撑更高价格。"
+
+  concept_anchors:
+    - at_event: "天气突然变晴"
+      display: "需求暴增！这就是供需关系在发挥作用——消费者突然更想买了。"
+    - at_event: "新竞争对手进入"
+      display: "供给增加了！更多的卖家意味着你需要思考：是降价竞争，还是差异化？"
+
+personality_mapping:
+  recommended:
+    - mbti: "ESTJ"
+      reason: "喜欢通过数据和规律理解世界"
+    - mbti: "INTP"
+      reason: "享受分析变量之间的关系"
+  challenge_for:
+    - mbti: "ESFP"
+      adjustment: "用具体操作（买卖体验）替代抽象曲线讲解"
+
+# 多媒体素材
+multimedia:
+  illustration_prompt: "卡通风格的跷跷板，一边是排队购物的人群（重），另一边是少数摊位（轻），跷跷板向人群方向倾斜，上方有一个价格标签在上涨"
+  short_video_prompt: "动画展示 lemonade 摊位：晴天时排队的人多，价格从2元涨到4元；雨天时没人，价格降到1元。用简单的供需曲线叠加展示。"
+  interactive_demo: "drag_drop_supply_demand: 学生拖拽供给/需求曲线，观察均衡价格变化"
+
+# 关联内容
+related_content:
+  prerequisites: []
+  extensions: ["KN-EC-MI-002", "KN-BS-MK-005"]
+  game_mode_applications: ["market_fair_v1", "auction_trading_v1"]
+  linked_cases: ["IC-PS-002", "IC-MS-003"]
+
+---
+content_type: KN
+content_id: "KN-EC-MI-002-v1.0"
+title: "价格弹性"
+subtitle: "为什么有的东西涨价没人买，有的东西涨价照样买？"
+
+target_level: "初中及以上"
+target_age: [13, 22]
+difficulty: 3
+competencies: ["ML-1", "ML-4"]
+bloom_level: "apply"
+
+tags: ["定价", "需求", "弹性", "进阶概念"]
+ai_generable: true
+author: "平台教研团队"
+reviewer: "经济学顾问"
+version: "1.0.0"
+created_at: "2026-05-12"
+updated_at: "2026-05-12"
+
+knowledge:
+  definition: "价格弹性衡量的是：当价格变化1%时，需求量变化的百分比。弹性大意味着消费者对价格敏感，弹性小意味着不敏感。"
+  explanation: "如果你涨价10%，销量下降了20%，说明弹性很大（消费者很敏感）。如果销量只下降了2%，说明弹性很小（消费者不太在意价格）。"
+  analogy: "就像橡皮筋——有的橡皮筋一拉就伸长（弹性大），有的几乎拉不动（弹性小）。价格就是拉力，销量变化就是伸长量。"
+  formula: "价格弹性 = (需求量变化百分比) / (价格变化百分比)"
+  
+  examples:
+    - context: "生活"
+      description: "盐涨价了，你还是得买（弹性小）。但奶茶涨价了，你可以改喝可乐（弹性大）。"
+    - context: "平台赛事"
+      description: "在'定价实验室'中，必需品（如基础款手机）的弹性低，奢侈品（如高端配件）的弹性高。"
+    - context: "现实商业"
+      description: "航空公司对商务舱和 Economy 舱采取不同定价策略——商务舱弹性低，Economy 弹性高。"
+  
+  non_examples:
+    - misconception: "涨价一定导致收入下降"
+      correction: "对于弹性小的商品，涨价反而可能增加总收入（因为销量下降不多）。"
+    - misconception: "弹性是固定不变的"
+      correction: "弹性会随时间、情境变化。短期弹性小（习惯难改），长期弹性大（可以找到替代品）。"
+
+level_adaptations:
+  middle:
+    explanation: "有些东西涨价了你还是买（盐），有些东西涨价你就不买了（零食）。这就是'弹性'——你对价格的敏感程度。"
+    example: "学校门口的奶茶从8元涨到12元，你会怎么做？如果涨到20元呢？"
+  high:
+    explanation: "弹性决定定价策略。弹性大的商品适合'薄利多销'，弹性小的商品可以'高价少销'。"
+    example: "分析为什么游乐园门票贵但里面矿泉水更贵——门票弹性低（你已经决定了要来），矿泉水弹性高（你可以自带）。"
+  university:
+    explanation: "交叉弹性、收入弹性、需求弹性的决定因素（替代品、必需品、时间跨度）。定价策略中的价格歧视。"
+    example: "三段定价法：为什么软件有免费版、专业版、企业版？不同用户群体的价格弹性不同。"
+
+platform_mapping:
+  game_modes:
+    - mode_id: "pricing_lab_v1"
+      application: "核心机制——学生通过多轮定价实验，发现不同产品的弹性差异"
+    - mode_id: "turn_based_strategy_v2"
+      application: "不同消费者群体的弹性不同——学生需要识别高/低弹性市场"
+  
+  ai_tutor_hints:
+    - trigger: "学生在高弹性市场大幅涨价"
+      hint: "这个市场的消费者对价格很敏感。大幅涨价可能导致销量暴跌。试试小幅涨价，观察反应。"
+    - trigger: "学生在低弹性市场定低价"
+      hint: "这个市场的消费者不太在意价格，更在意品质或服务。你有提价空间，同时提升体验。"
+
+personality_mapping:
+  recommended:
+    - mbti: "INTP"
+      reason: "喜欢分析变量之间的量化关系"
+    - mbti: "ENTJ"
+      reason: "善于利用规律制定定价策略"
+  challenge_for:
+    - mbti: "ESFP"
+      adjustment: "用具体实验数据替代抽象公式，让学生自己发现规律"
+
+multimedia:
+  illustration_prompt: "一条S形的需求曲线，左侧标注'弹性大'（陡峭下降），右侧标注'弹性小'（平缓），中间有一个指针可以根据价格移动"
+  short_video_prompt: "分屏对比：左边是'盐涨价'（销量几乎不变），右边是'奶茶涨价'（销量暴跌），用弹性公式动态计算"
+  interactive_demo: "slider_elasticity: 学生调节价格滑块，观察销量和总收入的变化曲线"
+
+related_content:
+  prerequisites: ["KN-EC-MI-001"]
+  extensions: ["KN-BS-MK-005", "KN-EC-BE-001"]
+  game_mode_applications: ["pricing_lab_v1"]
+
+---
+content_type: KN
+content_id: "KN-EC-MI-003-v1.0"
+title: "边际效用递减"
+subtitle: "为什么第三个冰淇淋不如第一个好吃？"
+
+target_level: "高中及以上"
+target_age: [15, 22]
+difficulty: 3
+competencies: ["FL-1"]
+bloom_level: "understand"
+
+tags: ["消费", "效用", "决策", "进阶概念"]
+ai_generable: true
+author: "平台教研团队"
+reviewer: "经济学顾问"
+version: "1.0.0"
+created_at: "2026-05-12"
+updated_at: "2026-05-12"
+
+knowledge:
+  definition: "在一定时间内，随着某种商品消费量的增加，每多消费一单位所带来的满足感（效用）会逐渐减少。"
+  explanation: "第一杯奶茶带给你很大的快乐，第二杯还不错，第三杯你开始觉得腻了，第四杯你可能喝不下去了。"
+  analogy: "就像往杯子里倒果汁——第一口最解渴，喝到后面每一口的满足感都在下降。"
+  
+  examples:
+    - context: "生活"
+      description: "玩游戏的第一个小时最开心，玩到第五个小时就开始累了。"
+    - context: "平台赛事"
+      description: "在'回合制策略'中，连续多轮在同一城市投入品牌展示，后期的边际效果会递减。"
+    - context: "现实商业"
+      description: "广告投入也有边际递减——第一家店投广告效果很好，但当所有店都投广告时，效果就被稀释了。"
+  
+  non_examples:
+    - misconception: "边际效用递减意味着总效用也在减少"
+      correction: "总效用还在增加，只是增加的速度变慢了。只有边际效用变为负数时，总效用才会下降。"
+    - misconception: "所有商品都严格遵循边际效用递减"
+      correction: "有些商品（如收藏品、网络效应产品）可能不遵循，甚至递增。"
+
+level_adaptations:
+  middle:
+    explanation: "吃第一个汉堡很香，吃第二个还行，吃第三个就撑了。每多吃一个，带来的满足感都在减少。"
+    example: "在'创业生存战'中，连续多轮投入同一项能力，后期的提升效果越来越小。"
+  high:
+    explanation: "边际效用递减解释了为什么'多样化'比'单一化'更好——把钱花在不同的东西上，总满足感更高。"
+    example: "企业在多个城市的投入分配：如果所有预算都投一个城市，后期效果递减；分散投资可能总回报更高。"
+  university:
+    explanation: "边际分析是经济学决策的核心：MR=MC 法则。边际收益等于边际成本时的产量是最优的。"
+    example: "为什么科技公司最后会裁员？因为新增员工的边际产出已经低于其成本。"
+
+platform_mapping:
+  game_modes:
+    - mode_id: "turn_based_strategy_v2"
+      application: "同一属性的连续投入会边际递减——学生需要分散投资或寻找新市场"
+    - mode_id: "slow_company_challenge_v1"
+      application: "长期投入中，边际递减迫使学生在'深耕'和'拓展'之间做选择"
+  
+  ai_tutor_hints:
+    - trigger: "学生连续3轮在同一城市投入同一属性>80%"
+      hint: "你连续多轮在同一属性上大量投入。注意'边际效用递减'——后期的每一分钱带来的回报可能不如前期。考虑分散投资或开拓新市场。"
+
+personality_mapping:
+  recommended:
+    - mbti: "INTJ"
+      reason: "善于在系统中发现规律和最优解"
+  challenge_for:
+    - mbti: "ISTJ"
+      adjustment: "强调'坚持'也有边界，适时转变不是放弃而是策略"
+
+multimedia:
+  illustration_prompt: "一个快乐表情在吃冰淇淋：第一个冰淇淋表情超开心，第二个微笑，第三个面无表情，第四个皱眉。上方有一条向下的曲线标注'满足感'"
+  interactive_demo: "slider_diminishing: 学生调节同一属性的投入量，观察边际回报的变化曲线"
+
+related_content:
+  prerequisites: ["KN-EC-MI-001"]
+  extensions: ["KN-BS-FI-004", "KN-MG-ST-003"]
+  game_mode_applications: ["turn_based_strategy_v2"]
+
+---
+content_type: KN
+content_id: "KN-EC-MI-004-v1.0"
+title: "机会成本"
+subtitle: "选择A的代价，是你放弃了的B"
+
+target_level: "初中及以上"
+target_age: [13, 22]
+difficulty: 2
+competencies: ["FL-1", "SL-2"]
+bloom_level: "understand"
+
+tags: ["决策", "成本", "权衡", "基础概念"]
+ai_generable: true
+author: "平台教研团队"
+reviewer: "经济学顾问"
+version: "1.0.0"
+created_at: "2026-05-12"
+updated_at: "2026-05-12"
+
+knowledge:
+  definition: "为了得到某种东西而必须放弃的其他东西中价值最高的那个，就是机会成本。"
+  explanation: "你有一个小时，可以用来学习、打游戏、或者睡觉。如果你选择学习，机会成本就是'打游戏或睡觉中能带给你最大价值的那一个'。"
+  analogy: "就像你有10元钱，买了奶茶就不能买汉堡。奶茶的机会成本就是那个你没买到的汉堡（假设汉堡是你第二想要的东西）。"
+  
+  examples:
+    - context: "生活"
+      description: "大学生选择考研的机会成本是三年的工作经验和收入。"
+    - context: "平台赛事"
+      description: "在'回合制策略'中，把预算投入 TECH 的机会成本是放弃了 BRAND 或 USER 可能带来的回报。"
+    - context: "现实商业"
+      description: "公司决定自建工厂的机会成本是：如果把钱用来研发新产品，可能获得的收益。"
+  
+  non_examples:
+    - misconception: "机会成本就是会计成本"
+      correction: "会计成本是实际花的钱，机会成本是放弃的潜在收益。两者完全不同。"
+    - misconception: "没选的那个选项的价值就是机会成本"
+      correction: "是所有放弃选项中价值最高的那个，不是随便一个。"
+
+level_adaptations:
+  middle:
+    explanation: "你花时间做A，就不能做B。机会成本就是你放弃的B。"
+    example: "周末你有2小时，可以写作业或打篮球。如果你选择打篮球，机会成本就是'完成作业带来的安心感'。"
+  high:
+    explanation: "机会成本是决策的核心。理性人比较的是边际收益和机会成本，而不是沉没成本。"
+    example: "企业决定是否继续一个亏损项目：考虑的不是已经投了多少钱（沉没成本），而是继续投入的边际收益是否大于机会成本。"
+  university:
+    explanation: "机会成本在资源配置、投资决策、政策评估中的应用。比较优势理论的基础。"
+    example: "为什么医生不应该自己修电脑？因为医生一小时的机会成本（看病收入）远高于请IT人员的费用。"
+
+platform_mapping:
+  game_modes:
+    - mode_id: "turn_based_strategy_v2"
+      application: "每条路线的选择都有机会成本——投入A意味着放弃B的潜在回报"
+    - mode_id: "startup_survival_v1"
+      application: "有限的现金流如何分配？每个决策都涉及机会成本权衡"
+  
+  ai_tutor_hints:
+    - trigger: "学生在某城市投入100%预算"
+      hint: "你把所有预算都投在了这里。机会成本的视角：如果这些预算的一部分投到另一个城市，会不会获得更高的总回报？"
+
+personality_mapping:
+  recommended:
+    - mbti: "INTJ"
+      reason: "天然思考'如果...会怎样'的替代方案"
+    - mbti: "ENTJ"
+      reason: "善于在资源约束下做权衡决策"
+
+multimedia:
+  illustration_prompt: "一个岔路口，左边路标'A'通向奶茶，右边路标'B'通向汉堡。人物站在路口，脚下有一个影子指向B（暗示机会成本）。风格：卡通插画"
+  interactive_demo: "choice_opportunity_cost: 学生做出选择后，系统自动展示'你放弃了什么'及其潜在价值"
+
+related_content:
+  prerequisites: []
+  extensions: ["KN-EC-MI-003", "KN-MG-ST-002"]
+  game_mode_applications: ["turn_based_strategy_v2", "startup_survival_v1"]
+
+---
+content_type: KN
+content_id: "KN-EC-MI-005-v1.0"
+title: "市场结构"
+subtitle: "从街头小店到科技巨头——市场格局决定游戏规则"
+
+target_level: "高中及以上"
+target_age: [15, 22]
+difficulty: 4
+competencies: ["ML-3", "SL-1"]
+bloom_level: "analyze"
+
+tags: ["竞争", "市场", "策略", "进阶概念"]
+ai_generable: true
+author: "平台教研团队"
+reviewer: "经济学顾问"
+version: "1.0.0"
+created_at: "2026-05-12"
+updated_at: "2026-05-12"
+
+knowledge:
+  definition: "市场结构描述了一个市场中企业的数量、产品差异程度、进入壁垒等因素，主要分为完全竞争、垄断竞争、寡头和垄断四种。"
+  explanation: |
+    - 完全竞争：很多小卖家，卖的东西都一样（如菜市场）
+    - 垄断竞争：很多卖家，产品有点不同（如奶茶店）
+    - 寡头：少数几个大卖家（如手机行业：苹果、三星、华为）
+    - 垄断：只有一个卖家（如过去的电话公司）
+  analogy: "就像运动会：完全竞争是百米赛跑（所有人跑一样的距离），垄断竞争是花样滑冰（每个人都有自己的动作），寡头是篮球决赛（两队对抗），垄断是裁判（只有他能吹哨）。"
+  
+  examples:
+    - context: "生活"
+      description: "学校门口的奶茶店是垄断竞争——很多家，但每家的口味和风格不同。"
+    - context: "平台赛事"
+      description: "在'小镇集市'中，初期是垄断竞争（各摊位差异化），后期可能演变为寡头（两三家主导）。"
+    - context: "现实商业"
+      description: "搜索引擎市场接近垄断（谷歌/百度），社交平台是寡头（微信、抖音、微博）。"
+  
+  non_examples:
+    - misconception: "垄断一定对消费者有害"
+      correction: "自然垄断（如电网）可能比多个竞争者更高效。关键看是否存在垄断利润和创新的抑制。"
+
+level_adaptations:
+  high:
+    explanation: "四种市场结构的区别：卖家数量、产品差异、价格控制力、进入壁垒。"
+    example: "分析为什么奶茶店可以定价不同，但加油站的价格几乎一样？"
+  university:
+    explanation: "博弈论视角下的市场结构分析、市场集中度指标（HHI）、反垄断政策的经济学基础。"
+    example: "平台经济中的'赢家通吃'：为什么互联网公司容易形成垄断？"
+
+platform_mapping:
+  game_modes:
+    - mode_id: "market_fair_v1"
+      application: "初期模拟完全竞争/垄断竞争，引入差异化后演变为寡头"
+    - mode_id: "turn_based_strategy_v2"
+      application: "多队伍竞争的市场结构分析——何时合作（寡头共谋）何时竞争"
+  
+  ai_tutor_hints:
+    - trigger: "市场只有2-3个主要竞争者"
+      hint: "这个市场正在从'充分竞争'演变为'寡头格局'。在寡头市场中，你的决策会强烈影响对手，对手也会强烈影响你。考虑博弈思维！"
+
+related_content:
+  prerequisites: ["KN-EC-MI-001"]
+  extensions: ["KN-EC-MI-006", "KN-MG-ST-002"]
+  game_mode_applications: ["market_fair_v1", "turn_based_strategy_v2"]
+
+---
+content_type: KN
+content_id: "KN-EC-MI-006-v1.0"
+title: "纳什均衡"
+subtitle: "当所有人都做了对自己最好的选择，结果会怎样？"
+
+target_level: "高中及以上"
+target_age: [16, 22]
+difficulty: 5
+competencies: ["SL-1", "SL-2"]
+bloom_level: "analyze"
+
+tags: ["博弈论", "策略", "均衡", "高阶概念"]
+ai_generable: true
+author: "平台教研团队"
+reviewer: "经济学顾问"
+version: "1.0.0"
+created_at: "2026-05-12"
+updated_at: "2026-05-12"
+
+knowledge:
+  definition: "在博弈中，纳什均衡是指一个策略组合：在这个组合下，任何参与者单方面改变自己的策略都无法获得更好的结果。"
+  explanation: "就像堵车：如果所有人都走同一条路（均衡），虽然都很慢，但任何一个人单独换路可能更慢。所以大家都'卡住'了。"
+  analogy: "电影院里所有人都站着看电影（纳什均衡）——虽然大家都很累，但没人敢先坐下（因为坐下就看不到了）。"
+  
+  examples:
+    - context: "生活"
+      description: "学校里的'军备竞赛'：所有人都在补课，虽然大家都很累，但没人敢先停下来。"
+    - context: "平台赛事"
+      description: "在'回合制策略'中，如果所有队伍都选择 TECH 路线，即使 BRAND 路线更好，也没人敢先切换——这就是纳什均衡的'陷阱'。"
+    - context: "现实商业"
+      description: "价格战：两家企业都降价到成本线，虽然利润微薄，但谁先涨价谁丢市场。"
+  
+  non_examples:
+    - misconception: "纳什均衡一定是最优结果"
+      correction: "纳什均衡只是'稳定'的结果，不一定是'最好'的结果。囚徒困境就是最好的反例。"
+
+level_adaptations:
+  high:
+    explanation: "纳什均衡是一种'稳定状态'——在给定他人选择的情况下，你没有动力改变自己的选择。"
+    example: "分析'回合制策略'中的路线选择：如果所有人都选 TECH，这就是一种纳什均衡（虽然可能不是最优）。"
+  university:
+    explanation: "纳什均衡的存在性、多重均衡的选择、颤抖手完美均衡、演化博弈论。"
+    example: "平台竞争中的'补贴大战'：为什么共享单车最后只剩一两家？"
+
+platform_mapping:
+  game_modes:
+    - mode_id: "turn_based_strategy_v2"
+      application: "多轮策略博弈中识别和打破纳什均衡陷阱"
+    - mode_id: "prisoners_dilemma_v1"
+      application: "囚徒困境是纳什均衡的经典案例——双方都不合作是均衡，但合作对双方更好"
+  
+  ai_tutor_hints:
+    - trigger: "超过60%队伍选择同一路线"
+      hint: "市场似乎陷入了一个纳什均衡——大家都挤在同一条路上。但要注意：均衡不等于最优。有时候，率先打破均衡的人能获得超额回报。"
+
+related_content:
+  prerequisites: ["KN-EC-MI-005"]
+  extensions: ["KN-EC-MI-007", "KN-MG-ST-003"]
+  game_mode_applications: ["turn_based_strategy_v2", "prisoners_dilemma_v1"]
+
+---
+content_type: KN
+content_id: "KN-EC-MI-007-v1.0"
+title: "囚徒困境"
+subtitle: "为什么聪明人也会做蠢事？"
+
+target_level: "高中及以上"
+target_age: [15, 22]
+difficulty: 4
+competencies: ["SL-1", "EL-1"]
+bloom_level: "evaluate"
+
+tags: ["博弈论", "合作", "信任", "经典概念"]
+ai_generable: true
+author: "平台教研团队"
+reviewer: "经济学顾问"
+version: "1.0.0"
+created_at: "2026-05-12"
+updated_at: "2026-05-12"
+
+knowledge:
+  definition: "两个被捕的囚徒，如果都保持沉默（合作），两人各判1年；如果一人背叛、一人沉默，背叛者释放、沉默者判10年；如果都背叛，各判5年。理性选择导致双方都背叛——结果比合作更差。"
+  explanation: "每个人都想'不管对方怎么选，背叛对我更有利'。但当两个人都这么想时，结果比合作糟糕得多。"
+  analogy: "就像周末大扫除：如果两人都干活，家里干净（各付出中等 effort）。如果一人偷懒、一人干活，偷懒者轻松、干活者累死。如果两人都偷懒，家里脏乱。结果：两人都选择偷懒。"
+  
+  examples:
+    - context: "生活"
+      description: "小组作业：如果都努力，成绩好；如果一人偷懒，偷懒者轻松得同样分数。结果：大家倾向于偷懒。"
+    - context: "平台赛事"
+      description: "在'拍卖交易大厅'中，如果竞拍者串通压低价格（合作），大家都能获利。但每个人都有动机偷偷出高价（背叛）。"
+    - context: "现实商业"
+      description: "OPEC产油国协议减产：大家都同意减产保价，但每个国家都有动机偷偷多产。"
+  
+  non_examples:
+    - misconception: "囚徒困境说明人不应该合作"
+      correction: "恰恰相反——它说明合作很难但需要机制设计（如重复博弈、惩罚机制）来维持。"
+    - misconception: "囚徒困境只在两人之间存在"
+      correction: "多人囚徒困境（公地悲剧）更常见——污染、过度捕捞都是变体。"
+
+level_adaptations:
+  high:
+    explanation: "囚徒困境的核心悖论：个体理性导致集体非理性。打破困境的方法：重复博弈、建立信任、引入惩罚机制。"
+    example: "分析'产业链角色扮演'中的合作与背叛：为什么口头协议容易破裂？合同如何改变博弈结构？"
+  university:
+    explanation: "重复囚徒困境（Axelrod锦标赛）、演化稳定策略、机制设计理论、公共品博弈。"
+    example: "区块链技术如何通过'不可篡改的记录'解决囚徒困境中的信任问题？"
+
+platform_mapping:
+  game_modes:
+    - mode_id: "prisoners_dilemma_v1"
+      application: "核心机制——让学生亲身体验合作与背叛的张力"
+    - mode_id: "supply_chain_rpg_v1"
+      application: "产业链上下游的信任与背叛——合同如何改变博弈"
+    - mode_id: "turn_based_strategy_v2"
+      application: "联盟机制的设计——如何维持合作而不被背叛"
+  
+  ai_tutor_hints:
+    - trigger: "学生在联盟中被背叛"
+      hint: "你经历了囚徒困境的'背叛面'。在现实商业中，信任很宝贵但也很脆弱。思考：什么样的机制可以让合作更稳定？（如合同、重复博弈、声誉系统）"
+    - trigger: "学生连续多轮选择合作"
+      hint: "你的合作精神值得赞赏！但在一次性博弈中，合作可能被利用。如果这是重复博弈，'以牙还牙'策略可能是更好的选择。"
+
+related_content:
+  prerequisites: ["KN-EC-MI-006"]
+  extensions: ["KN-EC-MI-008", "KN-MG-ET-001"]
+  game_mode_applications: ["prisoners_dilemma_v1", "supply_chain_rpg_v1"]
+
+---
+content_type: KN
+content_id: "KN-EC-MI-008-v1.0"
+title: "外部性"
+subtitle: "你的行为，悄悄影响着别人"
+
+target_level: "高中及以上"
+target_age: [15, 22]
+difficulty: 3
+competencies: ["EL-2", "EL-3", "ML-1"]
+bloom_level: "analyze"
+
+tags: ["社会", "环境", "成本", "进阶概念"]
+ai_generable: true
+author: "平台教研团队"
+reviewer: "经济学顾问"
+version: "1.0.0"
+created_at: "2026-05-12"
+updated_at: "2026-05-12"
+
+knowledge:
+  definition: "当一个人的行为对旁观者产生影响，而这种影响又没有通过市场价格反映出来时，就存在外部性。正外部性带来社会收益，负外部性带来社会成本。"
+  explanation: "工厂排污赚钱（自己的收益），但污染了河流（别人的成本）。这种'别人的成本'就是负外部性。"
+  analogy: "就像宿舍里有人放音乐：他自己很开心（私人收益），但室友无法安静学习（外部成本）。"
+  
+  examples:
+    - context: "生活"
+      description: "接种疫苗：你自己不得病（私人收益），也减少了传染病传播（正外部性）。"
+    - context: "平台赛事"
+      description: "在'ESG可持续经营'中，企业减少碳排放有成本（私人成本），但全社会受益（正外部性）。"
+    - context: "现实商业"
+      description: "科技公司的数据隐私问题：公司用数据盈利，但用户隐私受损——负外部性。"
+  
+  non_examples:
+    - misconception: "所有社会影响都是外部性"
+      correction: "只有通过市场交易能解决的才不是外部性。如果已经通过税收或补贴内部化了，就不再是外部性。"
+    - misconception: "外部性只存在于环境污染"
+      correction: "教育、研发、疫苗都有正外部性；噪音、拥堵都有负外部性。"
+
+level_adaptations:
+  high:
+    explanation: "外部性导致市场失灵：私人成本/收益与社会成本/收益不一致。解决办法：税收（庇古税）、补贴、产权界定（科斯定理）。"
+    example: "为什么塑料袋要收费？因为免费时商家和消费者都不考虑环境成本（负外部性），收费后成本被'内部化'了。"
+  university:
+    explanation: "科斯定理、产权经济学、公共选择理论、环境经济学中的最优污染水平。"
+    example: "碳交易市场如何通过价格机制将外部性内部化？"
+
+platform_mapping:
+  game_modes:
+    - mode_id: "esg_scoring_v1"
+      application: "核心机制——ESG投入的正外部性如何影响企业长期价值"
+    - mode_id: "macro_sandbox_v1"
+      application: "环境政策对企业决策的外部性影响"
+  
+  ai_tutor_hints:
+    - trigger: "学生为降低成本而忽视ESG投入"
+      hint: "你降低了成本，但产生了负外部性。在ESG评分系统中，这些外部成本最终会影响你的企业声誉和长期利润。"
+
+related_content:
+  prerequisites: ["KN-EC-MI-001"]
+  extensions: ["KN-MG-ET-001", "KN-MG-ET-002"]
+  game_mode_applications: ["esg_scoring_v1", "macro_sandbox_v1"]

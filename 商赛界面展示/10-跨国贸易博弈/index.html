@@ -1,0 +1,658 @@
+<!DOCTYPE html>
+<html lang="zh-CN" data-theme="global">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>跨国贸易博弈 - 商业模拟平台</title>
+  <link rel="stylesheet" href="../shared-styles.css">
+  <style>
+    :root {
+      --theme: #6366f1;
+      --theme-soft: rgba(99,102,241,0.15);
+      --theme-glow: rgba(99,102,241,0.4);
+    }
+    
+    .world-map {
+      background: var(--bg-card);
+      border-radius: var(--radius-lg);
+      padding: var(--space-xl);
+      position: relative;
+      overflow: hidden;
+      margin-bottom: var(--space-xl);
+    }
+    .map-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: var(--space-md);
+    }
+    .market-card {
+      background: var(--bg-hover);
+      border-radius: var(--radius-md);
+      padding: var(--space-md);
+      border: 2px solid transparent;
+      transition: all var(--transition-fast);
+      cursor: pointer;
+    }
+    .market-card:hover { border-color: var(--theme); }
+    .market-card.active { border-color: var(--theme); background: var(--theme-soft); }
+    .market-flag {
+      font-size: 2rem;
+      margin-bottom: var(--space-sm);
+    }
+    .market-name {
+      font-weight: 600;
+      font-size: 0.875rem;
+    }
+    .market-gdp {
+      font-size: 0.75rem;
+      color: var(--text-muted);
+    }
+    .market-risk {
+      display: inline-block;
+      padding: 0.125rem 0.5rem;
+      border-radius: 9999px;
+      font-size: 0.625rem;
+      font-weight: 600;
+      margin-top: var(--space-sm);
+    }
+    .risk-low { background: rgba(16,185,129,0.15); color: var(--success); }
+    .risk-mid { background: rgba(245,158,11,0.15); color: var(--warning); }
+    .risk-high { background: rgba(239,68,68,0.15); color: var(--danger); }
+    
+    .exchange-board {
+      background: var(--bg-card);
+      border-radius: var(--radius-md);
+      padding: var(--space-lg);
+      margin-bottom: var(--space-lg);
+    }
+    .exchange-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: var(--space-sm) 0;
+      border-bottom: 1px solid var(--border-subtle);
+    }
+    .exchange-row:last-child { border-bottom: none; }
+    .currency-pair {
+      display: flex;
+      align-items: center;
+      gap: var(--space-sm);
+      font-weight: 600;
+    }
+    .exchange-rate {
+      font-family: var(--font-mono);
+      font-weight: 700;
+    }
+    .rate-change {
+      font-size: 0.75rem;
+      font-family: var(--font-mono);
+    }
+    
+    .trade-route {
+      display: flex;
+      align-items: center;
+      gap: var(--space-md);
+      padding: var(--space-lg);
+      background: var(--bg-card);
+      border-radius: var(--radius-md);
+      margin-bottom: var(--space-md);
+      border: 1px solid var(--border-subtle);
+    }
+    .route-origin, .route-dest {
+      text-align: center;
+      min-width: 100px;
+    }
+    .route-arrow {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: var(--space-xs);
+    }
+    .route-line {
+      width: 100%;
+      height: 3px;
+      background: var(--theme);
+      border-radius: 9999px;
+      position: relative;
+    }
+    .route-line::after {
+      content: '';
+      position: absolute;
+      right: -6px;
+      top: -4px;
+      border: 5px solid transparent;
+      border-left: 8px solid var(--theme);
+    }
+    .route-cost {
+      font-size: 0.75rem;
+      color: var(--text-muted);
+    }
+    .route-profit {
+      font-family: var(--font-mono);
+      font-weight: 700;
+      color: var(--success);
+    }
+    
+    .tariff-panel {
+      background: var(--bg-card);
+      border-radius: var(--radius-md);
+      padding: var(--space-lg);
+    }
+    .tariff-row {
+      display: grid;
+      grid-template-columns: 2fr 1fr 1fr 1fr;
+      padding: var(--space-sm) 0;
+      border-bottom: 1px solid var(--border-subtle);
+      align-items: center;
+      font-size: 0.875rem;
+    }
+    .tariff-row:last-child { border-bottom: none; }
+    .tariff-header {
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      font-weight: 600;
+    }
+    .tariff-rate {
+      font-family: var(--font-mono);
+      font-weight: 700;
+    }
+    .tariff-bar {
+      width: 60px;
+      height: 6px;
+      background: var(--bg-hover);
+      border-radius: 9999px;
+      overflow: hidden;
+    }
+    
+    .culture-card {
+      background: var(--bg-card);
+      border-radius: var(--radius-md);
+      padding: var(--space-lg);
+      border: 1px solid var(--border-subtle);
+    }
+    .culture-dimension {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: var(--space-sm) 0;
+      border-bottom: 1px solid var(--border-subtle);
+    }
+    .culture-dimension:last-child { border-bottom: none; }
+    .dimension-scale {
+      display: flex;
+      align-items: center;
+      gap: var(--space-sm);
+      width: 200px;
+    }
+    .dim-track {
+      flex: 1;
+      height: 6px;
+      background: var(--bg-hover);
+      border-radius: 9999px;
+      position: relative;
+    }
+    .dim-marker {
+      position: absolute;
+      top: 50%;
+      transform: translate(-50%, -50%);
+      width: 12px;
+      height: 12px;
+      background: var(--theme);
+      border-radius: 50%;
+    }
+    .dim-labels {
+      display: flex;
+      justify-content: space-between;
+      font-size: 0.625rem;
+      color: var(--text-muted);
+      margin-top: 2px;
+    }
+    
+    .negotiation-table {
+      background: var(--bg-card);
+      border-radius: var(--radius-md);
+      overflow: hidden;
+    }
+    .nego-row {
+      display: grid;
+      grid-template-columns: 1.5fr 1fr 1fr 1fr 1fr;
+      padding: var(--space-md);
+      border-bottom: 1px solid var(--border-subtle);
+      align-items: center;
+      font-size: 0.875rem;
+    }
+    .nego-row:last-child { border-bottom: none; }
+    .nego-header {
+      background: var(--bg-hover);
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      font-weight: 600;
+    }
+    .deal-status {
+      padding: 0.25rem 0.5rem;
+      border-radius: 9999px;
+      font-size: 0.625rem;
+      font-weight: 600;
+      text-align: center;
+    }
+    .deal-pending { background: rgba(245,158,11,0.15); color: var(--warning); }
+    .deal-signed { background: rgba(16,185,129,0.15); color: var(--success); }
+    .deal-broken { background: rgba(239,68,68,0.15); color: var(--danger); }
+  </style>
+</head>
+<body>
+  <nav class="navbar">
+    <div class="container navbar-inner">
+      <a href="#" class="navbar-brand">
+        <div class="logo-icon" style="background: var(--theme);">🌐</div>
+        <span>商业模拟平台</span>
+      </a>
+      <ul class="navbar-nav">
+        <li><a href="#overview" class="active">赛制概览</a></li>
+        <li><a href="#markets">全球市场</a></li>
+        <li><a href="#trade">贸易路线</a></li>
+        <li><a href="#culture">文化差异</a></li>
+      </ul>
+    </div>
+  </nav>
+
+  <section class="hero">
+    <div class="hero-bg" style="background-image: url('cover.svg');"></div>
+    <div class="container hero-content">
+      <div class="hero-badge" style="border-color: var(--theme); color: var(--theme);">
+        <span>🌐</span>
+        <span>多国家地图 · 汇率波动 · 文化差异</span>
+      </div>
+      <h1 class="hero-title">跨国贸易博弈</h1>
+      <p class="hero-subtitle">在多国家市场中经营，面对汇率波动、关税壁垒、文化差异与地缘政治风险。训练全球化视野与跨文化商业决策能力。</p>
+      <div class="hero-meta">
+        <div class="hero-meta-item">
+          <span class="hero-meta-value" style="color: var(--theme);">多国</span>
+          <span class="hero-meta-label">市场地图</span>
+        </div>
+        <div class="hero-meta-item">
+          <span class="hero-meta-value" style="color: var(--theme);">汇率</span>
+          <span class="hero-meta-label">实时波动</span>
+        </div>
+        <div class="hero-meta-item">
+          <span class="hero-meta-value" style="color: var(--theme);">关税</span>
+          <span class="hero-meta-label">贸易壁垒</span>
+        </div>
+        <div class="hero-meta-item">
+          <span class="hero-meta-value" style="color: var(--theme);">大学+</span>
+          <span class="hero-meta-label">适合学段</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" id="overview">
+    <div class="container">
+      <div class="section-header">
+        <div class="section-label">Global Markets</div>
+        <h2 class="section-title">全球市场版图</h2>
+        <p class="section-desc">每个市场有独特的经济特征与风险等级</p>
+      </div>
+      
+      <div class="world-map">
+        <div class="map-grid">
+          <div class="market-card active">
+            <div class="market-flag">🇨🇳</div>
+            <div class="market-name">中国</div>
+            <div class="market-gdp">GDP: ¥126万亿</div>
+            <span class="market-risk risk-low">低风险</span>
+          </div>
+          <div class="market-card">
+            <div class="market-flag">🇺🇸</div>
+            <div class="market-name">美国</div>
+            <div class="market-gdp">GDP: $27万亿</div>
+            <span class="market-risk risk-mid">中风险</span>
+          </div>
+          <div class="market-card">
+            <div class="market-flag">🇪🇺</div>
+            <div class="market-name">欧盟</div>
+            <div class="market-gdp">GDP: €17万亿</div>
+            <span class="market-risk risk-mid">中风险</span>
+          </div>
+          <div class="market-card">
+            <div class="market-flag">🇯🇵</div>
+            <div class="market-name">日本</div>
+            <div class="market-gdp">GDP: ¥560万亿</div>
+            <span class="market-risk risk-low">低风险</span>
+          </div>
+          <div class="market-card">
+            <div class="market-flag">🇮🇳</div>
+            <div class="market-name">印度</div>
+            <div class="market-gdp">GDP: $3.9万亿</div>
+            <span class="market-risk risk-mid">中风险</span>
+          </div>
+          <div class="market-card">
+            <div class="market-flag">🇧🇷</div>
+            <div class="market-name">巴西</div>
+            <div class="market-gdp">GDP: $2.1万亿</div>
+            <span class="market-risk risk-high">高风险</span>
+          </div>
+          <div class="market-card">
+            <div class="market-flag">🇦🇪</div>
+            <div class="market-name">阿联酋</div>
+            <div class="market-gdp">GDP: $5,070亿</div>
+            <span class="market-risk risk-mid">中风险</span>
+          </div>
+          <div class="market-card">
+            <div class="market-flag">🇿🇦</div>
+            <div class="market-name">南非</div>
+            <div class="market-gdp">GDP: $3,770亿</div>
+            <span class="market-risk risk-high">高风险</span>
+          </div>
+        </div>
+      </div>
+      
+      <div class="exchange-board">
+        <h4 style="margin-bottom: var(--space-md);">💱 实时汇率看板</h4>
+        <div class="exchange-row">
+          <span class="currency-pair">🇺🇸 USD / 🇨🇳 CNY</span>
+          <span class="exchange-rate">7.2450</span>
+          <span class="rate-change" style="color: var(--danger);">▼ -0.32%</span>
+        </div>
+        <div class="exchange-row">
+          <span class="currency-pair">🇪🇺 EUR / 🇨🇳 CNY</span>
+          <span class="exchange-rate">7.8920</span>
+          <span class="rate-change" style="color: var(--success);">▲ +0.15%</span>
+        </div>
+        <div class="exchange-row">
+          <span class="currency-pair">🇯🇵 JPY / 🇨🇳 CNY</span>
+          <span class="exchange-rate">0.0482</span>
+          <span class="rate-change" style="color: var(--danger);">▼ -0.08%</span>
+        </div>
+        <div class="exchange-row">
+          <span class="currency-pair">🇮🇳 INR / 🇨🇳 CNY</span>
+          <span class="exchange-rate">0.0865</span>
+          <span class="rate-change" style="color: var(--success);">▲ +0.42%</span>
+        </div>
+        <div class="exchange-row">
+          <span class="currency-pair">🇧🇷 BRL / 🇨🇳 CNY</span>
+          <span class="exchange-rate">1.3240</span>
+          <span class="rate-change" style="color: var(--danger);">▼ -1.25%</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" id="trade" style="background: var(--bg-secondary);">
+    <div class="container">
+      <div class="section-header">
+        <div class="section-label">Trade Routes</div>
+        <h2 class="section-title">贸易路线与关税</h2>
+        <p class="section-desc">规划最优贸易路线，平衡成本与利润</p>
+      </div>
+      
+      <div class="trade-route">
+        <div class="route-origin">
+          <div style="font-size: 2rem;">🇨🇳</div>
+          <div style="font-weight: 600;">上海</div>
+          <div style="font-size: 0.75rem; color: var(--text-muted);">电子产品</div>
+        </div>
+        <div class="route-arrow">
+          <div class="route-line"></div>
+          <div class="route-cost">运费: ¥12万 · 关税: 15%</div>
+        </div>
+        <div class="route-dest">
+          <div style="font-size: 2rem;">🇺🇸</div>
+          <div style="font-weight: 600;">洛杉矶</div>
+          <div style="font-size: 0.75rem; color: var(--text-muted);">售价: $85万</div>
+        </div>
+        <div style="text-align: right; margin-left: auto;">
+          <div class="route-profit">+¥32万</div>
+          <div style="font-size: 0.75rem; color: var(--text-muted);">单批次利润</div>
+        </div>
+      </div>
+      
+      <div class="trade-route">
+        <div class="route-origin">
+          <div style="font-size: 2rem;">🇨🇳</div>
+          <div style="font-weight: 600;">深圳</div>
+          <div style="font-size: 0.75rem; color: var(--text-muted);">纺织品</div>
+        </div>
+        <div class="route-arrow">
+          <div class="route-line" style="background: var(--warning);"></div>
+          <div class="route-cost">运费: ¥8万 · 关税: 25%</div>
+        </div>
+        <div class="route-dest">
+          <div style="font-size: 2rem;">🇪🇺</div>
+          <div style="font-weight: 600;">汉堡</div>
+          <div style="font-size: 0.75rem; color: var(--text-muted);">售价: €45万</div>
+        </div>
+        <div style="text-align: right; margin-left: auto;">
+          <div class="route-profit" style="color: var(--warning);">+¥8万</div>
+          <div style="font-size: 0.75rem; color: var(--text-muted);">单批次利润</div>
+        </div>
+      </div>
+      
+      <div class="trade-route">
+        <div class="route-origin">
+          <div style="font-size: 2rem;">🇨🇳</div>
+          <div style="font-weight: 600;">广州</div>
+          <div style="font-size: 0.75rem; color: var(--text-muted);">机械设备</div>
+        </div>
+        <div class="route-arrow">
+          <div class="route-line" style="background: var(--success);"></div>
+          <div class="route-cost">运费: ¥15万 · 关税: 5%</div>
+        </div>
+        <div class="route-dest">
+          <div style="font-size: 2rem;">🇦🇪</div>
+          <div style="font-weight: 600;">迪拜</div>
+          <div style="font-size: 0.75rem; color: var(--text-muted);">售价: $120万</div>
+        </div>
+        <div style="text-align: right; margin-left: auto;">
+          <div class="route-profit">+¥58万</div>
+          <div style="font-size: 0.75rem; color: var(--text-muted);">单批次利润</div>
+        </div>
+      </div>
+      
+      <div class="tariff-panel mt-xl">
+        <h4 style="margin-bottom: var(--space-md);">📋 关税税率表</h4>
+        <div class="tariff-row" style="background: var(--bg-hover);">
+          <span class="tariff-header">贸易路线</span>
+          <span class="tariff-header" style="text-align: center;">基础税率</span>
+          <span class="tariff-header" style="text-align: center;">优惠税率</span>
+          <span class="tariff-header" style="text-align: center;">趋势</span>
+        </div>
+        <div class="tariff-row">
+          <span>🇨🇳 → 🇺🇸</span>
+          <span class="tariff-rate" style="text-align: center; color: var(--danger);">25%</span>
+          <span class="tariff-rate" style="text-align: center; color: var(--warning);">15%</span>
+          <div class="tariff-bar" style="margin: 0 auto;"><div class="progress-fill" style="width: 80%; background: var(--danger);"></div></div>
+        </div>
+        <div class="tariff-row">
+          <span>🇨🇳 → 🇪🇺</span>
+          <span class="tariff-rate" style="text-align: center; color: var(--warning);">15%</span>
+          <span class="tariff-rate" style="text-align: center; color: var(--success);">5%</span>
+          <div class="tariff-bar" style="margin: 0 auto;"><div class="progress-fill" style="width: 50%; background: var(--warning);"></div></div>
+        </div>
+        <div class="tariff-row">
+          <span>🇨🇳 → 🇯🇵</span>
+          <span class="tariff-rate" style="text-align: center; color: var(--success);">5%</span>
+          <span class="tariff-rate" style="text-align: center; color: var(--success);">0%</span>
+          <div class="tariff-bar" style="margin: 0 auto;"><div class="progress-fill" style="width: 20%; background: var(--success);"></div></div>
+        </div>
+        <div class="tariff-row">
+          <span>🇨🇳 → 🇮🇳</span>
+          <span class="tariff-rate" style="text-align: center; color: var(--warning);">18%</span>
+          <span class="tariff-rate" style="text-align: center; color: var(--warning);">12%</span>
+          <div class="tariff-bar" style="margin: 0 auto;"><div class="progress-fill" style="width: 60%; background: var(--warning);"></div></div>
+        </div>
+        <div class="tariff-row">
+          <span>🇨🇳 → 🇦🇪</span>
+          <span class="tariff-rate" style="text-align: center; color: var(--success);">3%</span>
+          <span class="tariff-rate" style="text-align: center; color: var(--success);">0%</span>
+          <div class="tariff-bar" style="margin: 0 auto;"><div class="progress-fill" style="width: 10%; background: var(--success);"></div></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" id="culture">
+    <div class="container">
+      <div class="section-header">
+        <div class="section-label">Cross-Culture</div>
+        <h2 class="section-title">跨文化商业维度</h2>
+        <p class="section-desc">理解文化差异，避免商业失误</p>
+      </div>
+      
+      <div class="grid-2">
+        <div class="culture-card">
+          <h4 style="margin-bottom: var(--space-lg);">🇺🇸 美国市场文化画像</h4>
+          <div class="culture-dimension">
+            <span style="font-size: 0.875rem;">个人主义</span>
+            <div class="dimension-scale">
+              <div class="dim-track"><div class="dim-marker" style="left: 85%;"></div></div>
+            </div>
+          </div>
+          <div class="dim-labels" style="width: 200px; margin-left: auto;">
+            <span>集体</span>
+            <span>个人</span>
+          </div>
+          
+          <div class="culture-dimension">
+            <span style="font-size: 0.875rem;">时间观念</span>
+            <div class="dimension-scale">
+              <div class="dim-track"><div class="dim-marker" style="left: 90%;"></div></div>
+            </div>
+          </div>
+          <div class="dim-labels" style="width: 200px; margin-left: auto;">
+            <span>弹性</span>
+            <span>严格</span>
+          </div>
+          
+          <div class="culture-dimension">
+            <span style="font-size: 0.875rem;">风险承受</span>
+            <div class="dimension-scale">
+              <div class="dim-track"><div class="dim-marker" style="left: 75%;"></div></div>
+            </div>
+          </div>
+          <div class="dim-labels" style="width: 200px; margin-left: auto;">
+            <span>规避</span>
+            <span>偏好</span>
+          </div>
+          
+          <div class="culture-dimension">
+            <span style="font-size: 0.875rem;">沟通风格</span>
+            <div class="dimension-scale">
+              <div class="dim-track"><div class="dim-marker" style="left: 80%;"></div></div>
+            </div>
+          </div>
+          <div class="dim-labels" style="width: 200px; margin-left: auto;">
+            <span>含蓄</span>
+            <span>直接</span>
+          </div>
+          
+          <div style="margin-top: var(--space-md); padding: var(--space-md); background: var(--bg-hover); border-radius: var(--radius-sm); font-size: 0.8125rem; color: var(--text-secondary);">
+            <strong>💡 商业提示：</strong>美国人重视效率和直接沟通。会议应准时开始，提案需数据支撑，避免过度谦虚。
+          </div>
+        </div>
+        
+        <div class="culture-card">
+          <h4 style="margin-bottom: var(--space-lg);">🇯🇵 日本市场文化画像</h4>
+          <div class="culture-dimension">
+            <span style="font-size: 0.875rem;">个人主义</span>
+            <div class="dimension-scale">
+              <div class="dim-track"><div class="dim-marker" style="left: 25%;"></div></div>
+            </div>
+          </div>
+          <div class="dim-labels" style="width: 200px; margin-left: auto;">
+            <span>集体</span>
+            <span>个人</span>
+          </div>
+          
+          <div class="culture-dimension">
+            <span style="font-size: 0.875rem;">时间观念</span>
+            <div class="dimension-scale">
+              <div class="dim-track"><div class="dim-marker" style="left: 95%;"></div></div>
+            </div>
+          </div>
+          <div class="dim-labels" style="width: 200px; margin-left: auto;">
+            <span>弹性</span>
+            <span>严格</span>
+          </div>
+          
+          <div class="culture-dimension">
+            <span style="font-size: 0.875rem;">风险承受</span>
+            <div class="dimension-scale">
+              <div class="dim-track"><div class="dim-marker" style="left: 30%;"></div></div>
+            </div>
+          </div>
+          <div class="dim-labels" style="width: 200px; margin-left: auto;">
+            <span>规避</span>
+            <span>偏好</span>
+          </div>
+          
+          <div class="culture-dimension">
+            <span style="font-size: 0.875rem;">沟通风格</span>
+            <div class="dimension-scale">
+              <div class="dim-track"><div class="dim-marker" style="left: 20%;"></div></div>
+            </div>
+          </div>
+          <div class="dim-labels" style="width: 200px; margin-left: auto;">
+            <span>含蓄</span>
+            <span>直接</span>
+          </div>
+          
+          <div style="margin-top: var(--space-md); padding: var(--space-md); background: var(--bg-hover); border-radius: var(--radius-sm); font-size: 0.8125rem; color: var(--text-secondary);">
+            <strong>💡 商业提示：</strong>日本重视关系建立和共识决策。首次会面不急于谈生意，名片交换是重要仪式。
+          </div>
+        </div>
+      </div>
+      
+      <div class="card mt-xl">
+        <h4 style="margin-bottom: var(--space-lg);">🤝 跨国谈判桌</h4>
+        <div class="negotiation-table">
+          <div class="nego-row nego-header">
+            <span>谈判议题</span>
+            <span style="text-align: center;">中方立场</span>
+            <span style="text-align: center;">美方立场</span>
+            <span style="text-align: center;">分歧点</span>
+            <span style="text-align: center;">状态</span>
+          </div>
+          <div class="nego-row">
+            <span>价格条款</span>
+            <span style="text-align: center;">FOB 上海</span>
+            <span style="text-align: center;">CIF 洛杉矶</span>
+            <span style="text-align: center; color: var(--warning);">运费承担</span>
+            <span class="deal-status deal-pending">协商中</span>
+          </div>
+          <div class="nego-row">
+            <span>付款方式</span>
+            <span style="text-align: center;">信用证 60天</span>
+            <span style="text-align: center;">T/T 预付</span>
+            <span style="text-align: center; color: var(--danger);">资金风险</span>
+            <span class="deal-status deal-pending">协商中</span>
+          </div>
+          <div class="nego-row">
+            <span>质量标准</span>
+            <span style="text-align: center;">国标 GB</span>
+            <span style="text-align: center;">美标 ASTM</span>
+            <span style="text-align: center; color: var(--warning);">检测标准</span>
+            <span class="deal-status deal-signed">已达成一致</span>
+          </div>
+          <div class="nego-row">
+            <span>知识产权</span>
+            <span style="text-align: center;">联合持有</span>
+            <span style="text-align: center;">美方独有</span>
+            <span style="text-align: center; color: var(--danger);">核心争议</span>
+            <span class="deal-status deal-broken">谈判破裂</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <footer style="padding: var(--space-xl) 0; border-top: 1px solid var(--border-subtle); text-align: center;">
+    <div class="container">
+      <p style="color: var(--text-muted); font-size: 0.875rem;">商业模拟平台 · 跨国贸易博弈 · 适合大学及以上学段 · 全球化视野训练</p>
+    </div>
+  </footer>
+</body>
+</html>

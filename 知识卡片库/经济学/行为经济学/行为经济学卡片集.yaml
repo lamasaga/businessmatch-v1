@@ -1,0 +1,213 @@
+# ============================================
+# 行为经济学知识卡片集（3张）
+# ============================================
+
+---
+content_type: KN
+content_id: "KN-EC-BE-001-v1.0"
+title: "锚定效应"
+subtitle: "第一个看到的数字，悄悄改变了你的判断"
+
+target_level: "高中及以上"
+target_age: [15, 22]
+difficulty: 3
+competencies: ["ML-4", "SL-4"]
+bloom_level: "understand"
+
+tags: ["心理", "决策", "定价", "行为经济学"]
+ai_generable: true
+author: "平台教研团队"
+reviewer: "经济学顾问"
+version: "1.0.0"
+created_at: "2026-05-12"
+updated_at: "2026-05-12"
+
+knowledge:
+  definition: "锚定效应是指人们在做出判断时，过度依赖最先获得的信息（锚点），即使这个锚点与决策无关。"
+  explanation: "如果你先看到'原价1999，现价999'，你会觉得999很划算。但如果直接看到999，你可能觉得贵。那个'1999'就是锚。"
+  analogy: "就像抛锚的船——锚点（第一个数字）固定了你的判断范围，后续的波动都围绕这个锚展开。"
+  
+  examples:
+    - context: "生活"
+      description: "房产中介先带你看几套超预算的房子，再看目标价位的房子，你会觉得目标价位的房子'性价比真高'。"
+    - context: "平台赛事"
+      description: "在'拍卖交易大厅'中，起拍价设得很高，最终成交价往往也会偏高——即使商品实际不值那么多。"
+    - context: "现实商业"
+      description: "星巴克的'超大杯'：设置一个明显不划算的大杯选项，让中杯看起来性价比更高。"
+  
+  non_examples:
+    - misconception: "锚定效应只影响不聪明的人"
+      correction: "锚定效应影响所有人，包括专家和经济学家。它是大脑的自动加工，与智商无关。"
+    - misconception: "知道锚定效应就能免疫"
+      correction: "即使你知道锚定效应的存在，仍然会被影响。唯一的办法是主动寻找反锚（其他参考点）。"
+
+level_adaptations:
+  high:
+    explanation: "锚定效应的机制：调整不足（insufficient adjustment）。如何设计反锚策略：寻找多个参考点、延迟决策。"
+    example: "在'投资人对决'中，路演时第一个数字（估值）会锚定投资人的心理预期。如何设置最优锚点？"
+  university:
+    explanation: "锚定效应的神经基础（前额叶皮层与杏仁核的互动）、专家vs新手的锚定差异、去锚定策略的实证研究。"
+    example: "谈判中的锚定：先出价者占据优势。如何打破对方的锚？引入新的信息维度。"
+
+platform_mapping:
+  game_modes:
+    - mode_id: "auction_trading_v1"
+      application: "起拍价设置对最终成交价的锚定影响"
+    - mode_id: "investor_pitch_v1"
+      application: "路演中估值声明的锚定效应"
+    - mode_id: "turn_based_strategy_v2"
+      application: "对手首轮投资对你决策的锚定"
+  
+  ai_tutor_hints:
+    - trigger: "学生在拍卖中出价接近起拍价"
+      hint: "注意锚定效应！起拍价只是一个参考，不是商品的真实价值。问问自己：如果没有看到起拍价，这个商品我愿意出多少钱？"
+
+personality_mapping:
+  recommended:
+    - mbti: "INTP"
+      reason: "喜欢分析认知偏差和决策机制"
+  challenge_for:
+    - mbti: "ESTP"
+      adjustment: "用具体拍卖实验数据展示锚定效应的力量"
+
+multimedia:
+  illustration_prompt: "一个巨大的船锚沉入海中，海面上漂浮着数字标签'1999'，远处有一艘小船（代表判断）被锚链拉住"
+  interactive_demo: "experiment_anchoring: 两组学生看到不同的'参考价'，然后出价，对比结果差异"
+
+related_content:
+  prerequisites: ["KN-EC-MI-001"]
+  extensions: ["KN-EC-BE-002", "KN-EC-BE-003", "KN-BS-MK-005"]
+  game_mode_applications: ["auction_trading_v1", "investor_pitch_v1"]
+
+---
+content_type: KN
+content_id: "KN-EC-BE-002-v1.0"
+title: "损失厌恶"
+subtitle: "失去100元的痛苦，比得到100元的快乐更强烈"
+
+target_level: "高中及以上"
+target_age: [15, 22]
+difficulty: 3
+competencies: ["FL-5", "SL-1"]
+bloom_level: "understand"
+
+tags: ["心理", "风险", "决策", "行为经济学"]
+ai_generable: true
+author: "平台教研团队"
+reviewer: "经济学顾问"
+version: "1.0.0"
+created_at: "2026-05-12"
+updated_at: "2026-05-12"
+
+knowledge:
+  definition: "损失厌恶是指人们对损失的敏感度远高于对同等收益的喜悦。心理学家卡尼曼发现：失去100元的痛苦≈得到200元的快乐。"
+  explanation: "如果你已经赚了1000元，再赚100元感觉一般。但如果从1000元亏了100元，你会非常难受——虽然金额一样。"
+  analogy: "就像秤——左边放'得到'的砝码，右边放'失去'的砝码。右边的重量是左边的2倍，才能让秤平衡。"
+  
+  examples:
+    - context: "生活"
+      description: "股票跌了你不舍得卖（承认损失太痛苦），结果越跌越多。股票涨了你也舍不得卖（怕错过更多涨幅）。"
+    - context: "平台赛事"
+      description: "在'创业生存战'中，学生在亏损时倾向于冒险翻盘（想避免损失），在盈利时倾向于保守（想保住成果）。"
+    - context: "现实商业"
+      description: "免费试用策略：一旦你开始使用（建立了'拥有感'），取消订阅就像'失去'，所以你更可能付费。"
+  
+  non_examples:
+    - misconception: "损失厌恶意味着人们从不愿意冒险"
+      correction: "恰恰相反——当人们已经处于'损失区域'时，反而更愿意冒险（赌一把翻本）。"
+    - misconception: "损失厌恶只影响个人投资"
+      correction: "它影响所有决策：企业不愿退出亏损业务、政府不愿承认政策失败。"
+
+level_adaptations:
+  high:
+    explanation: "损失厌恶导致的决策偏差：禀赋效应（拥有的东西估值更高）、现状偏见、沉没成本谬误。"
+    example: "在'拍卖交易大厅'中，为什么已经出了高价的人更难停手？因为'放弃'意味着承认损失。"
+  university:
+    explanation: "前景理论（Prospect Theory）的完整框架：价值函数的S形曲线、参考点依赖、概率加权。"
+    example: "企业并购中的损失厌恶：CEO为什么宁愿维持亏损的多元化业务，也不愿聚焦核心？"
+
+platform_mapping:
+  game_modes:
+    - mode_id: "startup_survival_v1"
+      application: "亏损时的冒险倾向vs盈利时的保守倾向"
+    - mode_id: "auction_trading_v1"
+      application: "已出价者的'沉没成本'心理——越投越难退出"
+    - mode_id: "turn_based_strategy_v2"
+      application: "领先者的保守防御vs落后者的冒险反击"
+  
+  ai_tutor_hints:
+    - trigger: "学生因不愿承认损失而持续投入亏损策略"
+      hint: "你似乎陷入了'损失厌恶'——承认之前的决策失误很痛苦，但继续投入只会让损失更大。商业中，及时止损比硬撑更需要勇气。"
+    - trigger: "学生在拍卖中加价超出预算"
+      hint: "你已经投入了这么多，放弃就意味着'损失'已出的价。但这正是损失厌恶在影响你。冷静评估：这个商品的真正价值是多少？"
+
+related_content:
+  prerequisites: ["KN-EC-MI-004"]
+  extensions: ["KN-EC-BE-003", "KN-BS-FI-005"]
+  game_mode_applications: ["startup_survival_v1", "auction_trading_v1"]
+
+---
+content_type: KN
+content_id: "KN-EC-BE-003-v1.0"
+title: "心理账户"
+subtitle: "同样是100元，为什么花在不同地方感觉不一样？"
+
+target_level: "初中及以上"
+target_age: [13, 22]
+difficulty: 2
+competencies: ["FL-1"]
+bloom_level: "understand"
+
+tags: ["心理", "消费", "财务", "行为经济学"]
+ai_generable: true
+author: "平台教研团队"
+reviewer: "经济学顾问"
+version: "1.0.0"
+created_at: "2026-05-12"
+updated_at: "2026-05-12"
+
+knowledge:
+  definition: "心理账户是指人们在心中把金钱分门别类放入不同的'账户'，不同账户的钱有不同的消费规则和心理价值。"
+  explanation: "你丢了100元现金很心疼，但用信用卡刷100元没感觉。因为现金是'辛苦赚来的账户'，信用卡是'未来再说的账户'。"
+  analogy: "就像你钱包里有几个不同的口袋：一个放'生活费'（花的时候心疼），一个放'奖金'（花的时候大方），一个放'应急金'（非紧急不动）。"
+  
+  examples:
+    - context: "生活"
+      description: "有人省吃俭用，但买彩票很大方——因为'彩票钱'在心理上是'娱乐账户'，不是'生活账户'。"
+    - context: "平台赛事"
+      description: "在'创业生存战'中，学生把'运营资金'和'备用金'分开管理——即使运营资金紧张，也不愿动用备用金。"
+    - context: "现实商业"
+      description: "为什么退款比折扣更有效？因为折扣是'少付了'，退款是'得到了一笔钱'——心理账户不同。"
+  
+  non_examples:
+    - misconception: "心理账户是理性的财务管理"
+      correction: "恰恰相反——心理账户常常导致非理性行为，比如过度消费'意外之财'。"
+    - misconception: "心理账户只影响消费者"
+      correction: "企业也有心理账户：'研发预算'和'营销预算'即使可以互换，管理者也不愿挪用。"
+
+level_adaptations:
+  middle:
+    explanation: "人们把钱分成不同的心理盒子：零花钱、压岁钱、储蓄。每个盒子的花钱规则不同。"
+    example: "为什么压岁钱比零花钱花得更大方？因为压岁钱在'意外之财'的心理账户里。"
+  high:
+    explanation: "心理账户的三种类型：当前收入账户、当前资产账户、未来收入账户。不同账户的边际消费倾向不同。"
+    example: "在'实时经营挑战'中，学生如何分配'日常运营资金'和'突发应急资金'？这种划分如何影响决策？"
+  university:
+    explanation: "心理账户理论的完整框架：交易效用vs获取效用、账户的打开与关闭、心理会计对企业财务决策的影响。"
+    example: "SaaS企业为什么更喜欢'订阅制'而非'买断制'？因为客户的心理账户从'大额投资'变成了'小额日常开销'。"
+
+platform_mapping:
+  game_modes:
+    - mode_id: "startup_survival_v1"
+      application: "预算分类管理——不同心理账户影响资源分配决策"
+    - mode_id: "real_time_challenge_v1"
+      application: "应急资金vs日常资金的动用决策"
+  
+  ai_tutor_hints:
+    - trigger: "学生有备用金但不愿使用"
+      hint: "你似乎在把资金分成不同的心理账户。从商业理性的角度看，钱就是钱——在关键时刻，备用金的存在就是为了被使用的。"
+
+related_content:
+  prerequisites: ["KN-EC-MI-004"]
+  extensions: ["KN-EC-BE-002", "KN-BS-FI-005"]
+  game_mode_applications: ["startup_survival_v1", "real_time_challenge_v1"]

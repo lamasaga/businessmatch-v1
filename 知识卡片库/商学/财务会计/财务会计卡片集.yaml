@@ -1,0 +1,417 @@
+# ============================================
+# 财务会计知识卡片集（6张）
+# ============================================
+
+---
+content_type: KN
+content_id: "KN-BS-FI-001-v1.0"
+title: "三张财务报表"
+subtitle: "企业的'体检报告'：利润表、资产负债表、现金流量表"
+
+target_level: "初中及以上"
+target_age: [13, 22]
+difficulty: 3
+competencies: ["FL-3"]
+bloom_level: "understand"
+
+tags: ["财务", "报表", "基础概念", "入门"]
+ai_generable: true
+author: "平台教研团队"
+reviewer: "商学顾问"
+version: "1.0.0"
+created_at: "2026-05-12"
+updated_at: "2026-05-12"
+
+knowledge:
+  definition: |
+    三张财务报表是企业财务状况的全景图：
+    - 利润表（Income Statement）：一段时间内的收入、成本和利润
+    - 资产负债表（Balance Sheet）：某一时点的资产、负债和所有者权益
+    - 现金流量表（Cash Flow Statement）：一段时间内现金的流入和流出
+  explanation: |
+    - 利润表像"成绩单"：这段时间赚了多少钱？
+    - 资产负债表像"快照"：现在手里有什么、欠别人什么？
+    - 现金流量表像"钱包记录"：钱怎么来的、怎么花的？
+  analogy: |
+    就像个人理财：
+    - 利润表 = 你这个月的工资减去开销 = 存了多少钱
+    - 资产负债表 = 你现在有多少存款、多少债、房子值多少钱
+    - 现金流量表 = 工资几号到账、房租几号扣、信用卡什么时候还
+  
+  examples:
+    - context: "生活"
+      description: "你的'个人三张表'：利润表=月收入-月支出；资产负债表=存款+房产-房贷；现金流量表=每月几号收钱、几号花钱。"
+    - context: "平台赛事"
+      description: "在'创业生存战'中，平台自动生成简化版三张表，帮助学生理解企业财务全貌。"
+    - context: "现实商业"
+      description: "上市公司每季度公布三张表——投资者通过这三张表判断公司健康状况。"
+  
+  non_examples:
+    - misconception: "利润高就一定健康"
+      correction: "利润高的企业可能现金流断裂（应收账款收不回来）。三张表必须一起看。"
+    - misconception: "三张表是会计的事，与商业决策无关"
+      correction: "三张表是商业决策的基础。战略、营销、投资都要以财务数据为依据。"
+
+level_adaptations:
+  middle:
+    explanation: "企业有三张'成绩单'：赚了多少钱（利润表）、现在有什么（资产负债表）、钱怎么流动的（现金流量表）。"
+    example: "用 lemonade 摊位演示：利润表=卖了多少钱-花了多少钱；资产负债表=剩下的原料+收到的钱-欠的钱"
+  high:
+    explanation: "三张表的勾稽关系：利润表中的净利润影响资产负债表的留存收益；现金流量表解释资产负债表中现金的变化。"
+    example: "在'创业生存战'中，分析为什么有的团队利润为正但破产了——现金流断裂。"
+  university:
+    explanation: "财务报表分析框架：比率分析、趋势分析、杜邦分析。财务报表的局限性和操纵空间。"
+    example: "分析瑞幸咖啡的财务造假：如何通过三张表的异常信号识别问题？"
+
+platform_mapping:
+  game_modes:
+    - mode_id: "startup_survival_v1"
+      application: "核心机制——学生需要根据三张表做经营决策"
+    - mode_id: "investor_pitch_v1"
+      application: "投资人通过三张表评估企业价值"
+    - mode_id: "turn_based_strategy_v2"
+      application: "结算后自动生成简化财务报表"
+  
+  ai_tutor_hints:
+    - trigger: "学生只看利润忽视现金流"
+      hint: "利润只是'纸面上的钱'，现金流才是'口袋里的钱'。很多倒闭的企业利润表很漂亮，但现金流断了。看看你的现金流量表。"
+
+related_content:
+  prerequisites: ["KN-EC-MI-004"]
+  extensions: ["KN-BS-FI-002", "KN-BS-FI-003", "KN-BS-FI-005"]
+  game_mode_applications: ["startup_survival_v1", "investor_pitch_v1"]
+
+---
+content_type: KN
+content_id: "KN-BS-FI-002-v1.0"
+title: "ROI（投资回报率）"
+subtitle: "花出去的每一分钱，值不值？"
+
+target_level: "初中及以上"
+target_age: [13, 22]
+difficulty: 2
+competencies: ["FL-3", "FL-5"]
+bloom_level: "apply"
+
+tags: ["财务", "投资", "效率", "基础概念"]
+ai_generable: true
+author: "平台教研团队"
+reviewer: "商学顾问"
+version: "1.0.0"
+created_at: "2026-05-12"
+updated_at: "2026-05-12"
+
+knowledge:
+  definition: "ROI（Return on Investment）是衡量投资效率的核心指标，计算公式为：(投资收益 - 投资成本) / 投资成本 × 100%。"
+  explanation: "如果你花100元做广告，带来了300元收入，ROI = (300-100)/100 = 200%。ROI越高，说明钱花得越值。"
+  analogy: "就像种果树：你买了树苗、花了时间浇水（投资），最后收获了苹果（回报）。ROI就是'每个投入换来了多少收获'。"
+  formula: "ROI = (收益 - 成本) / 成本 × 100%"
+  
+  examples:
+    - context: "生活"
+      description: "你花50元买复习资料，考试提高了20分（值100元奖学金），ROI = 100%。"
+    - context: "平台赛事"
+      description: "在'回合制策略'中，计算每个城市的ROI：投入10万带来多少回报？"
+    - context: "现实商业"
+      description: "营销ROI：每投入1元广告费带来5元销售额，ROI = 400%。"
+  
+  non_examples:
+    - misconception: "ROI高就一定好"
+      correction: "ROI高但绝对收益小（如投资1元赚10元，ROI=900%，但只赚了9元），不如ROI低但规模大。"
+    - misconception: "ROI只看财务回报"
+      correction: "广义ROI还包括品牌提升、客户获取、能力积累等非财务回报。"
+
+level_adaptations:
+  middle:
+    explanation: "ROI就是'赚了百分之多少'。投入100元，收回150元，ROI=50%。"
+    example: "比较两个投资：A投入100赚50，B投入200赚80。哪个ROI高？哪个总收益高？"
+  high:
+    explanation: "ROI的局限：不考虑时间价值、风险差异、资金规模。需结合NPV、IRR等指标。"
+    example: "在'回合制策略'中，TECH投入的ROI可能前期低后期高——需要考虑时间维度。"
+  university:
+    explanation: "ROI与ROE、ROA、ROIC的关系。投入资本回报率（ROIC）与企业价值创造的联系。"
+    example: "亚马逊长期低利润但高市值的秘密：投入全部用于增长，ROIC极高。"
+
+platform_mapping:
+  game_modes:
+    - mode_id: "turn_based_strategy_v2"
+      application: "每轮计算各投入维度的ROI，辅助决策"
+    - mode_id: "startup_survival_v1"
+      application: "评估不同经营策略的ROI"
+  
+  ai_tutor_hints:
+    - trigger: "学生某维度投入ROI持续为负"
+      hint: "你在这个维度的ROI已经连续为负。从财务理性的角度，考虑减少投入或改变策略。但也要注意：某些投入（如品牌建设）的回报有滞后性。"
+
+related_content:
+  prerequisites: ["KN-BS-FI-001"]
+  extensions: ["KN-BS-FI-004", "KN-BS-FI-006"]
+  game_mode_applications: ["turn_based_strategy_v2", "startup_survival_v1"]
+
+---
+content_type: KN
+content_id: "KN-BS-FI-003-v1.0"
+title: "固定成本与变动成本"
+subtitle: "有些成本不管你卖多少都得付，有些成本随销量变化"
+
+target_level: "初中及以上"
+target_age: [13, 22]
+difficulty: 2
+competencies: ["FL-1"]
+bloom_level: "understand"
+
+tags: ["成本", "财务", "基础概念", "入门"]
+ai_generable: true
+author: "平台教研团队"
+reviewer: "商学顾问"
+version: "1.0.0"
+created_at: "2026-05-12"
+updated_at: "2026-05-12"
+
+knowledge:
+  definition: |
+    - 固定成本：不随产量变化的成本，如房租、设备折旧、管理人员工资
+    - 变动成本：随产量变化的成本，如原材料、计件工资、包装费
+  explanation: "开奶茶店：房租每月5000元（固定成本——不管卖1杯还是1000杯都要付），奶茶原料每杯3元（变动成本——卖得越多，原料成本越高）。"
+  analogy: "就像手机套餐：月租费是固定成本（不管打多少电话都要付），超出套餐的通话费是变动成本（打得越多付得越多）。"
+  
+  examples:
+    - context: "生活"
+      description: "你的零花钱：固定成本是每月必交的公交卡充值，变动成本是买零食和饮料的钱。"
+    - context: "平台赛事"
+      description: "在'创业生存战'中，每轮必须支付的租金是固定成本，生产原料是变动成本。"
+    - context: "现实商业"
+      description: "航空业：飞机折旧和机组人员工资是固定成本，燃油和餐食是变动成本。为什么疫情期间航空公司巨亏？因为收入暴跌但固定成本还在。"
+  
+  non_examples:
+    - misconception: "固定成本永远不变"
+      correction: "固定成本在'一定范围内'不变。如果产量大幅增加，可能需要租更大的场地（固定成本跳跃上升）。"
+    - misconception: "降低固定成本总是好的"
+      correction: "降低固定成本可能意味着降低产能上限或服务质量。需要权衡。"
+
+level_adaptations:
+  middle:
+    explanation: "固定成本=不管卖多少都要花的钱；变动成本=卖得越多花得越多的钱。"
+    example: " lemonade 摊位：摊位租金是固定成本，柠檬和糖是变动成本。"
+  high:
+    explanation: "成本结构对经营杠杆的影响：固定成本占比高意味着经营杠杆高（利润波动大）。"
+    example: "在'创业生存战'中，选择'高固定成本+低变动成本'（自动化工厂）还是'低固定成本+高变动成本'（外包生产）？"
+  university:
+    explanation: "半变动成本、阶梯成本、本量利分析（CVP）、经营杠杆系数。"
+    example: "SaaS企业的成本结构：为什么固定成本极高但边际成本趋近于零？"
+
+platform_mapping:
+  game_modes:
+    - mode_id: "startup_survival_v1"
+      application: "核心机制——固定成本每轮必须支付，变动成本随产量变化"
+    - mode_id: "turn_based_strategy_v2"
+      application: "某些投入的固定/变动属性影响策略选择"
+  
+  ai_tutor_hints:
+    - trigger: "学生销量低但固定成本负担重"
+      hint: "你的销量不足以覆盖固定成本。两个选择：提升销量（摊薄固定成本）或减少固定成本（但可能限制增长）。"
+
+related_content:
+  prerequisites: ["KN-EC-MI-004"]
+  extensions: ["KN-BS-FI-004", "KN-BS-FI-005"]
+  game_mode_applications: ["startup_survival_v1", "turn_based_strategy_v2"]
+
+---
+content_type: KN
+content_id: "KN-BS-FI-004-v1.0"
+title: "盈亏平衡点"
+subtitle: "卖多少才能不亏本？"
+
+target_level: "初中及以上"
+target_age: [13, 22]
+difficulty: 3
+competencies: ["FL-3"]
+bloom_level: "apply"
+
+tags: ["财务", "成本", "决策", "进阶概念"]
+ai_generable: true
+author: "平台教研团队"
+reviewer: "商学顾问"
+version: "1.0.0"
+created_at: "2026-05-12"
+updated_at: "2026-05-12"
+
+knowledge:
+  definition: "盈亏平衡点（Break-even Point）是指总收入等于总成本时的销售量。超过这个点开始盈利，低于这个点则亏损。"
+  explanation: "如果固定成本是1000元，每杯奶茶售价10元、变动成本4元，那么盈亏平衡点 = 1000 / (10-4) = 167杯。卖167杯刚好保本，卖168杯开始赚钱。"
+  analogy: "就像游泳池的排水口：进水（收入）和出水（成本）速度相同时，水位不变——这就是盈亏平衡。进水更快，水位上升（盈利）；出水更快，水位下降（亏损）。"
+  formula: "盈亏平衡销量 = 固定成本 / (单价 - 单位变动成本)"
+  
+  examples:
+    - context: "生活"
+      description: "你摆摊卖手工饰品：材料包成本200元（固定），每个饰品材料5元（变动），卖15元。盈亏平衡点 = 200/(15-5) = 20个。"
+    - context: "平台赛事"
+      description: "在'创业生存战'中，计算每轮需要多少收入才能覆盖固定成本——这是生存的第一道关卡。"
+    - context: "现实商业"
+      description: "电影院：座位数是固定的，每场电影的盈亏平衡点就是上座率需要达到多少。"
+  
+  non_examples:
+    - misconception: "盈亏平衡点就是目标"
+      correction: "盈亏平衡只是'不亏'，企业需要盈利才能发展。而且现实中还有其他隐性成本。"
+    - misconception: "盈亏平衡点是固定的"
+      correction: "价格、成本变化都会影响盈亏平衡点。降价会提高盈亏平衡销量。"
+
+level_adaptations:
+  middle:
+    explanation: "算一算：卖多少才能把钱赚回来？固定成本÷（每个赚多少钱）= 需要卖多少个。"
+    example: " lemonade 摊位：租金100元/天，每杯成本2元，卖5元。每天要卖多少杯才能保本？"
+  high:
+    explanation: "盈亏平衡分析的应用：定价决策、成本结构优化、安全边际计算。"
+    example: "在'创业生存战'中，如果市场需求不确定，应该选择'低固定成本+高变动成本'还是相反？"
+  university:
+    explanation: "多产品盈亏平衡、目标利润分析、敏感性分析、蒙特卡洛模拟下的盈亏概率。"
+    example: "创业公司的'烧钱率'和'跑道'：如何用盈亏平衡思维管理现金流？"
+
+platform_mapping:
+  game_modes:
+    - mode_id: "startup_survival_v1"
+      application: "核心指标——实时显示距离盈亏平衡还有多远"
+    - mode_id: "turn_based_strategy_v2"
+      application: "帮助评估新市场进入的可行性"
+  
+  ai_tutor_hints:
+    - trigger: "学生长期低于盈亏平衡点"
+      hint: "你的经营持续低于盈亏平衡点。这意味着每多卖一个产品，反而亏得更多（因为变动成本还没覆盖）。需要紧急调整：提价、降本、或退出。"
+
+related_content:
+  prerequisites: ["KN-BS-FI-003"]
+  extensions: ["KN-BS-FI-005", "KN-EC-MI-003"]
+  game_mode_applications: ["startup_survival_v1", "turn_based_strategy_v2"]
+
+---
+content_type: KN
+content_id: "KN-BS-FI-005-v1.0"
+title: "现金流管理"
+subtitle: "利润是 Opinion，现金流是 Fact"
+
+target_level: "高中及以上"
+target_age: [15, 22]
+difficulty: 4
+competencies: ["FL-3", "FL-5"]
+bloom_level: "apply"
+
+tags: ["财务", "现金", "生存", "进阶概念"]
+ai_generable: true
+author: "平台教研团队"
+reviewer: "商学顾问"
+version: "1.0.0"
+created_at: "2026-05-12"
+updated_at: "2026-05-12"
+
+knowledge:
+  definition: "现金流管理是指企业对现金流入和流出的规划、监控和优化，确保企业在任何时点都有足够的现金支付到期债务和运营开支。"
+  explanation: "利润是会计概念（可能包含未收款的应收账款），现金流是实际的钱（银行账户里的余额）。企业可以盈利但现金流断裂而倒闭。"
+  analogy: "就像你的微信钱包：有人欠你1000元（利润），但你的微信余额只有50元（现金流）。明天要交200元房租——虽然你"有钱"，但可能交不起。"
+  
+  examples:
+    - context: "生活"
+      description: "信用卡消费：你刷信用卡买了手机（有'消费'但没有现金流出），但还款日必须有钱还（现金流出）。"
+    - context: "平台赛事"
+      description: "在'创业生存战'中，平台实时显示现金流。即使利润为正，如果应收账款回收慢，也会现金流断裂。"
+    - context: "现实商业"
+      description: "恒大危机：账面资产庞大，但现金流断裂导致债务违约。"
+  
+  non_examples:
+    - misconception: "现金流管理就是少花钱"
+      correction: "现金流管理是'让钱在正确的时间出现在正确的地点'。有时需要主动花钱（投资）来换取未来现金流。"
+    - misconception: "只有小企业需要关注现金流"
+      correction: "大企业同样需要——甚至更需要，因为规模越大，现金流断裂的后果越严重。"
+
+level_adaptations:
+  high:
+    explanation: "现金流的三个来源：经营活动（主营业务）、投资活动（买卖资产）、融资活动（借款/还款/股权）。自由现金流（FCF）是企业价值的核心。"
+    example: "在'投资人对决'中，为什么投资人更关注现金流而非利润？"
+  university:
+    explanation: "现金流预测模型、营运资本管理、现金转换周期（CCC）、财务困境预警模型（Altman Z-Score）。"
+    example: "分析特斯拉的现金流管理：如何通过预售模式改善现金流？"
+
+platform_mapping:
+  game_modes:
+    - mode_id: "startup_survival_v1"
+      application: "核心机制——现金流归零即破产，无论利润如何"
+    - mode_id: "real_time_challenge_v1"
+      application: "实时现金流监控，考验快速资金调度能力"
+    - mode_id: "turn_based_strategy_v2"
+      application: "结算周期与现金回收期的匹配"
+  
+  ai_tutor_hints:
+    - trigger: "学生现金流紧张但继续大额投资"
+      hint: "你的现金流即将断裂！记住：利润是 Opinion，现金流是 Fact。没有现金，再好的战略也无法执行。考虑暂缓投资或加速收款。"
+    - trigger: "学生有现金但不愿投资"
+      hint: "你保留了过多现金。现金闲置是有机会成本的——如果投资回报率高于现金收益，应该适当投资。"
+
+related_content:
+  prerequisites: ["KN-BS-FI-001", "KN-BS-FI-004"]
+  extensions: ["KN-BS-FI-006", "KN-EC-MA-002"]
+  game_mode_applications: ["startup_survival_v1", "real_time_challenge_v1"]
+
+---
+content_type: KN
+content_id: "KN-BS-FI-006-v1.0"
+title: "估值基础"
+subtitle: "一家公司到底值多少钱？"
+
+target_level: "高中及以上"
+target_age: [16, 22]
+difficulty: 5
+competencies: ["FL-5"]
+bloom_level: "evaluate"
+
+tags: ["财务", "投资", "估值", "高阶概念"]
+ai_generable: true
+author: "平台教研团队"
+reviewer: "商学顾问"
+version: "1.0.0"
+created_at: "2026-05-12"
+updated_at: "2026-05-12"
+
+knowledge:
+  definition: "企业估值是确定企业经济价值的过程。常用方法包括：绝对估值法（DCF现金流折现）、相对估值法（P/E、P/S倍数）、成本法（净资产）。"
+  explanation: |
+    - DCF：预测企业未来能产生的现金流，折算成今天的价值
+    - P/E倍数：参考同行业上市公司的市盈率，乘以你的利润
+    - 净资产：企业资产减去负债的账面价值
+  analogy: "就像估价一栋房子：DCF是'未来50年租金的总和'，P/E是'同小区房子的单价'，净资产是'建房子的成本'。"
+  
+  examples:
+    - context: "生活"
+      description: "你转卖一个游戏账号：看市场上类似账号卖多少钱（相对估值），或者算这个账号未来能帮你赚多少（绝对估值）。"
+    - context: "平台赛事"
+      description: "在'投资人对决'中，学生需要为虚拟企业估值，投资人基于估值决定是否投资。"
+    - context: "现实商业"
+      description: "特斯拉的高估值：P/E远超传统车企，因为投资者看好其未来现金流（自动驾驶、能源业务）。"
+  
+  non_examples:
+    - misconception: "估值有一个'正确答案'"
+      correction: "估值是艺术+科学。不同方法得出不同结果，最终价格是买卖双方博弈的结果。"
+    - misconception: "利润高就估值高"
+      correction: "估值取决于未来预期。一家利润高但增长停滞的企业，估值可能低于一家亏损但高速成长的企业。"
+
+level_adaptations:
+  high:
+    explanation: "估值的核心逻辑：企业价值 = 未来现金流的现值。理解折现率、永续增长率、终端价值。"
+    example: "在'投资人对决'中，为什么两家利润相同的企业估值可能差10倍？"
+  university:
+    explanation: "VC/PE估值方法、创业企业估值的特殊挑战（高不确定性）、实物期权理论、市场法/收益法/成本法的适用场景。"
+    example: "分析字节跳动的估值逻辑：为什么一家未上市公司估值超过许多上市公司？"
+
+platform_mapping:
+  game_modes:
+    - mode_id: "investor_pitch_v1"
+      application: "核心机制——路演估值+谈判+投资决策"
+    - mode_id: "startup_survival_v1"
+      application: "企业成长过程中的价值变化"
+  
+  ai_tutor_hints:
+    - trigger: "学生估值远高于合理范围"
+      hint: "你的估值似乎过于乐观。估值需要基于可验证的假设。问问自己：你的预测利润实现概率有多大？折现率是否充分考虑了风险？"
+
+related_content:
+  prerequisites: ["KN-BS-FI-001", "KN-BS-FI-002"]
+  extensions: ["KN-BS-EN-004", "KN-EC-MA-002"]
+  game_mode_applications: ["investor_pitch_v1", "startup_survival_v1"]
