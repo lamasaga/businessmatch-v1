@@ -1,9 +1,12 @@
 """FastAPI 应用入口"""
 
+from contextlib import asynccontextmanager
+
 from fastapi import FastAPI, status
 from fastapi.middleware.cors import CORSMiddleware
 
 from app.core.config import get_settings
+from app.db.init_db import init_all
 from app.core.response import (
     ApiResponse,
     BusinessException,
@@ -18,6 +21,14 @@ from fastapi.exceptions import RequestValidationError, HTTPException as FastAPIH
 
 settings = get_settings()
 
+
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    """启动时初始化 SQLite 表与默认账号（admin / student）。"""
+    init_all()
+    yield
+
+
 app = FastAPI(
     title=settings.APP_NAME,
     version=settings.APP_VERSION,
@@ -25,7 +36,7 @@ app = FastAPI(
     docs_url="/docs" if settings.DEBUG else None,
     redoc_url="/redoc" if settings.DEBUG else None,
     openapi_url="/openapi.json" if settings.DEBUG else None,
-
+    lifespan=lifespan,
 )
 
 # 注册全局异常处理器
@@ -34,16 +45,17 @@ app.add_exception_handler(FastAPIHTTPException, http_exception_handler)
 app.add_exception_handler(RequestValidationError, validation_exception_handler)
 app.add_exception_handler(Exception, global_exception_handler)
 
-# 请求日志中间件
+# 请求日志中间件（先于 CORS 注册，CORS 包在最外层）
 app.add_middleware(RequestLoggingMiddleware)
 
-# CORS 中间件
+# CORS 中间件（须最后注册，使其成为最外层，错误响应也带 CORS 头）
 app.add_middleware(
     CORSMiddleware,
     allow_origins=settings.CORS_ORIGINS,
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
+    expose_headers=["X-Request-ID", "X-Process-Time"],
 )
 
 # 注册路由
