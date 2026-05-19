@@ -2,8 +2,7 @@
 
 > 一个现代化的、模块化的前后端分离 Web 应用，提供**完整的商业模拟教育体验**：课程学习、实战商赛、AI 辅助训练、交易模拟比赛。
 >
-> **战略与路线图**（全仓库视角）：见 [`00-项目现状与发展设计.md`](./00-项目现状与发展设计.md)  
-> **分项目开发与集成**（组织者端 → 基础赛制 → 学生端结合、单库与 AI 协作）：见 [`01-分项目开发与集成流程.md`](./01-分项目开发与集成流程.md)
+> **仓库文档**：[`../README.md`](../README.md)（00～09）· 工程详表 [`../08-`](../08-工程现状与webapp实现详表.md) · 分项目 [`../09-`](../09-分项目开发与集成流程.md)
 
 ---
 
@@ -165,7 +164,7 @@ webapp/
 │   │   │   ├── Wiki/            # 知识图谱/文章详情
 │   │   │   ├── Courses/         # 课程列表/详情
 │   │   │   ├── WealthOfNations/ # 国富论游戏
-│   │   │   ├── OHB/             # 一人公司孵化器
+│   │   │   ├── OPC/             # 一人公司孵化器
 │   │   │   ├── Organizer/       # 组织者控制台/创建比赛
 │   │   │   ├── Quests/          # 每日任务
 │   │   │   ├── Achievements/    # 成就中心
@@ -176,7 +175,7 @@ webapp/
 │   │   │   ├── careerStore.ts   # 生涯状态
 │   │   │   ├── competitionStore.ts  # 比赛状态
 │   │   │   ├── tradingStore.ts  # 交易游戏状态
-│   │   │   └── ohbStore.ts      # 一人公司状态
+│   │   │   └── OPCStore.ts      # 一人公司状态
 │   │   ├── services/            # API 服务层
 │   │   │   ├── authService.ts
 │   │   │   ├── wikiService.ts
@@ -205,7 +204,7 @@ webapp/
 │   │   │   ├── auth.py          # 认证 (注册/登录/刷新/Me)
 │   │   │   ├── wiki.py          # 知识图谱
 │   │   │   ├── courses.py       # 课程中心
-│   │   │   ├── ohb.py           # 一人公司
+│   │   │   ├── OPC.py           # 一人公司
 │   │   │   ├── organizer.py     # 组织者管理
 │   │   │   ├── competitions.py  # 比赛管理
 │   │   │   └── trading.py       # 交易游戏
@@ -217,11 +216,11 @@ webapp/
 │   │   │   └── middleware.py    # 请求日志中间件
 │   │   ├── models/              # SQLAlchemy 数据模型
 │   │   │   ├── user.py          # 用户模型
-│   │   │   ├── ohb.py           # 公司/员工/任务模型
+│   │   │   ├── OPC.py           # 公司/员工/任务模型
 │   │   │   └── trading_competition.py  # 商赛模型
 │   │   ├── schemas/             # Pydantic 数据校验
 │   │   │   ├── user.py
-│   │   │   ├── ohb.py
+│   │   │   ├── OPC.py
 │   │   │   └── trading_competition.py
 │   │   ├── db/                  # 数据库
 │   │   │   ├── database.py      # SQLite + SQLAlchemy 引擎
@@ -230,7 +229,7 @@ webapp/
 │   │   │   └── knowledge_graph.json
 │   │   └── services/            # 业务逻辑层 (预留)
 │   ├── scripts/                 # 数据初始化脚本
-│   │   ├── init_ohb.py
+│   │   ├── init_OPC.py
 │   │   └── parse_knowledge.py
 │   ├── requirements.txt
 │   ├── Dockerfile
@@ -320,17 +319,17 @@ webapp/
 - **市场波动**：价格与需求随供需变化
 - **斯密语录**：关键时刻弹出原著引文
 
-### 8. 一人公司孵化器 (`/ohb`)
+### 8. 一人公司孵化器 (`/opc`)
 
 学生创建虚拟公司，雇佣 AI 员工完成商业任务：
 
 | 页面 | 功能 |
 |------|------|
-| `/ohb` | 公司仪表盘：员工/任务/营收统计 |
-| `/ohb/talent` | 人才市场：雇佣 AI 员工 |
-| `/ohb/missions` | 任务控制中心：看板式任务管理 |
-| `/ohb/bmc` | 商业模式画布：9宫格编辑 |
-| `/ohb/employee/:id` | 员工详情：技能矩阵 / 任务历史 |
+| `/opc` | 公司仪表盘：员工/任务/营收统计 |
+| `/opc/talent` | 人才市场：雇佣 AI 员工 |
+| `/opc/missions` | 任务控制中心：看板式任务管理 |
+| `/opc/bmc` | 商业模式画布：9宫格编辑 |
+| `/opc/employee/:id` | 员工详情：技能矩阵 / 任务历史 |
 
 **数据模型**：
 - `OneCompany` — 公司（阶段：IDEATE → SCALE）
@@ -366,20 +365,22 @@ webapp/
 | GET | `/api/v1/courses/` | 课程列表（支持分类/等级/搜索筛选） |
 | GET | `/api/v1/courses/{id}` | 课程详情 |
 
-### 一人公司 (OHB)
+### 一人公司 (OPC)
 
 | 方法 | 路径 | 说明 |
 |------|------|------|
-| GET | `/api/v1/ohb/companies` | 公司列表 |
-| POST | `/api/v1/ohb/companies` | 创建公司 |
-| GET | `/api/v1/ohb/companies/{id}` | 公司详情（含员工+任务） |
-| PATCH | `/api/v1/ohb/companies/{id}` | 更新公司 |
-| GET | `/api/v1/ohb/companies/{id}/employees` | 员工列表 |
-| POST | `/api/v1/ohb/companies/{id}/employees` | 雇佣员工 |
-| GET | `/api/v1/ohb/employees/{id}` | 员工详情 |
-| GET | `/api/v1/ohb/companies/{id}/tasks` | 任务列表 |
-| POST | `/api/v1/ohb/companies/{id}/tasks` | 创建任务 |
-| PATCH | `/api/v1/ohb/tasks/{id}` | 更新任务状态/进度/评分 |
+| GET | `/api/v1/opc/companies` | 公司列表 |
+| POST | `/api/v1/opc/companies` | 创建公司 |
+| GET | `/api/v1/opc/companies/{id}` | 公司详情（含员工+任务） |
+| PATCH | `/api/v1/opc/companies/{id}` | 更新公司 |
+| GET | `/api/v1/opc/companies/{id}/employees` | 员工列表 |
+| POST | `/api/v1/opc/companies/{id}/employees` | 雇佣员工 |
+| GET | `/api/v1/opc/employees/{id}` | 员工详情 |
+| GET | `/api/v1/opc/companies/{id}/tasks` | 任务列表 |
+| POST | `/api/v1/opc/companies/{id}/tasks` | 创建任务 |
+| PATCH | `/api/v1/opc/tasks/{id}` | 更新任务状态/进度/评分 |
+
+> **数据库**：表名已由 `ohb_*` 改为 `opc_*`。若本地已有旧版 `bizsim.db`，请删除后重启后端以自动建表，或运行 `python scripts/init_opc.py` 写入演示数据。
 
 ### 组织者 (Organizer)
 
@@ -427,7 +428,7 @@ webapp/
 | Phase 5 | 商赛引擎（大厅/房间/对局 UI） | ✅ |
 | Phase 6 | 国富论教学游戏 | ✅ |
 | Phase 7 | 生涯五域 + 三层 AI MVP | ✅ |
-| Phase 8 | 一人公司孵化器 (OHB) | ✅ |
+| Phase 8 | 一人公司孵化器 (OPC) | ✅ |
 | Phase 9 | 整合优化 + Docker 部署 | ✅ |
 | Phase 10 | **交易模拟商赛（组织者+房间码+回合制）** | ✅ |
 

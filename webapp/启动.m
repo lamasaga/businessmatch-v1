@@ -164,7 +164,7 @@ docker-compose logs -f   # 查看日志
 | 每日任务 | `/quests` |
 | 成就中心 | `/achievements` |
 | 国富论游戏 | `/wealth-of-nations` |
-| 一人公司 | `/ohb` |
+| 一人公司 | `/opc` |
 
 ---
 

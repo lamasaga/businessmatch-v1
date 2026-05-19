@@ -16,7 +16,7 @@ from app.core.response import (
     global_exception_handler,
 )
 from app.core.middleware import RequestLoggingMiddleware
-from app.api import auth, wiki, courses, ohb, organizer, competitions, trading
+from app.api import auth, wiki, courses, opc, organizer, competitions, trading
 from fastapi.exceptions import RequestValidationError, HTTPException as FastAPIHTTPException
 
 settings = get_settings()
@@ -62,7 +62,7 @@ app.add_middleware(
 app.include_router(auth.router, prefix="/api/v1")
 app.include_router(wiki.router, prefix="/api/v1")
 app.include_router(courses.router, prefix="/api/v1")
-app.include_router(ohb.router, prefix="/api/v1")
+app.include_router(opc.router, prefix="/api/v1")
 app.include_router(organizer.router, prefix="/api/v1")
 app.include_router(competitions.router, prefix="/api/v1")
 app.include_router(trading.router, prefix="/api/v1")

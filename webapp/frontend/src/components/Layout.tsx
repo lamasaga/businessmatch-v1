@@ -26,7 +26,7 @@ const navItems = [
   { path: '/courses', label: '课程学院', icon: GraduationCap },
   { path: '/wiki', label: '知识图谱', icon: Network },
   { path: '/achievements', label: '成就中心', icon: Award },
-  { path: '/ohb', label: '一人公司', icon: Rocket, highlight: true },
+  { path: '/opc', label: 'OPC 一人公司', icon: Rocket, highlight: true },
 ];
 
 export default function Layout() {

@@ -2,7 +2,7 @@
 
 from app.db.database import Base, engine, SessionLocal
 from app.models.user import User, UserRole
-from app.models.ohb import OneCompany, AIEmployee, AITask
+from app.models.opc import OneCompany, AIEmployee, AITask
 from app.models.trading_competition import OrganizerProfile
 from app.core.security import get_password_hash
 

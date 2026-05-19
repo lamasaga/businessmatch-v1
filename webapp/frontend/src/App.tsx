@@ -20,11 +20,11 @@ import WikiArticlePage from './pages/Wiki/WikiArticlePage';
 import CoursesPage from './pages/Courses/CoursesPage';
 import CourseDetailPage from './pages/Courses/CourseDetailPage';
 import WealthOfNationsPage from './pages/WealthOfNations/WealthOfNationsPage';
-import OHBPage from './pages/OHB/OHBPage';
-import TalentMarketPage from './pages/OHB/TalentMarketPage';
-import MissionControlPage from './pages/OHB/MissionControlPage';
-import BMCPage from './pages/OHB/BMCPage';
-import EmployeeDetailPage from './pages/OHB/EmployeeDetailPage';
+import OPCPage from './pages/OPC/OPCPage';
+import TalentMarketPage from './pages/OPC/TalentMarketPage';
+import MissionControlPage from './pages/OPC/MissionControlPage';
+import BMCPage from './pages/OPC/BMCPage';
+import EmployeeDetailPage from './pages/OPC/EmployeeDetailPage';
 
 function App() {
   return (
@@ -167,17 +167,17 @@ function App() {
                 </AuthGuard>
               }
             />
-            {/* OHB - 一人公司孵化器 */}
+            {/* OPC 一人公司孵化器 */}
             <Route
-              path="ohb"
+              path="opc"
               element={
                 <AuthGuard requireAuth>
-                  <OHBPage />
+                  <OPCPage />
                 </AuthGuard>
               }
             />
             <Route
-              path="ohb/talent"
+              path="opc/talent"
               element={
                 <AuthGuard requireAuth>
                   <TalentMarketPage />
@@ -185,7 +185,7 @@ function App() {
               }
             />
             <Route
-              path="ohb/missions"
+              path="opc/missions"
               element={
                 <AuthGuard requireAuth>
                   <MissionControlPage />
@@ -193,7 +193,7 @@ function App() {
               }
             />
             <Route
-              path="ohb/bmc"
+              path="opc/bmc"
               element={
                 <AuthGuard requireAuth>
                   <BMCPage />
@@ -201,13 +201,16 @@ function App() {
               }
             />
             <Route
-              path="ohb/employee/:id"
+              path="opc/employee/:id"
               element={
                 <AuthGuard requireAuth>
                   <EmployeeDetailPage />
                 </AuthGuard>
               }
             />
+            {/* 旧路由重定向 */}
+            <Route path="ohb" element={<Navigate to="/opc" replace />} />
+            <Route path="ohb/*" element={<Navigate to="/opc" replace />} />
           </Route>
         </Routes>
       </AppInitializer>
