@@ -82,6 +82,19 @@
 
 ---
 
+## 组织者控制台（Phase 1）
+
+　　独立前端工程 [`organizer-frontend/`](./organizer-frontend/)，默认端口 **5174**：
+
+| 角色 | 地址 |
+|------|------|
+| 组织者 | http://localhost:5174 |
+| 学生加入 | http://localhost:5173/games（输入房间码） |
+
+　　演示：组织者 `admin/admin123` 创建比赛 → 学生 `student/student123` 输入房间码 → 组织者端控场推进回合。
+
+---
+
 ## 快速开始
 
 ### 环境要求
@@ -131,11 +144,41 @@ API 文档: http://localhost:8000/docs
 
 组织者档案会自动创建（关联 admin 用户）。
 
-### Docker 部署
+### Docker 三端部署（推荐演示 / ECS 单机）
 
-```bash
-docker-compose up -d
+　　一条命令启动 **后端 + 学生端 + 组织者端**：
+
+```powershell
+Set-Location "d:\businessmatch-v1\webapp"
+docker compose up -d --build
 ```
+
+| 服务 | 容器名 | 浏览器地址 |
+|------|--------|------------|
+| 后端 API | `bizsim-backend` | http://localhost:8000 （文档 `/docs`） |
+| 学生端 | `bizsim-student` | http://localhost |
+| 组织者端 | `bizsim-organizer` | http://localhost:5174 |
+
+　　前端通过 Nginx 将 `/api/` 反代到 `backend:8000`，无需浏览器跨域。SQLite 数据持久化在卷 `bizsim_data`。
+
+```powershell
+# 查看日志
+docker compose logs -f backend
+
+# 停止并删除容器（保留数据卷）
+docker compose down
+
+# 停止并删除数据卷（清空数据库）
+docker compose down -v
+```
+
+　　开发时若需后端热重载，可叠加：
+
+```powershell
+docker compose -f docker-compose.yml -f docker-compose.dev.yml up backend
+```
+
+　　前端仍建议本机 `npm run dev`（5173 / 5174），见 [`organizer-frontend/README.md`](./organizer-frontend/README.md)。
 
 ---
 
@@ -235,7 +278,9 @@ webapp/
 │   ├── Dockerfile
 │   └── run.py                   # 开发启动脚本
 │
-├── docker-compose.yml           # Docker Compose 配置
+├── docker-compose.yml           # 三端编排（backend + student + organizer）
+├── docker-compose.dev.yml       # 开发叠加（后端热重载）
+├── organizer-frontend/          # 组织者控制台（:5174）
 ├── bizsim.db                    # SQLite 数据库文件
 ├── 启动.bat                     # Windows 一键启动 (前后端)
 ├── 启动-前端.bat                # Windows 启动前端
@@ -390,6 +435,8 @@ webapp/
 | GET | `/api/v1/organizer/profile` | 获取组织者档案 |
 | PUT | `/api/v1/organizer/profile` | 更新组织者信息 |
 | GET | `/api/v1/organizer/stats` | 获取统计数据 |
+| GET | `/api/v1/organizer/events` | 我的比赛列表 |
+| GET | `/api/v1/organizer/events/{id}/control` | 控场面板（排行榜/回合） |
 
 ### 比赛 (Competition)
 

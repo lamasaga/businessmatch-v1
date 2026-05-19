@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useopcStore } from '../../stores/opcStore';
+import { useOPCStore } from '../../stores/opcStore';
 import {
   Rocket, Users, ClipboardList, Building2,
   ChevronRight, Sparkles, Target, BarChart3
@@ -16,7 +16,7 @@ const STAGE_INFO: Record<string, { label: string; color: string; desc: string }>
 
 export default function OPCPage() {
   const navigate = useNavigate();
-  const { company, employees, tasks, loading, fetchCompany } = useopcStore();
+  const { company, employees, tasks, loading, fetchCompany } = useOPCStore();
   const [showCreateModal, setShowCreateModal] = useState(false);
   const [companyName, setCompanyName] = useState('');
 
@@ -75,7 +75,7 @@ export default function OPCPage() {
                 <button
                   onClick={async () => {
                     try {
-                      const id = await useopcStore.getState().createCompany(companyName);
+                      const id = await useOPCStore.getState().createCompany(companyName);
                       await fetchCompany(id);
                       setShowCreateModal(false);
                       setCompanyName('');

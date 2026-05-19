@@ -1,0 +1,26 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --background: #0a0a0b;
+    --background-secondary: #111113;
+    --background-card: #141416;
+    --foreground: #f2f0eb;
+    --foreground-muted: #8a8a92;
+    --primary: #d4a853;
+    --border-subtle: rgba(255, 255, 255, 0.055);
+  }
+
+  body {
+    @apply bg-background text-foreground antialiased;
+    font-family: 'Inter', system-ui, sans-serif;
+  }
+}
+
+@layer components {
+  .glass-card {
+    @apply bg-background-card/90 backdrop-blur-xl border border-border-subtle rounded-xl;
+  }
+}

@@ -1,0 +1,10 @@
+# 开发叠加配置（热更新）：docker compose -f docker-compose.yml -f docker-compose.dev.yml up
+# 仅覆盖后端与本地源码挂载；前端仍建议本机 npm run dev
+
+services:
+  backend:
+    volumes:
+      - ./backend:/app
+      - bizsim_data:/app/data
+    environment:
+      DEBUG: "true"

@@ -1,7 +1,6 @@
 import { useEffect, useState, useCallback } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useTradingStore } from '../../stores/tradingStore';
-import { useCompetitionStore } from '../../stores/competitionStore';
 import { useAuthStore } from '../../stores/authStore';
 import {
   TrendingUp, TrendingDown, Minus, MapPin, Wallet, Package,
@@ -14,7 +13,6 @@ export default function TradingGamePage() {
   const navigate = useNavigate();
   const { user } = useAuthStore();
   const { gameState, fetchGameState, submitDecision, loading, error } = useTradingStore();
-  const { isOrganizer, nextRound, endEvent } = useCompetitionStore();
 
   const eventId = Number(id);
 
@@ -63,30 +61,6 @@ export default function TradingGamePage() {
       refresh();
     } catch {
       // error handled in store
-    }
-  };
-
-  const handleNextRound = async () => {
-    if (!gameState?.current_round) return;
-    try {
-      await nextRound(gameState.current_round.id);
-      setDecisionSubmitted(false);
-      setSelectedProduct('');
-      setSelectedCity('');
-      setQuantity(1);
-      setActionType('hold');
-      refresh();
-    } catch {
-      // error handled
-    }
-  };
-
-  const handleEndGame = async () => {
-    try {
-      await endEvent(eventId);
-      navigate(`/games/${eventId}/lobby`);
-    } catch {
-      // error handled
     }
   };
 
@@ -340,29 +314,6 @@ export default function TradingGamePage() {
             </div>
           )}
 
-          {/* Organizer Controls */}
-          {isOrganizer && !isFinished && (
-            <div className="glass-card p-6">
-              <h3 className="font-semibold text-foreground mb-4">组织者控制</h3>
-              <div className="flex gap-3">
-                <button
-                  onClick={handleNextRound}
-                  disabled={loading}
-                  className="flex-1 py-3 bg-success/20 text-success border border-success/30 rounded-xl font-semibold hover:bg-success/30 transition-colors disabled:opacity-50 flex items-center justify-center gap-2"
-                >
-                  <ChevronRight className="w-5 h-5" />
-                  推进下一回合
-                </button>
-                <button
-                  onClick={handleEndGame}
-                  disabled={loading}
-                  className="flex-1 py-3 bg-danger/20 text-danger border border-danger/30 rounded-xl font-semibold hover:bg-danger/30 transition-colors disabled:opacity-50 flex items-center justify-center gap-2"
-                >
-                  结束比赛
-                </button>
-              </div>
-            </div>
-          )}
         </div>
 
         {/* Sidebar */}

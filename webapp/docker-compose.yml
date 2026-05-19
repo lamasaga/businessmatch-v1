@@ -1,26 +1,60 @@
-version: '3.8'
+# BizSim Edu — 三端编排：后端 + 学生端 + 组织者端
+# 启动：docker compose up -d --build
+# 停止：docker compose down
 
 services:
   backend:
     build:
       context: ./backend
       dockerfile: Dockerfile
+    container_name: bizsim-backend
     ports:
       - "8000:8000"
     environment:
-      - DATABASE_URL=sqlite:///./bizsim.db
-      - SECRET_KEY=your-secret-key-change-in-production
-      - DEBUG=true
+      DATABASE_URL: sqlite:////app/data/bizsim.db
+      SECRET_KEY: change-me-in-production
+      DEBUG: "true"
     volumes:
-      - ./backend:/app
+      - bizsim_data:/app/data
     restart: unless-stopped
+    networks:
+      - bizsim
 
-  frontend:
+  student:
     build:
       context: ./frontend
       dockerfile: Dockerfile
+      args:
+        VITE_API_URL: ""
+        VITE_ORGANIZER_URL: http://localhost:5174
+    container_name: bizsim-student
     ports:
       - "80:80"
     depends_on:
       - backend
     restart: unless-stopped
+    networks:
+      - bizsim
+
+  organizer:
+    build:
+      context: ./organizer-frontend
+      dockerfile: Dockerfile
+      args:
+        VITE_API_URL: ""
+        VITE_STUDENT_URL: http://localhost/games
+    container_name: bizsim-organizer
+    ports:
+      - "5174:80"
+    depends_on:
+      - backend
+    restart: unless-stopped
+    networks:
+      - bizsim
+
+volumes:
+  bizsim_data:
+
+networks:
+  bizsim:
+    driver: bridge

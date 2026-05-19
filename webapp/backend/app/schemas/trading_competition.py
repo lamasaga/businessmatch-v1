@@ -243,5 +243,14 @@ class CompetitionResult(BaseModel):
     achievements: List[str]
 
 
+class OrganizerControlOut(BaseModel):
+    """组织者控场面板数据（无需参赛即可查看）"""
+    event: CompetitionEventOut
+    current_round: Optional[TradingRoundOut] = None
+    standings: List[Dict[str, Any]] = []
+    participants: List[ParticipantOut] = []
+    decisions_submitted: int = 0
+
+
 # 解决前向引用
 CompetitionEventDetail.model_rebuild()

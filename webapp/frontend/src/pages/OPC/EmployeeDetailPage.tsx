@@ -1,12 +1,12 @@
 import { useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { useopcStore } from '../../stores/opcStore';
+import { useOPCStore } from '../../stores/opcStore';
 import { ArrowLeft, Briefcase, Award } from 'lucide-react';
 
 export default function EmployeeDetailPage() {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
-  const { employees, tasks, fetchCompany } = useopcStore();
+  const { employees, tasks, fetchCompany } = useOPCStore();
 
   useEffect(() => {
     fetchCompany(1).catch(() => {});

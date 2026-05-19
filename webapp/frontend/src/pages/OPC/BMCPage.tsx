@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useopcStore } from '../../stores/opcStore';
+import { useOPCStore } from '../../stores/opcStore';
 import { ArrowLeft, Edit3, Check } from 'lucide-react';
 
 const BMC_BLOCKS = [
@@ -17,7 +17,7 @@ const BMC_BLOCKS = [
 
 export default function BMCPage() {
   const navigate = useNavigate();
-  const { company, fetchCompany } = useopcStore();
+  const { company, fetchCompany } = useOPCStore();
   const [editing, setEditing] = useState<string | null>(null);
   const [editValue, setEditValue] = useState('');
   const [bmc, setBmc] = useState<Record<string, string>>({});

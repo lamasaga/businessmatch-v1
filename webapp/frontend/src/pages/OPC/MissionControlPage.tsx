@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useopcStore } from '../../stores/opcStore';
+import { useOPCStore } from '../../stores/opcStore';
 import {
   ArrowLeft, Plus, Play, CheckCircle,
   Clock, Flag
@@ -29,7 +29,7 @@ const PRIORITY_LABELS: Record<string, string> = {
 
 export default function MissionControlPage() {
   const navigate = useNavigate();
-  const { company, employees, tasks, createTask, updateTask, fetchTasks } = useopcStore();
+  const { company, employees, tasks, createTask, updateTask, fetchTasks } = useOPCStore();
   const [showCreate, setShowCreate] = useState(false);
   const [newTask, setNewTask] = useState({
     title: '',

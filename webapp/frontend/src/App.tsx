@@ -14,7 +14,6 @@ import ShowcasePage from './pages/Showcase/ShowcasePage';
 import GamesPage from './pages/Games/GamesPage';
 import GameLobbyPage from './pages/Games/GameLobbyPage';
 import TradingGamePage from './pages/Games/TradingGamePage';
-import CreateEventPage from './pages/Organizer/CreateEventPage';
 import WikiPage from './pages/Wiki/WikiPage';
 import WikiArticlePage from './pages/Wiki/WikiArticlePage';
 import CoursesPage from './pages/Courses/CoursesPage';
@@ -116,14 +115,6 @@ function App() {
               element={
                 <AuthGuard requireAuth>
                   <TradingGamePage />
-                </AuthGuard>
-              }
-            />
-            <Route
-              path="organizer/events/create"
-              element={
-                <AuthGuard requireAuth>
-                  <CreateEventPage />
                 </AuthGuard>
               }
             />

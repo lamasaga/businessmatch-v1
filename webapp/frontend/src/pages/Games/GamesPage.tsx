@@ -1,6 +1,5 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useAuthStore } from '../../stores/authStore';
 import { useCompetitionStore } from '../../stores/competitionStore';
 import {
   Trophy, Plus, Search, Users, Clock, ArrowRight,
@@ -9,7 +8,6 @@ import {
 
 export default function GamesPage() {
   const navigate = useNavigate();
-  const { user } = useAuthStore();
   const { events, fetchEvents, joinEvent, loading } = useCompetitionStore();
   const [roomCode, setRoomCode] = useState('');
   const [joinError, setJoinError] = useState('');
@@ -49,15 +47,15 @@ export default function GamesPage() {
           <h1 className="text-3xl font-bold text-foreground tracking-tight">商赛大厅</h1>
           <p className="text-foreground-muted mt-1">加入比赛，体验真实商业竞争</p>
         </div>
-        {user?.role === 'admin' && (
-          <button
-            onClick={() => navigate('/organizer/events/create')}
-            className="flex items-center gap-2 px-5 py-2.5 bg-primary text-background rounded-xl font-semibold hover:bg-primary/90 transition-colors"
-          >
-            <Plus className="w-4 h-4" />
-            创建比赛
-          </button>
-        )}
+        <a
+          href={import.meta.env.VITE_ORGANIZER_URL || 'http://localhost:5174'}
+          target="_blank"
+          rel="noreferrer"
+          className="flex items-center gap-2 px-5 py-2.5 border border-primary/40 text-primary rounded-xl font-semibold hover:bg-primary/10 transition-colors"
+        >
+          <Plus className="w-4 h-4" />
+          组织者控制台
+        </a>
       </div>
 
       {/* Join by room code */}

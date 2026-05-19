@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useopcStore } from '../../stores/opcStore';
+import { useOPCStore } from '../../stores/opcStore';
 import { ArrowLeft, Plus, Briefcase, Search, Filter } from 'lucide-react';
 
 const AVAILABLE_ROLES = [
@@ -62,7 +62,7 @@ const AVAILABLE_ROLES = [
 
 export default function TalentMarketPage() {
   const navigate = useNavigate();
-  const { company, employees, hireEmployee, fetchEmployees } = useopcStore();
+  const { company, employees, hireEmployee, fetchEmployees } = useOPCStore();
   const [filter, setFilter] = useState('all');
   const [search, setSearch] = useState('');
   const [hiring, setHiring] = useState<string | null>(null);

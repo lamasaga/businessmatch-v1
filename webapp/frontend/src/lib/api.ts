@@ -1,7 +1,15 @@
 import axios, { AxiosError, type AxiosResponse, type InternalAxiosRequestConfig } from 'axios';
 import type { ApiResponse } from '../types';
 
-const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000';
+/** Docker/Nginx 生产构建走同源 /api 代理；本地 dev 默认直连 8000 */
+function resolveApiBaseUrl(): string {
+  const fromEnv = import.meta.env.VITE_API_URL;
+  if (typeof fromEnv === 'string' && fromEnv.length > 0) return fromEnv;
+  if (import.meta.env.PROD) return '';
+  return 'http://localhost:8000';
+}
+
+const API_BASE_URL = resolveApiBaseUrl();
 
 // 用于刷新token的独立axios实例，避免拦截器循环
 const refreshAxios = axios.create({
