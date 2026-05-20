@@ -187,6 +187,20 @@ def get_event_control(
 
     from app.api.competitions import _event_to_out, _participant_to_out, _calc_inventory_value
     from app.api.trading import _round_to_out
+    from app.games.trading.rts_config import is_rts_mode
+    from app.games.trading.rts_state import get_rts_runtime, seconds_until_next_tick
+
+    rts_info = None
+    if is_rts_mode(event.config):
+        rt = get_rts_runtime(event.config or {})
+        rts_info = {
+            "tick": rt.get("tick", 0),
+            "total_ticks": rt.get("total_ticks", 120),
+            "phase": rt.get("phase", "warmup"),
+            "tick_interval_sec": int(rt.get("tick_interval_sec", 5)),
+            "seconds_until_next_tick": seconds_until_next_tick(rt),
+            "duration_preset": (event.config or {}).get("duration_preset", "standard"),
+        }
 
     participants = db.query(CompetitionParticipant).filter(
         CompetitionParticipant.event_id == event_id,
@@ -223,4 +237,5 @@ def get_event_control(
         standings=standings,
         participants=[_participant_to_out(p, db) for p in participants],
         decisions_submitted=decisions_submitted,
+        rts=rts_info,
     ))

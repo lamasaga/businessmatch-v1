@@ -2,7 +2,8 @@
 
 | 文件 | engine | 说明 |
 |------|--------|------|
-| `trading-v1.yaml` | `trading` | **浮生记式**六城十品倒卖；`pricing.mode: market` 由玩家/AI 买卖驱动供需 |
+| `trading-v1.yaml` | `trading` | **回合制**六城倒卖；`pricing.mode: market`；练习局 `practice_flow` 自动推进回合 |
+| `trading-v2-rts.yaml` | `trading` | **浮生记 RTS**（`mode: rts`）：5s tick、ask/bid、体积仓储、车辆；**仅 `rts_scheduler` 推进**；前端 WebSocket 收 tick |
 
 ## 定价模式
 

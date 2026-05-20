@@ -48,9 +48,24 @@ class ErrorCode:
     TOKEN_INVALID = 1008
 
 
+def _cors_headers(request: Request) -> dict:
+    """异常响应也带上 CORS，避免浏览器只显示 CORS 错误而掩盖真实 500。"""
+    origin = request.headers.get("origin")
+    if not origin:
+        return {}
+    from app.core.config import get_settings
+    if origin in get_settings().CORS_ORIGINS:
+        return {
+            "Access-Control-Allow-Origin": origin,
+            "Access-Control-Allow-Credentials": "true",
+        }
+    return {}
+
+
 async def business_exception_handler(request: Request, exc: BusinessException) -> JSONResponse:
     return JSONResponse(
         status_code=exc.status_code,
+        headers=_cors_headers(request),
         content=ApiResponse.error(
             message=exc.message,
             code=exc.code,
@@ -67,6 +82,7 @@ async def http_exception_handler(request: Request, exc: FastAPIHTTPException) ->
     }
     return JSONResponse(
         status_code=exc.status_code,
+        headers=_cors_headers(request),
         content=ApiResponse.error(
             message=exc.detail if isinstance(exc.detail, str) else "Request error",
             code=code_map.get(exc.status_code, ErrorCode.UNKNOWN_ERROR),
@@ -81,6 +97,7 @@ async def validation_exception_handler(request: Request, exc: RequestValidationE
         errors.append(f"{field}: {error['msg']}")
     return JSONResponse(
         status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
+        headers=_cors_headers(request),
         content=ApiResponse.error(
             message="; ".join(errors),
             code=ErrorCode.VALIDATION_ERROR,
@@ -89,8 +106,11 @@ async def validation_exception_handler(request: Request, exc: RequestValidationE
 
 
 async def global_exception_handler(request: Request, exc: Exception) -> JSONResponse:
+    import logging
+    logging.getLogger(__name__).exception("Unhandled error: %s", exc)
     return JSONResponse(
         status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+        headers=_cors_headers(request),
         content=ApiResponse.error(
             message="Internal server error",
             code=ErrorCode.UNKNOWN_ERROR,

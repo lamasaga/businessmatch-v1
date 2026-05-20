@@ -31,7 +31,10 @@ from app.schemas.trading_competition import (
     DecisionRequest, DecisionOut, GameState, TradingRoundOut, TradingRoundResult,
     CityMarket, ProductPrice, PlayerInventoryItem, StandingsEntry,
     SubmitDecisionResult, MarketInsight, InventoryCapacity,
+    RtsActionRequest, RtsActionResult,
 )
+from app.games.trading.rts_config import is_rts_mode
+from app.api.trading_rts_handlers import build_rts_game_state, submit_rts_action
 from app.core.response import ApiResponse, BusinessException, ErrorCode
 from app.core.dependencies import get_current_active_user
 
@@ -64,6 +67,11 @@ def get_game_state(
             code=ErrorCode.FORBIDDEN,
             status_code=status.HTTP_403_FORBIDDEN,
         )
+
+    if is_rts_mode(event.config):
+        state = build_rts_game_state(db, event, participant)
+        db.commit()
+        return ApiResponse.ok(data=state)
 
     # 获取当前回合
     current_round = db.query(TradingRound).filter(
@@ -127,12 +135,51 @@ def get_game_state(
         standings=standings,
         time_remaining=None,
         is_practice=event.match_kind == MatchKind.practice,
+        game_mode="round",
         pricing_mode=pricing.get("mode", "market"),
         market_insights=market_insights,
         has_submitted_this_round=has_submitted,
         can_submit_decision=can_submit,
         inventory_capacity=InventoryCapacity(**inv_capacity),
     ))
+
+
+@router.post("/events/{event_id}/actions", response_model=ApiResponse[RtsActionResult])
+def submit_rts_game_action(
+    event_id: int,
+    data: RtsActionRequest,
+    current_user: User = Depends(get_current_active_user),
+    db: Session = Depends(get_db),
+):
+    """RTS：提交即时指令（下 tick 结算）"""
+    event = db.query(CompetitionEvent).filter(CompetitionEvent.id == event_id).first()
+    if not event:
+        raise BusinessException(
+            message="比赛不存在",
+            code=ErrorCode.NOT_FOUND,
+            status_code=status.HTTP_404_NOT_FOUND,
+        )
+    if not is_rts_mode(event.config):
+        raise BusinessException(
+            message="本场次非 RTS 模式",
+            code=ErrorCode.BAD_REQUEST,
+            status_code=status.HTTP_400_BAD_REQUEST,
+        )
+
+    participant = db.query(CompetitionParticipant).filter(
+        CompetitionParticipant.event_id == event_id,
+        CompetitionParticipant.user_id == current_user.id,
+    ).first()
+    if not participant:
+        raise BusinessException(
+            message="您未参加这场比赛",
+            code=ErrorCode.FORBIDDEN,
+            status_code=status.HTTP_403_FORBIDDEN,
+        )
+
+    result = submit_rts_action(db, event, participant, data)
+    db.commit()
+    return ApiResponse.ok(data=result)
 
 
 @router.post("/rounds/{round_id}/decide", response_model=ApiResponse[SubmitDecisionResult])
@@ -443,6 +490,13 @@ def next_round(
         )
 
     event = round_obj.event
+
+    if is_rts_mode(event.config):
+        raise BusinessException(
+            message="RTS 场次由 tick 自动推进，不可手动推进回合",
+            code=ErrorCode.BAD_REQUEST,
+            status_code=status.HTTP_400_BAD_REQUEST,
+        )
 
     # 验证组织者身份
     from app.models.trading_competition import OrganizerProfile

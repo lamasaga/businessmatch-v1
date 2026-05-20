@@ -33,17 +33,10 @@ interface OrganizerState {
   clearError: () => void;
 }
 
-const DEFAULT_CONFIG = {
-  rounds: 10,
+const DEFAULT_RTS_CONFIG = {
+  mode: 'rts',
+  duration_preset: 'standard' as const,
   initial_capital: 50000,
-  inventory_limit: 20,
-  move_cost: 1000,
-  decision_time: 60,
-  cities: ['jingcheng', 'hushi', 'shenshi', 'rongcheng', 'bingcheng', 'gangcheng'],
-  products: [
-    'fruit', 'vegetable', 'daily', 'electronics', 'clothing',
-    'cosmetics', 'jewelry', 'antique', 'art', 'snack',
-  ],
 };
 
 export const useOrganizerStore = create<OrganizerState>((set) => ({
@@ -121,7 +114,8 @@ export const useOrganizerStore = create<OrganizerState>((set) => ({
       const res = await api.post<ApiResponse<CompetitionEvent>>('/api/v1/competitions', {
         ...data,
         game_type: 'trading',
-        config: { ...DEFAULT_CONFIG, ...data.config },
+        game_config_id: 'trading-v2-rts',
+        config: { ...DEFAULT_RTS_CONFIG, ...data.config },
       });
       const event = res.data.data!;
       set((s) => ({ events: [event, ...s.events], loading: false }));

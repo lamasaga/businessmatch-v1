@@ -5,7 +5,7 @@
 > **读者**：开发、架构、排 Bug  
 > **配套阅读**：[`01-平台愿景与产品架构`](./01-平台愿景与产品架构.md) · [`02-赛事体系与双端产品`](./02-赛事体系与双端产品.md)（双端）· [`03-技术架构与实现现状`](./03-技术架构与实现现状.md)（摘要）· [`04-实施路线与里程碑`](./04-实施路线与里程碑.md) · [`09-分项目开发与集成流程`](./09-分项目开发与集成流程.md)  
 > **安装启动**：[`webapp/README.md`](./webapp/README.md)  
-> **最后更新**：2026-05-20
+> **最后更新**：2026-05-19
 
 ---
 
@@ -58,8 +58,9 @@
 | 知识图谱 | `/wiki` | ✅ | ✅ Canvas 力导向 | `knowledge_graph.json` | **可用** |
 | 课程学院 | `/courses` | ✅ | ✅ | 静态/种子数据 | **可用** |
 | 商赛大厅 | `/games` | ✅ 比赛 CRUD | ✅ | SQLite 比赛表 | **可用** |
-| 交易模拟商赛（**正式赛链路**） | `/games/:id/play` | ✅ 回合决策 | ✅ 六城十品 | SQLite + 服务端结算 | **核心可玩** |
-| 商赛模拟（**vs AI 练习**） | `/games` → `/games/:id/play` | ✅ `practice/*` + 自动推进 | ✅ 浮生记日常练习入口 | SQLite + `match_kind=practice` | **核心可玩** |
+| 交易模拟商赛（**回合制**） | `/games/:id/play` | ✅ 回合决策 | ✅ 六城 · `trading-v1` | SQLite + 回合结算 | **可玩** |
+| **浮生记 RTS v2**（**即时**） | `/games/:id/play` | ✅ `/state` 只读 + `/actions` + **WebSocket** | ✅ `TradingRTSView` | 调度器 tick + `trading-v2-rts` | **核心可玩** |
+| 商赛模拟（**vs AI 练习**） | `/games` → `/games/:id/play` | ✅ `practice/trading/start`（默认 v2 RTS） | ✅ 日常练习卡片 | SQLite + 3 AI 档位 | **核心可玩** |
 | 组织者控场 | `organizer-frontend` (:5174) | ✅ | ✅ | 组织者档案 | **Phase 1 独立端** |
 | 国富论游戏 | `/wealth-of-nations` | — | ✅ 纯前端 | 无 | **教学小游戏** |
 | Demia / Rival 练习 | `/games/...` 等 | — | ✅ UI | mock 对话 | **演示级** |
@@ -77,12 +78,19 @@
     → 成绩写入用户 XP → 学生 /career 查看成长
 ```
 
-**路径 B — 浮生记日常练习（1 人 + 3 AI，已打通）**
+**路径 B — 浮生记 RTS 日常练习（1 人 + 3 AI，默认 v2）**
 
 ```
-学生 /games →「浮生记 · 日常练习」→ POST /practice/trading/start
-    → 1 真人 + 3 AI 交易员 → 供需定价（market）→ 提交后自动推进回合
-    → 打满回合自动结算 practice XP
+学生 /games →「浮生记 · 日常练习」→ POST /practice/trading/start（game_config_id=trading-v2-rts）
+    → commit 后启动 rts_scheduler → 每 5s tick（调度器唯一推进）
+    → 学生 WebSocket 收 tick → GET /state 刷新 UI → 买卖/移动/购车指令排队下 tick 结算
+    → AI（chaotic + advanced×2）同 tick 决策 → 打满 total_ticks 自动 finish + WS finished
+```
+
+**路径 B′ — 浮生记回合制练习（v1，可选）**
+
+```
+practice/start 传 game_config_id=trading-v1 → 回合制 market 定价 → 提交后 practice_flow 自动推进
 ```
 
 **路径 C — 正式多人赛（组织者 + 房间码，约 10 人可试点）**
@@ -97,7 +105,8 @@
 
 ### 2.4 代码结构要点
 
-- **真实业务后端**：`auth`、`wiki`、`courses`、`opc`、`organizer`、`competitions`、`trading`、`practice` 八组路由（见 `backend/app/main.py`）。
+- **真实业务后端**：`auth`、`wiki`、`courses`、`opc`、`organizer`、`competitions`、`trading`、`trading_ws`、`practice`（见 `main.py`）。
+- **RTS 模块**：`games/trading/rts_{config,state,tick,actions,pricing,logistics,scheduler,ai,ai_levels,api_helpers,ws}.py`。
 - **域分层**（2026-05）：`domains/arena`（场次/参赛者）、`domains/cybercore`（YAML）、`domains/career`（`xp_events`）、`games/trading`（结算引擎）；`models/trading_competition.py` 仅为兼容 re-export。
 - **演示数据层**：`frontend/src/data/mockPlatform.ts` 支撑 Athena 文案、部分榜单与成就展示。
 - **状态管理**：`careerStore`（持久化本地）、`competitionStore` / `tradingStore`（对局）、`OPCStore`（公司任务）。
@@ -212,10 +221,11 @@
 | **OPC** | `/opc` | companies, employees, tasks CRUD | 按 `owner_id` 隔离 |
 | **organizer** | `/organizer` | apply, profile, stats | 组织者档案 |
 | **competitions** | `/competitions` | CRUD、join(房间码)、start、end、standings、my-status | 创建需组织者；start/end 需组织者 |
-| **trading** | `/trading` | state、decide、result、next、history | 对局内决策；`next` 组织者 |
-| **practice** | `/practice` | `GET /game-configs`、`POST /trading/start`、`GET /my` | 日常练习局创建与列表；跳转后仍走 `/trading/*` |
+| **trading** | `/trading` | `GET /events/{id}/state`、`POST /events/{id}/actions`（RTS）、decide/result/next（回合制） | RTS：`state` **只读**不推进 tick；`next` 对 RTS 返回 400 |
+| **trading WS** | `/trading` | `WS /events/{id}/ws?token=` | tick/finished 推送；参赛者或本场组织者 |
+| **practice** | `/practice` | `GET /game-configs`、`POST /trading/start`、`GET /my` | 默认 `trading-v2-rts`；开赛 commit 后 `start_rts_scheduler` |
 
-　　**缺失的后端域**（规划中有、代码中无）：`/career/*`（聚合查询）、`/quests/*`、`/credentials/*`、`/ai/athena|demia|rival/*`、`WebSocket 房间`。
+　　**缺失的后端域**（规划中有、代码中无）：`/career/*`（聚合查询）、`/quests/*`、`/credentials/*`、`/ai/athena|demia|rival/*`（通用房间 WS 已有 RTS 专用）。
 
 #### 2.7.4 服务层与域包
 
@@ -224,8 +234,10 @@
 | `domains/arena/services/match_factory.py` | `create_official_match` / `create_practice_match` |
 | `domains/career/services/rewards.py` | `grant_xp`、`settle_match_rewards`（读 YAML 权重） |
 | `domains/cybercore/registry.py` | 加载 `backend/content/game-configs/*.yaml` |
-| `games/trading/engine.py` | 交易赛状态机与结算 |
-| `app/services/` | 仍为空；部分逻辑仍在 `api/trading.py` |
+| `games/trading/engine.py` | 回合制交易赛状态机 |
+| `games/trading/rts_scheduler.py` | RTS **唯一** tick 推进 + commit 后 WS 广播 |
+| `games/trading/rts_tick.py` | `maybe_advance_rts`（仅调度器调用）、`finish_rts_match` |
+| `app/services/` | 仍为空；RTS/回合分支在 `trading_rts_handlers.py` |
 
 　　规范见 [`domains/arena/ARCHITECTURE.md`](./webapp/backend/app/domains/arena/ARCHITECTURE.md)。
 
@@ -258,7 +270,7 @@ flowchart LR
 | `authStore` | localStorage tokens | ✅ login/me；用户 `experience` **未在 Career 页展示** |
 | `careerStore` | localStorage `bizsim-career-mvp` | ❌ 仅 `careerActive`/`demoMode`/`completedQuests` |
 | `competitionStore` | 内存 | ✅ 列表、加入、控场 |
-| `tradingStore` | 内存 | ✅ 回合状态与决策 |
+| `tradingStore` | 内存 | ✅ 回合 + RTS（`submitRtsAction`）；RTS 靠 `lib/rtsWebSocket.ts` 触发刷新 |
 | `OPCStore` | 内存 | ✅ 公司/员工/任务 API |
 
 ### 2.9 工程环境与部署
@@ -307,7 +319,9 @@ flowchart LR
 | Q2 | **`mockPlatform` 与真实 API 混用** | 演示模式与生产数据边界不清 |
 | Q3 | **`courses` 非数据库驱动** | `courses.py` 内硬编码列表，与 `inspire/college/` 资产未打通 |
 | Q4 | **第二种赛制未验证** | Arena/CyberCore 分层已建，需按 ARCHITECTURE checklist 增第二 `game_config` |
-| Q5 | **无自动化测试** | 结算、join、XP 无 pytest / e2e |
+| Q5 | **自动化测试仍少** | 已有 `test_rts_pricing`、`test_rts_ai_levels`、`test_rts_http_readonly`；缺 DB 级并发 tick 集成测 |
+| Q8 | **RTS 依赖调度器进程** | 后端须正常 lifespan；调度器未起则 tick 不推进（HTTP 不再兜底推进） |
+| Q9 | **WS 与 API 跨域** | 本地 dev 为 `ws://localhost:8000`；生产需 `VITE_API_URL` 与 WSS 同主机 |
 | Q6 | **README 与仓库路径** | 根目录规划仍写 `web应用商业教育`，应以 `webapp` 为准 |
 | Q7 | **Docker 前端端口** | Compose 暴露 80，与本地 dev `:5173` 不一致，文档需区分 |
 
@@ -326,6 +340,26 @@ flowchart LR
 |----|------|
 | 登录 CORS 误报 | 根因多为 DB 未初始化导致 500；已 `lifespan` + `init_all()` |
 | `init_db` Windows 控制台 emoji | 已改为 ASCII 日志，避免 GBK 中断 |
+| RTS `/state` 500、`trading_rounds` 重复 | HTTP+调度器双写 tick；已改调度器单写 + 行锁/幂等 + `persist_match_config` |
+| RTS 调度器 commit 前启动占坑 | 已改为 `commit` 后 `start_rts_scheduler` |
+| WS `finished` 早于 commit | 已改为 `commit` 后 `broadcast_rts_from_match` |
+
+---
+
+### 2.11 浮生记 RTS v2 工程专节（2026-05-19）
+
+| 项 | 说明 |
+|----|------|
+| 赛制包 | `backend/content/game-configs/trading-v2-rts.yaml`（`mode: rts`，10 品，6 城） |
+| 判定 | `is_rts_mode(config)` → `config.mode == "rts"` |
+| tick 写者 | **仅** `rts_scheduler._tick_loop` → `maybe_advance_rts` |
+| HTTP 读路径 | `build_rts_game_state`、`organizer.get_event_control` — **不**调用 `maybe_advance_rts` |
+| 实时 | `rts_ws.hub` + `api/trading_ws.py`；消息类型 `connected` / `tick` / `finished` / `pong` |
+| 前端 | `TradingRTSView`、`TradingGamePage`（WS + 30s 兜底轮询）；组织者 `EventControlPage` 同理 |
+| 练习 AI | `rts_ai_levels.py`：`chaotic`、`advanced`；`practice_ai_slots` 可配 |
+| 组织者 | 创建赛可选 8/10/12 分钟；控场无「推进回合」；提前结束走 `finish_rts_match` |
+
+**关键文件**：`rts_scheduler.py` · `rts_tick.py` · `rts_ws.py` · `trading_ws.py` · `trading_rts_handlers.py` · `frontend/src/lib/rtsWebSocket.ts`
 
 ---
 
@@ -339,7 +373,7 @@ flowchart LR
 | **Atlas** | 掌握度驱动解锁 | Wiki + 图谱浏览 | 🟡 50% |
 | **Academy** | 单元进度写回生涯 | 列表/详情 UI | 🟡 40% |
 | **Quest** | 每日任务服务 + streak | 前端 Quest 页 | 🟡 35% |
-| **Arena** | 练习（AI）+ 正式（组织者房间）双模式 | 练习闭环 + 供需定价 + 正式赛 ~10 人可试点；正式赛控场规则待完善 | 🟡 72% |
+| **Arena** | 练习（AI）+ 正式（组织者房间）双模式 | 回合制 + **RTS v2** + WS；练习默认 RTS；正式赛控场（回合）规则待完善 | 🟡 78% |
 | **Credenti** | 徽章/认证链 | 成就页 mock | 🔴 20% |
 | **Athena** | RAG 复盘、周计划 | 浮窗 + 模板/mock | 🟡 25% |
 | **Demia / Rival** | 规则层 + 可选 LLM | UI 演示 | 🔴 15% |
@@ -371,7 +405,12 @@ flowchart LR
 | `backend/app/games/trading/inventory.py` | 单品种库存上限 |
 | `backend/app/domains/arena/services/match_lifecycle.py` | 开赛生命周期 |
 | `backend/app/api/practice.py` | 日常练习 API |
-| `backend/content/game-configs/trading-v1.yaml` | 首份可玩赛制包 |
+| `backend/content/game-configs/trading-v1.yaml` | 回合制赛制包 |
+| `backend/content/game-configs/trading-v2-rts.yaml` | 浮生记 RTS 赛制包 |
+| `backend/app/games/trading/rts_scheduler.py` | RTS tick 调度与 WS 广播 |
+| `backend/app/api/trading_ws.py` | WebSocket 订阅端点 |
+| `frontend/src/lib/rtsWebSocket.ts` | 学生端 WS 客户端 |
+| `organizer-frontend/src/lib/rtsWebSocket.ts` | 组织者端 WS 客户端 |
 | `backend/app/db/migrate_schema.py` | 旧 SQLite 库列迁移 |
 | `backend/app/api/trading.py` | 对局 HTTP 适配层 |
 | `backend/app/api/competitions.py` | 房间码与比赛生命周期 |
@@ -389,7 +428,8 @@ flowchart LR
 
 | 日期 | 摘要 |
 |------|------|
-| 2026-05-20 | 浮生记供需定价（`market.py`）；练习局 AI + 自动推进；单品种库存上限 99；学生端移除组织者入口；启动脚本优化；`can_submit_decision` 防重复提交 |
+| 2026-05-19 | **浮生记 RTS v2**：`trading-v2-rts`、调度器单写 tick、HTTP 只读、WebSocket 推送、两档练习 AI、10 品；修复双写回合/调度器占坑/估值 bid/提前结束收尾 |
+| 2026-05-20 | 浮生记回合制供需定价（`market.py`）；练习局 AI + 自动推进；单品种库存上限 99；学生端移除组织者入口；启动脚本优化 |
 | 2026-05-20 | Arena/Career/Cybercore 域分包；`games/trading` 引擎；`practice` API；`trading-v1.yaml`；`xp_events`；课程文档迁至 `inspire/college/` |
 | 2026-05-19 | 组织者独立端、Docker 三端编排（见上一版提交说明） |
 

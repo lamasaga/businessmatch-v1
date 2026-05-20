@@ -5,6 +5,7 @@ import {
 } from 'lucide-react';
 import { useState } from 'react';
 import { useOrganizerStore } from '../stores/organizerStore';
+import { connectRtsWebSocket } from '../lib/rtsWebSocket';
 
 const STATUS_LABEL: Record<string, string> = {
   draft: '草稿',
@@ -37,14 +38,35 @@ export default function EventControlPage() {
     refresh();
   }, [refresh]);
 
+  const isRtsEvent =
+    control?.event?.config?.mode === 'rts' ||
+    control?.event?.game_config_id === 'trading-v2-rts';
+
   useEffect(() => {
-    if (!control?.event) return;
+    if (!eventId || !isRtsEvent) return;
+    if (control?.event?.status !== 'registration' && control?.event?.status !== 'playing') {
+      return;
+    }
+    const disconnect = connectRtsWebSocket(eventId, {
+      onTick: () => {
+        void refresh();
+      },
+    });
+    const fallback = setInterval(() => void refresh(), 30000);
+    return () => {
+      disconnect();
+      clearInterval(fallback);
+    };
+  }, [eventId, isRtsEvent, control?.event?.status, refresh]);
+
+  useEffect(() => {
+    if (!control?.event || isRtsEvent) return;
     const st = control.event.status;
     if (st === 'registration' || st === 'playing') {
       const t = setInterval(refresh, 3000);
       return () => clearInterval(t);
     }
-  }, [control?.event?.status, refresh]);
+  }, [control?.event?.status, isRtsEvent, refresh]);
 
   const copyCode = async () => {
     if (!control?.event.room_code) return;
@@ -61,8 +83,11 @@ export default function EventControlPage() {
     );
   }
 
-  const { event, current_round, standings, participants, decisions_submitted } = control;
-  const totalRounds = Number(event.config?.rounds ?? 10);
+  const { event, current_round, standings, participants, decisions_submitted, rts } = control;
+  const isRts = event.config?.mode === 'rts' || event.game_config_id === 'trading-v2-rts';
+  const totalRounds = isRts
+    ? Number(rts?.total_ticks ?? event.config?.total_ticks ?? 120)
+    : Number(event.config?.rounds ?? 10);
   const hasPlayers = participants.length >= 1;
   const isPlaying = event.status === 'playing';
   const isFinished = event.status === 'finished';
@@ -86,7 +111,9 @@ export default function EventControlPage() {
           <h1 className="text-2xl font-bold">{event.title}</h1>
           <p className="text-sm text-foreground-muted mt-1">
             {STATUS_LABEL[event.status] || event.status}
-            {isPlaying && ` · 第 ${event.current_round}/${totalRounds} 回合`}
+            {isPlaying && (isRts
+              ? ` · Tick ${event.current_round}/${totalRounds}${rts?.phase ? ` (${rts.phase})` : ''}`
+              : ` · 第 ${event.current_round}/${totalRounds} 回合`)}
           </p>
         </div>
         <button
@@ -145,7 +172,7 @@ export default function EventControlPage() {
               )}
             </button>
           )}
-          {isPlaying && current_round && (
+          {isPlaying && current_round && !isRts && (
             <button
               type="button"
               disabled={loading}
@@ -183,7 +210,9 @@ export default function EventControlPage() {
           )}
           {isPlaying && (
             <p className="text-sm text-success">
-              比赛已开始 — 学生可进入对局；您可在此推进回合或结束比赛。
+              {isRts
+                ? 'RTS 模式已自动每 5 秒推进 tick；学生提交指令后下 tick 结算。'
+                : '比赛已开始 — 学生可进入对局；您可在此推进回合或结束比赛。'}
             </p>
           )}
         </div>

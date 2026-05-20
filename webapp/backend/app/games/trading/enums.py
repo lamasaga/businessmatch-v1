@@ -15,3 +15,4 @@ class ActionType(str, enum.Enum):
     sell = "sell"
     move = "move"
     hold = "hold"
+    buy_vehicle = "buy_vehicle"

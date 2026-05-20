@@ -3,6 +3,12 @@ import { useNavigate } from 'react-router-dom';
 import { ArrowLeft, Plus, Loader2, Settings, Users, Coins, Clock } from 'lucide-react';
 import { useOrganizerStore } from '../stores/organizerStore';
 
+const DURATION_OPTIONS = [
+  { key: 'short', label: '快速局', minutes: 8 },
+  { key: 'standard', label: '标准局', minutes: 10 },
+  { key: 'long', label: '完整局', minutes: 12 },
+] as const;
+
 export default function CreateEventPage() {
   const navigate = useNavigate();
   const { createEvent, loading, error } = useOrganizerStore();
@@ -11,11 +17,8 @@ export default function CreateEventPage() {
     title: '',
     description: '',
     max_players: 50,
-    rounds: 10,
+    duration_preset: 'standard' as 'short' | 'standard' | 'long',
     initial_capital: 50000,
-    inventory_limit: 20,
-    move_cost: 1000,
-    decision_time: 60,
   });
 
   const handleSubmit = async (e: FormEvent) => {
@@ -26,11 +29,9 @@ export default function CreateEventPage() {
         description: formData.description,
         max_players: formData.max_players,
         config: {
-          rounds: formData.rounds,
+          mode: 'rts',
+          duration_preset: formData.duration_preset,
           initial_capital: formData.initial_capital,
-          inventory_limit: formData.inventory_limit,
-          move_cost: formData.move_cost,
-          decision_time: formData.decision_time,
         },
       });
       navigate(`/events/${event.id}`);
@@ -51,7 +52,7 @@ export default function CreateEventPage() {
         </button>
         <div>
           <h1 className="text-2xl font-bold">创建比赛</h1>
-          <p className="text-sm text-foreground-muted">生成 4 位房间码供学生加入</p>
+          <p className="text-sm text-foreground-muted">浮生记 RTS · 5 秒 tick 即时商战</p>
         </div>
       </div>
 
@@ -93,35 +94,41 @@ export default function CreateEventPage() {
         </section>
 
         <section className="glass-card p-6 space-y-4">
-          <h3 className="font-semibold">游戏参数</h3>
-          <div className="grid grid-cols-2 gap-4">
-            <Field icon={Clock} label="回合数">
-              <input
-                type="number"
-                min={3}
-                max={20}
-                value={formData.rounds}
-                onChange={(e) =>
-                  setFormData({ ...formData, rounds: parseInt(e.target.value, 10) || 10 })
-                }
-                className="w-full px-3 py-2 bg-background-secondary border border-border-subtle rounded-lg"
-              />
-            </Field>
-            <Field icon={Coins} label="初始资金">
-              <input
-                type="number"
-                step={10000}
-                value={formData.initial_capital}
-                onChange={(e) =>
-                  setFormData({
-                    ...formData,
-                    initial_capital: parseInt(e.target.value, 10) || 50000,
-                  })
-                }
-                className="w-full px-3 py-2 bg-background-secondary border border-border-subtle rounded-lg"
-              />
-            </Field>
+          <h3 className="font-semibold flex items-center gap-2">
+            <Clock className="w-4 h-4 text-primary" />
+            比赛时长
+          </h3>
+          <div className="grid grid-cols-3 gap-3">
+            {DURATION_OPTIONS.map((opt) => (
+              <button
+                key={opt.key}
+                type="button"
+                onClick={() => setFormData({ ...formData, duration_preset: opt.key })}
+                className={`p-4 rounded-xl border text-left transition-colors ${
+                  formData.duration_preset === opt.key
+                    ? 'border-primary bg-primary/10'
+                    : 'border-border-subtle hover:border-primary/40'
+                }`}
+              >
+                <p className="font-semibold">{opt.label}</p>
+                <p className="text-xs text-foreground-muted mt-1">{opt.minutes} 分钟</p>
+              </button>
+            ))}
           </div>
+          <Field icon={Coins} label="初始资金">
+            <input
+              type="number"
+              step={10000}
+              value={formData.initial_capital}
+              onChange={(e) =>
+                setFormData({
+                  ...formData,
+                  initial_capital: parseInt(e.target.value, 10) || 50000,
+                })
+              }
+              className="w-full px-3 py-2 bg-background-secondary border border-border-subtle rounded-lg"
+            />
+          </Field>
         </section>
 
         {error && <p className="text-sm text-danger">{error}</p>}

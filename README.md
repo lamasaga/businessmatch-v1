@@ -1,7 +1,7 @@
 # businessmatch-v1 · 商业模拟教育平台
 
 > **商域 (BizSim Edu)**：K12～大学商业素养教育基础设施。可运行代码在 [`webapp/`](./webapp/)。  
-> **工程近况（2026-05-20）**：Arena/Cybercore/Career 域分层、`practice` 练习 API、`trading-v1.yaml` — 详见 [`08-工程现状与webapp实现详表`](./08-工程现状与webapp实现详表.md) §5.1。
+> **工程近况（2026-05-19）**：浮生记 **RTS v2**（`trading-v2-rts`）— 调度器单写 tick、HTTP 只读、`WebSocket` 推送；与回合制 `trading-v1` 并存。详见 [`08-工程现状与webapp实现详表`](./08-工程现状与webapp实现详表.md) §2.11、§5.1。
 
 ---
 

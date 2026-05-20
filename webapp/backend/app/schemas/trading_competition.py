@@ -42,12 +42,16 @@ class OrganizerStats(BaseModel):
 # ============== Competition Event Schemas ==============
 
 class GameConfig(BaseModel):
+    model_config = ConfigDict(extra="allow")
+
     rounds: int = Field(default=10, ge=3, le=20)
     initial_capital: int = Field(default=50000, ge=10000, le=100000)
-    inventory_limit: int = Field(default=99, ge=5, le=999, description="每种商品的最大持有数量")
+    inventory_limit: int = Field(default=99, ge=5, le=999, description="v1：每种商品上限")
     inventory_limit_per_product: int = Field(default=99, ge=5, le=999)
     move_cost: int = Field(default=1000, ge=100, le=5000)
     decision_time: int = Field(default=60, ge=15, le=300)
+    mode: Optional[str] = Field(default=None, description="rts 即时战略")
+    duration_preset: Optional[str] = Field(default=None, description="short | standard | long")
     cities: List[str] = Field(default=["jingcheng", "hushi", "shenshi", "rongcheng", "bingcheng", "gangcheng"])
     products: List[str] = Field(default=["fruit", "vegetable", "daily", "electronics", "clothing", "cosmetics", "jewelry", "antique", "art", "snack"])
 
@@ -61,7 +65,7 @@ class CompetitionEventBase(BaseModel):
 
 
 class CompetitionEventCreate(CompetitionEventBase):
-    game_config_id: str = Field(default="trading-v1", max_length=64)
+    game_config_id: str = Field(default="trading-v2-rts", max_length=64)
     design_mode: str = Field(default="standalone", description="standalone | modular")
     match_kind: str = Field(default="official", description="official | practice")
 
@@ -73,10 +77,12 @@ class CompetitionEventUpdate(BaseModel):
 
 
 class PracticeStartRequest(BaseModel):
-    game_config_id: str = Field(default="trading-v1")
+    game_config_id: str = Field(default="trading-v2-rts")
     design_mode: str = Field(default="standalone")
     title: Optional[str] = None
     config: Optional[GameConfig] = None
+    # 覆盖 AI 档位顺序，如 ["chaotic","advanced","advanced"]
+    practice_ai_slots: Optional[List[str]] = Field(default=None)
 
 
 class CompetitionEventOut(BaseModel):
@@ -154,7 +160,8 @@ class TradingRoundOut(BaseModel):
     round_number: int
     status: str
     events: List[Dict[str, Any]]
-    price_snapshot: Dict[str, Dict[str, int]]
+    # v1: product_id -> int；v2 RTS: product_id -> {ask, bid, pool, pressure}
+    price_snapshot: Dict[str, Dict[str, Any]]
     started_at: Optional[datetime]
     ended_at: Optional[datetime]
 
@@ -209,10 +216,12 @@ class ProductPrice(BaseModel):
     sell_price: int
     trend: str  # up, down, stable
     trend_percent: float
+    volume: int = 1
+    pool_qty: float = 0.0
     buy_qty: int = 0
     sell_qty: int = 0
     net_demand: int = 0
-    pressure: float = 0.0  # 供需压力 -1~1，正=需求偏强
+    pressure: float = 0.0
 
 
 class MarketInsight(BaseModel):
@@ -238,12 +247,29 @@ class PlayerInventoryItem(BaseModel):
     quantity: int
     avg_cost: float
     current_value: float
+    volume: int = 1
 
 
 class InventoryCapacity(BaseModel):
-    limit_per_product: int
-    total_items: int
-    by_product: Dict[str, Dict[str, int]] = {}
+    limit_per_product: int = 99
+    total_items: int = 0
+    by_product: Dict[str, Any] = {}
+    storage_capacity: Optional[int] = None
+    storage_used: Optional[int] = None
+    storage_remaining: Optional[int] = None
+    vehicles: List[str] = Field(default_factory=list)
+    max_vehicles: int = 3
+
+
+class RtsActionRequest(BaseModel):
+    action_type: str
+    payload: Dict[str, Any] = Field(default_factory=dict)
+
+
+class RtsActionResult(BaseModel):
+    accepted: bool
+    message: str = ""
+    game_state: Optional["GameState"] = None
 
 
 class GameState(BaseModel):
@@ -255,11 +281,13 @@ class GameState(BaseModel):
     standings: List[Dict[str, Any]]
     time_remaining: Optional[int] = None
     is_practice: bool = False
+    game_mode: str = "round"
     pricing_mode: str = "market"
     market_insights: List[MarketInsight] = []
     has_submitted_this_round: bool = False
     can_submit_decision: bool = False
     inventory_capacity: Optional[InventoryCapacity] = None
+    rts: Optional[Dict[str, Any]] = None
 
 
 class SubmitDecisionResult(BaseModel):
@@ -299,7 +327,9 @@ class OrganizerControlOut(BaseModel):
     standings: List[Dict[str, Any]] = []
     participants: List[ParticipantOut] = []
     decisions_submitted: int = 0
+    rts: Optional[Dict[str, Any]] = None
 
 
 # 解决前向引用
 CompetitionEventDetail.model_rebuild()
+RtsActionResult.model_rebuild()

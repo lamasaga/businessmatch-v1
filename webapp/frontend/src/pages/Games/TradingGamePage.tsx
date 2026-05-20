@@ -2,6 +2,8 @@ import { useEffect, useState, useCallback } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useTradingStore } from '../../stores/tradingStore';
 import { useAuthStore } from '../../stores/authStore';
+import TradingRTSView from './TradingRTSView';
+import { connectRtsWebSocket } from '../../lib/rtsWebSocket';
 import {
   TrendingUp, TrendingDown, Minus, MapPin, Wallet, Package,
   Loader2, Crown, Clock, ShoppingCart, Truck,
@@ -30,11 +32,27 @@ export default function TradingGamePage() {
     refresh();
   }, [refresh]);
 
-  // Auto-refresh every 5 seconds
+  // RTS：WebSocket 推送 tick，HTTP 只读拉状态；断线时 30s 兜底轮询
   useEffect(() => {
+    if (!eventId || gameState?.game_mode !== 'rts') return;
+    const disconnect = connectRtsWebSocket(eventId, {
+      onTick: () => {
+        void refresh();
+      },
+    });
+    const fallback = setInterval(() => void refresh(), 30000);
+    return () => {
+      disconnect();
+      clearInterval(fallback);
+    };
+  }, [eventId, gameState?.game_mode, refresh]);
+
+  // 回合制：固定 5 秒轮询
+  useEffect(() => {
+    if (gameState?.game_mode === 'rts') return;
     const interval = setInterval(refresh, 5000);
     return () => clearInterval(interval);
-  }, [refresh]);
+  }, [refresh, gameState?.game_mode]);
 
   // 新回合重置表单
   useEffect(() => {
@@ -83,6 +101,16 @@ export default function TradingGamePage() {
       <div className="flex items-center justify-center h-96">
         <Loader2 className="w-8 h-8 text-primary animate-spin" />
       </div>
+    );
+  }
+
+  if (gameState.game_mode === 'rts') {
+    return (
+      <TradingRTSView
+        gameState={gameState}
+        eventId={eventId}
+        onRefresh={refresh}
+      />
     );
   }
 

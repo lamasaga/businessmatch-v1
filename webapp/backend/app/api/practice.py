@@ -53,7 +53,9 @@ def start_trading_practice(
 
     design = DesignMode(data.design_mode) if data.design_mode else DesignMode.standalone
     platform = _platform_organizer(db)
-    overrides = data.config.model_dump() if data.config else None
+    overrides = data.config.model_dump() if data.config else {}
+    if data.practice_ai_slots:
+        overrides["practice_ai_slots"] = data.practice_ai_slots
 
     match, _participant = create_practice_match(
         db,
@@ -67,6 +69,11 @@ def start_trading_practice(
     begin_match(db, match)
     db.commit()
     db.refresh(match)
+    from app.games.trading.rts_config import is_rts_mode
+    from app.games.trading.rts_scheduler import start_rts_scheduler
+
+    if is_rts_mode(match.config):
+        start_rts_scheduler(match.id)
     return ApiResponse.ok(data=event_to_out(match, db))
 
 

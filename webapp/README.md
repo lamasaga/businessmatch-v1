@@ -29,7 +29,7 @@
 - **五域一体**：知识图谱 (Atlas) · 课程学院 (Academy) · 每日任务 (Quest) · 商赛大厅 (Arena) · 成就中心 (Credenti)
 - **三层 AI**：Athena (生涯导师) · Demia (人群模拟) · Rival (谈判对手)
 - **赛季成长**：经验等级、五维雷达、连续打卡、徽章认证
-- **交易商赛**： organizers 创建比赛 → 学生通过 4 位房间码加入 → 回合制倒卖交易 → 结果反馈到生涯
+- **交易商赛**：组织者建场 / 学生房间码加入 / **浮生记 RTS**（5s tick + WebSocket）或 **回合制 v1** → 结果反馈生涯
 
 ### 对外演示（推荐）
 
@@ -41,9 +41,9 @@
    - **管理员/组织者**: `admin` / `admin123`
 5. 体验完整闭环：
    - `/career` 生涯中枢（经验值、等级）
-   - `/games` 商赛大厅（输入房间码加入比赛）
-   - `/games/:id/play` 交易游戏（买/卖/移动/持有）
-   - `/organizer/events/create` 创建比赛（admin 用户）
+   - `/games` 商赛大厅 → **浮生记 · 日常练习**（默认 RTS v2）或房间码加入正式赛
+   - `/games/:id/play` 即时物流商战（WebSocket 刷新 + 指令排队）或回合制交易
+   - 组织者端 http://localhost:5174 创建/控场（RTS 无「推进回合」）
 
 ---
 
@@ -456,11 +456,20 @@ webapp/
 
 | 方法 | 路径 | 说明 |
 |------|------|------|
-| GET | `/api/v1/trading/events/{id}/state` | 获取游戏状态 |
-| POST | `/api/v1/trading/rounds/{id}/decide` | 提交决策（买/卖/移动/持有） |
-| GET | `/api/v1/trading/rounds/{id}/result` | 获取回合结果 |
-| POST | `/api/v1/trading/rounds/{id}/next` | 推进下一回合（组织者） |
+| GET | `/api/v1/trading/events/{id}/state` | 游戏状态（**RTS：只读，不推进 tick**） |
+| POST | `/api/v1/trading/events/{id}/actions` | RTS 指令（buy/sell/move/buy_vehicle，下 tick 结算） |
+| WS | `/api/v1/trading/events/{id}/ws?token=` | RTS tick/finished 推送（调度器 commit 后广播） |
+| POST | `/api/v1/trading/rounds/{id}/decide` | 回合制决策 |
+| GET | `/api/v1/trading/rounds/{id}/result` | 回合结果 |
+| POST | `/api/v1/trading/rounds/{id}/next` | 推进下一回合（组织者；**RTS 返回 400**） |
 | GET | `/api/v1/trading/events/{id}/history` | 价格历史 |
+
+### 日常练习 (Practice)
+
+| 方法 | 路径 | 说明 |
+|------|------|------|
+| GET | `/api/v1/practice/game-configs` | 可选赛制列表 |
+| POST | `/api/v1/practice/trading/start` | 创建并开始练习局（默认 `trading-v2-rts`） |
 
 ---
 
@@ -478,6 +487,7 @@ webapp/
 | Phase 8 | 一人公司孵化器 (OPC) | ✅ |
 | Phase 9 | 整合优化 + Docker 部署 | ✅ |
 | Phase 10 | **交易模拟商赛（组织者+房间码+回合制）** | ✅ |
+| Phase 11 | **浮生记 RTS v2（调度器+WebSocket+双档 AI）** | ✅ |
 
 ---
 

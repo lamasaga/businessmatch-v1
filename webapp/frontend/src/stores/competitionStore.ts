@@ -141,7 +141,7 @@ export const useCompetitionStore = create<CompetitionState>((set) => ({
     set({ loading: true, error: null });
     try {
       const response = await api.post('/api/v1/practice/trading/start', {
-        game_config_id: 'trading-v1',
+        game_config_id: 'trading-v2-rts',
         title: '浮生记 · 日常练习',
       });
       const event = response.data.data as CompetitionEvent;

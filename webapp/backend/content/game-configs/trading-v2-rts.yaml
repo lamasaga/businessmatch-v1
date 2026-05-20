@@ -1,0 +1,438 @@
+# CyberCore 赛制包 — 浮生记 RTS 即时战略 v2
+id: trading-v2-rts
+engine: trading
+design_mode: standalone
+version: "2.1.0"
+meta:
+  name: 浮生记 · 即时物流商战
+  description: 5 秒 tick 同步；城市内生产出/消费；体积仓储与车辆；组织者可选 8/10/12 分钟
+  theme: fushengji-rts
+  education_focus:
+    - 地域产业结构与供需结构
+    - 运输时间的机会成本
+    - 仓储约束与运力投资
+    - 买卖价差与市场池吸收
+
+defaults:
+  mode: rts
+  tick_interval_sec: 5
+  # 比赛时长由组织者选择 duration_preset；未指定时用 standard
+  duration_preset: standard
+  duration_presets:
+    short:
+      label: 快速局
+      minutes: 8
+      total_ticks: 96
+    standard:
+      label: 标准局
+      minutes: 10
+      total_ticks: 120
+    long:
+      label: 完整局
+      minutes: 12
+      total_ticks: 144
+  warmup_ticks: 6
+  initial_capital: 50000
+  storage_capacity_base: 99
+  max_vehicles_per_player: 3
+  practice_ai_count: 3
+  # 练习局 AI 档位：chaotic=混乱试探，advanced=逐利套利（与 bot 顺序一一对应）
+  practice_ai_slots:
+    - chaotic
+    - advanced
+    - advanced
+  ai_levels:
+    chaotic:
+      name: 混乱型
+      description: 高随机、常本地贵买贱卖，市场波动大但威胁较低
+    advanced:
+      name: 精英型
+      description: 跨城 bid/ask 套利、产销地采购、高消费城出货
+  pricing:
+    mode: pool_ask_bid
+    min_spread: 0.08
+    elasticity: 0.12
+    reference_pool: 100
+    absorption_cap_per_tick: 25
+  logistics:
+    min_travel_ticks: 2
+    move_cost_per_edge: 800
+  cities:
+    - jingcheng
+    - hushi
+    - shenshi
+    - rongcheng
+    - bingcheng
+    - gangcheng
+  products:
+    - grain
+    - produce
+    - raw_materials
+    - energy
+    - furniture
+    - textile
+    - daily_goods
+    - appliances
+    - passenger_car
+    - luxury
+  routes:
+    # travel_ticks 为无车辆时的基准；实际 = max(min_travel_ticks, base - speed_bonus_sum)
+    jingcheng-hushi: { base_travel_ticks: 3 }
+    jingcheng-shenshi: { base_travel_ticks: 5 }
+    jingcheng-rongcheng: { base_travel_ticks: 6 }
+    jingcheng-bingcheng: { base_travel_ticks: 6 }
+    jingcheng-gangcheng: { base_travel_ticks: 5 }
+    hushi-shenshi: { base_travel_ticks: 4 }
+    hushi-gangcheng: { base_travel_ticks: 3 }
+    hushi-rongcheng: { base_travel_ticks: 6 }
+    hushi-bingcheng: { base_travel_ticks: 6 }
+    shenshi-rongcheng: { base_travel_ticks: 5 }
+    shenshi-bingcheng: { base_travel_ticks: 4 }
+    shenshi-gangcheng: { base_travel_ticks: 4 }
+    rongcheng-bingcheng: { base_travel_ticks: 4 }
+    rongcheng-gangcheng: { base_travel_ticks: 6 }
+    bingcheng-gangcheng: { base_travel_ticks: 5 }
+
+# 体积单位：格（总容量 storage_capacity_base + 车辆加成）
+products:
+  grain:
+    name: 粮食
+    category: staple
+    volume: 1
+    base_price: 18
+    price_range: [8, 45]
+    chain: upstream
+  produce:
+    name: 生鲜
+    category: staple
+    volume: 1
+    base_price: 22
+    price_range: [10, 55]
+    chain: upstream
+    spoil_pressure: 1.15
+  raw_materials:
+    name: 原材料
+    category: industrial_input
+    volume: 4
+    base_price: 120
+    price_range: [60, 220]
+    chain: upstream
+  energy:
+    name: 能源
+    category: industrial_input
+    volume: 4
+    base_price: 95
+    price_range: [45, 180]
+    chain: upstream
+    notes: 燃油/电力等，汽车与重工城市的共性投入，此前产业链缺失环节
+  furniture:
+    name: 家具
+    category: industrial_output
+    volume: 4
+    base_price: 380
+    price_range: [180, 720]
+    chain: midstream
+  textile:
+    name: 纺织品
+    category: industrial_output
+    volume: 4
+    base_price: 280
+    price_range: [140, 580]
+    chain: midstream
+  daily_goods:
+    name: 日用品
+    category: consumer_mass
+    volume: 2
+    base_price: 45
+    price_range: [22, 95]
+    chain: downstream
+  appliances:
+    name: 家电
+    category: consumer_durable
+    volume: 6
+    base_price: 1200
+    price_range: [650, 2400]
+    chain: downstream
+  passenger_car:
+    name: 家用车
+    category: automotive
+    volume: 8
+    base_price: 4200
+    price_range: [2200, 9500]
+    chain: downstream
+  luxury:
+    name: 奢侈品
+    category: consumer_luxury
+    volume: 2
+    base_price: 8500
+    price_range: [4200, 18000]
+    chain: downstream
+
+vehicles:
+  van:
+    name: 小货车
+    capacity_bonus: 18
+    speed_bonus: 1
+    cost: 7500
+  truck:
+    name: 大卡车
+    capacity_bonus: 42
+    speed_bonus: 2
+    cost: 22000
+
+cities:
+  jingcheng:
+    name: 京城
+    type: political
+    description: 政治与高端消费中心，奢侈品与家电需求旺盛，几乎无农业产出
+    population: 2400
+    demographics:
+      luxury: 0.38
+      mass: 0.42
+      staple: 0.20
+    production:
+      grain: 2
+      produce: 1
+      raw_materials: 0
+      energy: 0
+      furniture: 1
+      textile: 2
+      daily_goods: 1
+      appliances: 0
+      passenger_car: 0
+      luxury: 0
+    consumption:
+      grain: 14
+      produce: 16
+      raw_materials: 4
+      energy: 7
+      furniture: 8
+      textile: 10
+      daily_goods: 18
+      appliances: 12
+      passenger_car: 10
+      luxury: 9
+    demand_profile:
+      luxury: 1.45
+      passenger_car: 1.35
+      appliances: 1.25
+      daily_goods: 1.15
+      energy: 1.10
+      grain: 0.85
+    logistics: { hub: true, travel_multiplier: 0.95 }
+
+  hushi:
+    name: 沪市
+    type: finance
+    description: 金融与总部经济，进口与日消活跃，奢侈品消费高
+    population: 2200
+    demographics:
+      luxury: 0.32
+      mass: 0.48
+      staple: 0.20
+    production:
+      grain: 1
+      produce: 2
+      raw_materials: 1
+      energy: 1
+      furniture: 2
+      textile: 4
+      daily_goods: 3
+      appliances: 2
+      passenger_car: 2
+      luxury: 1
+    consumption:
+      grain: 12
+      produce: 14
+      raw_materials: 5
+      energy: 6
+      furniture: 9
+      textile: 12
+      daily_goods: 20
+      appliances: 14
+      passenger_car: 9
+      luxury: 8
+    demand_profile:
+      luxury: 1.30
+      passenger_car: 1.25
+      daily_goods: 1.20
+      textile: 1.10
+      energy: 1.05
+    logistics: { hub: true, travel_multiplier: 1.0 }
+
+  shenshi:
+    name: 深市
+    type: tech
+    description: 科技与先进制造，家电主产地，原材料需求大
+    population: 2000
+    demographics:
+      luxury: 0.22
+      mass: 0.50
+      staple: 0.28
+    production:
+      grain: 1
+      produce: 2
+      raw_materials: 3
+      energy: 3
+      furniture: 2
+      textile: 3
+      daily_goods: 4
+      appliances: 14
+      passenger_car: 6
+      luxury: 0
+    consumption:
+      grain: 11
+      produce: 12
+      raw_materials: 10
+      energy: 9
+      furniture: 6
+      textile: 8
+      daily_goods: 14
+      appliances: 6
+      passenger_car: 4
+      luxury: 4
+    demand_profile:
+      raw_materials: 1.35
+      energy: 1.25
+      appliances: 0.75
+      passenger_car: 0.90
+      produce: 1.05
+    logistics: { travel_multiplier: 1.0 }
+
+  rongcheng:
+    name: 蓉城
+    type: agriculture
+    description: 农业与食品供给基地，粮食与生鲜产出远高于本地消费
+    population: 1800
+    demographics:
+      luxury: 0.15
+      mass: 0.55
+      staple: 0.30
+    production:
+      grain: 22
+      produce: 20
+      raw_materials: 2
+      energy: 2
+      furniture: 3
+      textile: 5
+      daily_goods: 2
+      appliances: 1
+      passenger_car: 0
+      luxury: 0
+    consumption:
+      grain: 10
+      produce: 11
+      raw_materials: 3
+      energy: 4
+      furniture: 5
+      textile: 6
+      daily_goods: 8
+      appliances: 4
+      passenger_car: 2
+      luxury: 2
+    demand_profile:
+      grain: 0.70
+      produce: 0.75
+      energy: 0.80
+      luxury: 0.85
+    logistics: { travel_multiplier: 1.05 }
+
+  bingcheng:
+    name: 冰城
+    type: industrial
+    description: 重工业与日用品制造，原材料与家具产出，日用品供给核心
+    population: 1900
+    demographics:
+      luxury: 0.18
+      mass: 0.58
+      staple: 0.24
+    production:
+      grain: 4
+      produce: 3
+      raw_materials: 16
+      energy: 14
+      furniture: 12
+      textile: 8
+      daily_goods: 18
+      appliances: 6
+      passenger_car: 9
+      luxury: 0
+    consumption:
+      grain: 9
+      produce: 8
+      raw_materials: 6
+      energy: 5
+      furniture: 5
+      textile: 7
+      daily_goods: 10
+      appliances: 5
+      passenger_car: 3
+      luxury: 2
+    demand_profile:
+      raw_materials: 0.80
+      energy: 0.75
+      passenger_car: 0.85
+      daily_goods: 0.85
+      furniture: 0.90
+    logistics: { travel_multiplier: 1.0 }
+
+  gangcheng:
+    name: 港城
+    type: freeport
+    description: 自由贸易港，家电与日消进口导向，生鲜转运枢纽
+    population: 2100
+    demographics:
+      luxury: 0.25
+      mass: 0.50
+      staple: 0.25
+    production:
+      grain: 3
+      produce: 8
+      raw_materials: 4
+      energy: 7
+      furniture: 3
+      textile: 5
+      daily_goods: 10
+      appliances: 8
+      passenger_car: 5
+      luxury: 2
+    consumption:
+      grain: 11
+      produce: 13
+      raw_materials: 6
+      energy: 8
+      furniture: 7
+      textile: 9
+      daily_goods: 16
+      appliances: 11
+      passenger_car: 7
+      luxury: 5
+    demand_profile:
+      appliances: 1.15
+      passenger_car: 1.12
+      daily_goods: 1.10
+      energy: 1.08
+      produce: 1.05
+    logistics: { hub: true, travel_multiplier: 0.92 }
+
+event_types:
+  - { type: harvest_bumper, name: 丰收, desc: 农业城产出激增，粮价承压, target_products: [grain, produce], impact_range: [0.15, 0.30] }
+  - { type: factory_rush, name: 工厂满产, desc: 工业城日用品与原材料供给上升, target_products: [daily_goods, raw_materials], impact_range: [0.12, 0.28] }
+  - { type: energy_supply, name: 能源宽松, desc: 燃油电力供给增加，能源价格承压, target_products: [energy], impact_range: [0.12, 0.28] }
+  - { type: auto_fair, name: 车展季, desc: 家用车需求上升, target_products: [passenger_car], impact_range: [0.18, 0.35] }
+  - { type: tech_launch, name: 新品发布, desc: 家电需求曲线右移, target_products: [appliances], impact_range: [0.18, 0.35] }
+  - { type: luxury_fair, name: 高端展会, desc: 政治/金融城奢侈品需求上升, target_products: [luxury], impact_range: [0.20, 0.40] }
+  - { type: logistics_jam, name: 物流拥堵, desc: 本 tick 全图移动时间 +1, global: true, impact_range: [1, 1] }
+  - { type: cold_chain_break, name: 冷链中断, desc: 生鲜消费与产出波动加剧, target_products: [produce], impact_range: [-0.25, 0.25] }
+
+rewards:
+  official:
+    participate: 100
+    top50_bonus: 100
+    top20_bonus: 200
+    first_place_bonus: 500
+  practice:
+    participate: 40
+    top50_bonus: 30
+    top20_bonus: 60
+    first_place_bonus: 120

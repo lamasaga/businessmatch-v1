@@ -74,7 +74,7 @@ def create_practice_match(
         organizer_id=platform_organizer.id,
         room_code=_unique_room_code(db),
         title=title or f"日常练习 · {doc.meta.get('name', game_config_id)}",
-        description="浮生记式倒卖练习：AI 交易员与你共同驱动各城物价",
+        description="商战练习：AI 交易员与你共同驱动各城市场",
         match_kind=MatchKind.practice,
         design_mode=design_mode,
         game_config_id=game_config_id,
@@ -100,20 +100,31 @@ def create_practice_match(
 
     bots = ensure_bot_traders(db)
     import random
+    from app.domains.arena.config_json import persist_match_config
+    from app.games.trading.rts_config import is_rts_mode
+    from app.games.trading.rts_ai_levels import init_ai_player_levels, normalize_ai_slots
 
     bot_cities = list(config.get("cities", [start_city]))
+    ai_slots = normalize_ai_slots(config, ai_count)
+    bot_participant_ids: list[int] = []
+
     for bot in bots[:ai_count]:
-        db.add(
-            ArenaParticipant(
-                event_id=match.id,
-                user_id=bot.id,
-                is_ai=1,
-                cash=float(initial_capital),
-                inventory={},
-                current_city=random.choice(bot_cities),
-                total_assets=float(initial_capital),
-            )
+        bp = ArenaParticipant(
+            event_id=match.id,
+            user_id=bot.id,
+            is_ai=1,
+            cash=float(initial_capital),
+            inventory={},
+            current_city=random.choice(bot_cities),
+            total_assets=float(initial_capital),
         )
+        db.add(bp)
+        db.flush()
+        bot_participant_ids.append(bp.id)
+
+    if is_rts_mode(config):
+        init_ai_player_levels(config, bot_participant_ids, ai_slots)
+        persist_match_config(match, config)
 
     db.flush()
     return match, participant

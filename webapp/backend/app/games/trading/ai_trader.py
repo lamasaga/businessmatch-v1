@@ -1,4 +1,7 @@
-"""AI 交易员 — 练习局模拟其他玩家买卖，驱动供需波动"""
+"""AI 交易员 — 仅用于 trading-v1 回合制练习局。
+
+RTS 模式（trading-v2-rts）请使用 rts_ai.enqueue_ai_actions。
+"""
 
 from __future__ import annotations
 

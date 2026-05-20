@@ -331,6 +331,11 @@ def start_competition(
     begin_match(db, event)
     db.commit()
     db.refresh(event)
+    from app.games.trading.rts_config import is_rts_mode
+    from app.games.trading.rts_scheduler import start_rts_scheduler
+
+    if is_rts_mode(event.config):
+        start_rts_scheduler(event.id)
     return ApiResponse.ok(data=_event_to_out(event, db))
 
 
@@ -369,21 +374,30 @@ def end_competition(
     ).order_by(CompetitionParticipant.total_assets.desc()).all()
 
     total = len(participants)
-    for rank, p in enumerate(participants, 1):
-        p.final_rank = rank
-        p.status = ParticipantStatus.joined
-
-    settle_match_rewards(db, event, participants)
-
     profile.total_events_hosted += 1
     profile.total_participants += total
 
-    event.status = EventStatus.finished
-    event.ends_at = func.now()
-    event.current_round = event.config.get("rounds", 10) if event.config else 10
+    from app.games.trading.rts_config import is_rts_mode
+    from app.games.trading.rts_tick import finish_rts_match
+
+    rts_early_end = is_rts_mode(event.config)
+    if rts_early_end:
+        finish_rts_match(db, event, participants)
+    else:
+        for rank, p in enumerate(participants, 1):
+            p.final_rank = rank
+            p.status = ParticipantStatus.joined
+        settle_match_rewards(db, event, participants)
+        event.current_round = event.config.get("rounds", 10) if event.config else 10
+        event.status = EventStatus.finished
+        event.ends_at = func.now()
 
     db.commit()
     db.refresh(event)
+    if rts_early_end:
+        from app.games.trading.rts_ws import broadcast_rts_from_match
+
+        broadcast_rts_from_match(event, finished=True)
     return ApiResponse.ok(data=_event_to_out(event, db))
 
 
@@ -412,12 +426,20 @@ def _participant_to_out(participant: CompetitionParticipant, db: Session) -> Par
     )
 
 
+def _unit_price_for_valuation(city_prices: dict, pid: str) -> float:
+    if pid not in city_prices:
+        return 0.0
+    row = city_prices[pid]
+    if isinstance(row, dict):
+        return float(row.get("bid") or row.get("ask") or 0)
+    return float(row)
+
+
 def _calc_inventory_value(inventory: dict, event_id: int, db: Session) -> float:
-    """计算库存当前价值"""
+    """计算库存当前价值（兼容回合制标量价与 RTS ask/bid 结构）"""
     if not inventory:
         return 0.0
 
-    # 获取最新回合的价格
     latest_round = db.query(TradingRound).filter(
         TradingRound.event_id == event_id
     ).order_by(TradingRound.round_number.desc()).first()
@@ -428,10 +450,12 @@ def _calc_inventory_value(inventory: dict, event_id: int, db: Session) -> float:
     prices = latest_round.price_snapshot
     total = 0.0
     for pid, qty in inventory.items():
-        # 取第一个城市的价格作为估值基准
-        for city_prices in prices.values():
-            if pid in city_prices:
-                total += city_prices[pid] * qty
+        for city_key, city_prices in prices.items():
+            if city_key.startswith("_") or not isinstance(city_prices, dict):
+                continue
+            unit = _unit_price_for_valuation(city_prices, pid)
+            if unit > 0:
+                total += unit * qty
                 break
 
     return total

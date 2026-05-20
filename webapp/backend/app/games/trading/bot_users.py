@@ -6,9 +6,9 @@ from app.core.security import get_password_hash
 from app.models.user import User, UserRole
 
 BOT_TRADERS = [
-    ("trader_bot_a", "市集摊贩·老陈", "bot_a@bizsim.internal"),
-    ("trader_bot_b", "倒卖客·小美", "bot_b@bizsim.internal"),
-    ("trader_bot_c", "行商·大周", "bot_c@bizsim.internal"),
+    ("trader_bot_a", "市集摊贩·老陈 [混乱]", "bot_a@bizsim.internal"),
+    ("trader_bot_b", "倒卖客·小美 [精英]", "bot_b@bizsim.internal"),
+    ("trader_bot_c", "行商·大周 [精英]", "bot_c@bizsim.internal"),
 ]
 
 

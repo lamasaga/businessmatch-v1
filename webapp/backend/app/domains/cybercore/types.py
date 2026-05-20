@@ -20,6 +20,8 @@ class GameConfigDocument(BaseModel):
     defaults: Dict[str, Any] = Field(default_factory=dict)
     products: Dict[str, Dict[str, Any]] = Field(default_factory=dict)
     cities: Dict[str, Dict[str, Any]] = Field(default_factory=dict)
+    vehicles: Dict[str, Dict[str, Any]] = Field(default_factory=dict)
+    routes: Dict[str, Dict[str, Any]] = Field(default_factory=dict)
     event_types: List[Dict[str, Any]] = Field(default_factory=list)
     rewards: Dict[str, RewardTier] = Field(default_factory=dict)
 
@@ -27,4 +29,14 @@ class GameConfigDocument(BaseModel):
         base = dict(self.defaults)
         if overrides:
             base.update(overrides)
+        if base.get("mode") == "rts":
+            presets = base.get("duration_presets") or {}
+            preset_key = base.get("duration_preset") or "standard"
+            if preset_key in presets:
+                p = presets[preset_key]
+                base["total_ticks"] = int(p.get("total_ticks", 120))
+                base["duration_minutes"] = int(p.get("minutes", 10))
+            else:
+                base.setdefault("total_ticks", 120)
+                base.setdefault("duration_minutes", 10)
         return base

@@ -8,6 +8,7 @@ from app.games.trading.models import TradingDecision, TradingRound
 from app.domains.arena.models import ArenaParticipant
 from app.games.trading.enums import RoundStatus
 from app.games.trading.ai_trader import run_ai_round_decisions
+from app.games.trading.rts_config import is_rts_mode
 from app.games.trading.round_advance import advance_to_next_round
 
 
@@ -29,6 +30,9 @@ def try_advance_practice_round(
     返回 (是否推进了回合, 比赛是否已结束)。
     """
     if event.match_kind != MatchKind.practice:
+        return False, False
+    # RTS 练习局由 rts_tick + rts_ai 驱动，勿走回合制 AI
+    if is_rts_mode(event.config):
         return False, False
     if round_obj.status != RoundStatus.active:
         return False, event.status.value == "finished"

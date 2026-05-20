@@ -16,7 +16,7 @@ from app.core.response import (
     global_exception_handler,
 )
 from app.core.middleware import RequestLoggingMiddleware
-from app.api import auth, wiki, courses, opc, organizer, competitions, trading, practice
+from app.api import auth, wiki, courses, opc, organizer, competitions, trading, trading_ws, practice
 from fastapi.exceptions import RequestValidationError, HTTPException as FastAPIHTTPException
 
 settings = get_settings()
@@ -25,7 +25,15 @@ settings = get_settings()
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     """启动时初始化 SQLite 表与默认账号（admin / student）。"""
+    import asyncio
+    from app.games.trading.rts_scheduler import resume_playing_rts_matches, set_app_event_loop
+    from app.games.trading.rts_ws import hub
+
     init_all()
+    loop = asyncio.get_running_loop()
+    set_app_event_loop(loop)
+    hub.set_event_loop(loop)
+    resume_playing_rts_matches()
     yield
 
 
@@ -66,6 +74,7 @@ app.include_router(opc.router, prefix="/api/v1")
 app.include_router(organizer.router, prefix="/api/v1")
 app.include_router(competitions.router, prefix="/api/v1")
 app.include_router(trading.router, prefix="/api/v1")
+app.include_router(trading_ws.router, prefix="/api/v1")
 app.include_router(practice.router, prefix="/api/v1")
 
 

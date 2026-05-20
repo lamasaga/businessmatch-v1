@@ -216,7 +216,12 @@ export interface CompetitionConfig {
 export interface InventoryCapacity {
   limit_per_product: number;
   total_items: number;
-  by_product: Record<string, { quantity: number; remaining: number }>;
+  by_product: Record<string, { quantity: number; remaining?: number; volume_used?: number; volume_per_unit?: number }>;
+  storage_capacity?: number;
+  storage_used?: number;
+  storage_remaining?: number;
+  vehicles?: string[];
+  max_vehicles?: number;
 }
 
 export interface Participant {
@@ -264,6 +269,8 @@ export interface ProductPrice {
   sell_price: number;
   trend: string;
   trend_percent: number;
+  volume?: number;
+  pool_qty?: number;
   buy_qty?: number;
   sell_qty?: number;
   net_demand?: number;
@@ -282,6 +289,7 @@ export interface PlayerInventoryItem {
   quantity: number;
   avg_cost: number;
   current_value: number;
+  volume?: number;
 }
 
 export interface GameState {
@@ -293,11 +301,27 @@ export interface GameState {
   standings: StandingsEntry[];
   time_remaining?: number;
   is_practice?: boolean;
+  game_mode?: string;
   pricing_mode?: string;
   market_insights?: MarketInsight[];
   has_submitted_this_round?: boolean;
   can_submit_decision?: boolean;
   inventory_capacity?: InventoryCapacity;
+  rts?: RtsMeta;
+}
+
+export interface RtsMeta {
+  mode: string;
+  tick: number;
+  total_ticks: number;
+  phase: string;
+  tick_interval_sec: number;
+  seconds_until_next_tick: number;
+  duration_minutes?: number;
+  duration_preset?: string;
+  transit?: { from_city?: string; to_city?: string; arrival_tick?: number } | null;
+  can_trade?: boolean;
+  vehicles_available?: Record<string, { name?: string; cost?: number; capacity_bonus?: number; speed_bonus?: number }>;
 }
 
 export interface SubmitDecisionResponse {
