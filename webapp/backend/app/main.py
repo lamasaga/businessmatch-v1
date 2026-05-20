@@ -16,7 +16,7 @@ from app.core.response import (
     global_exception_handler,
 )
 from app.core.middleware import RequestLoggingMiddleware
-from app.api import auth, wiki, courses, opc, organizer, competitions, trading
+from app.api import auth, wiki, courses, opc, organizer, competitions, trading, practice
 from fastapi.exceptions import RequestValidationError, HTTPException as FastAPIHTTPException
 
 settings = get_settings()
@@ -66,6 +66,7 @@ app.include_router(opc.router, prefix="/api/v1")
 app.include_router(organizer.router, prefix="/api/v1")
 app.include_router(competitions.router, prefix="/api/v1")
 app.include_router(trading.router, prefix="/api/v1")
+app.include_router(practice.router, prefix="/api/v1")
 
 
 @app.get("/", response_model=ApiResponse[dict])

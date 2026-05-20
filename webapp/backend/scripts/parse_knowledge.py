@@ -72,7 +72,10 @@ def parse_all_cards(base_dir: str):
 
 
 if __name__ == '__main__':
-    base = r'D:\1XFAwork\商业模拟比赛架构思考\知识卡片库'
+    from pathlib import Path
+
+    repo_root = Path(__file__).resolve().parents[3]
+    base = str(repo_root / '知识卡片库')
     cards, edges = parse_all_cards(base)
     print(f'Total cards: {len(cards)}')
     for c in cards:
@@ -84,8 +87,8 @@ if __name__ == '__main__':
         'nodes': cards,
         'edges': edges,
     }
-    out_path = r'D:\1XFAwork\商业模拟比赛架构思考\web应用商业教育\backend\app\data\knowledge_graph.json'
-    os.makedirs(os.path.dirname(out_path), exist_ok=True)
+    out_path = repo_root / 'webapp' / 'backend' / 'app' / 'data' / 'knowledge_graph.json'
+    out_path.parent.mkdir(parents=True, exist_ok=True)
     with open(out_path, 'w', encoding='utf-8') as f:
         json.dump(output, f, ensure_ascii=False, indent=2)
     print(f'Saved to {out_path}')

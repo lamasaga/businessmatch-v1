@@ -1,15 +1,21 @@
 """数据库初始化脚本 - 创建表 + 插入默认 admin 用户"""
 
 from app.db.database import Base, engine, SessionLocal
+from app.db.migrate_schema import run_migrations
 from app.models.user import User, UserRole
 from app.models.opc import OneCompany, AIEmployee, AITask
-from app.models.trading_competition import OrganizerProfile
+from app.domains.arena.models import OrganizerProfile
+from app.domains.arena.models.match import ArenaMatch  # noqa: F401
+from app.domains.arena.models.participant import ArenaParticipant  # noqa: F401
+from app.domains.career.models.xp_event import XpEvent  # noqa: F401
+from app.games.trading.models import TradingRound, TradingDecision, TradingPrice  # noqa: F401
 from app.core.security import get_password_hash
 
 
 def init_database():
-    """创建所有数据表"""
+    """创建所有数据表并执行轻量迁移"""
     Base.metadata.create_all(bind=engine)
+    run_migrations(engine)
     print("[init] database tables created")
 
 

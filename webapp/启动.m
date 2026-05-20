@@ -7,7 +7,7 @@
 ## 📁 项目路径
 
 ```
-D:\1XFAwork\商业模拟比赛架构思考\webapp
+D:\1XFAwork\businessmatch-v1\webapp
 ```
 
 ---
@@ -31,7 +31,7 @@ webapp/
 打开 PowerShell 或终端，执行：
 
 ```powershell
-cd "D:\1XFAwork\商业模拟比赛架构思考\webapp\backend"
+cd "D:\1XFAwork\businessmatch-v1\webapp\backend"
 
 # 首次：创建虚拟环境（如已创建可跳过）
 python -m venv venv
@@ -51,7 +51,7 @@ python -m venv venv
 另开一个终端窗口，执行：
 
 ```powershell
-cd "D:\1XFAwork\商业模拟比赛架构思考\webapp\frontend"
+cd "D:\1XFAwork\businessmatch-v1\webapp\frontend"
 
 # 首次：安装依赖（如已安装可跳过）
 npm install
@@ -80,7 +80,7 @@ npm run dev
 在项目根目录执行以下 PowerShell 脚本，同时启动前后端：
 
 ```powershell
-cd "D:\1XFAwork\商业模拟比赛架构思考\webapp"
+cd "D:\1XFAwork\businessmatch-v1\webapp"
 
 # 启动后端（新窗口）
 Start-Process powershell -ArgumentList "-NoExit", "-Command", "cd backend; .\venv\Scripts\python run.py"
@@ -100,7 +100,7 @@ Write-Host "后端: http://localhost:8000" -ForegroundColor Cyan
 确保已安装 Docker Desktop，然后在项目根目录执行：
 
 ```powershell
-cd "D:\1XFAwork\商业模拟比赛架构思考\webapp"
+cd "D:\1XFAwork\businessmatch-v1\webapp"
 docker-compose up -d
 ```
 

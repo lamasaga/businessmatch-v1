@@ -7,11 +7,24 @@ from typing import List, Dict, Any
 
 from app.db.database import get_db
 from app.models.user import User
-from app.models.trading_competition import (
-    CompetitionEvent, CompetitionParticipant, TradingRound, TradingDecision, TradingPrice,
-    EventStatus, ParticipantStatus, RoundStatus, ActionType,
-    PRODUCTS, CITIES, generate_random_events, calculate_prices,
+from app.domains.arena.enums import MatchStatus, ParticipantStatus
+from app.domains.arena.models import ArenaMatch, ArenaParticipant
+from app.games.trading import (
+    TradingRound,
+    TradingDecision,
+    TradingPrice,
+    RoundStatus,
+    ActionType,
+    PRODUCTS,
+    CITIES,
+    calculate_prices,
+    generate_random_events,
 )
+from app.games.trading.engine import cities_meta_for, get_products_dict, load_world
+
+EventStatus = MatchStatus
+CompetitionEvent = ArenaMatch
+CompetitionParticipant = ArenaParticipant
 from app.schemas.trading_competition import (
     DecisionRequest, DecisionOut, GameState, TradingRoundOut, TradingRoundResult,
     CityMarket, ProductPrice, PlayerInventoryItem, StandingsEntry,
@@ -363,20 +376,21 @@ def next_round(
 
     # 创建新回合
     next_round_number = round_obj.round_number + 1
-    cities = config.get("cities", list(CITIES.keys()))
-    products = config.get("products", list(PRODUCTS.keys()))
-    product_dict = {k: v for k, v in PRODUCTS.items() if k in products}
+    config_id = event.game_config_id or "trading-v1"
+    products_all, cities_all, _ = load_world(config_id)
+    cities = config.get("cities", list(cities_all.keys()))
+    product_keys = config.get("products", list(products_all.keys()))
+    product_dict = get_products_dict(config_id, product_keys)
+    city_meta = cities_meta_for(config_id, cities)
 
-    # 获取本回合的所有决策
     decisions = db.query(TradingDecision).filter(
         TradingDecision.round_id == round_id
     ).all()
 
-    # 计算新价格
-    new_prices = calculate_prices(product_dict, cities, decisions, round_obj.events or [], next_round_number)
-
-    # 生成新事件
-    new_events = generate_random_events(next_round_number, cities, product_dict)
+    new_prices = calculate_prices(
+        product_dict, cities, city_meta, decisions, round_obj.events or [], next_round_number
+    )
+    new_events = generate_random_events(next_round_number, cities, product_dict, config_id)
 
     new_round = TradingRound(
         event_id=event.id,
@@ -395,7 +409,7 @@ def next_round(
                 round_id=new_round.id,
                 city=city_key,
                 product_id=pid,
-                base_price=PRODUCTS[pid]["base_price"],
+                base_price=product_dict[pid]["base_price"],
                 final_price=price,
             ))
 

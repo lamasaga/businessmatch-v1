@@ -7,11 +7,24 @@ from typing import List, Optional
 
 from app.db.database import get_db
 from app.models.user import User
-from app.models.trading_competition import (
-    OrganizerProfile, CompetitionEvent, CompetitionParticipant, TradingRound, TradingPrice,
-    EventStatus, ParticipantStatus, RoundStatus, GameType,
-    generate_room_code, PRODUCTS, CITIES, generate_random_events, calculate_prices,
+from app.domains.arena.enums import DesignMode, GameEngineId, MatchKind, MatchStatus, ParticipantStatus
+from app.domains.arena.models import OrganizerProfile, ArenaMatch, ArenaParticipant
+from app.domains.arena.serializers import event_to_out
+from app.domains.arena.services.match_factory import create_official_match
+from app.domains.career.services.rewards import settle_match_rewards
+from app.games.trading import TradingRound, TradingPrice, RoundStatus
+from app.games.trading.engine import (
+    calculate_prices,
+    cities_meta_for,
+    generate_random_events,
+    get_products_dict,
+    load_world,
 )
+
+EventStatus = MatchStatus
+CompetitionEvent = ArenaMatch
+CompetitionParticipant = ArenaParticipant
+GameType = GameEngineId
 from app.schemas.trading_competition import (
     CompetitionEventCreate, CompetitionEventOut, CompetitionEventUpdate,
     CompetitionEventDetail, JoinCompetitionRequest, ParticipantOut,
@@ -35,28 +48,8 @@ def _get_organizer_profile(user_id: int, db: Session) -> OrganizerProfile:
     return profile
 
 
-def _event_to_out(event: CompetitionEvent, db: Session) -> CompetitionEventOut:
-    """将ORM对象转为输出schema"""
-    participant_count = db.query(func.count(CompetitionParticipant.id)).filter(
-        CompetitionParticipant.event_id == event.id
-    ).scalar()
-    data = {
-        "id": event.id,
-        "organizer_id": event.organizer_id,
-        "room_code": event.room_code,
-        "title": event.title,
-        "description": event.description,
-        "game_type": event.game_type.value if event.game_type else "trading",
-        "status": event.status.value if event.status else "draft",
-        "config": event.config or {},
-        "max_players": event.max_players,
-        "current_round": event.current_round,
-        "starts_at": event.starts_at,
-        "ends_at": event.ends_at,
-        "created_at": event.created_at,
-        "participant_count": participant_count,
-    }
-    return CompetitionEventOut.model_validate(data)
+def _event_to_out(event: ArenaMatch, db: Session) -> CompetitionEventOut:
+    return event_to_out(event, db)
 
 
 # ============== 公开接口 ==============
@@ -64,10 +57,11 @@ def _event_to_out(event: CompetitionEvent, db: Session) -> CompetitionEventOut:
 @router.get("", response_model=ApiResponse[List[CompetitionEventOut]])
 def list_competitions(
     status: Optional[str] = None,
+    match_kind: str = MatchKind.official.value,
     db: Session = Depends(get_db),
 ):
-    """获取公开比赛列表"""
-    query = db.query(CompetitionEvent)
+    """获取公开比赛列表（默认仅正式赛）"""
+    query = db.query(CompetitionEvent).filter(CompetitionEvent.match_kind == MatchKind(match_kind))
     if status:
         query = query.filter(CompetitionEvent.status == status)
     else:
@@ -263,35 +257,20 @@ def create_competition(
 ):
     """创建比赛"""
     profile = _get_organizer_profile(current_user.id, db)
-
-    # 生成唯一的房间码
-    room_code = generate_room_code()
-    for _ in range(100):
-        existing = db.query(CompetitionEvent).filter(CompetitionEvent.room_code == room_code).first()
-        if not existing:
-            break
-        room_code = generate_room_code()
-    else:
-        raise BusinessException(
-            message="房间码生成失败，请重试",
-            code=ErrorCode.INTERNAL_ERROR,
-            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-        )
-
     config_dict = data.config.model_dump() if data.config else {}
+    design = DesignMode(data.design_mode) if data.design_mode else DesignMode.standalone
+    config_id = data.game_config_id or "trading-v1"
 
-    event = CompetitionEvent(
-        organizer_id=profile.id,
-        room_code=room_code,
+    event = create_official_match(
+        db,
+        organizer=profile,
         title=data.title,
         description=data.description,
-        game_type=GameType(data.game_type) if data.game_type else GameType.trading,
-        status=EventStatus.draft,
-        config=config_dict,
+        game_config_id=config_id,
+        design_mode=design,
         max_players=data.max_players,
-        current_round=0,
+        config_overrides=config_dict,
     )
-    db.add(event)
     db.commit()
     db.refresh(event)
 
@@ -380,23 +359,24 @@ def start_competition(
 
     # 初始化第1回合
     config = event.config or {}
-    cities = config.get("cities", list(CITIES.keys()))
-    products = config.get("products", list(PRODUCTS.keys()))
-    product_dict = {k: v for k, v in PRODUCTS.items() if k in products}
+    config_id = event.game_config_id or "trading-v1"
+    products_all, cities_all, _ = load_world(config_id)
+    cities_list = config.get("cities", list(cities_all.keys()))
+    product_keys = config.get("products", list(products_all.keys()))
+    product_dict = get_products_dict(config_id, product_keys)
+    city_meta = cities_meta_for(config_id, cities_list)
 
-    # 生成初始价格（无供需影响，只有城市和随机因素）
-    initial_prices = calculate_prices(product_dict, cities, [], [], 0)
+    initial_prices = calculate_prices(product_dict, cities_list, city_meta, [], [], 0)
 
     first_round = TradingRound(
         event_id=event.id,
         round_number=1,
         status=RoundStatus.active,
-        events=generate_random_events(1, cities, product_dict),
+        events=generate_random_events(1, cities_list, product_dict, config_id),
         price_snapshot=initial_prices,
     )
     db.add(first_round)
 
-    # 保存价格记录
     for city_key, city_prices in initial_prices.items():
         for pid, price in city_prices.items():
             db.add(TradingPrice(
@@ -404,7 +384,7 @@ def start_competition(
                 round_id=first_round.id,
                 city=city_key,
                 product_id=pid,
-                base_price=PRODUCTS[pid]["base_price"],
+                base_price=product_dict[pid]["base_price"],
                 final_price=price,
             ))
 
@@ -450,7 +430,6 @@ def end_competition(
             status_code=status.HTTP_400_BAD_REQUEST,
         )
 
-    # 计算最终排名
     participants = db.query(CompetitionParticipant).filter(
         CompetitionParticipant.event_id == event.id
     ).order_by(CompetitionParticipant.total_assets.desc()).all()
@@ -458,28 +437,10 @@ def end_competition(
     total = len(participants)
     for rank, p in enumerate(participants, 1):
         p.final_rank = rank
-        p.status = ParticipantStatus.joined  # 恢复为joined表示已完成
+        p.status = ParticipantStatus.joined
 
-        # 计算经验值
-        exp = 100  # 参与奖
-        if rank <= total * 0.5:
-            exp += 100
-        if rank <= total * 0.2:
-            exp += 200
-        if rank == 1:
-            exp += 500
+    settle_match_rewards(db, event, participants)
 
-        p.experience_earned = exp
-
-        # 更新用户总经验值
-        user = p.user
-        user.experience += exp
-        # 简单等级计算：每1000经验升1级
-        new_level = max(1, user.experience // 1000 + 1)
-        if new_level > user.level:
-            user.level = new_level
-
-    # 更新组织者统计
     profile.total_events_hosted += 1
     profile.total_participants += total
 

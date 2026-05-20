@@ -1,6 +1,7 @@
 # 商域 BizSim Edu — 一键启动（后端 + 学生端 + 组织者端）
 
-$projectRoot = "d:\businessmatch-v1\webapp"
+# 与仓库目录名无关：脚本在 webapp/ 下，自动定位
+$projectRoot = $PSScriptRoot
 
 Write-Host "========================================" -ForegroundColor Cyan
 Write-Host "  商域 BizSim Edu 项目启动器" -ForegroundColor Cyan

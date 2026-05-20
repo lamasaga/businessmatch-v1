@@ -1,3 +1,12 @@
-from app.api import auth, courses, wiki, opc, organizer, competitions, trading
+from app.api import auth, courses, wiki, opc, organizer, competitions, trading, practice
 
-__all__ = ["auth", "courses", "wiki", "opc", "organizer", "competitions", "trading"]
+__all__ = [
+    "auth",
+    "courses",
+    "wiki",
+    "opc",
+    "organizer",
+    "competitions",
+    "trading",
+    "practice",
+]

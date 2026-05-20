@@ -60,7 +60,9 @@ class CompetitionEventBase(BaseModel):
 
 
 class CompetitionEventCreate(CompetitionEventBase):
-    pass
+    game_config_id: str = Field(default="trading-v1", max_length=64)
+    design_mode: str = Field(default="standalone", description="standalone | modular")
+    match_kind: str = Field(default="official", description="official | practice")
 
 
 class CompetitionEventUpdate(BaseModel):
@@ -69,14 +71,24 @@ class CompetitionEventUpdate(BaseModel):
     status: Optional[str] = None
 
 
+class PracticeStartRequest(BaseModel):
+    game_config_id: str = Field(default="trading-v1")
+    design_mode: str = Field(default="standalone")
+    title: Optional[str] = None
+    config: Optional[GameConfig] = None
+
+
 class CompetitionEventOut(BaseModel):
     model_config = ConfigDict(from_attributes=True)
 
     id: int
-    organizer_id: int
+    organizer_id: Optional[int] = None
     room_code: str
     title: str
     description: Optional[str]
+    match_kind: str = "official"
+    design_mode: str = "standalone"
+    game_config_id: str = "trading-v1"
     game_type: str
     status: str
     config: Dict[str, Any]
