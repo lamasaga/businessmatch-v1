@@ -27,6 +27,11 @@ class TradingRound(Base):
     decisions = relationship("TradingDecision", back_populates="round", cascade="all, delete-orphan")
     prices = relationship("TradingPrice", back_populates="round", cascade="all, delete-orphan")
 
+    @property
+    def event(self):
+        """兼容旧代码中的 round.event 命名"""
+        return self.match
+
     __table_args__ = (
         UniqueConstraint("event_id", "round_number", name="uq_round_event_number"),
         Index("idx_trading_rounds_event", "event_id", "status"),

@@ -28,7 +28,12 @@ export default function LoginPage() {
           </div>
           <h1 className="text-2xl font-bold">组织者登录</h1>
           <p className="text-foreground-muted text-sm mt-2">商域 BizSim · 正式赛控场端</p>
-          <p className="text-xs text-foreground-muted mt-3">演示账号：admin / admin123</p>
+          <p className="text-xs text-foreground-muted mt-3">
+            演示账号：用户名 <strong>admin</strong> / 密码 <strong>admin123</strong>
+          </p>
+          <p className="text-xs text-foreground-muted mt-1">
+            若提示无法连接，请先确认后端窗口已启动（http://localhost:8000）
+          </p>
         </div>
 
         <form onSubmit={handleSubmit} className="glass-card p-8 space-y-5">

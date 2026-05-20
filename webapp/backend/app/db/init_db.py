@@ -9,6 +9,7 @@ from app.domains.arena.models.match import ArenaMatch  # noqa: F401
 from app.domains.arena.models.participant import ArenaParticipant  # noqa: F401
 from app.domains.career.models.xp_event import XpEvent  # noqa: F401
 from app.games.trading.models import TradingRound, TradingDecision, TradingPrice  # noqa: F401
+from app.games.trading.bot_users import ensure_bot_traders
 from app.core.security import get_password_hash
 
 
@@ -98,11 +99,23 @@ def create_demo_organizer():
         db.close()
 
 
+def create_bot_traders():
+    """创建 AI 交易员系统账号（练习局虚拟对手）"""
+    db = SessionLocal()
+    try:
+        bots = ensure_bot_traders(db)
+        db.commit()
+        print(f"[init] trader bots ready ({len(bots)} accounts)")
+    finally:
+        db.close()
+
+
 def init_all():
     """完整初始化"""
     init_database()
     create_admin_user()
     create_demo_student()
+    create_bot_traders()
     create_demo_organizer()
     print("[init] database ready")
 

@@ -11,15 +11,9 @@ from app.domains.arena.enums import DesignMode, GameEngineId, MatchKind, MatchSt
 from app.domains.arena.models import OrganizerProfile, ArenaMatch, ArenaParticipant
 from app.domains.arena.serializers import event_to_out
 from app.domains.arena.services.match_factory import create_official_match
+from app.domains.arena.services.match_lifecycle import begin_match
 from app.domains.career.services.rewards import settle_match_rewards
-from app.games.trading import TradingRound, TradingPrice, RoundStatus
-from app.games.trading.engine import (
-    calculate_prices,
-    cities_meta_for,
-    generate_random_events,
-    get_products_dict,
-    load_world,
-)
+from app.games.trading import TradingRound, RoundStatus
 
 EventStatus = MatchStatus
 CompetitionEvent = ArenaMatch
@@ -334,67 +328,7 @@ def start_competition(
             status_code=status.HTTP_403_FORBIDDEN,
         )
 
-    if event.status != EventStatus.registration:
-        raise BusinessException(
-            message="比赛不在报名状态，无法开始",
-            code=ErrorCode.BAD_REQUEST,
-            status_code=status.HTTP_400_BAD_REQUEST,
-        )
-
-    # 检查是否有参赛者
-    participant_count = db.query(func.count(CompetitionParticipant.id)).filter(
-        CompetitionParticipant.event_id == event.id
-    ).scalar()
-    if participant_count < 1:
-        raise BusinessException(
-            message="至少需要1名参赛者才能开始",
-            code=ErrorCode.BAD_REQUEST,
-            status_code=status.HTTP_400_BAD_REQUEST,
-        )
-
-    # 更新状态
-    event.status = EventStatus.playing
-    event.current_round = 1
-    event.starts_at = func.now()
-
-    # 初始化第1回合
-    config = event.config or {}
-    config_id = event.game_config_id or "trading-v1"
-    products_all, cities_all, _ = load_world(config_id)
-    cities_list = config.get("cities", list(cities_all.keys()))
-    product_keys = config.get("products", list(products_all.keys()))
-    product_dict = get_products_dict(config_id, product_keys)
-    city_meta = cities_meta_for(config_id, cities_list)
-
-    initial_prices = calculate_prices(product_dict, cities_list, city_meta, [], [], 0)
-
-    first_round = TradingRound(
-        event_id=event.id,
-        round_number=1,
-        status=RoundStatus.active,
-        events=generate_random_events(1, cities_list, product_dict, config_id),
-        price_snapshot=initial_prices,
-    )
-    db.add(first_round)
-
-    for city_key, city_prices in initial_prices.items():
-        for pid, price in city_prices.items():
-            db.add(TradingPrice(
-                event_id=event.id,
-                round_id=first_round.id,
-                city=city_key,
-                product_id=pid,
-                base_price=product_dict[pid]["base_price"],
-                final_price=price,
-            ))
-
-    # 更新所有参赛者为playing状态
-    participants = db.query(CompetitionParticipant).filter(
-        CompetitionParticipant.event_id == event.id
-    ).all()
-    for p in participants:
-        p.status = ParticipantStatus.playing
-
+    begin_match(db, event)
     db.commit()
     db.refresh(event)
     return ApiResponse.ok(data=_event_to_out(event, db))
@@ -457,12 +391,15 @@ def end_competition(
 
 def _participant_to_out(participant: CompetitionParticipant, db: Session) -> ParticipantOut:
     """将ORM转为输出schema"""
+    from app.games.trading.bot_users import bot_display_name
+
     user = participant.user
+    username = bot_display_name(user.username) if getattr(participant, "is_ai", 0) else user.username
     return ParticipantOut(
         id=participant.id,
         event_id=participant.event_id,
         user_id=participant.user_id,
-        username=user.username,
+        username=username,
         avatar=user.avatar,
         cash=participant.cash,
         inventory=participant.inventory or {},

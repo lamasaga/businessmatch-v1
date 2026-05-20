@@ -24,11 +24,12 @@ interface CompetitionState {
       decision_time?: number;
     };
   }) => Promise<CompetitionEvent>;
-  joinEvent: (roomCode: string) => Promise<void>;
+  joinEvent: (roomCode: string) => Promise<number>;
   getMyStatus: (eventId: number) => Promise<void>;
   startEvent: (eventId: number) => Promise<void>;
   endEvent: (eventId: number) => Promise<void>;
   nextRound: (roundId: number) => Promise<void>;
+  startPractice: () => Promise<CompetitionEvent>;
   clearError: () => void;
 }
 
@@ -80,7 +81,9 @@ export const useCompetitionStore = create<CompetitionState>((set) => ({
     set({ loading: true, error: null });
     try {
       const response = await api.post('/api/v1/competitions/join', { room_code: roomCode });
-      set({ myParticipant: response.data.data, loading: false });
+      const participant = response.data.data;
+      set({ myParticipant: participant, loading: false });
+      return participant.event_id as number;
     } catch (err: any) {
       set({ error: err.message || '加入比赛失败', loading: false });
       throw err;
@@ -130,6 +133,22 @@ export const useCompetitionStore = create<CompetitionState>((set) => ({
       set({ loading: false });
     } catch (err: any) {
       set({ error: err.message || '推进回合失败', loading: false });
+      throw err;
+    }
+  },
+
+  startPractice: async () => {
+    set({ loading: true, error: null });
+    try {
+      const response = await api.post('/api/v1/practice/trading/start', {
+        game_config_id: 'trading-v1',
+        title: '浮生记 · 日常练习',
+      });
+      const event = response.data.data as CompetitionEvent;
+      set({ currentEvent: event, loading: false });
+      return event;
+    } catch (err: any) {
+      set({ error: err.message || '创建练习局失败', loading: false });
       throw err;
     }
   },

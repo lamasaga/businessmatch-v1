@@ -206,10 +206,17 @@ export interface CompetitionConfig {
   rounds: number;
   initial_capital: number;
   inventory_limit: number;
+  inventory_limit_per_product?: number;
   move_cost: number;
   decision_time: number;
   cities: string[];
   products: string[];
+}
+
+export interface InventoryCapacity {
+  limit_per_product: number;
+  total_items: number;
+  by_product: Record<string, { quantity: number; remaining: number }>;
 }
 
 export interface Participant {
@@ -257,6 +264,10 @@ export interface ProductPrice {
   sell_price: number;
   trend: string;
   trend_percent: number;
+  buy_qty?: number;
+  sell_qty?: number;
+  net_demand?: number;
+  pressure?: number;
 }
 
 export interface CityMarket {
@@ -281,6 +292,31 @@ export interface GameState {
   inventory: PlayerInventoryItem[];
   standings: StandingsEntry[];
   time_remaining?: number;
+  is_practice?: boolean;
+  pricing_mode?: string;
+  market_insights?: MarketInsight[];
+  has_submitted_this_round?: boolean;
+  can_submit_decision?: boolean;
+  inventory_capacity?: InventoryCapacity;
+}
+
+export interface SubmitDecisionResponse {
+  practice_advanced?: boolean;
+  event_finished?: boolean;
+  has_submitted_this_round?: boolean;
+  can_submit_decision?: boolean;
+  current_round?: TradingRound | null;
+}
+
+export interface MarketInsight {
+  city: string;
+  city_name: string;
+  product_id: string;
+  product_name: string;
+  buy_qty: number;
+  sell_qty: number;
+  net_demand: number;
+  pressure: number;
 }
 
 export interface StandingsEntry {

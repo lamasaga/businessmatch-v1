@@ -5,7 +5,7 @@
 > **读者**：开发、架构、排 Bug  
 > **配套阅读**：[`01-平台愿景与产品架构`](./01-平台愿景与产品架构.md) · [`02-赛事体系与双端产品`](./02-赛事体系与双端产品.md)（双端）· [`03-技术架构与实现现状`](./03-技术架构与实现现状.md)（摘要）· [`04-实施路线与里程碑`](./04-实施路线与里程碑.md) · [`09-分项目开发与集成流程`](./09-分项目开发与集成流程.md)  
 > **安装启动**：[`webapp/README.md`](./webapp/README.md)  
-> **最后更新**：2026-05-19
+> **最后更新**：2026-05-20
 
 ---
 
@@ -59,7 +59,7 @@
 | 课程学院 | `/courses` | ✅ | ✅ | 静态/种子数据 | **可用** |
 | 商赛大厅 | `/games` | ✅ 比赛 CRUD | ✅ | SQLite 比赛表 | **可用** |
 | 交易模拟商赛（**正式赛链路**） | `/games/:id/play` | ✅ 回合决策 | ✅ 六城十品 | SQLite + 服务端结算 | **核心可玩** |
-| 商赛模拟（**vs AI 练习**） | 部分演示页 | — | 🟡 UI | mock | **待建设** |
+| 商赛模拟（**vs AI 练习**） | `/games` → `/games/:id/play` | ✅ `practice/*` + 自动推进 | ✅ 浮生记日常练习入口 | SQLite + `match_kind=practice` | **核心可玩** |
 | 组织者控场 | `organizer-frontend` (:5174) | ✅ | ✅ | 组织者档案 | **Phase 1 独立端** |
 | 国富论游戏 | `/wealth-of-nations` | — | ✅ 纯前端 | 无 | **教学小游戏** |
 | Demia / Rival 练习 | `/games/...` 等 | — | ✅ UI | mock 对话 | **演示级** |
@@ -77,19 +77,28 @@
     → 成绩写入用户 XP → 学生 /career 查看成长
 ```
 
-**路径 B — 商赛模拟（vs AI，产品目标，尚未形成闭环）**
+**路径 B — 浮生记日常练习（1 人 + 3 AI，已打通）**
 
 ```
-学生 /games 选择「模拟练习」→ 选赛制与 AI 难度
-    → 单人或 1vAI 对局（低 stakes）→ Athena 练习复盘
-    → 掌握度/Quest 更新（练习 XP，与正式赛分流）
+学生 /games →「浮生记 · 日常练习」→ POST /practice/trading/start
+    → 1 真人 + 3 AI 交易员 → 供需定价（market）→ 提交后自动推进回合
+    → 打满回合自动结算 practice XP
 ```
 
-　　详见 [`webapp/README.md`](./webapp/README.md)「对外演示」章节：测试账号 `student` / `admin`（admin 暂兼组织者角色）。
+**路径 C — 正式多人赛（组织者 + 房间码，约 10 人可试点）**
+
+```
+组织者 :5174 创建比赛（max_players=10）→ 学生房间码加入 → 大厅等待
+    → 组织者开始 → 各回合买/卖/移动/持有 → 组织者推进回合
+    → 最后一回合建议点「结束比赛」结算（勿仅依赖最后一次「推进」）
+```
+
+　　详见 [`webapp/README.md`](./webapp/README.md)「对外演示」：学生 `student/student123`；组织者 `admin/admin123`（`:5174` 独立端，学生端已无控制台入口）。
 
 ### 2.4 代码结构要点
 
-- **真实业务后端**：`auth`、`wiki`、`courses`、`OPC`、`organizer`、`competitions`、`trading` 七组路由（见 `backend/app/main.py`）。
+- **真实业务后端**：`auth`、`wiki`、`courses`、`opc`、`organizer`、`competitions`、`trading`、`practice` 八组路由（见 `backend/app/main.py`）。
+- **域分层**（2026-05）：`domains/arena`（场次/参赛者）、`domains/cybercore`（YAML）、`domains/career`（`xp_events`）、`games/trading`（结算引擎）；`models/trading_competition.py` 仅为兼容 re-export。
 - **演示数据层**：`frontend/src/data/mockPlatform.ts` 支撑 Athena 文案、部分榜单与成就展示。
 - **状态管理**：`careerStore`（持久化本地）、`competitionStore` / `tradingStore`（对局）、`OPCStore`（公司任务）。
 - **Phase 10 里程碑**（见 README 路线图）：**交易模拟商赛（组织者 + 房间码 + 回合制）** 已标记完成 ✅。
@@ -99,8 +108,8 @@
 | 资产 | webapp 中的体现 | 缺口 |
 |------|-----------------|------|
 | `知识卡片库/*.yaml` | `scripts/parse_knowledge.py` → `knowledge_graph.json` | 未自动化 CI 同步；掌握度 API 未建 |
-| `college/` 课程单元 | 课程 API 为演示数据 | 未按 YAML bundle 导入 |
-| `商赛界面展示/` 声明式框架 | 交易赛为**独立硬编码引擎** | 未接入 CyberCore 配置层 |
+| `inspire/college/` 课程单元 | 课程 API 为演示数据 | 未按 YAML bundle 导入 |
+| `商赛界面展示/` 声明式框架 | `trading-v1.yaml` + `cybercore.registry` 已加载 | 前端局内 UI 仍部分硬编码；第二赛制未建 |
 | `OPC/` | OPC 页面 + REST | 无 LangGraph/MCP/Gateway |
 
 ### 2.6 前端架构与路由全表
@@ -186,9 +195,12 @@
 | 模块 | 表/实体 | 用途 |
 |------|---------|------|
 | `models/user.py` | `users` | 认证、角色、`experience`/`level` |
-| `models/trading_competition.py` | `organizer_profiles`、`competition_events`、`competition_participants`、`trading_rounds`、`trading_decisions`、`trading_prices` | 正式交易赛全流程 |
-| `models/opc.py` | `one_companies`、`ai_employees`、`ai_tasks` | OPC（`init_db` 会建表，但未在 `models/__init__.py` 导出） |
-| — | **无** `career_profiles` / `xp_events` / `quests` | 与规划文档差距 |
+| `domains/arena/models/` | `organizer_profiles`、`competition_events`（`ArenaMatch`）、`competition_participants` | 含 `match_kind`、`design_mode`、`game_config_id`；`migrate_schema.py` 为旧库补列 |
+| `games/trading/models.py` | `trading_rounds`、`trading_decisions`、`trading_prices` | 交易赛回合数据 |
+| `domains/career/models/xp_event.py` | `xp_events` | 幂等 XP 账本（`idempotency_key`） |
+| `models/opc.py` | `one_companies`、`ai_employees`、`ai_tasks` | OPC |
+| `models/trading_competition.py` | — | **仅 re-export**，新逻辑勿写入 |
+| — | **无** `career_profiles` / `quests` | Career 聚合 API 仍缺 |
 
 #### 2.7.3 API 路由一览（前缀均为 `/api/v1`）
 
@@ -201,15 +213,21 @@
 | **organizer** | `/organizer` | apply, profile, stats | 组织者档案 |
 | **competitions** | `/competitions` | CRUD、join(房间码)、start、end、standings、my-status | 创建需组织者；start/end 需组织者 |
 | **trading** | `/trading` | state、decide、result、next、history | 对局内决策；`next` 组织者 |
+| **practice** | `/practice` | `GET /game-configs`、`POST /trading/start`、`GET /my` | 日常练习局创建与列表；跳转后仍走 `/trading/*` |
 
-　　**缺失的后端域**（规划中有、代码中无）：`/career/*`、`/quests/*`、`/credentials/*`、`/ai/athena|demia|rival/*`、`WebSocket 房间`。
+　　**缺失的后端域**（规划中有、代码中无）：`/career/*`（聚合查询）、`/quests/*`、`/credentials/*`、`/ai/athena|demia|rival/*`、`WebSocket 房间`。
 
-#### 2.7.4 服务层
+#### 2.7.4 服务层与域包
 
-| 项 | 现状 |
-|----|------|
-| `app/services/` | **空包**，业务逻辑写在 `api/*.py` 内 |
-| 事务与规则 | `trading.py`、`competitions.py` 单文件较长，尚未抽离 CyberCore |
+| 路径 | 职责 |
+|------|------|
+| `domains/arena/services/match_factory.py` | `create_official_match` / `create_practice_match` |
+| `domains/career/services/rewards.py` | `grant_xp`、`settle_match_rewards`（读 YAML 权重） |
+| `domains/cybercore/registry.py` | 加载 `backend/content/game-configs/*.yaml` |
+| `games/trading/engine.py` | 交易赛状态机与结算 |
+| `app/services/` | 仍为空；部分逻辑仍在 `api/trading.py` |
+
+　　规范见 [`domains/arena/ARCHITECTURE.md`](./webapp/backend/app/domains/arena/ARCHITECTURE.md)。
 
 ### 2.8 状态管理与数据流
 
@@ -265,7 +283,7 @@ flowchart LR
 | # | 问题 | 现象 | 建议修复 |
 |---|------|------|----------|
 | E1 | **生涯页与登录用户 XP 脱节** | `/career` 仅用 `mockPlatform.DEMO_CAREER`，忽略 `authStore.user.experience` | Career 读 `GET /auth/me` 或新增 `/career/profile` |
-| E2 | **无后端生涯域** | 开启生涯、Quest、成就均无服务端记录 | 按规划增加 `career_profiles`、`xp_events` |
+| E2 | **生涯域不完整** | 已有 `xp_events` 与赛后发放，但无 `/career/profile`；Quest/成就仍无表 | 增加 Career 聚合 API + 前端对接 |
 | E3 | **房间码加入后可能无法跳转大厅** | `GamesPage` 在 `joinEvent` 后用旧 `events` 数组 `find(room_code)`，未 refetch 且 join 响应未带 `event_id` 导航 | join 后用 `myParticipant.event_id` 或 refetch + navigate |
 | E4 | **数据库依赖启动初始化** | 若未走 `lifespan`/`init_db` 则 `no such table: users`，前端易报 CORS | 已加 `lifespan`；文档强调先启 backend |
 | E5 | **正式赛结束与生涯复盘未打通** | 结束比赛写用户 XP，但 `/career/debrief/demo` 仍为静态 mock | 局末跳转真实 `matchId` + Debrief API |
@@ -274,8 +292,9 @@ flowchart LR
 
 | # | 问题 | 说明 |
 |---|------|------|
-| P1 | **组织者未独立客户端** | 与学生共用 SPA，`admin` 见「创建比赛」 |
-| P2 | **商赛模拟（vs AI）无路由无 API** | `GamePlayPage`/`PracticeNegotiationPage` 未注册；无 `match_kind=practice` |
+| P1 | ~~**学生端仍保留组织者入口**~~ | ✅ 已移除 `GamesPage` 控制台链接；仅 `:5174` 组织者端 |
+| P2 | ~~**商赛模拟前端未接 API**~~ | ✅ 日常练习卡片 + `startPractice` + 局内自动推进 |
+| P2b | **正式赛控场规则不完整** | 推进回合不校验全员提交；`decision_time` 未计时；第 10 回合仅「推进」不结算 XP，须点「结束比赛」 |
 | P3 | **`teacher` 角色未用** | 模型有 `UserRole.teacher`，前端仅判断 `admin` |
 | P4 | **组织者申请流未接前端** | 后端有 `POST /organizer/apply`，页面无入口 |
 | P5 | **/wiki 强制登录** | 知识图谱本可作为公开预习，现与规划「Atlas 引流」略冲突 |
@@ -286,8 +305,8 @@ flowchart LR
 |---|------|------|
 | Q1 | **死代码页面** | 见 §2.6.4，增加维护困惑 |
 | Q2 | **`mockPlatform` 与真实 API 混用** | 演示模式与生产数据边界不清 |
-| Q3 | **`courses` 非数据库驱动** | `courses.py` 内硬编码列表，与 `college/` 资产未打通 |
-| Q4 | **`trading.py` / `competitions.py` 体量大** | 难以复用到第二种赛制 |
+| Q3 | **`courses` 非数据库驱动** | `courses.py` 内硬编码列表，与 `inspire/college/` 资产未打通 |
+| Q4 | **第二种赛制未验证** | Arena/CyberCore 分层已建，需按 ARCHITECTURE checklist 增第二 `game_config` |
 | Q5 | **无自动化测试** | 结算、join、XP 无 pytest / e2e |
 | Q6 | **README 与仓库路径** | 根目录规划仍写 `web应用商业教育`，应以 `webapp` 为准 |
 | Q7 | **Docker 前端端口** | Compose 暴露 80，与本地 dev `:5173` 不一致，文档需区分 |
@@ -316,18 +335,18 @@ flowchart LR
 
 | 规划组件 | 规划要求 | webapp 现状 | 对齐度 |
 |----------|----------|-------------|--------|
-| **Career Hub** | 统一 XP 账本、赛季、班级榜 | 本地演示 + 用户表 XP 字段；无 `xp_events` 幂等账本 | 🟡 30% |
+| **Career Hub** | 统一 XP 账本、赛季、班级榜 | `xp_events` + 正式赛 `settle_match_rewards`；前端 Career 仍 mock | 🟡 45% |
 | **Atlas** | 掌握度驱动解锁 | Wiki + 图谱浏览 | 🟡 50% |
 | **Academy** | 单元进度写回生涯 | 列表/详情 UI | 🟡 40% |
 | **Quest** | 每日任务服务 + streak | 前端 Quest 页 | 🟡 35% |
-| **Arena** | 练习（AI）+ 正式（组织者房间）双模式 | **正式赛** 1 种交易赛可玩；**AI 模拟** 未独立 | 🟡 45% |
+| **Arena** | 练习（AI）+ 正式（组织者房间）双模式 | 练习闭环 + 供需定价 + 正式赛 ~10 人可试点；正式赛控场规则待完善 | 🟡 72% |
 | **Credenti** | 徽章/认证链 | 成就页 mock | 🔴 20% |
 | **Athena** | RAG 复盘、周计划 | 浮窗 + 模板/mock | 🟡 25% |
 | **Demia / Rival** | 规则层 + 可选 LLM | UI 演示 | 🔴 15% |
 | **OPC** | 孵化流水线 + AI 员工 | 管理 UI + REST；无真实 Agent | 🟡 45% |
 | **Identity** | 多租户/班级 | 单库 SQLite、基础角色 | 🟡 40% |
 
-　　**结论**：`webapp` 已完成「**可演示的一体化壳 + 一条深玩的商赛链路 + OPC 数据模型**」，尚未达到规划中的「五域事件闭环 + 后端生涯账本 + 声明式多赛制」。
+　　**结论**：`webapp` 已完成「**可演示的一体化壳 + 正式交易赛链路 + Arena/CyberCore 域分层 + OPC 数据模型**」；2026-05 起具备 `xp_events` 与练习场后端 API，尚未达到「五域事件闭环 + Career 前端对接 + 多赛制可配 + AI 练习对手」。
 
 ---
 
@@ -343,7 +362,18 @@ flowchart LR
 | 代码路径（相对 `webapp/`） | 说明 |
 |---------------------------|------|
 | `backend/app/main.py` | API 注册 |
-| `backend/app/api/trading.py` | 交易赛结算 |
+| `backend/app/domains/arena/` | 场次域模型与工厂 |
+| `backend/app/domains/cybercore/registry.py` | 赛制 YAML 加载 |
+| `backend/app/domains/career/services/rewards.py` | XP 发放 |
+| `backend/app/games/trading/market.py` | 供需定价引擎 |
+| `backend/app/games/trading/ai_trader.py` | 练习局 AI 交易员 |
+| `backend/app/games/trading/practice_flow.py` | 练习局自动推进 |
+| `backend/app/games/trading/inventory.py` | 单品种库存上限 |
+| `backend/app/domains/arena/services/match_lifecycle.py` | 开赛生命周期 |
+| `backend/app/api/practice.py` | 日常练习 API |
+| `backend/content/game-configs/trading-v1.yaml` | 首份可玩赛制包 |
+| `backend/app/db/migrate_schema.py` | 旧 SQLite 库列迁移 |
+| `backend/app/api/trading.py` | 对局 HTTP 适配层 |
 | `backend/app/api/competitions.py` | 房间码与比赛生命周期 |
 | `frontend/src/App.tsx` | 路由总表 |
 | `frontend/src/data/mockPlatform.ts` | 演示数据（待逐步废弃） |
@@ -354,6 +384,14 @@ flowchart LR
 
 - `webapp/README` 或路由/API 变更时，同步更新 §2.2、§2.6.2、§2.7.3、§2.10。  
 - 规划调整时，同步 §三 对齐度表与 [`03-`](./03-技术架构与实现现状.md) §五。
+
+### 5.1 变更记录
+
+| 日期 | 摘要 |
+|------|------|
+| 2026-05-20 | 浮生记供需定价（`market.py`）；练习局 AI + 自动推进；单品种库存上限 99；学生端移除组织者入口；启动脚本优化；`can_submit_decision` 防重复提交 |
+| 2026-05-20 | Arena/Career/Cybercore 域分包；`games/trading` 引擎；`practice` API；`trading-v1.yaml`；`xp_events`；课程文档迁至 `inspire/college/` |
+| 2026-05-19 | 组织者独立端、Docker 三端编排（见上一版提交说明） |
 
 ---
 

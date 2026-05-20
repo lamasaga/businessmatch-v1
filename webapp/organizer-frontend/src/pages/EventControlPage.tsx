@@ -63,9 +63,13 @@ export default function EventControlPage() {
 
   const { event, current_round, standings, participants, decisions_submitted } = control;
   const totalRounds = Number(event.config?.rounds ?? 10);
-  const canStart = event.status === 'registration' && participants.length >= 1;
+  const hasPlayers = participants.length >= 1;
   const isPlaying = event.status === 'playing';
   const isFinished = event.status === 'finished';
+  const canStart =
+    (event.status === 'registration' || event.status === 'draft') &&
+    hasPlayers &&
+    !isFinished;
 
   return (    <div>
       <button
@@ -114,20 +118,31 @@ export default function EventControlPage() {
       </div>
 
       {!isFinished && (
-        <div className="glass-card p-6 mb-6 flex flex-wrap gap-3">
+        <div className="glass-card p-6 mb-6 flex flex-col gap-3">
+          <div className="flex flex-wrap gap-3">
           {canStart && (
             <button
               type="button"
               disabled={loading}
               onClick={async () => {
                 clearError();
-                await startEvent(eventId);
-                refresh();
+                try {
+                  await startEvent(eventId);
+                  await fetchControl(eventId);
+                } catch {
+                  /* error in store */
+                }
               }}
               className="flex-1 min-w-[140px] py-3 bg-primary text-background rounded-xl font-semibold flex items-center justify-center gap-2 disabled:opacity-50"
             >
-              <Play className="w-5 h-5" />
-              开始比赛
+              {loading ? (
+                <Loader2 className="w-5 h-5 animate-spin" />
+              ) : (
+                <>
+                  <Play className="w-5 h-5" />
+                  开始比赛
+                </>
+              )}
             </button>
           )}
           {isPlaying && current_round && (
@@ -159,6 +174,17 @@ export default function EventControlPage() {
             >
               结束比赛
             </button>
+          )}
+          </div>
+          {!hasPlayers && (event.status === 'registration' || event.status === 'draft') && (
+            <p className="text-sm text-foreground-muted">
+              至少 1 名学生输入房间码加入后，方可点击「开始比赛」。
+            </p>
+          )}
+          {isPlaying && (
+            <p className="text-sm text-success">
+              比赛已开始 — 学生可进入对局；您可在此推进回合或结束比赛。
+            </p>
           )}
         </div>
       )}

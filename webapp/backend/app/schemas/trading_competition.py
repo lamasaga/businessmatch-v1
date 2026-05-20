@@ -44,7 +44,8 @@ class OrganizerStats(BaseModel):
 class GameConfig(BaseModel):
     rounds: int = Field(default=10, ge=3, le=20)
     initial_capital: int = Field(default=50000, ge=10000, le=100000)
-    inventory_limit: int = Field(default=20, ge=5, le=50)
+    inventory_limit: int = Field(default=99, ge=5, le=999, description="每种商品的最大持有数量")
+    inventory_limit_per_product: int = Field(default=99, ge=5, le=999)
     move_cost: int = Field(default=1000, ge=100, le=5000)
     decision_time: int = Field(default=60, ge=15, le=300)
     cities: List[str] = Field(default=["jingcheng", "hushi", "shenshi", "rongcheng", "bingcheng", "gangcheng"])
@@ -208,6 +209,21 @@ class ProductPrice(BaseModel):
     sell_price: int
     trend: str  # up, down, stable
     trend_percent: float
+    buy_qty: int = 0
+    sell_qty: int = 0
+    net_demand: int = 0
+    pressure: float = 0.0  # 供需压力 -1~1，正=需求偏强
+
+
+class MarketInsight(BaseModel):
+    city: str
+    city_name: str
+    product_id: str
+    product_name: str
+    buy_qty: int
+    sell_qty: int
+    net_demand: int
+    pressure: float
 
 
 class CityMarket(BaseModel):
@@ -224,6 +240,12 @@ class PlayerInventoryItem(BaseModel):
     current_value: float
 
 
+class InventoryCapacity(BaseModel):
+    limit_per_product: int
+    total_items: int
+    by_product: Dict[str, Dict[str, int]] = {}
+
+
 class GameState(BaseModel):
     event: CompetitionEventOut
     participant: ParticipantOut
@@ -231,7 +253,22 @@ class GameState(BaseModel):
     markets: List[CityMarket]
     inventory: List[PlayerInventoryItem]
     standings: List[Dict[str, Any]]
-    time_remaining: Optional[int]  # 剩余决策时间（秒）
+    time_remaining: Optional[int] = None
+    is_practice: bool = False
+    pricing_mode: str = "market"
+    market_insights: List[MarketInsight] = []
+    has_submitted_this_round: bool = False
+    can_submit_decision: bool = False
+    inventory_capacity: Optional[InventoryCapacity] = None
+
+
+class SubmitDecisionResult(BaseModel):
+    decision: DecisionOut
+    practice_advanced: bool = False
+    event_finished: bool = False
+    current_round: Optional[TradingRoundOut] = None
+    has_submitted_this_round: bool = True
+    can_submit_decision: bool = False
 
 
 class StandingsEntry(BaseModel):

@@ -2,13 +2,13 @@ import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useCompetitionStore } from '../../stores/competitionStore';
 import {
-  Trophy, Plus, Search, Users, Clock, ArrowRight,
-  TrendingUp, MapPin, Zap
+  Trophy, Search, Users, Clock, ArrowRight,
+  TrendingUp, MapPin, Zap, Bot, Sparkles, Loader2, Play,
 } from 'lucide-react';
 
 export default function GamesPage() {
   const navigate = useNavigate();
-  const { events, fetchEvents, joinEvent, loading } = useCompetitionStore();
+  const { events, fetchEvents, joinEvent, startPractice, loading, error } = useCompetitionStore();
   const [roomCode, setRoomCode] = useState('');
   const [joinError, setJoinError] = useState('');
   const [activeTab, setActiveTab] = useState<'public' | 'my'>('public');
@@ -24,14 +24,20 @@ export default function GamesPage() {
     }
     setJoinError('');
     try {
-      await joinEvent(roomCode);
-      // Find the event we just joined
-      const joinedEvent = events.find(e => e.room_code === roomCode);
-      if (joinedEvent) {
-        navigate(`/games/${joinedEvent.id}/lobby`);
-      }
+      const eventId = await joinEvent(roomCode);
+      navigate(`/games/${eventId}/lobby`);
     } catch (err: any) {
       setJoinError(err.message || '加入失败');
+    }
+  };
+
+  const handleStartPractice = async () => {
+    setJoinError('');
+    try {
+      const event = await startPractice();
+      navigate(`/games/${event.id}/play`);
+    } catch (err: any) {
+      setJoinError(err.message || '练习局创建失败');
     }
   };
 
@@ -42,20 +48,36 @@ export default function GamesPage() {
   return (
     <div className="max-w-6xl mx-auto">
       {/* Header */}
-      <div className="flex items-center justify-between mb-8">
-        <div>
-          <h1 className="text-3xl font-bold text-foreground tracking-tight">商赛大厅</h1>
-          <p className="text-foreground-muted mt-1">加入比赛，体验真实商业竞争</p>
+      <div className="mb-8">
+        <h1 className="text-3xl font-bold text-foreground tracking-tight">商赛大厅</h1>
+        <p className="text-foreground-muted mt-1">加入比赛，体验真实商业竞争</p>
+      </div>
+
+      {/* Daily practice */}
+      <div className="glass-card p-6 mb-8 border border-accent-teal/20 bg-accent-teal/5">
+        <div className="flex flex-col md:flex-row md:items-center gap-4">
+          <div className="w-12 h-12 rounded-xl bg-accent-teal/20 flex items-center justify-center shrink-0">
+            <Bot className="w-6 h-6 text-accent-teal" />
+          </div>
+          <div className="flex-1">
+            <h3 className="font-semibold text-foreground flex items-center gap-2">
+              浮生记 · 日常练习
+              <Sparkles className="w-4 h-4 text-accent-teal" />
+            </h3>
+            <p className="text-sm text-foreground-muted mt-1">
+              六城十品倒卖：3 名 AI 交易员与你共同买卖，物价由供需驱动（非随机摇号）
+            </p>
+          </div>
+          <button
+            type="button"
+            onClick={handleStartPractice}
+            disabled={loading}
+            className="px-6 py-2.5 bg-accent-teal text-background rounded-xl font-semibold hover:bg-accent-teal/90 transition-colors disabled:opacity-50 flex items-center justify-center gap-2 shrink-0"
+          >
+            {loading ? <Loader2 className="w-4 h-4 animate-spin" /> : <Play className="w-4 h-4" />}
+            开始练习
+          </button>
         </div>
-        <a
-          href={import.meta.env.VITE_ORGANIZER_URL || 'http://localhost:5174'}
-          target="_blank"
-          rel="noreferrer"
-          className="flex items-center gap-2 px-5 py-2.5 border border-primary/40 text-primary rounded-xl font-semibold hover:bg-primary/10 transition-colors"
-        >
-          <Plus className="w-4 h-4" />
-          组织者控制台
-        </a>
       </div>
 
       {/* Join by room code */}

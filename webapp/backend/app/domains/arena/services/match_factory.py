@@ -8,6 +8,7 @@ from app.domains.arena.enums import DesignMode, GameEngineId, MatchKind, MatchSt
 from app.domains.arena.models import ArenaMatch, ArenaParticipant, OrganizerProfile
 from app.domains.arena.utils import generate_room_code
 from app.domains.cybercore.registry import get_game_config
+from app.games.trading.bot_users import ensure_bot_traders
 
 
 def _unique_room_code(db: Session) -> str:
@@ -42,7 +43,7 @@ def create_official_match(
         design_mode=design_mode,
         game_config_id=game_config_id,
         game_type=engine,
-        status=MatchStatus.draft,
+        status=MatchStatus.registration,
         config=config,
         max_players=max_players,
         current_round=0,
@@ -66,19 +67,21 @@ def create_practice_match(
     engine = GameEngineId(doc.engine)
     config = doc.merged_match_config(config_overrides)
     initial_capital = config.get("initial_capital", 50000)
+    start_city = config.get("cities", ["jingcheng"])[0]
+    ai_count = int(config.get("practice_ai_count", 3))
 
     match = ArenaMatch(
         organizer_id=platform_organizer.id,
         room_code=_unique_room_code(db),
         title=title or f"日常练习 · {doc.meta.get('name', game_config_id)}",
-        description="单人练习局，结算经验按 practice 权重计入生涯",
+        description="浮生记式倒卖练习：AI 交易员与你共同驱动各城物价",
         match_kind=MatchKind.practice,
         design_mode=design_mode,
         game_config_id=game_config_id,
         game_type=engine,
         status=MatchStatus.registration,
         config=config,
-        max_players=1,
+        max_players=1 + ai_count,
         current_round=0,
     )
     db.add(match)
@@ -90,9 +93,27 @@ def create_practice_match(
         is_ai=0,
         cash=float(initial_capital),
         inventory={},
-        current_city=config.get("cities", ["jingcheng"])[0],
+        current_city=start_city,
         total_assets=float(initial_capital),
     )
     db.add(participant)
+
+    bots = ensure_bot_traders(db)
+    import random
+
+    bot_cities = list(config.get("cities", [start_city]))
+    for bot in bots[:ai_count]:
+        db.add(
+            ArenaParticipant(
+                event_id=match.id,
+                user_id=bot.id,
+                is_ai=1,
+                cash=float(initial_capital),
+                inventory={},
+                current_city=random.choice(bot_cities),
+                total_assets=float(initial_capital),
+            )
+        )
+
     db.flush()
     return match, participant

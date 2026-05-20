@@ -75,23 +75,18 @@ npm run dev
 
 ---
 
-## 🚀 方式二：PowerShell 一键启动
+## 🚀 方式二：一键启动（推荐）
 
-在项目根目录执行以下 PowerShell 脚本，同时启动前后端：
+在 `webapp` 目录任选一种方式（**不要用 `py` 运行 `.ps1`**，否则会报 Python 语法错误）：
 
 ```powershell
 cd "D:\1XFAwork\businessmatch-v1\webapp"
-
-# 启动后端（新窗口）
-Start-Process powershell -ArgumentList "-NoExit", "-Command", "cd backend; .\venv\Scripts\python run.py"
-
-# 启动前端（新窗口）
-Start-Process powershell -ArgumentList "-NoExit", "-Command", "cd frontend; npm run dev"
-
-Write-Host "前后端服务已启动！" -ForegroundColor Green
-Write-Host "前端: http://localhost:5173" -ForegroundColor Cyan
-Write-Host "后端: http://localhost:8000" -ForegroundColor Cyan
+.\启动.ps1
 ```
+
+或双击 **`启动.bat`**（自动调用 PowerShell / pwsh）。
+
+将依次打开三个窗口：后端 `:8000`、学生端 `:5173`、组织者端 `:5174`。
 
 ---
 

@@ -20,10 +20,10 @@ export default function TradingGamePage() {
   const [selectedProduct, setSelectedProduct] = useState<string>('');
   const [quantity, setQuantity] = useState(1);
   const [actionType, setActionType] = useState<'buy' | 'sell' | 'move' | 'hold'>('hold');
-  const [decisionSubmitted, setDecisionSubmitted] = useState(false);
+  const [submitting, setSubmitting] = useState(false);
 
-  const refresh = useCallback(() => {
-    fetchGameState(eventId);
+  const refresh = useCallback(async () => {
+    return fetchGameState(eventId);
   }, [eventId, fetchGameState]);
 
   useEffect(() => {
@@ -36,11 +36,22 @@ export default function TradingGamePage() {
     return () => clearInterval(interval);
   }, [refresh]);
 
+  // 新回合重置表单
+  useEffect(() => {
+    if (gameState?.current_round?.id) {
+      setSelectedProduct('');
+      setSelectedCity('');
+      setQuantity(1);
+      setActionType('hold');
+    }
+  }, [gameState?.current_round?.id]);
+
   const currentMarket = gameState?.markets?.find(m => m.city === gameState?.participant?.current_city);
   const currentCityPrices = currentMarket?.products || [];
 
   const handleSubmit = async () => {
-    if (!gameState?.current_round) return;
+    if (!gameState?.current_round || submitting) return;
+    if (!gameState.can_submit_decision) return;
 
     let actionData: Record<string, any> = {};
 
@@ -55,12 +66,15 @@ export default function TradingGamePage() {
       actionData = { to_city: selectedCity };
     }
 
+    const roundIdBefore = gameState.current_round.id;
+    setSubmitting(true);
     try {
-      await submitDecision(gameState.current_round.id, actionType, actionData);
-      setDecisionSubmitted(true);
-      refresh();
+      await submitDecision(roundIdBefore, actionType, actionData);
+      await refresh();
     } catch {
-      // error handled in store
+      await refresh();
+    } finally {
+      setSubmitting(false);
     }
   };
 
@@ -72,8 +86,22 @@ export default function TradingGamePage() {
     );
   }
 
-  const { event, participant, current_round, inventory, standings } = gameState;
+  const { event, participant, current_round, inventory, standings, is_practice, market_insights, inventory_capacity } = gameState;
   const isFinished = event.status === 'finished';
+  const isPlaying = event.status === 'playing';
+  const canAct = isPlaying && (gameState.can_submit_decision ?? false) && !submitting;
+  const isWaiting = isPlaying && !canAct && !submitting && (gameState.has_submitted_this_round ?? false);
+  const productLimit = inventory_capacity?.limit_per_product
+    ?? event.config?.inventory_limit_per_product
+    ?? event.config?.inventory_limit
+    ?? 99;
+  const selectedHeld = selectedProduct
+    ? (inventory.find((i) => i.product_id === selectedProduct)?.quantity ?? 0)
+    : 0;
+  const maxQuantity = actionType === 'sell'
+    ? selectedHeld
+    : Math.max(0, productLimit - selectedHeld);
+  const cityLabel = currentMarket?.city_name || participant.current_city;
 
   return (
     <div className="max-w-6xl mx-auto">
@@ -106,12 +134,59 @@ export default function TradingGamePage() {
 
           <div className="flex items-center gap-2 text-sm text-foreground-muted">
             <MapPin className="w-4 h-4 text-primary" />
-            {participant.current_city}
+            {cityLabel}
+            {is_practice && (
+              <span className="text-xs px-2 py-0.5 rounded-full bg-accent-teal/15 text-accent-teal">练习局</span>
+            )}
           </div>
         </div>
       </div>
 
+      {isFinished && (
+        <div className="glass-card p-6 mb-6 border border-primary/20 text-center">
+          <Crown className="w-10 h-10 mx-auto text-primary mb-2" />
+          <h3 className="text-lg font-semibold text-foreground">本局练习已结束</h3>
+          <p className="text-sm text-foreground-muted mt-1">
+            最终排名 #{standings.find(s => s.user_id === user?.id)?.rank || '-'} · 总资产 ¥{participant.total_assets.toLocaleString()}
+          </p>
+          <button
+            onClick={() => navigate('/games')}
+            className="mt-4 px-6 py-2.5 bg-primary text-background rounded-lg font-medium hover:bg-primary/90"
+          >
+            返回游戏大厅
+          </button>
+        </div>
+      )}
+
       {/* Events */}
+      {/* 供需教学 */}
+      {gameState.pricing_mode === 'market' && (
+        <div className="glass-card p-4 mb-6 border border-accent-teal/15">
+          <h3 className="text-sm font-semibold text-accent-teal mb-2">供需定价（浮生记机制）</h3>
+          <p className="text-xs text-foreground-muted mb-3">
+            上一回合某城某商品的<strong className="text-foreground">买入越多 → 需求上升 → 下回合涨价</strong>；
+            <strong className="text-foreground">卖出越多 → 供给增加 → 下回合降价</strong>。正式赛由全体玩家共同塑造市场，练习局由 AI 交易员模拟其他玩家。
+          </p>
+          {market_insights && market_insights.length > 0 ? (
+            <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-2">
+              {market_insights.slice(0, 6).map((ins) => (
+                <div key={`${ins.city}-${ins.product_id}`} className="text-xs p-2 rounded-lg bg-background-secondary">
+                  <span className="font-medium text-foreground">{ins.city_name} · {ins.product_name}</span>
+                  <div className="flex justify-between mt-1 text-foreground-muted">
+                    <span>买 {ins.buy_qty} / 卖 {ins.sell_qty}</span>
+                    <span className={ins.pressure > 0.05 ? 'text-danger' : ins.pressure < -0.05 ? 'text-success' : ''}>
+                      {ins.pressure > 0 ? '需求↑' : ins.pressure < 0 ? '供给↑' : '均衡'}
+                    </span>
+                  </div>
+                </div>
+              ))}
+            </div>
+          ) : (
+            <p className="text-xs text-foreground-muted">第 1 回合：各城基准价由城市特性决定；本回合结束后将根据买卖量更新物价。</p>
+          )}
+        </div>
+      )}
+
       {current_round?.events && current_round.events.length > 0 && (
         <div className="bg-primary-soft border border-primary/20 rounded-xl p-4 mb-6">
           <h3 className="text-sm font-semibold text-primary mb-2 flex items-center gap-2">
@@ -121,7 +196,7 @@ export default function TradingGamePage() {
           {current_round.events.map((evt, idx) => (
             <p key={idx} className="text-sm text-foreground-secondary">
               📰 <strong>{evt.name}</strong>：{evt.description}
-              {evt.impact > 0 ? ' (价格预计上涨)' : ' (价格预计下跌)'}
+              {evt.impact > 0 ? ' (需求侧利好)' : ' (供给增加/需求走弱)'}
             </p>
           ))}
         </div>
@@ -142,6 +217,7 @@ export default function TradingGamePage() {
                     <th className="pb-3 font-medium">商品</th>
                     <th className="pb-3 font-medium">买入价</th>
                     <th className="pb-3 font-medium">卖出价</th>
+                    <th className="pb-3 font-medium">供需</th>
                     <th className="pb-3 font-medium">趋势</th>
                   </tr>
                 </thead>
@@ -150,13 +226,13 @@ export default function TradingGamePage() {
                     <tr
                       key={product.product_id}
                       onClick={() => {
-                        if (!isFinished && !decisionSubmitted) {
+                        if (canAct) {
                           setSelectedProduct(product.product_id);
                           setActionType('buy');
                         }
                       }}
                       className={`border-b border-border-subtle/50 transition-colors ${
-                        !isFinished && !decisionSubmitted ? 'cursor-pointer hover:bg-background-hover' : ''
+                        canAct ? 'cursor-pointer hover:bg-background-hover' : ''
                       } ${selectedProduct === product.product_id ? 'bg-primary-soft' : ''}`}
                     >
                       <td className="py-3">
@@ -165,6 +241,15 @@ export default function TradingGamePage() {
                       </td>
                       <td className="py-3 text-foreground">¥{product.buy_price}</td>
                       <td className="py-3 text-foreground">¥{product.sell_price}</td>
+                      <td className="py-3 text-xs text-foreground-muted">
+                        {(product.pressure ?? 0) > 0.05 ? (
+                          <span className="text-danger">需求偏强</span>
+                        ) : (product.pressure ?? 0) < -0.05 ? (
+                          <span className="text-success">供给偏强</span>
+                        ) : (
+                          '均衡'
+                        )}
+                      </td>
                       <td className="py-3">
                         <span className={`flex items-center gap-1 text-xs ${
                           product.trend === 'up' ? 'text-success' :
@@ -185,17 +270,24 @@ export default function TradingGamePage() {
           </div>
 
           {/* Decision Panel */}
-          {!isFinished && (
+          {!isFinished && isPlaying && (
             <div className="glass-card p-6">
               <h3 className="font-semibold text-foreground mb-4">本回合决策</h3>
+              <p className="text-xs text-foreground-muted mb-4">
+                每回合仅可执行一次操作（买入 / 卖出 / 移动 / 持有）。每种商品最多持有 {productLimit} 件。
+              </p>
 
-              {decisionSubmitted ? (
+              {isWaiting ? (
                 <div className="text-center py-8">
-                  <PauseCircle className="w-12 h-12 mx-auto text-primary mb-3" />
-                  <p className="text-foreground">决策已提交</p>
-                  <p className="text-sm text-foreground-muted mt-1">等待组织者推进下一回合</p>
+                  <Loader2 className="w-12 h-12 mx-auto text-primary mb-3 animate-spin" />
+                  <p className="text-foreground">本回合决策已提交</p>
+                  <p className="text-sm text-foreground-muted mt-1">
+                    {is_practice
+                      ? 'AI 交易员正在行动，即将进入下一回合…'
+                      : '等待组织者推进下一回合'}
+                  </p>
                 </div>
-              ) : (
+              ) : canAct ? (
                 <>
                   {/* Action Type */}
                   <div className="grid grid-cols-4 gap-2 mb-4">
@@ -247,11 +339,16 @@ export default function TradingGamePage() {
                         <input
                           type="number"
                           min={1}
-                          max={event.config?.inventory_limit || 20}
+                          max={Math.max(1, maxQuantity)}
                           value={quantity}
-                          onChange={(e) => setQuantity(Math.max(1, parseInt(e.target.value) || 1))}
+                          onChange={(e) => setQuantity(Math.min(Math.max(1, parseInt(e.target.value) || 1), Math.max(1, maxQuantity)))}
                           className="w-full px-3 py-2.5 bg-background-secondary border border-border-subtle rounded-lg text-foreground focus:outline-none focus:border-primary"
                         />
+                        {actionType === 'buy' && selectedProduct && (
+                          <p className="text-xs text-foreground-muted mt-1">
+                            该商品已持有 {selectedHeld} 件，还可买入 {Math.max(0, productLimit - selectedHeld)} 件
+                          </p>
+                        )}
                       </div>
                       {selectedProduct && (
                         <p className="text-sm text-foreground-muted">
@@ -285,7 +382,7 @@ export default function TradingGamePage() {
                                 : 'bg-background-secondary text-foreground-secondary hover:bg-background-hover'
                             }`}
                           >
-                            {city}
+                            {city === participant.current_city ? cityLabel : (gameState.markets.find(m => m.city === city)?.city_name || city)}
                           </button>
                         ))}
                       </div>
@@ -304,12 +401,17 @@ export default function TradingGamePage() {
 
                   <button
                     onClick={handleSubmit}
-                    disabled={loading || (actionType !== 'hold' && !selectedProduct && !selectedCity)}
+                    disabled={loading || submitting || (actionType !== 'hold' && !selectedProduct && !selectedCity) || (actionType !== 'hold' && maxQuantity < 1)}
                     className="w-full mt-4 py-3 bg-primary text-background rounded-xl font-semibold hover:bg-primary/90 transition-colors disabled:opacity-50 flex items-center justify-center gap-2"
                   >
-                    {loading ? <Loader2 className="w-5 h-5 animate-spin" /> : '确认决策'}
+                    {(loading || submitting) ? <Loader2 className="w-5 h-5 animate-spin" /> : '确认决策'}
                   </button>
                 </>
+              ) : (
+                <div className="text-center py-8 text-sm text-foreground-muted">
+                  <Loader2 className="w-8 h-8 mx-auto text-primary mb-2 animate-spin" />
+                  正在同步对局状态…
+                </div>
               )}
             </div>
           )}
@@ -323,6 +425,9 @@ export default function TradingGamePage() {
             <h3 className="font-semibold text-foreground mb-4 flex items-center gap-2">
               <Package className="w-4 h-4 text-primary" />
               我的库存
+              <span className="text-xs font-normal text-foreground-muted ml-auto">
+                共 {inventory_capacity?.total_items ?? inventory.reduce((s, i) => s + i.quantity, 0)} 件 · 单品种上限 {productLimit}
+              </span>
             </h3>
             {inventory.length > 0 ? (
               <div className="space-y-3">

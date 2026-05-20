@@ -9,6 +9,7 @@ from app.db.database import get_db
 from app.domains.arena.enums import DesignMode, GameEngineId, MatchKind, MatchStatus
 from app.domains.arena.models import ArenaMatch, OrganizerProfile
 from app.domains.arena.services.match_factory import create_practice_match
+from app.domains.arena.services.match_lifecycle import begin_match
 from app.domains.cybercore.registry import get_game_config, list_game_configs
 from app.models.user import User
 from app.domains.arena.serializers import event_to_out
@@ -40,7 +41,7 @@ def start_trading_practice(
     current_user: User = Depends(get_current_active_user),
     db: Session = Depends(get_db),
 ):
-    """创建并进入一场交易赛日常练习（registration 状态，由前端跳转 trading 路由）"""
+    """创建并自动开始一场交易赛日常练习（单人，低权重 XP）"""
     config_id = data.game_config_id or "trading-v1"
     doc = get_game_config(config_id)
     if doc.engine != GameEngineId.trading.value:
@@ -63,6 +64,7 @@ def start_trading_practice(
         title=data.title,
         config_overrides=overrides,
     )
+    begin_match(db, match)
     db.commit()
     db.refresh(match)
     return ApiResponse.ok(data=event_to_out(match, db))
