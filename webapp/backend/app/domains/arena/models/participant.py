@@ -25,6 +25,10 @@ class ArenaParticipant(Base):
     current_city = Column(String(20), default="jingcheng", nullable=False)
     total_assets = Column(Float, default=0, nullable=False)
 
+    # 队伍（可选）：team_id 有值 → 队伍成员；NULL → 个人模式（如浮生记）
+    team_id = Column(Integer, ForeignKey("arena_teams.id"), nullable=True)
+    team_role = Column(String(32), nullable=True)
+
     status = Column(Enum(ParticipantStatus), default=ParticipantStatus.joined, nullable=False)
     final_rank = Column(Integer, nullable=True)
     experience_earned = Column(Integer, default=0, nullable=False)
@@ -33,6 +37,7 @@ class ArenaParticipant(Base):
 
     match = relationship("ArenaMatch", back_populates="participants")
     user = relationship("User", backref="competition_participations")
+    team = relationship("ArenaTeam", back_populates="members")
 
     __table_args__ = (
         UniqueConstraint("event_id", "user_id", name="uq_participant_event_user"),

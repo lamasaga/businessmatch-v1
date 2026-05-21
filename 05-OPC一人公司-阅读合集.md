@@ -2,7 +2,9 @@
 
 > **文档定位**：OPC（一人公司）的**根目录权威阅读版**——合并 `OPC/01～08、99` 的重复叙述，供决策与排期；**规格细则、MCP Schema、SOP 逐日手册**仍在 [`OPC/`](./OPC/) 子目录。
 >
-> **最后更新**：2026-05-19
+> **蓝图定位**：OPC 属于 **Phase E**（高级智能体），当前不抢 Phase A/B 优先级。详见 [04-实施路线与蓝图](./04-实施路线与里程碑.md) §二。
+>
+> **最后更新**：2026-05-21
 
 ---
 
@@ -157,10 +159,10 @@ Atlas / Academy / Quest / Arena / Credenti
 
 | 期 | 重点 | 技术 |
 |----|------|------|
-| **A（0～6 月）** | webapp OPC CRUD + BMC + 手动任务 | FastAPI 已有；无 Agent |
-| **B（6～12 月）** | Cortex + 2 员工 Worker | LangGraph + 2 MCP |
-| **C（12～18 月）** | Gateway + 沙箱部署 | gVisor + ethos |
-| **D（18 月+）** | LAUNCH 真实收入 | 支付 MCP、合规 |
+| **A** | webapp OPC CRUD + BMC + 手动任务（对应蓝图 Phase A～B） | FastAPI 已有；无 Agent |
+| **B** | Cortex + 2 员工 Worker（对应蓝图 Phase C～D） | LangGraph + 2 MCP |
+| **C** | Gateway + 沙箱部署（对应蓝图 Phase E） | gVisor + ethos |
+| **D** | LAUNCH 真实收入（对应蓝图 Phase F+） | 支付 MCP、合规 |
 
 **技术栈选型**：LangGraph（编排）、MCP（工具）、CrewAI 可选（角色组）、PostgreSQL 与主平台共库。
 
@@ -205,7 +207,7 @@ Atlas / Academy / Quest / Arena / Credenti
 
 ### 与主平台路线图对齐
 
-　　OPC **不抢** P0 的 Career / 组织者端 / practice 局；**Phase A** 与 webapp P2 并行，见 [04-实施路线与里程碑](./04-实施路线与里程碑.md)。
+　　OPC **不抢** Phase A 的 Career / 组织者端 / practice 局优先级；OPC 实质开发始于蓝图 **Phase E**，见 [04-实施路线与蓝图](./04-实施路线与里程碑.md) §二。
 
 ---
 

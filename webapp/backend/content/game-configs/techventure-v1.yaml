@@ -1,0 +1,205 @@
+# CyberCore 赛制包 — 创想大赢家 TechVenture v1 (基于 v6.0 引擎)
+id: techventure-v1
+engine: techventure
+design_mode: standalone
+version: "1.0.0"
+meta:
+  name: 创想大赢家 · TechVenture
+  description: 4轮策略商赛——三城布局、三维投入、BQI评分；以队伍为参赛单元
+  theme: techventure
+  education_focus:
+    - 战略路线选择与取舍
+    - 资源分配与投入产出
+    - 市场竞争与博弈
+    - 宣言-行动一致性
+
+defaults:
+  rounds: 4
+  seed_budget: 100
+  round_allowance: 20
+  interest_rate: 0.15
+  route_switch_cost: 5
+  city_expand_cost: 10
+  submit_timeout_minutes: 8
+  practice_ai_count: 5
+  round_weights: [0.15, 0.20, 0.25, 0.40]
+  beta: 0.5
+  sigma: 0.05
+  n_ref: 16
+  a_init: 2.0
+  a_hard: 12.0
+  bqi_last_count: 4
+
+cities:
+  南京:
+    label: 南京市 · 区域中心
+    scale: 1.00
+    eta_fit: 1.10
+    eta_show: 0.90
+    tau_tech: 0.85
+    consumers: { geek: 0.12, pragmatic: 0.58, trendy: 0.30 }
+  合肥:
+    label: 合肥市 · 网红金融
+    scale: 0.85
+    eta_fit: 0.90
+    eta_show: 1.15
+    tau_tech: 0.90
+    consumers: { geek: 0.18, pragmatic: 0.30, trendy: 0.52 }
+  杭州:
+    label: 杭州市 · 科技中心
+    scale: 1.15
+    eta_fit: 1.00
+    eta_show: 1.00
+    tau_tech: 1.00
+    consumers: { geek: 0.25, pragmatic: 0.42, trendy: 0.33 }
+
+routes:
+  TECH:
+    label: 技术驱动型
+    tagline: 埋头研发 · 技术为本
+    brief: 聚焦研发与产品落地，以技术能力建立长期壁垒。
+    r_tech: 1.25
+    r_fit: 1.00
+    r_show: 1.00
+    tech_invest_boost: 1.30
+  USER:
+    label: 用户深耕型
+    tagline: 听懂用户 · 精准击中
+    brief: 围绕真实场景与关键需求做深做细，把体验与口碑变成增长。
+    r_tech: 1.00
+    r_fit: 1.20
+    r_show: 1.00
+    fit_t1: 4.5
+    fit_t2: 6.5
+  BRAND:
+    label: 品牌传播型
+    tagline: 品牌起势 · 声量登顶
+    brief: 以品牌与传播打开声量，更容易在舆论与渠道侧形成破圈。
+    r_tech: 1.00
+    r_fit: 1.00
+    r_show: 1.25
+    can_trigger_hot_pulse: true
+  PATHFINDER:
+    label: 破局奇兵
+    tagline: 小众路线 · 独占红利
+    brief: 走差异化/细分竞争路线，在格局更有利时更容易把优势滚大。
+    r_tech: 1.00
+    r_fit: 1.00
+    r_show: 1.00
+    crowd_curve: { 1: 1.285, 2: 1.200, 3: 0.80, 4: 0.70, 5: 0.60, 6: 0.50, 8: 0.40, 12: 0.30 }
+
+consumer_weights:
+  geek:      { tech: 0.55, fit: 0.30, show: 0.15 }
+  pragmatic: { tech: 0.22, fit: 0.60, show: 0.18 }
+  trendy:    { tech: 0.18, fit: 0.22, show: 0.60 }
+
+growth_rate_table:
+  - { upto: 2.0,  rate: 1.20 }
+  - { upto: 4.0,  rate: 1.08 }
+  - { upto: 5.5,  rate: 0.95 }
+  - { upto: 7.0,  rate: 0.80 }
+  - { upto: 8.0,  rate: 0.60 }
+  - { upto: 9.0,  rate: 0.38 }
+  - { upto: 9.5,  rate: 0.20 }
+  - { upto: 10.0, rate: 0.10 }
+  - { upto: 10.5, rate: 0.05 }
+  - { upto: 12.0, rate: 0.02 }
+
+tech_overload_kappa:
+  - { upto: 20,   kappa: 1.00 }
+  - { upto: 30,   kappa: 0.80 }
+  - { upto: 45,   kappa: 0.50 }
+  - { upto: 65,   kappa: 0.30 }
+  - { upto: 99999, kappa: 0.15 }
+
+fit_weights: { investment: 0.50, rank: 0.50 }
+show_weights: { investment: 0.10, rank: 0.90 }
+show_b_max: 2.5
+fit_growth_scale: 2.0
+show_halo_weight: 0.10
+fit_t1: 5.0
+fit_t2: 7.5
+fit_t1_bonus: 0.05
+fit_t2_bonus: 0.08
+
+route_crowd_utility:
+  TECH:       { geek: 0.20, pragmatic: 0.12, trendy: 0.25 }
+  USER:       { geek: 0.20, pragmatic: 0.12, trendy: 0.25 }
+  BRAND:      { geek: 0.20, pragmatic: 0.12, trendy: 0.25 }
+  PATHFINDER: { geek: 0.10, pragmatic: 0.10, trendy: 0.10 }
+
+ceiling_city:
+  base_const: 0.10
+  q_coeff: 0.10
+  cap: 0.95
+  maturity_min: 0.70
+  maturity_range: 0.30
+  crowd_lift: 0.10
+  show_lift: 0.18
+  show_lift_ref: 30
+
+bqi_rules:
+  tech_last_third: -0.10
+  fit_last_third: -0.10
+  marketing_over: -0.15
+  all_round: 0.12
+  declaration_direction_base: 0.04
+  declaration_direction_double: 0.06
+  declaration_direction_triple: 0.09
+  declaration_vision_bonus: 0.03
+  declaration_reward_cap: 0.10
+  declaration_deviation_minor: -0.03
+  floor: 0.60
+  ceil: 1.20
+
+momentum:
+  decay: 0.40
+  r1: 0.60
+  r2: 0.30
+  r3: 0.10
+
+hot_pulse:
+  eligible_routes: [BRAND]
+  tiers:
+    - { threshold: 0.5, bonus: 0.5, label: 上了本地热搜 }
+    - { threshold: 1.5, bonus: 1.2, label: 登上全国热榜 }
+    - { threshold: 2.5, bonus: 2.0, label: 现象级爆款全网刷屏 }
+    - { threshold: 4.5, bonus: 2.5, label: 超级爆款连续霸榜 }
+
+follow_on:
+  max_base: 15
+  floor: 3
+
+declaration_keywords:
+  tech: [技术, 研发, 算法, 性能, 功能, 升级, 核心, 突破, 创新, 工程, 架构, 智能, 模型, 传感, 精度]
+  fit:  [用户, 调研, 需求, 体验, 交互, 实用, 场景, 痛点, 人性化, 反馈, 问卷, 贴心, 易用, 陪伴, 定制]
+  show: [展示, 设计, 外观, 包装, 品牌, 故事, 营销, 传播, 颜值, 视觉, 风格, 形象, 叙事, 口碑, 推广]
+  vision: [愿景, 使命, 改变, 未来, 梦想, 初心, 解决, 普惠, 赋能, 创业, 坚持, 迭代, 挑战, 成长, 学习, 探索, 勇气, 信任, 责任, 公平, 环保, 可持续, 守护, 关怀, 温度, 真诚]
+
+declaration_min_investment:
+  tech: 0.30
+  fit: 0.25
+  show: 0.20
+
+declaration_deviation_threshold_pp: 0.25
+
+event_types:
+  - { id: none,            label: 无事件,      desc: 平稳回合，市场无特殊变化。 }
+  - { id: pragmaticWave,   label: 用户口味大变, desc: 三城 Pragmatic 群体占比 +10pp，用户匹配身价暴涨。 }
+  - { id: geekWave,        label: 技术突破浪潮, desc: 三城 Geek 群体占比 +15pp，技术力成为焦点。 }
+  - { id: trendyWave,      label: 社交媒体爆发, desc: 三城 Trendy 群体占比 +10pp，展示力话题连天。 }
+  - { id: investorBoom,    label: 投资狂潮,    desc: 全场投资热情飙升：所有队伍额外获得 30 万追加投资。 }
+  - { id: compliance,      label: 政策合规,    desc: 营销过度罚则 ×1.5，品牌过火者被加倍打击。 }
+  - { id: influencerBoom,  label: 网红崛起,    desc: 合肥市场规模 0.85 → 1.10，潮流之城含金量飙升。 }
+
+rewards:
+  official:
+    participate: 150
+    top50_bonus: 150
+    top20_bonus: 250
+    first_place_bonus: 600
+  practice:
+    participate: 50
+    top50_bonus: 50
+    top20_bonus: 80
+    first_place_bonus: 150

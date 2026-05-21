@@ -18,6 +18,8 @@ def run_migrations(engine: Engine) -> None:
             ("competition_events", "design_mode", "VARCHAR(20) DEFAULT 'standalone' NOT NULL"),
             ("competition_events", "game_config_id", "VARCHAR(64) DEFAULT 'trading-v1' NOT NULL"),
             ("competition_participants", "is_ai", "INTEGER DEFAULT 0 NOT NULL"),
+            ("competition_participants", "team_id", "INTEGER"),
+            ("competition_participants", "team_role", "VARCHAR(32)"),
         ]
         for table, col, ddl in alters:
             if not _has_column(engine, table, col):

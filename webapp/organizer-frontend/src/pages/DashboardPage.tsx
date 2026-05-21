@@ -63,7 +63,11 @@ export default function DashboardPage() {
             <button
               key={ev.id}
               type="button"
-              onClick={() => navigate(`/events/${ev.id}`)}
+              onClick={() => navigate(
+                ev.game_config_id?.startsWith('techventure')
+                  ? `/events/${ev.id}/techventure`
+                  : `/events/${ev.id}`
+              )}
               className="w-full glass-card p-5 flex items-center gap-4 text-left hover:border-primary/30 transition-colors"
             >
               <div className="w-12 h-12 rounded-xl bg-primary/15 flex items-center justify-center shrink-0">
@@ -72,8 +76,9 @@ export default function DashboardPage() {
               <div className="flex-1 min-w-0">
                 <p className="font-semibold truncate">{ev.title}</p>
                 <p className="text-sm text-foreground-muted mt-0.5">
+                  {ev.game_config_id?.startsWith('techventure') ? 'TechVenture' : '浮生记'}{' · '}
                   {STATUS_LABEL[ev.status] || ev.status} · {ev.participant_count ?? 0} 人 · 第{' '}
-                  {ev.current_round}/{String(ev.config?.rounds ?? 10)} 回合
+                  {ev.current_round}/{String(ev.config?.rounds ?? (ev.game_config_id?.startsWith('techventure') ? 4 : 10))} 回合
                 </p>
               </div>
               <ChevronRight className="w-5 h-5 text-foreground-muted shrink-0" />

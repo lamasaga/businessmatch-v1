@@ -1,4 +1,6 @@
-# inspire/reference · 参考资料
+# inspire/f早期调研 · 早期调研与参考资料
+
+> 原 `inspire/reference/`；竞品赛制、性格框架、伦理参考。
 
 | 文件 | 用途 |
 |------|------|

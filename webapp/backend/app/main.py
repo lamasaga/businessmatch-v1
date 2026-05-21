@@ -17,6 +17,7 @@ from app.core.response import (
 )
 from app.core.middleware import RequestLoggingMiddleware
 from app.api import auth, wiki, courses, opc, organizer, competitions, trading, trading_ws, practice
+from app.api import techventure as techventure_api, techventure_admin
 from fastapi.exceptions import RequestValidationError, HTTPException as FastAPIHTTPException
 
 settings = get_settings()
@@ -76,6 +77,8 @@ app.include_router(competitions.router, prefix="/api/v1")
 app.include_router(trading.router, prefix="/api/v1")
 app.include_router(trading_ws.router, prefix="/api/v1")
 app.include_router(practice.router, prefix="/api/v1")
+app.include_router(techventure_api.router, prefix="/api/v1")
+app.include_router(techventure_admin.router, prefix="/api/v1")
 
 
 @app.get("/", response_model=ApiResponse[dict])

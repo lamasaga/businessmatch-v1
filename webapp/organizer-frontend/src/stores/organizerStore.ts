@@ -25,6 +25,8 @@ interface OrganizerState {
     title: string;
     description?: string;
     max_players?: number;
+    game_config_id?: string;
+    game_type?: string;
     config?: Record<string, unknown>;
   }) => Promise<CompetitionEvent>;
   startEvent: (eventId: number) => Promise<void>;
@@ -111,11 +113,18 @@ export const useOrganizerStore = create<OrganizerState>((set) => ({
   createEvent: async (data) => {
     set({ loading: true, error: null });
     try {
+      const gameType = data.game_type || 'trading';
+      const configId = data.game_config_id || 'trading-v2-rts';
+      const mergedConfig = configId.startsWith('techventure')
+        ? (data.config || {})
+        : { ...DEFAULT_RTS_CONFIG, ...data.config };
       const res = await api.post<ApiResponse<CompetitionEvent>>('/api/v1/competitions', {
-        ...data,
-        game_type: 'trading',
-        game_config_id: 'trading-v2-rts',
-        config: { ...DEFAULT_RTS_CONFIG, ...data.config },
+        title: data.title,
+        description: data.description,
+        max_players: data.max_players,
+        game_type: gameType,
+        game_config_id: configId,
+        config: mergedConfig,
       });
       const event = res.data.data!;
       set((s) => ({ events: [event, ...s.events], loading: false }));

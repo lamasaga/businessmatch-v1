@@ -29,6 +29,7 @@ class GameEngineId(str, enum.Enum):
     """运行时引擎插件 ID（对应 app/games/<engine>/）"""
 
     trading = "trading"
+    techventure = "techventure"
     negotiation = "negotiation"
     strategy = "strategy"
 

@@ -1,17 +1,25 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useCompetitionStore } from '../../stores/competitionStore';
+import { useTechVentureStore } from '../../stores/techventureStore';
 import {
   Trophy, Search, Users, Clock, ArrowRight,
-  TrendingUp, MapPin, Zap, Bot, Sparkles, Loader2, Play,
+  TrendingUp, MapPin, Zap, Bot, Sparkles, Loader2, Play, Briefcase,
 } from 'lucide-react';
+
+function gameRoute(eventId: number, configId?: string): string {
+  if (configId?.startsWith('techventure')) return `/games/${eventId}/techventure`;
+  return `/games/${eventId}/play`;
+}
 
 export default function GamesPage() {
   const navigate = useNavigate();
-  const { events, fetchEvents, joinEvent, startPractice, loading, error } = useCompetitionStore();
+  const { events, fetchEvents, joinEvent, startPractice, loading } = useCompetitionStore();
+  const tvStore = useTechVentureStore();
   const [roomCode, setRoomCode] = useState('');
   const [joinError, setJoinError] = useState('');
   const [activeTab, setActiveTab] = useState<'public' | 'my'>('public');
+  const [tvLoading, setTvLoading] = useState(false);
 
   useEffect(() => {
     fetchEvents();
@@ -38,6 +46,19 @@ export default function GamesPage() {
       navigate(`/games/${event.id}/play`);
     } catch (err: any) {
       setJoinError(err.message || '练习局创建失败');
+    }
+  };
+
+  const handleStartTvPractice = async () => {
+    setJoinError('');
+    setTvLoading(true);
+    try {
+      const result = await tvStore.startPractice();
+      navigate(`/games/${result.event_id}/techventure`);
+    } catch (err: any) {
+      setJoinError(err.message || 'TechVenture 练习创建失败');
+    } finally {
+      setTvLoading(false);
     }
   };
 
@@ -75,6 +96,33 @@ export default function GamesPage() {
             className="px-6 py-2.5 bg-accent-teal text-background rounded-xl font-semibold hover:bg-accent-teal/90 transition-colors disabled:opacity-50 flex items-center justify-center gap-2 shrink-0"
           >
             {loading ? <Loader2 className="w-4 h-4 animate-spin" /> : <Play className="w-4 h-4" />}
+            开始练习
+          </button>
+        </div>
+      </div>
+
+      {/* TechVenture Daily practice */}
+      <div className="glass-card p-6 mb-8 border border-purple-500/20 bg-purple-500/5">
+        <div className="flex flex-col md:flex-row md:items-center gap-4">
+          <div className="w-12 h-12 rounded-xl bg-purple-500/20 flex items-center justify-center shrink-0">
+            <Briefcase className="w-6 h-6 text-purple-400" />
+          </div>
+          <div className="flex-1">
+            <h3 className="font-semibold text-foreground flex items-center gap-2">
+              创想大赢家 · 日常练习
+              <Sparkles className="w-4 h-4 text-purple-400" />
+            </h3>
+            <p className="text-sm text-foreground-muted mt-1">
+              4 轮策略商赛：三城布局 + 四条路线 + BQI 评分，与 5 支 AI 队伍对决
+            </p>
+          </div>
+          <button
+            type="button"
+            onClick={handleStartTvPractice}
+            disabled={tvLoading}
+            className="px-6 py-2.5 bg-purple-500 text-white rounded-xl font-semibold hover:bg-purple-500/90 transition-colors disabled:opacity-50 flex items-center justify-center gap-2 shrink-0"
+          >
+            {tvLoading ? <Loader2 className="w-4 h-4 animate-spin" /> : <Play className="w-4 h-4" />}
             开始练习
           </button>
         </div>
@@ -146,7 +194,11 @@ export default function GamesPage() {
           {events.map((event) => (
             <div
               key={event.id}
-              onClick={() => navigate(`/games/${event.id}/lobby`)}
+              onClick={() => navigate(
+                event.status === 'playing'
+                  ? gameRoute(event.id, event.game_config_id)
+                  : `/games/${event.id}/lobby`
+              )}
               className="glass-card p-5 cursor-pointer hover:border-primary/30 transition-all group"
             >
               <div className="flex items-start justify-between mb-4">

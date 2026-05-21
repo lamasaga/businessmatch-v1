@@ -14,6 +14,8 @@ import ShowcasePage from './pages/Showcase/ShowcasePage';
 import GamesPage from './pages/Games/GamesPage';
 import GameLobbyPage from './pages/Games/GameLobbyPage';
 import TradingGamePage from './pages/Games/TradingGamePage';
+import TechVenturePlayPage from './pages/Games/TechVenturePlayPage';
+import TechVentureLobbyPage from './pages/Games/TechVentureLobbyPage';
 import WikiPage from './pages/Wiki/WikiPage';
 import WikiArticlePage from './pages/Wiki/WikiArticlePage';
 import CoursesPage from './pages/Courses/CoursesPage';
@@ -115,6 +117,22 @@ function App() {
               element={
                 <AuthGuard requireAuth>
                   <TradingGamePage />
+                </AuthGuard>
+              }
+            />
+            <Route
+              path="games/:id/techventure/lobby"
+              element={
+                <AuthGuard requireAuth>
+                  <TechVentureLobbyPage />
+                </AuthGuard>
+              }
+            />
+            <Route
+              path="games/:id/techventure"
+              element={
+                <AuthGuard requireAuth>
+                  <TechVenturePlayPage />
                 </AuthGuard>
               }
             />

@@ -7,8 +7,10 @@ from app.models.opc import OneCompany, AIEmployee, AITask
 from app.domains.arena.models import OrganizerProfile
 from app.domains.arena.models.match import ArenaMatch  # noqa: F401
 from app.domains.arena.models.participant import ArenaParticipant  # noqa: F401
+from app.domains.arena.models.team import ArenaTeam  # noqa: F401
 from app.domains.career.models.xp_event import XpEvent  # noqa: F401
 from app.games.trading.models import TradingRound, TradingDecision, TradingPrice  # noqa: F401
+from app.games.techventure.models import TvTeamState, TvRound, TvSubmission, TvSnapshot, TvNews  # noqa: F401
 from app.games.trading.bot_users import ensure_bot_traders
 from app.core.security import get_password_hash
 

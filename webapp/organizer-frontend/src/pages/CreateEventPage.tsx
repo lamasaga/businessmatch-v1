@@ -1,9 +1,16 @@
 import { useState, type FormEvent, type ReactNode } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { ArrowLeft, Plus, Loader2, Settings, Users, Coins, Clock } from 'lucide-react';
+import { ArrowLeft, Plus, Loader2, Settings, Users, Coins, Clock, Briefcase, Zap } from 'lucide-react';
 import { useOrganizerStore } from '../stores/organizerStore';
 
-const DURATION_OPTIONS = [
+type GamePreset = 'rts' | 'techventure';
+
+const PRESET_META: Record<GamePreset, { label: string; subtitle: string; game_config_id: string; game_type: string }> = {
+  rts: { label: '浮生记 RTS', subtitle: '六城十品即时倒卖 · 5 秒 tick', game_config_id: 'trading-v2-rts', game_type: 'trading' },
+  techventure: { label: '创想大赢家', subtitle: '4 轮三城策略 · 队伍制 · BQI 评分', game_config_id: 'techventure-v1', game_type: 'techventure' },
+};
+
+const RTS_DURATION_OPTIONS = [
   { key: 'short', label: '快速局', minutes: 8 },
   { key: 'standard', label: '标准局', minutes: 10 },
   { key: 'long', label: '完整局', minutes: 12 },
@@ -13,6 +20,7 @@ export default function CreateEventPage() {
   const navigate = useNavigate();
   const { createEvent, loading, error } = useOrganizerStore();
 
+  const [gamePreset, setGamePreset] = useState<GamePreset>('rts');
   const [formData, setFormData] = useState({
     title: '',
     description: '',
@@ -21,22 +29,36 @@ export default function CreateEventPage() {
     initial_capital: 50000,
   });
 
+  const preset = PRESET_META[gamePreset];
+
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
     try {
+      const config: Record<string, unknown> =
+        gamePreset === 'rts'
+          ? {
+              mode: 'rts',
+              duration_preset: formData.duration_preset,
+              initial_capital: formData.initial_capital,
+            }
+          : { rounds: 4 };
+
       const event = await createEvent({
         title: formData.title,
         description: formData.description,
         max_players: formData.max_players,
-        config: {
-          mode: 'rts',
-          duration_preset: formData.duration_preset,
-          initial_capital: formData.initial_capital,
-        },
+        game_config_id: preset.game_config_id,
+        game_type: preset.game_type,
+        config,
       });
-      navigate(`/events/${event.id}`);
+
+      if (gamePreset === 'techventure') {
+        navigate(`/events/${event.id}/techventure`);
+      } else {
+        navigate(`/events/${event.id}`);
+      }
     } catch {
-      /* store */
+      /* store handles error */
     }
   };
 
@@ -52,11 +74,48 @@ export default function CreateEventPage() {
         </button>
         <div>
           <h1 className="text-2xl font-bold">创建比赛</h1>
-          <p className="text-sm text-foreground-muted">浮生记 RTS · 5 秒 tick 即时商战</p>
+          <p className="text-sm text-foreground-muted">{preset.label} · {preset.subtitle}</p>
         </div>
       </div>
 
       <form onSubmit={handleSubmit} className="space-y-6">
+        {/* Game type selector */}
+        <section className="glass-card p-6 space-y-4">
+          <h3 className="font-semibold flex items-center gap-2">
+            <Settings className="w-4 h-4 text-primary" />
+            选择赛制
+          </h3>
+          <div className="grid grid-cols-2 gap-3">
+            <button
+              type="button"
+              onClick={() => setGamePreset('rts')}
+              className={`p-4 rounded-xl border text-left transition-colors ${
+                gamePreset === 'rts'
+                  ? 'border-emerald-500 bg-emerald-500/10'
+                  : 'border-border-subtle hover:border-primary/40'
+              }`}
+            >
+              <Zap className={`w-5 h-5 mb-2 ${gamePreset === 'rts' ? 'text-emerald-400' : 'text-foreground-muted'}`} />
+              <p className="font-semibold">浮生记 RTS</p>
+              <p className="text-xs text-foreground-muted mt-1">六城十品即时倒卖 · 5 秒 tick</p>
+            </button>
+            <button
+              type="button"
+              onClick={() => setGamePreset('techventure')}
+              className={`p-4 rounded-xl border text-left transition-colors ${
+                gamePreset === 'techventure'
+                  ? 'border-purple-500 bg-purple-500/10'
+                  : 'border-border-subtle hover:border-primary/40'
+              }`}
+            >
+              <Briefcase className={`w-5 h-5 mb-2 ${gamePreset === 'techventure' ? 'text-purple-400' : 'text-foreground-muted'}`} />
+              <p className="font-semibold">创想大赢家</p>
+              <p className="text-xs text-foreground-muted mt-1">4 轮三城策略 · 队伍制 · BQI 评分</p>
+            </button>
+          </div>
+        </section>
+
+        {/* Basic info */}
         <section className="glass-card p-6 space-y-4">
           <h3 className="font-semibold flex items-center gap-2">
             <Settings className="w-4 h-4 text-primary" />
@@ -93,43 +152,63 @@ export default function CreateEventPage() {
           </div>
         </section>
 
-        <section className="glass-card p-6 space-y-4">
-          <h3 className="font-semibold flex items-center gap-2">
-            <Clock className="w-4 h-4 text-primary" />
-            比赛时长
-          </h3>
-          <div className="grid grid-cols-3 gap-3">
-            {DURATION_OPTIONS.map((opt) => (
-              <button
-                key={opt.key}
-                type="button"
-                onClick={() => setFormData({ ...formData, duration_preset: opt.key })}
-                className={`p-4 rounded-xl border text-left transition-colors ${
-                  formData.duration_preset === opt.key
-                    ? 'border-primary bg-primary/10'
-                    : 'border-border-subtle hover:border-primary/40'
-                }`}
-              >
-                <p className="font-semibold">{opt.label}</p>
-                <p className="text-xs text-foreground-muted mt-1">{opt.minutes} 分钟</p>
-              </button>
-            ))}
-          </div>
-          <Field icon={Coins} label="初始资金">
-            <input
-              type="number"
-              step={10000}
-              value={formData.initial_capital}
-              onChange={(e) =>
-                setFormData({
-                  ...formData,
-                  initial_capital: parseInt(e.target.value, 10) || 50000,
-                })
-              }
-              className="w-full px-3 py-2 bg-background-secondary border border-border-subtle rounded-lg"
-            />
-          </Field>
-        </section>
+        {/* RTS-specific settings */}
+        {gamePreset === 'rts' && (
+          <section className="glass-card p-6 space-y-4">
+            <h3 className="font-semibold flex items-center gap-2">
+              <Clock className="w-4 h-4 text-primary" />
+              比赛时长
+            </h3>
+            <div className="grid grid-cols-3 gap-3">
+              {RTS_DURATION_OPTIONS.map((opt) => (
+                <button
+                  key={opt.key}
+                  type="button"
+                  onClick={() => setFormData({ ...formData, duration_preset: opt.key })}
+                  className={`p-4 rounded-xl border text-left transition-colors ${
+                    formData.duration_preset === opt.key
+                      ? 'border-primary bg-primary/10'
+                      : 'border-border-subtle hover:border-primary/40'
+                  }`}
+                >
+                  <p className="font-semibold">{opt.label}</p>
+                  <p className="text-xs text-foreground-muted mt-1">{opt.minutes} 分钟</p>
+                </button>
+              ))}
+            </div>
+            <Field icon={Coins} label="初始资金">
+              <input
+                type="number"
+                step={10000}
+                value={formData.initial_capital}
+                onChange={(e) =>
+                  setFormData({
+                    ...formData,
+                    initial_capital: parseInt(e.target.value, 10) || 50000,
+                  })
+                }
+                className="w-full px-3 py-2 bg-background-secondary border border-border-subtle rounded-lg"
+              />
+            </Field>
+          </section>
+        )}
+
+        {/* TechVenture-specific info */}
+        {gamePreset === 'techventure' && (
+          <section className="glass-card p-6 space-y-3">
+            <h3 className="font-semibold flex items-center gap-2">
+              <Briefcase className="w-4 h-4 text-purple-400" />
+              TechVenture 赛制说明
+            </h3>
+            <ul className="text-sm text-foreground-muted space-y-1.5">
+              <li>· 固定 4 轮决策，每轮 8 分钟提交窗口</li>
+              <li>· 每队选择一条策略路线（技术 / 用户 / 品牌 / 破局奇兵）</li>
+              <li>· 三座城市布局（南京 / 合肥 / 杭州），分配 Tech / Fit / Show 投入</li>
+              <li>· BQI 综合评分 + 加权排名 → 最终冠军</li>
+              <li>· 创建后在控场页面建队，学生加入后选择队伍</li>
+            </ul>
+          </section>
+        )}
 
         {error && <p className="text-sm text-danger">{error}</p>}
 

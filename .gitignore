@@ -6,5 +6,7 @@ __pycache__/
 .DS_Store
 *.db
 node_modules/
+# 旧版 Node 参考实现（迁移用，不纳入仓库）
+TechVenture/
 .env
 .env.*

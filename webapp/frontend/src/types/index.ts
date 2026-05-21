@@ -192,6 +192,7 @@ export interface CompetitionEvent {
   title: string;
   description?: string;
   game_type: string;
+  game_config_id?: string;
   status: 'draft' | 'registration' | 'playing' | 'finished' | 'cancelled';
   config: CompetitionConfig;
   max_players: number;

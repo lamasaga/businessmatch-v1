@@ -43,6 +43,8 @@ export interface CompetitionEvent {
   room_code: string;
   title: string;
   description?: string;
+  game_type?: string;
+  game_config_id?: string;
   status: string;
   config: Record<string, unknown>;
   max_players: number;

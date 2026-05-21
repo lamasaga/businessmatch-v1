@@ -1,0 +1,136 @@
+---
+description: 商域 BizSim Edu 蓝图编程规范 — 约束 AI 在文档定义的域边界、路由归属、表归属、架构原则内编程
+alwaysApply: true
+---
+
+# 蓝图编程规范（Blueprint Coding）
+
+本项目主要依赖 AI 辅助编程。根目录 `00～09` 是 AI 编程会话的**权威上下文锚点**。所有代码产出须在文档定义的框架内，不得偏离。
+
+---
+
+## 1 域边界（硬性）
+
+后端按域分包，每个域拥有**独占的表和服务**。跨域操作只能通过 API 调用或域事件，禁止直接 import 他域私有模型写入。
+
+| 域 | 代码路径 | 拥有的表（示例） | 禁止 |
+|----|---------|------------------|------|
+| **identity** | `models/user.py` · `api/auth.py` | `users` | 其他域直接改 `users.experience` |
+| **arena** | `domains/arena/` · `api/{competitions,trading,organizer,practice}.py` | `competition_events` · `competition_participants` · `organizer_profiles` · `arena_teams` | 在 `games/` 中直接建/改 arena 表 |
+| **cybercore** | `domains/cybercore/` · `content/game-configs/` | — (YAML 配置) | 在赛制引擎中硬编码规则，不读 YAML |
+| **games/trading** | `games/trading/*.py` | `trading_rounds` · `trading_decisions` · `trading_prices` | 跳过 arena 域直接操作 `competition_events` |
+| **games/techventure** | `games/techventure/*.py` | `tv_team_state` · `tv_rounds` · `tv_submissions` · `tv_snapshots` · `tv_news` | 跳过 arena 域直接操作 `competition_events` / `arena_teams` |
+| **career** | `domains/career/` | `xp_events` · (未来 `career_profiles`) | trading 直接改 `user.xp`；必须走 `grant_xp` / `settle_match_rewards` |
+| **opc** | `api/opc.py` · `models/opc.py` | `one_companies` · `ai_employees` · `ai_tasks` | 当前阶段(Phase A/B)不投入 OPC 开发 |
+
+**`models/trading_competition.py` 仅为 re-export 兼容层，禁止在其中写入新业务逻辑。**
+
+---
+
+## 2 路由归属
+
+新增路由必须归入 `08-` §2.7 定义的正确 API 模块，挂载在 `app/main.py` 的 `/api/v1` 前缀下。
+
+| 范围 | 归入 | 文件 |
+|------|------|------|
+| 认证/用户 | auth | `api/auth.py` |
+| 比赛 CRUD / 房间码 / 生命周期 | competitions | `api/competitions.py` |
+| 对局状态 / 决策 / 结算 | trading | `api/trading.py` |
+| WebSocket 订阅 | trading_ws | `api/trading_ws.py` |
+| 练习赛开赛 / 配置列表 | practice | `api/practice.py` |
+| 组织者档案 | organizer | `api/organizer.py` |
+| TechVenture 参赛端 | techventure | `api/techventure.py` |
+| TechVenture 组织/大屏/评委 | techventure_admin | `api/techventure_admin.py` |
+| 课程 / Wiki / OPC | 各自独立 | `api/{courses,wiki,opc}.py` |
+
+禁止创建不在此表中的新路由模块而不先更新 `08-` §2.7 + `main.py`。
+
+---
+
+## 3 赛制扩展（CyberCore 规范）
+
+新增赛制必须走声明式配置包，**禁止克隆** `trading.py`。
+
+1. 新增 `webapp/backend/content/game-configs/<id>.yaml`
+2. 新增 `webapp/backend/app/games/<engine>/`（models + engine）
+3. 可选：`api/practice.py` 增加该赛制的练习入口
+4. **不改 Arena 表结构**（除非是通用字段扩展）
+
+详见 `webapp/backend/app/domains/arena/ARCHITECTURE.md`。
+
+---
+
+## 4 RTS 实时架构（硬性）
+
+浮生记 RTS 采用**调度器单写者**模式。HTTP 端点**只读不推进 tick**。
+
+| 规则 | 说明 |
+|------|------|
+| tick 推进 | **仅** `rts_scheduler.py` → `maybe_advance_rts` |
+| HTTP `/state` | 只读。禁止在 GET 处理器中调用任何写入/推进函数 |
+| HTTP `/actions` | 排队指令，下次 tick 结算。不触发即时推进 |
+| WS 广播 | `commit` 之后才 `broadcast`；禁止 commit 前发 `finished` |
+| 回合制推进 | 练习局由 `practice_flow.py` 在人类提交后原子推进（同一事务内 AI 决策 + advance） |
+
+---
+
+## 5 数据库纪律
+
+| 规则 | 说明 |
+|------|------|
+| **一个库** | 禁止为组织者端/学生端/赛制各建独立 SQLite |
+| **一个 API 进程** | 禁止为组织者端单独起第二套后端 |
+| **幂等写入** | `xp_events` 使用 `idempotency_key` 防重复；赛后入账必须走 `settle_match_rewards` |
+| **事务原子性** | 练习局的"人类决策 + AI 决策 + 回合推进"须在同一事务内完成，最后统一 commit |
+| **`trading_competition.py`** | 仅 re-export，新代码写到 `domains/arena/models/` 或 `games/trading/models.py` |
+
+---
+
+## 6 前端纪律
+
+| 规则 | 说明 |
+|------|------|
+| 学生端 | `webapp/frontend/`（:5173）；禁止包含组织者控场页面 |
+| 组织者端 | `webapp/organizer-frontend/`（:5174）；独立 Vite 工程 |
+| 状态管理 | Zustand：`authStore` · `careerStore`(persist) · `competitionStore` · `tradingStore` · `techventureStore` · `OPCStore` |
+| Mock 边界 | `data/mockPlatform.ts` 仅供演示；新功能**必须对接后端 API**，不得新增 mock 数据源 |
+| RTS 实时 | 使用 `lib/rtsWebSocket.ts` 订阅 tick；30s 兜底轮询仅作 fallback |
+
+---
+
+## 7 Phase 优先级
+
+当前处于 **Phase A（商赛引擎闭环）**。以下优先级排序约束开发行为：
+
+| 优先级 | 可以做 | 不该做 |
+|--------|--------|--------|
+| **Phase A（当前）** | Career 前端对接 · 正式赛控场完善 · contracts/ 契约 · TechVenture 赛制引擎 | — |
+| **Phase B** | Athena-Debrief 规则模板 · Quest 服务 · PG 迁移 | 跳过规则层直接上 LLM Agent |
+| **Phase C～D** | LangGraph 编排 · Persona · 知识图谱 | 在 Phase A 阶段投入 |
+| **Phase E** | OPC LangGraph + MCP | 在 Phase A/B 阶段抢 OPC 进度 |
+
+**AI 编程会话中，若用户未明确指定，默认只做 Phase A 范围内的工作。**
+
+---
+
+## 8 编码风格
+
+- **Python**：FastAPI + SQLAlchemy 2；类型注解；函数式优先于类继承
+- **TypeScript**：React 19 + Zustand + Tailwind；函数组件；避免 `any`
+- **注释**：只注释非显而易见的意图和约束，不写叙述性注释
+- **命名**：后端蛇形（`match_kind`）；前端驼峰（`matchKind`）；数据库表名蛇形复数（`xp_events`）
+- **错误处理**：后端用 `HTTPException`；前端用 try-catch + toast；禁止静默吞异常
+
+---
+
+## 9 会话开始时的自检
+
+每次编程会话开始时，AI 应确认：
+
+1. 本次任务属于哪个 **Phase**？是否超出当前阶段？
+2. 涉及哪些**域**？是否存在跨域写入风险？
+3. 是否需要新增路由？归入哪个 API 模块？
+4. 是否需要新建表？唯一主人域是谁？
+5. 是否涉及 RTS？须遵守调度器单写者模式
+
+若任一项有疑问，应向用户确认后再动手。
