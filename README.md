@@ -25,6 +25,8 @@
 
 **协作纪律**：大型更新后推送 GitHub 前，须先对齐根目录 `00～09` 说明文档（见 [`.cursor/rules/docs-align-before-push.mdc`](./.cursor/rules/docs-align-before-push.mdc)）
 
+**架构决策（ADR）**：跨对话「为什么这样定」见 [`docs/decisions/`](./docs/decisions/README.md)（含何时写、初学者说明、001～008 基线决策）
+
 **终局出口（并列）**：[`05-` OPC](./05-OPC一人公司-阅读合集.md) · [`07-` 拟真城市](./07-拟真城市与区域模拟-阅读合集.md)（详设 [`inspire/75-`](./inspire/75-拟真城市世界观设计.md)）
 
 **灵感与归档**：[`inspire/50-目录导航`](./inspire/50-目录导航.md) · 历史长文 [`11-`](./inspire/11-平台整体设计方案v2.0.md)、[`12-`](./inspire/12-赛事体系架构与性格适配.md) · 工程规划 [`d商业模拟教育平台/`](./inspire/d商业模拟教育平台/)
@@ -104,6 +106,11 @@
   7. 避免在会话中途大幅变更目标
      AI 的上下文窗口有限。如果上半场在修 trading bug，下半场突然要
      重构 career 域，建议开新会话，并在开场重新声明范围。
+
+  8. 重大选型后写 ADR
+     换技术方案、改域边界、推翻旧做法时，见 docs/decisions/README.md §二。
+     不必记编号：让 AI「按 adr-writing 规则检查本次要不要写 ADR」即可。
+     涉及已有决策时 @ 对应文件，如 docs/decisions/005-浮生记RTS调度器单写者.md
 -->
 
 ---

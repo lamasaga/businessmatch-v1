@@ -1,0 +1,82 @@
+---
+description: ADR 编写触发与格式 — 架构选型后写入 docs/decisions，供跨会话记忆
+alwaysApply: true
+---
+
+# ADR 编写规范（Architecture Decision Record）
+
+<!-- 给项目主理人：你不需要背 ADR。只要重大选型后对照 docs/decisions/README.md §二 的 M/R 表即可。 -->
+
+完整说明、索引、初学者注释见 **[`docs/decisions/README.md`](../../docs/decisions/README.md)**。模板：**[`docs/decisions/_template.md`](../../docs/decisions/_template.md)**。
+
+---
+
+## 1 何时写（声明式触发 — AI 须主动提醒）
+
+### 1.1 必须写 ADR（满足任一即在本会话收尾前完成）
+
+| ID | 条件 |
+|----|------|
+| M1 | ≥2 个可行方案中做了架构/技术选型 |
+| M2 | 引入或更换核心依赖/框架（ORM、Zustand 替代、LangGraph 等） |
+| M3 | 变更域边界、表主人、API 模块归属 |
+| M4 | 变更全局模式：进程数、数据库个数、tick/结算推进权 |
+| M5 | 接受明显 trade-off（为简便牺牲安全/性能/可测性） |
+| M6 | 推翻已有 ADR → 旧 ADR 标「已取代」，新建 ADR 引用编号 |
+
+### 1.2 建议写 ADR
+
+| ID | 条件 |
+|----|------|
+| R1 | 首个新赛制 / 新 `game-configs/*.yaml` 引擎落地 |
+| R2 | 练习/正式流拆到 `practice_flow` / `official_flow` |
+| R3 | Phase 推进导致「以前禁止、现在允许」 |
+| R4 | 同一误解导致连续两次会话返工 |
+
+### 1.3 不要写 ADR
+
+- typo / 纯样式 / 仅 YAML 数值调参（S1～S4，见 README §二）
+
+---
+
+## 2 如何写（AI 执行步骤）
+
+1. 复制 `_template.md` → `docs/decisions/NNN-简述.md`（三位序号，不跳号）
+2. 必填：**上下文 · 决策 · 考虑过的方案 · 后果**；**后果**中须含 **「给初学者的操作提示」** 小节
+3. 更新 `docs/decisions/README.md` §五 索引表一行
+4. 若关联 `08-` 对外契约：在 `08-` §5.1 变更记录加摘要（与用户推送前文档对齐一并做）
+5. 会话结束前向用户说明：新增了哪条 ADR、下次应 @ 哪些文件
+
+**篇幅**：单篇建议 **80～200 行**；禁止粘贴大段代码，用路径引用即可。
+
+---
+
+## 3 与 blueprint-coding 的关系
+
+| 文档类型 | 作用 |
+|----------|------|
+| `.cursor/rules/blueprint-coding.mdc` | **每次**都要遵守的硬规则（what / must not） |
+| `docs/decisions/*.md` | **为什么**这样定（why / 曾否决什么） |
+| `08-` | **现在**工程状态与 API 表 |
+
+　　新增硬规则时：优先更新 `blueprint-coding.mdc` + `08-`；若存在选型故事，**同时**补 ADR。
+
+---
+
+## 4 上下文注入
+
+| 任务 | 除常规文档外 attach |
+|------|---------------------|
+| 全局架构 / Phase 争议 | `docs/decisions/README.md` + 相关 `00N-*.md` |
+| 新赛制 | ADR-004 + `arena/ARCHITECTURE.md` |
+| RTS / 浮生记实时 | ADR-005 |
+| 生涯 / XP | ADR-007 |
+| 推翻旧决策 | 被取代的 ADR + 新 ADR 草稿 |
+
+---
+
+## 5 会话收尾自检（AI）
+
+- [ ] 本次是否触发 M1～M6 或 R1～R4？
+- [ ] 若触发：是否已写/更新 ADR 与 README 索引？
+- [ ] 是否告知用户「下次对话 @ ADR-00N」？

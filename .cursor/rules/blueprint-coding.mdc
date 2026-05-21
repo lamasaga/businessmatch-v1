@@ -135,3 +135,11 @@ alwaysApply: true
 5. 是否涉及 RTS？须遵守调度器单写者模式
 
 若任一项有疑问，应向用户确认后再动手。
+
+---
+
+## 10 架构决策记录（ADR）
+
+　　跨会话的「为什么」见 **`docs/decisions/`**（索引 [`README.md`](../../docs/decisions/README.md)）。触发条件与写法见 [`.cursor/rules/adr-writing.mdc`](./adr-writing.mdc)。
+
+　　**已有基线决策（勿重复争论）**：001 文档约束层 · 002 单库单进程 · 003 域边界 · 004 CyberCore 赛制 · 005 RTS 单写者 · 006 双前端 · 007 XP 账本 · 008 Phase A 门控。

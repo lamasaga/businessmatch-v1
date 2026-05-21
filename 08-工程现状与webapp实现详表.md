@@ -498,6 +498,7 @@ flowchart LR
 
 | 日期 | 摘要 |
 |------|------|
+| 2026-05-21 | **ADR 体系落地**：`docs/decisions/`（README 触发表 + 模板 + ADR-001～008 基线）；`.cursor/rules/adr-writing.mdc`；`00-`/`03-`/`06-`/`09-`/`README` 交叉引用 |
 | 2026-05-23 | **赛事四层模型文档化**：`02-` §5.0 引擎/配置 ID/match_kind/流程；`arena/ARCHITECTURE.md` 对齐；`03-`/`00-`/`09-`/`README`/蓝图附录 A；创想大赢家组织端等待区与 `admin/start` 代码（见 2026-05-21 条目） |
 | 2026-05-21 | **组织端等待区（创想大赢家）**：`admin/state` 扩展房间码与选手列表；`POST admin/.../start` 与 `open_round` 拆分；组织端报名态 UI；学生房间码加入后路由至 `techventure/lobby`；`02-` §5.1 正式赛标准流程 |
 | 2026-05-22 | **根目录 07- 拟真城市阅读合集**：与 05- OPC 并列终局出口；[inspire/75-](./inspire/75-拟真城市世界观设计.md) 降为详设附录；`00～09` 编号补齐；`content/world/cities/` 占位 |
