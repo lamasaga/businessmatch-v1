@@ -21,6 +21,7 @@ alwaysApply: true
 | **games/trading** | `games/trading/*.py` | `trading_rounds` · `trading_decisions` · `trading_prices` | 跳过 arena 域直接操作 `competition_events` |
 | **games/techventure** | `games/techventure/*.py` | `tv_team_state` · `tv_rounds` · `tv_submissions` · `tv_snapshots` · `tv_news` | 跳过 arena 域直接操作 `competition_events` / `arena_teams` |
 | **career** | `domains/career/` | `xp_events` · (未来 `career_profiles`) | trading 直接改 `user.xp`；必须走 `grant_xp` / `settle_match_rewards` |
+| **world**（Phase B+） | `domains/world/`（规划）· `content/world/` | `cities` · `city_pop_segments` · `world_snapshots`（规划） | **Phase A 禁止**建表/API；赛制引擎直接写 world 表 |
 | **opc** | `api/opc.py` · `models/opc.py` | `one_companies` · `ai_employees` · `ai_tasks` | 当前阶段(Phase A/B)不投入 OPC 开发 |
 
 **`models/trading_competition.py` 仅为 re-export 兼容层，禁止在其中写入新业务逻辑。**
@@ -104,8 +105,8 @@ alwaysApply: true
 
 | 优先级 | 可以做 | 不该做 |
 |--------|--------|--------|
-| **Phase A（当前）** | Career 前端对接 · 正式赛控场完善 · contracts/ 契约 · TechVenture 赛制引擎 | — |
-| **Phase B** | Athena-Debrief 规则模板 · Quest 服务 · PG 迁移 | 跳过规则层直接上 LLM Agent |
+| **Phase A（当前）** | Career 前端对接 · 正式赛控场完善 · contracts/ 契约 · TechVenture 赛制引擎 · 拟真城市**规划文档与占位** | 建 `domains/world/` · 跨局持久化城市状态 · 改赛制结算以接入 World |
+| **Phase B** | Athena-Debrief 规则模板 · Quest 服务 · PG 迁移 · **城市母本 YAML** | 跳过规则层直接上 LLM Agent · 提前建 World 域表 |
 | **Phase C～D** | LangGraph 编排 · Persona · 知识图谱 | 在 Phase A 阶段投入 |
 | **Phase E** | OPC LangGraph + MCP | 在 Phase A/B 阶段抢 OPC 进度 |
 
