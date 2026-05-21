@@ -1077,6 +1077,23 @@ alwaysApply: true
 
 ---
 
+## 附录 A · businessmatch-v1 赛事分层（仓库专用）
+
+> **权威详述**：[02-赛事体系与双端产品.md](./02-赛事体系与双端产品.md) §5.0 · [arena/ARCHITECTURE.md](./webapp/backend/app/domains/arena/ARCHITECTURE.md)
+
+　　本仓库商业模拟赛事采用四层模型，AI 会话与 PR 须先对齐层级再改代码：
+
+| 层 | 标识 | 职责 |
+|----|------|------|
+| 引擎 | `engine` in YAML → `app/games/<engine>/` | 结算内核（稳定，少 fork） |
+| 配置 ID | `game_config_id` → `content/game-configs/<id>.yaml` | 规则变体：练习包、国内正式、地区正式（如美/欧） |
+| 场次类型 | `match_kind`：`practice` / `official` | 办赛流程、XP 权重、房间码与控场 |
+| 流程代码 | `practice.py` / `*_admin` / lobby 等 | 生命周期与安全，不复制引擎 |
+
+　　**口诀**：引擎一个；配置 ID 管「怎么玩」；`match_kind` 管「怎么办」；交付名写清「\<赛制\> · 练习」或「\<赛制\> · 正式赛」。
+
+---
+
 ## 附录 术语表
 
 

@@ -8,6 +8,7 @@ import {
 interface TeamInfo {
   id: number;
   team_name: string;
+  product_name?: string;
   member_count: number;
   members: string[];
 }
@@ -171,6 +172,11 @@ export default function TechVentureLobbyPage() {
                       <div>
                         <h3 className="font-semibold flex items-center gap-2">
                           {team.team_name}
+                          {team.product_name && (
+                            <span className="text-xs text-foreground-muted font-normal">
+                              · {team.product_name}
+                            </span>
+                          )}
                           {isMine && (
                             <span className="text-xs px-2 py-0.5 rounded-full bg-purple-500/20 text-purple-400 font-normal">
                               我的队伍

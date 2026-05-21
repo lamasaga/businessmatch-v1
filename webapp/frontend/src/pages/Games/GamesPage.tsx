@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useCompetitionStore } from '../../stores/competitionStore';
+import { api } from '../../lib/api';
 import { useTechVentureStore } from '../../stores/techventureStore';
 import {
   Trophy, Search, Users, Clock, ArrowRight,
@@ -10,6 +11,11 @@ import {
 function gameRoute(eventId: number, configId?: string): string {
   if (configId?.startsWith('techventure')) return `/games/${eventId}/techventure`;
   return `/games/${eventId}/play`;
+}
+
+function lobbyRoute(eventId: number, configId?: string): string {
+  if (configId?.startsWith('techventure')) return `/games/${eventId}/techventure/lobby`;
+  return `/games/${eventId}/lobby`;
 }
 
 export default function GamesPage() {
@@ -33,7 +39,13 @@ export default function GamesPage() {
     setJoinError('');
     try {
       const eventId = await joinEvent(roomCode);
-      navigate(`/games/${eventId}/lobby`);
+      const ev = events.find(e => e.id === eventId);
+      let configId = ev?.game_config_id;
+      if (!configId) {
+        const res = await api.get(`/api/v1/competitions/${eventId}`);
+        configId = res.data.data?.game_config_id;
+      }
+      navigate(lobbyRoute(eventId, configId));
     } catch (err: any) {
       setJoinError(err.message || '加入失败');
     }
@@ -197,7 +209,7 @@ export default function GamesPage() {
               onClick={() => navigate(
                 event.status === 'playing'
                   ? gameRoute(event.id, event.game_config_id)
-                  : `/games/${event.id}/lobby`
+                  : lobbyRoute(event.id, event.game_config_id)
               )}
               className="glass-card p-5 cursor-pointer hover:border-primary/30 transition-all group"
             >
@@ -260,7 +272,11 @@ export default function GamesPage() {
           {myEvents.length > 0 ? myEvents.map((event) => (
             <div
               key={event.id}
-              onClick={() => navigate(`/games/${event.id}/lobby`)}
+              onClick={() => navigate(
+                event.status === 'playing'
+                  ? gameRoute(event.id, event.game_config_id)
+                  : lobbyRoute(event.id, event.game_config_id)
+              )}
               className="glass-card p-5 cursor-pointer hover:border-primary/30 transition-all"
             >
               <div className="flex items-start justify-between mb-4">

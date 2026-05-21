@@ -112,10 +112,31 @@ def admin_state(
         subs = db.query(TvSubmission.team_id).filter(TvSubmission.round_id == current_rd.id).all()
         submitted_teams = [s[0] for s in subs]
 
+    participants_out: list[dict] = []
+    for p in db.query(ArenaParticipant).filter(ArenaParticipant.event_id == event_id).all():
+        u = db.query(User).get(p.user_id)
+        team_name = None
+        if p.team_id:
+            t = db.query(ArenaTeam).get(p.team_id)
+            team_name = t.team_name if t else None
+        participants_out.append({
+            "user_id": p.user_id,
+            "username": u.username if u else f"用户{p.user_id}",
+            "team_id": p.team_id,
+            "team_name": team_name,
+        })
+
+    unassigned = sum(1 for x in participants_out if not x["team_id"])
+
     return ApiResponse.ok(data={
         "match_id": match.id,
         "match_status": match.status.value,
         "title": match.title,
+        "room_code": match.room_code,
+        "max_players": match.max_players,
+        "participant_count": len(participants_out),
+        "unassigned_count": unassigned,
+        "participants": participants_out,
         "teams": team_list,
         "rounds": [
             {
@@ -141,8 +162,10 @@ def create_teams(
     current_user: User = Depends(get_current_active_user),
     db: Session = Depends(get_db),
 ):
-    """批量创建队伍。"""
+    """批量创建队伍（仅报名阶段）。"""
     match = _require_organizer(event_id, current_user, db)
+    if match.status not in (MatchStatus.registration, MatchStatus.draft):
+        raise BusinessException("比赛已开始，不可新建队伍", code=ErrorCode.BAD_REQUEST, status_code=400)
     cfg = get_cfg(match.game_config_id or "techventure-v1")
     defaults = cfg.get("defaults", {})
     seed = defaults.get("seed_budget", 100)
@@ -177,8 +200,10 @@ def update_team(
     current_user: User = Depends(get_current_active_user),
     db: Session = Depends(get_db),
 ):
-    """更新队伍信息。"""
-    _require_organizer(event_id, current_user, db)
+    """更新队伍信息（报名阶段可改队名/产品名）。"""
+    match = _require_organizer(event_id, current_user, db)
+    if match.status not in (MatchStatus.registration, MatchStatus.draft):
+        raise BusinessException("比赛已开始，不可修改队伍信息", code=ErrorCode.BAD_REQUEST, status_code=400)
     team = db.query(ArenaTeam).filter(ArenaTeam.id == team_id, ArenaTeam.event_id == event_id).first()
     if not team:
         raise BusinessException("队伍不存在", code=ErrorCode.NOT_FOUND, status_code=404)
@@ -193,6 +218,42 @@ def update_team(
     return ApiResponse.ok(data=_team_out(team, state))
 
 
+@router.post("/events/{event_id}/start", response_model=ApiResponse[dict])
+def start_match(
+    event_id: int,
+    current_user: User = Depends(get_current_active_user),
+    db: Session = Depends(get_db),
+):
+    """报名结束、进入控场态（不自动开放第一轮）。"""
+    match = _require_organizer(event_id, current_user, db)
+    if match.status not in (MatchStatus.registration, MatchStatus.draft):
+        raise BusinessException("比赛不在可开始状态", code=ErrorCode.BAD_REQUEST, status_code=400)
+
+    participants = db.query(ArenaParticipant).filter(ArenaParticipant.event_id == event_id).all()
+    if len(participants) < 1:
+        raise BusinessException("至少需要 1 名选手加入后才能开始", code=ErrorCode.BAD_REQUEST, status_code=400)
+
+    team_count = db.query(ArenaTeam).filter(
+        ArenaTeam.event_id == event_id,
+        ArenaTeam.is_ai == 0,
+    ).count()
+    if team_count < 1:
+        raise BusinessException("请先创建至少 1 支队伍", code=ErrorCode.BAD_REQUEST, status_code=400)
+
+    unassigned = [p for p in participants if not p.team_id]
+    if unassigned:
+        raise BusinessException(
+            f"仍有 {len(unassigned)} 名选手未选队，请提醒选手完成组队后再开始",
+            code=ErrorCode.BAD_REQUEST,
+            status_code=400,
+        )
+
+    match.status = MatchStatus.playing
+    match.current_round = 0
+    db.commit()
+    return ApiResponse.ok(data={"match_status": match.status.value, "title": match.title})
+
+
 @router.post("/events/{event_id}/rounds/open", response_model=ApiResponse[dict])
 def open_round(
     event_id: int,
@@ -202,11 +263,8 @@ def open_round(
 ):
     """开放下一轮。"""
     match = _require_organizer(event_id, current_user, db)
-    if match.status not in (MatchStatus.playing, MatchStatus.registration):
-        raise BusinessException("比赛未在进行中", code=ErrorCode.BAD_REQUEST, status_code=400)
-
-    if match.status == MatchStatus.registration:
-        match.status = MatchStatus.playing
+    if match.status != MatchStatus.playing:
+        raise BusinessException("请先点击「开始比赛」结束报名阶段", code=ErrorCode.BAD_REQUEST, status_code=400)
 
     existing = db.query(TvRound).filter(TvRound.event_id == event_id).order_by(TvRound.round_no.desc()).first()
     if existing and existing.status == TvRoundStatus.open:

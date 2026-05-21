@@ -97,10 +97,10 @@ practice/start 传 game_config_id=trading-v1 → 回合制 market 定价 → 提
 **路径 C — TechVenture 正式赛（队伍制，10-20+ 人）**
 
 ```
-组织者(admin) :5174 创建比赛（techventure-v1）→ 获得房间码
-    → 组织者建队（POST /techventure/admin/events/{id}/teams）
-    → 学生(student) 房间码加入 + 选择队伍 → 提交产品名
-    → 组织者开轮（POST open）→ 学生提交决策（路线+城市+投入+宣言）→ 8 分钟
+组织者(admin) :5174 创建比赛（techventure-v1）→ 报名等待区展示 4 位房间码
+    → 学生房间码加入 → /techventure/lobby 选队
+    → 组织者建队/编辑队名·产品名（POST teams / PATCH team）→ 全员选队后 POST .../start
+    → 组织者开轮（POST open，须已 playing）→ 学生提交决策（路线+城市+投入+宣言）→ 8 分钟
     → 组织者结算（POST settle）→ BQI + 排名 + 新闻 → 循环 4 轮
     → 成绩写入用户 XP → 学生 /career 查看成长
 ```
@@ -249,7 +249,7 @@ practice/start 传 game_config_id=trading-v1 → 回合制 market 定价 → 提
 | **trading WS** | `/trading` | `WS /events/{id}/ws?token=` | tick/finished 推送；参赛者或本场组织者 |
 | **practice** | `/practice` | `GET /game-configs`、`POST /trading/start`、`POST /techventure/start`、`GET /my` | 默认 `trading-v2-rts`；TechVenture 练习创建 1 真人 + 5 AI 队 |
 | **techventure** | `/techventure` | `GET lobby`、`POST join-team`、`GET state`、`GET poll`、`POST submit`、`POST profile`、`GET leaderboard`、`GET news` | 学生参赛端（选队大厅 + 对局） |
-| **techventure_admin** | `/techventure` | `GET admin/state`、`POST admin/teams`、`PATCH admin/teams/{tid}`、`POST rounds/open`、`POST rounds/settle`、`GET screen`、`GET judge/state` | 组织者 + 大屏 + 评委 |
+| **techventure_admin** | `/techventure` | `GET admin/state`（含 room_code/participants）、`POST admin/start`、`POST admin/teams`、`PATCH admin/teams/{tid}`、`POST rounds/open`、`POST rounds/settle`、`GET screen`、`GET judge/state` | 组织者 + 大屏 + 评委 |
 
 　　**缺失的后端域**（规划中有、代码中无）：`/career/*`（聚合查询）、`/quests/*`、`/credentials/*`、`/ai/athena|demia|rival/*`（通用房间 WS 已有 RTS 专用）。
 
@@ -498,6 +498,8 @@ flowchart LR
 
 | 日期 | 摘要 |
 |------|------|
+| 2026-05-23 | **赛事四层模型文档化**：`02-` §5.0 引擎/配置 ID/match_kind/流程；`arena/ARCHITECTURE.md` 对齐；`03-`/`00-`/`09-`/`README`/蓝图附录 A；创想大赢家组织端等待区与 `admin/start` 代码（见 2026-05-21 条目） |
+| 2026-05-21 | **组织端等待区（创想大赢家）**：`admin/state` 扩展房间码与选手列表；`POST admin/.../start` 与 `open_round` 拆分；组织端报名态 UI；学生房间码加入后路由至 `techventure/lobby`；`02-` §5.1 正式赛标准流程 |
 | 2026-05-22 | **根目录 07- 拟真城市阅读合集**：与 05- OPC 并列终局出口；[inspire/75-](./inspire/75-拟真城市世界观设计.md) 降为详设附录；`00～09` 编号补齐；`content/world/cities/` 占位 |
 | 2026-05-21 | **TechVenture 选队大厅**：`GET/POST lobby` + `TechVentureLobbyPage`；学生/组织端入口与赛制选择器 |
 | 2026-05-21 | **TechVenture 赛制迁移**：Arena 域新增通用 `ArenaTeam` 模型 + `ArenaParticipant` 增 `team_id/team_role`；从 Node.js 原版精确翻译 v6 引擎为 Python（`v6_engine.py` Step 0-9）；新增 `techventure-v1.yaml` 配置包（4 轮三城四路线 BQI）；5 张运行时表（`tv_*`）；学生 + 组织者 + 大屏 + 评委四端 React 重写；练习模式 AI 队伍决策；14 条 API 路由 |

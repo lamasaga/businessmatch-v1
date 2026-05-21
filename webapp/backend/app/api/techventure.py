@@ -150,6 +150,7 @@ def get_lobby(
             {
                 "id": t.id,
                 "team_name": t.team_name,
+                "product_name": (t.metadata_ or {}).get("product_name", ""),
                 "member_count": members_count.get(t.id, 0),
                 "members": team_members.get(t.id, []),
             }
