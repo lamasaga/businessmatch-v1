@@ -5,7 +5,7 @@
 > **读者**：开发、架构、排 Bug  
 > **配套阅读**：[`01-平台愿景与产品架构`](./01-平台愿景与产品架构.md) · [`02-赛事体系与双端产品`](./02-赛事体系与双端产品.md)（双端）· [`03-技术架构与实现现状`](./03-技术架构与实现现状.md)（摘要）· [`04-实施路线与里程碑`](./04-实施路线与里程碑.md) · [`09-分项目开发与集成流程`](./09-分项目开发与集成流程.md)  
 > **安装启动**：[`webapp/README.md`](./webapp/README.md)  
-> **最后更新**：2026-05-21
+> **最后更新**：2026-05-23
 
 ---
 
@@ -233,7 +233,7 @@ practice/start 传 game_config_id=trading-v1 → 回合制 market 定价 → 提
 | `domains/career/models/xp_event.py` | `xp_events` | 幂等 XP 账本（`idempotency_key`） |
 | `models/opc.py` | `one_companies`、`ai_employees`、`ai_tasks` | OPC |
 | `models/trading_competition.py` | — | **仅 re-export**，新逻辑勿写入 |
-| — | **无** `career_profiles` / `quests` | Career 聚合 API 仍缺 |
+| — | **无** `career_profiles` / `resource_ledger` / `homestead_slots` / `quests` | 规划见 [career/DESIGN.md](./webapp/backend/app/domains/career/DESIGN.md)；`api/career.py` 待 B1 |
 
 #### 2.7.3 API 路由一览（前缀均为 `/api/v1`）
 
@@ -422,7 +422,7 @@ flowchart LR
 
 | 规划组件 | 规划要求 | webapp 现状 | 对齐度 |
 |----------|----------|-------------|--------|
-| **Career Hub** | 统一 XP 账本、赛季、班级榜 | `xp_events` + 正式赛 `settle_match_rewards`；前端 Career 仍 mock | 🟡 45% |
+| **Career Hub** | 统一 XP/资源、家园、NPC、赛季 | `xp_events` + `settle_match_rewards`；设计 [d/04-](./inspire/d商业模拟教育平台/04-生涯模式-大循环家园与资源经济.md) · [career/DESIGN.md](./webapp/backend/app/domains/career/DESIGN.md)；表/API 待 Phase B | 🟡 45% |
 | **Atlas** | 掌握度驱动解锁 | Wiki + 图谱浏览 | 🟡 50% |
 | **Academy** | 单元进度写回生涯 | 列表/详情 UI | 🟡 40% |
 | **Quest** | 每日任务服务 + streak | 前端 Quest 页 | 🟡 35% |
@@ -498,6 +498,7 @@ flowchart LR
 
 | 日期 | 摘要 |
 |------|------|
+| 2026-05-23 | **生涯模式设计启动**：[d/04-大循环家园与资源经济](./inspire/d商业模拟教育平台/04-生涯模式-大循环家园与资源经济.md)（T0～T3、资源、家园、NPC、Phase B1～B5）；[career/DESIGN.md](./webapp/backend/app/domains/career/DESIGN.md)；`01-`/`04-` Phase B 拆条、`06-` 索引 |
 | 2026-05-21 | **ADR 体系落地**：`docs/decisions/`（README 触发表 + 模板 + ADR-001～008 基线）；`.cursor/rules/adr-writing.mdc`；`00-`/`03-`/`06-`/`09-`/`README` 交叉引用 |
 | 2026-05-23 | **赛事四层模型文档化**：`02-` §5.0 引擎/配置 ID/match_kind/流程；`arena/ARCHITECTURE.md` 对齐；`03-`/`00-`/`09-`/`README`/蓝图附录 A；创想大赢家组织端等待区与 `admin/start` 代码（见 2026-05-21 条目） |
 | 2026-05-21 | **组织端等待区（创想大赢家）**：`admin/state` 扩展房间码与选手列表；`POST admin/.../start` 与 `open_round` 拆分；组织端报名态 UI；学生房间码加入后路由至 `techventure/lobby`；`02-` §5.1 正式赛标准流程 |
