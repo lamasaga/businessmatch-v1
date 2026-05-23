@@ -2,8 +2,8 @@
 
 > **Blueprint Coding: A Methodology for AI-Assisted Large-Scale Engineering**
 
-**版本**：1.0  
-**最后更新**：2025-05-21  
+**版本**：1.1  
+**最后更新**：2026-05-24  
 **定位**：独立方法论手册，可脱离任何具体项目携带与复用
 
 ---
@@ -11,14 +11,19 @@
 ## 目录
 
 - [第一章 核心理念——为什么需要蓝图编程](#第一章-核心理念为什么需要蓝图编程)
+  - [1.6 从 Vibe Coding 到蓝图编程](#16-从-vibe-coding-到蓝图编程agentic-engineering)
 - [第二章 三层约束架构](#第二章-三层约束架构)
 - [第三章 会话生命周期](#第三章-会话生命周期)
+  - [3.2.4 上下文工程与 Token 预算](#324-上下文工程与-token-预算)
+  - [3.2.5 Rules / Skills / Commands 分工](#325-rules--skills--commands-分工)
+  - [3.2.6 渐进式检索与文件加载纪律](#326-渐进式检索与文件加载纪律)
 - [第四章 域治理——边界、契约、归属](#第四章-域治理边界契约归属)
 - [第五章 Phase 门控——防止范围蔓延](#第五章-phase-门控防止范围蔓延)
 - [第六章 质量保障——从手动到系统化](#第六章-质量保障从手动到系统化)
 - [第七章 反模式与失败图谱](#第七章-反模式与失败图谱)
 - [第八章 多 Agent 协作](#第八章-多-agent-协作)
 - [第九章 落地模板包](#第九章-落地模板包)
+- [附录 C · 开源 Skills / Rules 参考](#附录-c--开源-skills--rules-参考)
 - [附录 术语表](#附录-术语表)
 
 ---
@@ -88,6 +93,45 @@
 - **原则二：约束即自由**（Constraints as Freedom）——清晰的边界让 AI 无需猜测，反而产出更快更准。约束越明确，AI 越高效。
 - **原则三：人管架构，AI 管实现**（Human Architects, AI Implements）——人类负责"做什么"和"不做什么"，AI 负责"怎么做"。
 - **原则四：声明式优于命令式**（Declarative over Imperative）——用表格、清单、YAML 声明规则，而非在每次对话中反复口述。
+
+### 1.6 从 Vibe Coding 到蓝图编程（Agentic Engineering）
+
+　　2025 年初，Andrej Karpathy 提出 **Vibe Coding**：用自然语言描述意图，让 Agent（如 Cursor）生成代码，通过「运行 → 报错 → 粘贴错误 → 再生成」快速迭代，甚至「Accept All、不读 diff」——适合周末原型与 throwaway 项目。
+
+　　到 2025～2026 年，专业团队的主流已从「纯 vibe」演进为 **Agentic Engineering**（智能体工程）：**保留 Agent 的杠杆，但不牺牲可维护性与质量**——规格先行、小步实现、可验证、人类保留架构判断力（Karpathy 所称的 *taste*）。
+
+**三种范式对照：**
+
+| 维度 | Vibe Coding（原型态） | Agentic Engineering（专业态） | 蓝图编程（本手册） |
+|------|---------------------|------------------------------|-------------------|
+| 意图表达 | 口语化、一次性 prompt | 规格 + 计划 + 检查点 | **L1 文档 + 会话简报** |
+| 对代码的态度 | 可「忘记代码存在」 | 审查关键路径与契约 | **文档为真相源，代码须对齐** |
+| 范围控制 | 无，易膨胀 | 任务分解 + 测试门 | **Phase 门控 + 域边界** |
+| 跨会话记忆 | 聊天窗口 | 仓库内 spec / ADR | **00～09 + ADR + Skills** |
+| 适用场景 | 个人实验、Demo | 产品级功能交付 | **多域、多阶段、长期仓库** |
+
+**蓝图编程与 Vibe 的关系（不是对立，是分层）：**
+
+```
+┌─────────────────────────────────────────────────────────┐
+│  L1/L2 蓝图约束（域、Phase、路由、表归属）  ← 人类架构师  │
+├─────────────────────────────────────────────────────────┤
+│  L3 会话内仍可「vibe」：小步描述、跑测、贴错误修  ← Agent  │
+└─────────────────────────────────────────────────────────┘
+```
+
+　　在 **已划定边界** 的会话里，鼓励高效的 vibe 循环（描述子任务 → 生成 → 冒烟 → 修错）；在 **边界未定** 时，必须先回到 L1/L2 写清或更新文档，禁止让 Agent 自行「猜架构」。
+
+**与 Spec-Driven / Memory-Bank 类实践的对齐：**
+
+| 外部实践 | 蓝图编程中的落点 |
+|----------|------------------|
+| Game Design Document + Implementation Plan（[EnzeD/vibe-coding](https://github.com/EnzeD/vibe-coding/)） | L1 愿景/02- 赛制 + L2 域表；竖切计划写入 `04-` / 会话简报 |
+| Constitution / SDD（规格驱动开发） | `00～09` 权威文档 + `docs/decisions/` ADR |
+| Memory Bank（`architecture.md` / `progress.md`） | `08-` 工程详表 §三对齐度 + §5.1 变更记录 |
+| Context Engineering（[muratcankoylan/Agent-Skills-for-Context-Engineering](https://github.com/muratcankoylan/Agent-Skills-for-Context-Engineering)） | 本章 §3.2.4～3.2.6：高信号、低 token、渐进加载 |
+
+> **结论**：Vibe Coding 是 **执行层的交互风格**；蓝图编程是 **约束层的工程方法**。二者结合 = 「在蓝图划定的工地上 vibe 施工」。
 
 ---
 
@@ -173,11 +217,12 @@
 | **AI 自检协议** | 会话开头  | AI 主动确认 Phase、域、路由、表、架构模式 |
 | **中间检查点**   | 执行过程中 | 每完成子任务，自检是否越界             |
 | **推送前对齐门**  | 会话结束  | 代码与文档同步后才允许推送             |
+| **Skills 工作流** | 按需触发 | 多步剧本：对齐、ADR、赛制扩展、排错（§3.2.5） |
 
 
 **设计要点：**
 
-- 会话控制的**自动化程度**决定了蓝图编程的实际效果。完全依赖人工执行的会话控制会被遗忘；能自动注入的规则（如 `.cursor/rules/`）效果最好。
+- 会话控制的**自动化程度**决定了蓝图编程的实际效果。完全依赖人工执行的会话控制会被遗忘；能自动注入的规则（如 `.cursor/rules/`）效果最好；**长流程用 Skills**，避免 Rules 膨胀占满 token。
 - 会话简报的价值在于**主动导航**，而非被动兜底。即使 AI 工具已自动注入规则，一句明确的开场声明仍能大幅减少 AI 的猜测和偏离。
 
 ### 2.5 三层映射示例
@@ -194,6 +239,7 @@
 | L2  | `.cursor/rules/blueprint-coding.mdc`       | 蓝图编程规范     | 域边界、路由归属、Phase 门控 |
 | L3  | 09                                         | 分项目开发与集成流程 | 上下文注入清单、会话简报模板    |
 | L3  | `.cursor/rules/docs-align-before-push.mdc` | 推送前文档对齐    | 推送前强制步骤           |
+| L3  | `.cursor/skills/`（可选）                    | 按需工作流      | 推送对齐、排错、PR 审查等     |
 | L3  | README                                     | 项目入口       | AI 编程会话开场指南       |
 
 
@@ -282,6 +328,91 @@ Pre-Session          In-Session              Post-Session
 
 
 　　自检协议的理想实现方式是将其写入 AI 工具的自动注入规则中（如 Cursor 的 `alwaysApply` 规则），使 AI 在每次会话开始时自动执行。
+
+#### 3.2.4 上下文工程与 Token 预算
+
+　　有效上下文 ≠「把仓库相关文件全塞进去」。业界共识（见 [Agent Skills for Context Engineering](https://github.com/muratcankoylan/Agent-Skills-for-Context-Engineering)）：上下文窗口受 **注意力衰减** 制约——过长会出现 *lost-in-the-middle*、首尾偏重、后期约定被稀释。
+
+**蓝图编程的 Token 预算原则：**
+
+| 层级 | 预算建议 | 内容 |
+|------|----------|------|
+| **常驻（每请求）** | ≤ 2～4k tokens | 精简 `.mdc` 规则：域边界、Phase、自检 5 问、Shell/语言 |
+| **会话注入（Pre）** | ≤ 12～15k tokens | 3.2.2 矩阵中的 4～5 份权威文档（摘章节，非全文） |
+| **按需检索（In）** | 按文件递增 | 先 `grep`/语义搜索定位，再 **局部 Read**，禁止整库扫读 |
+| **代码上下文** | 子任务相关 | 只打开将改动的域内文件；相似实现作 **单文件** 参考 |
+
+**高信号 / 低噪声写法（写入 L1/L2 文档时）：**
+
+- 表格与「禁止」列优于长段落叙述
+- 文首 `> 文档定位` + `最后更新` 便于 Agent 判断是否过期
+- 用 `08- §2.7` 这类 **锚点引用** 代替复制整段 API 列表
+- 长文放 `inspire/`，根目录 `00～09` 保持可一次读完的密度
+
+**压缩与续聊：**
+
+| 场景 | 做法 |
+|------|------|
+| 会话将满 | 开新会话；简报 + **变更文件列表** + 未完成 checklist |
+| 跨会话 | ADR、`08-` §5.1、`.cursor/breadcrumbs.md`（可选）记录「试过什么」 |
+| 规划类任务 | Plan 模式只读，避免过早写代码占满上下文 |
+
+#### 3.2.5 Rules / Skills / Commands 分工
+
+　　Cursor 生态中，约束与流程应 **分层挂载**，避免把所有内容塞进一条 `alwaysApply`（既费 token 又难维护）。下表为蓝图编程推荐分工（与 [Cursor 官方文档](https://docs.cursor.com) 及社区实践一致）：
+
+| 机制 | 路径示例 | 加载方式 | 适合承载 | 篇幅 |
+|------|----------|----------|----------|------|
+| **Rules** | `.cursor/rules/*.mdc` | 自动（可按 glob） | 域边界、Phase、命名、禁止项 | **单条 ≤50 行**，多文件拆分 |
+| **Skills** | `.cursor/skills/<name>/SKILL.md` | Agent **按需** 或 `/skill` | 多步流程：推送前对齐、ADR、赛制扩展、排错仪式 | 可长，用时才读 |
+| **Commands** | 斜杠命令 / 短 prompt 模板 | 用户显式触发 | 省 token 的固定动作：`/type-check`、`/lint` | 极短 |
+| **User Rules** | Cursor 设置 | 全局 | 语言、OS/Shell、回复风格 | 极简 |
+| **AGENTS.md** | 仓库根 | 部分工具读取 | 子目录 Agent 说明（Monorepo） | 按包 |
+
+**与三层约束的映射：**
+
+```
+L1/L2 硬约束  →  Rules（blueprint-coding.mdc、docs-align.mdc、adr-writing.mdc）
+L3 流程剧本   →  Skills（docs-align-before-push、create-skill、ci-investigator…）
+一次性动作    →  Commands 或会话简报
+```
+
+**Skill 描述字段（`description`）要写明 WHEN**：例如 *「用户要求 push / 大型 PR / 触及 domains/ 时」*，便于 Agent 自动选用，减少人工 `@` 全文。
+
+#### 3.2.6 渐进式检索与文件加载纪律
+
+　　Agent 模式的 token 浪费，多半来自 **探索性读文件**（「我先看看项目结构」读数十个文件）。下列纪律应写入项目 Rule 或 Skill（可参考 [Minimize-Cursor-Cost](https://github.com/inboxpraveen/Minimize-Cursor-Cost)、[cursorskills/dont-be-greedy](https://github.com/bluriesophos/cursorskills)）：
+
+**加载顺序（由便宜到贵）：**
+
+```
+1. 读 00-/08- 锚点与域边界表（已在 Rules 中则可跳过）
+2. Grep / Glob / SemanticSearch 定位符号与路径
+3. Read 目标文件 ± 上下文行（offset/limit），大文件禁止全文
+4. 仅在实现同类功能时，Read 1 个参考实现
+5. 禁止：无目标地 list 全目录、重复 read 未变文件
+```
+
+**Agent 模式硬纪律（建议写入 `.cursor/rules/token-discipline.mdc`）：**
+
+| 纪律 | 说明 |
+|------|------|
+| 不重复读 | 同一会话内已读且未改的文件不再 `read` |
+| 批量工具 | 无依赖的 Grep/Read 并行发起 |
+| 范围守卫 | 未说明时默认 **≤3 个文件**；超出先问用户从哪切 |
+| 验证分级 | 优先 `read_lints` / 单测；全量 test 仅用户要求或高风险变更 |
+| 输出克制 | 先结论后细节；默认 diff 编辑，非整文件重写 |
+| 探索预算 | 「理解代码库」类任务：先给 **阅读计划**（≤5 个路径），用户确认后再读 |
+
+**蓝图专用检索地图（示例）：**
+
+| 要问的问题 | 先查哪里 | 再查哪里 |
+|------------|----------|----------|
+| 能不能改这张表？ | Rules 域边界表 | `domains/*/models` |
+| API 放哪？ | `08-` §2.7 | `app/api/*.py` |
+| 赛制怎么扩？ | `02-` §5.0、`arena/ARCHITECTURE.md` | `content/game-configs/` |
+| 生涯逻辑？ | `06-`、`career/DESIGN.md` | `domains/career/` |
+| 为何这样定？ | `docs/decisions/` | — |
 
 ### 3.3 In-Session：执行阶段
 
@@ -761,6 +892,28 @@ Pre-Session          In-Session              Post-Session
 | **修复** | 安装缺失依赖并更新依赖清单；或替换为项目已有的库                                                      |
 
 
+#### AP-10 贪婪加载（Greedy Context Load）
+
+
+| 维度     | 描述                                                         |
+| ------ | ---------------------------------------------------------- |
+| **症状** | 会话未动手先读 10+ 文件；或把 500 行文件全文读入；token 在「探索」阶段耗尽 |
+| **根因** | Agent 默认「先理解全貌」；缺少加载预算与检索顺序                              |
+| **预防** | §3.2.6 渐进式检索；`token-discipline.mdc`；大任务先出阅读计划              |
+| **修复** | 新会话 + 最小文档集 + 仅打开任务相关文件                                   |
+
+
+#### AP-11 规格漂移（Spec Drift in Session）
+
+
+| 维度     | 描述                                              |
+| ------ | ----------------------------------------------- |
+| **症状** | 聊嗨了偏离会话简报；实现 Phase C 功能；与 L1 文档矛盾               |
+| **根因** | 纯 vibe 式对话无边界；未在检查点对照简报                          |
+| **预防** | 会话简报 + 子任务检查点（§3.3.3）；Phase 默认规则                 |
+| **修复** | 停止编码；更新简报或 ADR；从竖切最小路径重做                        |
+
+
 ### 7.3 反模式 → 约束映射
 
 　　每个反模式都可以通过在约束体系中添加对应的预防规则来系统性地降低发生概率：
@@ -777,6 +930,8 @@ Pre-Session          In-Session              Post-Session
 | AP-7 文档漂移    | L3 推送门      | 强制对齐流程         |
 | AP-8 过度抽象    | L2 Phase 门控 | 当前 Phase 复杂度上限 |
 | AP-9 悄然依赖    | L2 编码规范     | 依赖同步规则         |
+| AP-10 贪婪加载   | L3 + Rules  | `token-discipline.mdc` |
+| AP-11 规格漂移   | L3 会话简报     | 子任务检查点 + Phase 规则 |
 
 
 ---
@@ -839,6 +994,21 @@ Pre-Session          In-Session              Post-Session
 - **锁定共享资源**：对于必须修改的共享文件（如 `main.py` 的路由挂载），指定唯一 Agent 负责
 - **最后合并**：各 Agent 完成独立工作后，用一个专门的会话进行集成和冲突处理
 
+### 8.6 与 Skills / 子代理工作流（Superpowers 类）
+
+　　社区成熟框架（如 [obra/superpowers](https://github.com/obra/superpowers)）将 **规划 → 执行 → 验证 → 收尾** 拆为可组合 Skills，与蓝图编程高度互补：
+
+| Superpowers 类 Skill | 蓝图编程落点 |
+|---------------------|-------------|
+| `brainstorming` / `writing-plans` | 会话简报 + L1 文档更新（非直接写码） |
+| `executing-plans` / `subagent-driven-development` | 竖切 + 探索者/执行者分工（§8.2） |
+| `test-driven-development` | 第六章第二道门（冒烟 → 单测） |
+| `systematic-debugging` | L3 错误恢复协议（§6.3） |
+| `verification-before-completion` | 完成定义 checklist |
+| `finishing-a-development-branch` | Post-Session：文档对齐 + ADR |
+
+　　**集成原则**：Superpowers 管 **怎么做一步**；蓝图管 **在哪做、做到哪一 Phase**。在 Cursor 中可通过 `/add-plugin superpowers` 或项目 `.cursor/skills/` 引入；**勿**让 Skills 中的流程覆盖本仓库域边界与 Phase 门控。
+
 ---
 
 ## 第九章 落地模板包
@@ -889,13 +1059,15 @@ project-root/
 ├── 03-技术架构与实现现状.md       技术栈 + 域分包 + AI 编程方法论
 ├── 04-实施路线与里程碑.md         Phase 阶梯 + 成本估算
 ├── 05-[可选专题].md              大型专题（如有）
-├── 06-文档索引.md                 按角色选读指引
+├── 06-生涯模式.md                 Career Hub 产品权威（原索引并入 README/00-）
 ├── 07-拟真城市阅读合集.md          终局出口 B（与 05- OPC 并列）
 ├── 08-工程现状与实现详表.md       API/模型/百分比/变更记录
 ├── 09-协作流程.md                 竖切 + AI 编程上下文注入
-├── .cursor/rules/
+├── .cursor/rules/                短约束（alwaysApply 宜 ≤5 条）
 │   ├── blueprint-coding.mdc     域边界 + 路由归属 + Phase 门控
-│   └── docs-align.mdc           推送前文档对齐
+│   ├── docs-align-before-push.mdc（或改为 skills 按需加载）
+│   └── token-discipline.mdc     检索与 token 纪律（§9.5）
+├── .cursor/skills/               多步工作流（§9.6、附录 C）
 └── docs/decisions/               架构决策记录（ADR）
     └── 001-[决策标题].md
 ```
@@ -1075,6 +1247,44 @@ alwaysApply: true
 5. 归档本 Phase 的 ADR
 ```
 
+### 9.5 Token 纪律规则模板（`token-discipline.mdc`）
+
+```markdown
+---
+description: Agent 模式下的上下文与检索纪律，降低 token 消耗
+alwaysApply: true
+---
+
+# Token 与检索纪律
+
+- 同一会话不重复 read 未变更文件
+- 大文件用 offset/limit；禁止无目标全库扫读
+- 先 Grep/SemanticSearch 定位，再 Read
+- 默认单次改动 ≤3 个文件；超出先确认范围
+- 验证：优先 read_lints / 单测；全量 test 仅用户要求
+- 回复：先结论；编辑用最小 diff
+- 权威文档：按任务只 @ 00～09 中 4～5 份相关章节，非全文
+```
+
+### 9.6 项目 Skill 模板（推送前对齐）
+
+```markdown
+---
+name: docs-align-before-push
+description: >-
+  用户要求 git push、或大型架构/域/API 变更、或单次 ≥5 文件时。
+  先对齐 00～09 与 08- §5.1，再提交推送。
+---
+
+# 推送前文档对齐
+
+1. `git status` + `git diff --stat` 盘点影响
+2. 按变更更新 README/00-/08-（及 02-/04-/09- 若触及）
+3. 统一「最后更新」日期；路径与 main.py 路由一致
+4. 自检：无「待建」已落地仍标红
+5. 代码与文档同一推送批次
+```
+
 ---
 
 ## 附录 A · businessmatch-v1 赛事分层（仓库专用）
@@ -1091,6 +1301,75 @@ alwaysApply: true
 | 流程代码 | `practice.py` / `*_admin` / lobby 等 | 生命周期与安全，不复制引擎 |
 
 　　**口诀**：引擎一个；配置 ID 管「怎么玩」；`match_kind` 管「怎么办」；交付名写清「\<赛制\> · 练习」或「\<赛制\> · 正式赛」。
+
+---
+
+## 附录 B · 生涯模式与编号空间（仓库专用）
+
+> **权威详述**：[06-生涯模式-大循环家园与资源经济.md](./06-生涯模式-大循环家园与资源经济.md) · [career/DESIGN.md](./webapp/backend/app/domains/career/DESIGN.md)
+
+| 路径 | 含义 |
+|------|------|
+| **根目录 `06-`** | 生涯模式产品（大循环、T0～T3、家园、NPC） |
+| **根目录 `07-`** | 拟真城市 / World 终局（与 06- **无关**） |
+| **`inspire/07-`** | 教学内容生成规范（又一独立编号空间） |
+
+　　改生涯功能时 attach **06-** + **career/DESIGN**；改城市母本时 attach **根目录 07-**。
+
+---
+
+## 附录 C · 开源 Skills / Rules 参考
+
+　　以下为 2025～2026 年社区中 **质量较高、与蓝图编程可组合** 的开源资源。使用前请阅读各仓库 LICENSE；生产项目建议 **fork 后裁剪**，只引入与本仓库栈（FastAPI / React / Cursor）相关的条目，避免 `alwaysApply` 规则堆叠过多。
+
+### C.1 方法论与上下文工程
+
+| 仓库 | 星标量级 | 用途 | 链接 |
+|------|----------|------|------|
+| **Agent Skills for Context Engineering** | ~16k | 上下文退化、压缩、评估；skills 可迁入 `.cursor/skills/` | https://github.com/muratcankoylan/Agent-Skills-for-Context-Engineering |
+| **EnzeD/vibe-coding** | — | GDD + Implementation Plan + Memory Bank；与 L1 竖切计划同源 | https://github.com/EnzeD/vibe-coding |
+| **obra/superpowers** | 高 | Agentic 工作流：规划、TDD、调试、Code Review、并行子代理 | https://github.com/obra/superpowers |
+| **kumekay/cursorpowers** | — | Superpowers 的 Cursor 适配 fork | https://github.com/kumekay/cursorpowers |
+
+### C.2 Rules 合集与工程规范
+
+| 仓库 | 用途 | 链接 |
+|------|------|------|
+| **PatrickJS/awesome-cursorrules** | 最大的 `.cursorrules` / `.mdc` 策展列表（按语言/框架筛选） | https://github.com/PatrickJS/awesome-cursorrules |
+| **d-padmanabhan/cursor-engineering-rules** | 多语言 rules + **015-context-engineering.mdc** + MCP | https://github.com/d-padmanabhan/cursor-engineering-rules |
+| **girijashankarj/cursor-handbook** | Rules + Skills + Commands 分层；宣称显著省 token 的命令替代全量 test | https://github.com/girijashankarj/cursor-handbook |
+
+### C.3 Token 节约与 Agent 纪律
+
+| 仓库 | 用途 | 链接 |
+|------|------|------|
+| **inboxpraveen/Minimize-Cursor-Cost** | Agent 不重复读、批量工具、范围守卫、响应侧精简 | https://github.com/inboxpraveen/Minimize-Cursor-Cost |
+| **bluriesophos/cursorskills** | Skills vs Rules 分工、`dont-be-greedy`、`breadcrumbs` 跨会话 | https://github.com/bluriesophos/cursorskills |
+
+### C.4 与本仓库已有约束的对照
+
+| 本仓库已有 | 可参考的开源增强 |
+|------------|------------------|
+| `.cursor/rules/blueprint-coding.mdc` | `cursor-engineering-rules` 的 workflow / git 规则 |
+| `.cursor/rules/docs-align-before-push.mdc` | 可抽为 `.cursor/skills/docs-align-before-push/SKILL.md` 供按需加载 |
+| `.cursor/rules/adr-writing.mdc` | Superpowers `writing-plans` + 本仓库 `docs/decisions/` |
+| `README` §按角色选读 | `cursor-handbook` 的 context layering 思路 |
+| 无 `token-discipline` | 建议新增 §9.5 模板或引入 `Minimize-Cursor-Cost` 片段 |
+
+### C.5 选用建议（避免规则打架）
+
+1. **alwaysApply 总数控制在 3～5 条**（域边界、Phase、token 纪律、OS/语言、推送对齐二选一常驻或改 Skill）
+2. **长流程进 Skills**，短禁令进 Rules
+3. **不要**同时安装多套「全局编码规范」——保留本仓库 `blueprint-coding.mdc` 为最高优先级
+4. 引入外部 rule 后跑 **1 次真实任务**，观察是否触发 AP-10（贪婪读）或 AP-11（偏离 Phase）
+
+### C.6 学术与行业参考（非代码）
+
+| 资料 | 说明 |
+|------|------|
+| Karpathy, 2025 | Vibe coding 原始表述（X/Twitter） |
+| [arXiv:2506.23253](https://arxiv.org/html/2506.23253v1) | Vibe coding 学术综述与风险 |
+| Cursor 官方文档 | Rules、Skills、Subagents、Plan 模式 | https://docs.cursor.com |
 
 ---
 
@@ -1113,6 +1392,12 @@ alwaysApply: true
 | **战略蓝图（Strategic Blueprint）**         | 三层约束架构的顶层，包含愿景、技术架构、阶段路线图                  |
 | **战术契约（Tactical Contract）**           | 三层约束架构的中层，包含域边界、API 契约、Phase 门控等           |
 | **会话控制（Session Control）**             | 三层约束架构的底层，包含会话简报、自检、推送对齐等                  |
+| **Vibe Coding**                          | 以自然语言驱动 Agent 快速迭代代码的原型式工作流；需与架构约束结合使用   |
+| **Agentic Engineering**                  | 在 Agent 杠杆下保持规格、测试与审查的专业智能体工程范式            |
+| **Context Engineering**                  | 策划进入模型上下文的高信号 token 集合，对抗注意力衰减与上下文退化      |
+| **Rules（.mdc）**                         | Cursor 自动注入的持久约束，宜短、宜分文件、宜 glob  scoped      |
+| **Skills（SKILL.md）**                    | 按需加载的多步骤工作流包，含 description 触发条件              |
+| **渐进式检索**                              | Grep → 局部 Read → 参考单文件，禁止无预算全库探索              |
 
 
 ---
