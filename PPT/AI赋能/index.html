@@ -6,8 +6,25 @@
   <title>商域 AI 赋能六支柱全景 · BizSim Edu</title>
   <style>
     :root {
-      --bg: #0a0e1a;
-      --bg-card: #141c2e;
+      /* Brown space: warm, textured, readable */
+      /* Leather brown palette */
+      --bg: #1f140f;
+      --bg-deep: #170e0b;
+      --bg-mid: #241712;
+      --bg-high: #2d1e18;
+
+      /* Card materials */
+      --bg-card: rgba(29, 18, 13, 0.80);
+      --bg-card-2: rgba(38, 24, 18, 0.78);
+
+      /* Cool specular highlight (very subtle) */
+      --spec-a: rgba(96, 165, 250, 0.18);
+      --spec-b: rgba(125, 211, 252, 0.12);
+      --spec-c: rgba(255, 255, 255, 0.03);
+
+      /* Leather grain */
+      --grain-a: rgba(255, 255, 255, 0.012);
+      --grain-b: rgba(0, 0, 0, 0.035);
       --text: #f1f5f9;
       --text-2: #94a3b8;
       --text-3: #64748b;
@@ -28,7 +45,7 @@
 
     html, body {
       height: 100%;
-      background: #050810;
+      background: #100805;
       color: var(--text);
       font-family: var(--font);
       overflow: hidden;
@@ -46,8 +63,14 @@
       width: min(96vw, var(--slide-w));
       height: min(92vh, var(--slide-h));
       position: relative;
-      background: var(--bg);
-      border: 1px solid var(--border);
+      /* textured brown with subtle gradient + dark pattern */
+      background:
+        radial-gradient(1200px 700px at 85% 10%, rgba(245, 158, 11, 0.07), transparent 62%),
+        radial-gradient(980px 600px at 10% 92%, rgba(96, 165, 250, 0.05), transparent 62%),
+        radial-gradient(760px 480px at 48% 40%, rgba(255, 255, 255, 0.02), transparent 60%),
+        repeating-linear-gradient(135deg, var(--grain-a) 0 2px, var(--grain-b) 2px 7px),
+        linear-gradient(160deg, var(--bg-high) 0%, var(--bg) 55%, var(--bg-deep) 100%);
+      border: 1px solid rgba(255, 255, 255, 0.08);
       border-radius: 12px;
       overflow: hidden;
       box-shadow: 0 24px 80px rgba(0, 0, 0, 0.55);
@@ -98,8 +121,63 @@
     .cover {
       justify-content: center;
       background:
-        radial-gradient(ellipse 80% 60% at 100% 0%, rgba(59, 130, 246, 0.1), transparent),
-        var(--bg);
+        radial-gradient(980px 620px at 92% 10%, rgba(245, 158, 11, 0.12), transparent 62%),
+        radial-gradient(900px 580px at 10% 92%, rgba(96, 165, 250, 0.06), transparent 62%),
+        radial-gradient(560px 420px at 42% 36%, rgba(255, 255, 255, 0.02), transparent 62%),
+        repeating-linear-gradient(135deg, var(--grain-a) 0 2px, var(--grain-b) 2px 7px),
+        linear-gradient(160deg, var(--bg-high) 0%, var(--bg) 55%, var(--bg-deep) 100%);
+    }
+
+    /* Subtle cool mirror specular on all “text boxes” */
+    .principle,
+    .flow-line,
+    .pillar-card,
+    .pillar-brand,
+    .agent-block,
+    .j-card,
+    .phase-card,
+    .overview-item {
+      position: relative;
+      overflow: hidden;
+    }
+
+    .principle::before,
+    .flow-line::before,
+    .pillar-card::before,
+    .pillar-brand::before,
+    .agent-block::before,
+    .j-card::before,
+    .phase-card::before,
+    .overview-item::before {
+      content: \"\";
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      background:
+        linear-gradient(165deg, var(--spec-a) 0%, rgba(96, 165, 250, 0.00) 38%),
+        linear-gradient(0deg, rgba(255, 255, 255, 0.02) 0%, rgba(255, 255, 255, 0.00) 30%),
+        radial-gradient(420px 220px at 18% 12%, var(--spec-b), rgba(125, 211, 252, 0.00) 62%);
+      opacity: 0.75; /* subtle but visible */
+      mix-blend-mode: screen;
+    }
+
+    /* Extra micro-gloss line near top edge */
+    .principle::after,
+    .pillar-card::after,
+    .pillar-brand::after,
+    .agent-block::after,
+    .j-card::after,
+    .phase-card::after,
+    .flow-line::after {
+      content: \"\";
+      position: absolute;
+      left: 12px;
+      right: 12px;
+      top: 10px;
+      height: 1px;
+      pointer-events: none;
+      background: linear-gradient(90deg, rgba(125, 211, 252, 0.00), rgba(125, 211, 252, 0.16), rgba(255, 255, 255, 0.00));
+      opacity: 0.75;
     }
 
     .cover-badge { font-size: 13px; color: var(--text-3); letter-spacing: 0.06em; margin-bottom: 24px; }
@@ -120,7 +198,7 @@
       font-size: 15px;
       font-weight: 600;
       border: 1px solid var(--border);
-      background: var(--bg-card);
+      background: rgba(255, 255, 255, 0.04);
     }
 
     /* Principles — 大字四原则 */
@@ -133,7 +211,7 @@
 
     .principle {
       background: var(--bg-card);
-      border: 1px solid var(--border);
+      border: 1px solid rgba(255, 255, 255, 0.08);
       border-radius: 14px;
       padding: 32px 36px;
       display: flex;
@@ -157,7 +235,7 @@
       margin-top: 28px;
       padding: 20px 28px;
       background: var(--bg-card);
-      border: 1px solid var(--border);
+      border: 1px solid rgba(255, 255, 255, 0.08);
       border-radius: 12px;
       font-size: 17px;
       color: var(--text-2);
@@ -230,7 +308,7 @@
 
     .pillar-card {
       background: var(--bg-card);
-      border: 1px solid var(--border);
+      border: 1px solid rgba(255, 255, 255, 0.08);
       border-radius: 14px;
       padding: 28px 32px;
       display: flex;
@@ -286,7 +364,7 @@
 
     .pillar-brand {
       background: var(--bg-card);
-      border: 1px solid var(--border);
+      border: 1px solid rgba(255, 255, 255, 0.08);
       border-radius: 16px;
       border-top: 4px solid var(--c);
       padding: 40px 32px;
@@ -366,7 +444,7 @@
 
     .agent-block {
       background: var(--bg-card);
-      border: 1px solid var(--border);
+      border: 1px solid rgba(255, 255, 255, 0.08);
       border-radius: 14px;
       padding: 36px 32px;
     }
@@ -400,7 +478,7 @@
 
     .j-card {
       background: var(--bg-card);
-      border: 1px solid var(--border);
+      border: 1px solid rgba(255, 255, 255, 0.08);
       border-radius: 12px;
       padding: 24px 20px;
       text-align: center;
@@ -429,7 +507,7 @@
 
     .phase-card {
       background: var(--bg-card);
-      border: 1px solid var(--border);
+      border: 1px solid rgba(255, 255, 255, 0.08);
       border-radius: 14px;
       padding: 28px;
     }
@@ -456,16 +534,16 @@
       display: flex;
       align-items: center;
       gap: 12px;
-      background: rgba(10, 14, 26, 0.92);
-      border: 1px solid var(--border);
+      background: rgba(28, 18, 13, 0.86);
+      border: 1px solid rgba(255, 255, 255, 0.10);
       border-radius: 999px;
       padding: 8px 16px;
       z-index: 100;
     }
 
     .controls button {
-      background: var(--bg-card);
-      border: 1px solid var(--border);
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid rgba(255, 255, 255, 0.10);
       color: var(--text);
       width: 36px;
       height: 36px;
@@ -491,7 +569,7 @@
       display: none;
       position: fixed;
       inset: 0;
-      background: rgba(5, 8, 16, 0.96);
+      background: rgba(16, 8, 5, 0.96);
       z-index: 200;
       padding: 40px;
       overflow: auto;
