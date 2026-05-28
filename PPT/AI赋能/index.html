@@ -1,0 +1,958 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>商域 AI 赋能六支柱全景 · BizSim Edu</title>
+  <style>
+    :root {
+      --bg: #0a0e1a;
+      --bg-card: #141c2e;
+      --text: #f1f5f9;
+      --text-2: #94a3b8;
+      --text-3: #64748b;
+      --border: rgba(148, 163, 184, 0.14);
+      --accent: #3b82f6;
+      --p1: #3b82f6;
+      --p2: #8b5cf6;
+      --p3: #10b981;
+      --p4: #f59e0b;
+      --p5: #06b6d4;
+      --p6: #f43f5e;
+      --font: "PingFang SC", "Microsoft YaHei", "Segoe UI", system-ui, sans-serif;
+      --slide-w: 1280px;
+      --slide-h: 720px;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    html, body {
+      height: 100%;
+      background: #050810;
+      color: var(--text);
+      font-family: var(--font);
+      overflow: hidden;
+    }
+
+    .deck {
+      width: 100vw;
+      height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .viewport {
+      width: min(96vw, var(--slide-w));
+      height: min(92vh, var(--slide-h));
+      position: relative;
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      overflow: hidden;
+      box-shadow: 0 24px 80px rgba(0, 0, 0, 0.55);
+    }
+
+    .slide {
+      position: absolute;
+      inset: 0;
+      padding: 52px 64px 80px;
+      display: none;
+      flex-direction: column;
+      opacity: 0;
+      transform: translateX(20px);
+      transition: opacity 0.35s ease, transform 0.35s ease;
+      overflow: hidden;
+    }
+
+    .slide.active { display: flex; opacity: 1; transform: translateX(0); }
+
+    .slide-tag {
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 12px;
+    }
+
+    .slide-title {
+      font-size: 36px;
+      font-weight: 800;
+      line-height: 1.2;
+      letter-spacing: -0.02em;
+    }
+
+    .slide-lead {
+      margin-top: 16px;
+      font-size: 18px;
+      color: var(--text-2);
+      line-height: 1.65;
+      max-width: 880px;
+    }
+
+    .slide-header { margin-bottom: 36px; flex-shrink: 0; }
+    .slide-body { flex: 1; min-height: 0; display: flex; flex-direction: column; }
+
+    /* Cover */
+    .cover {
+      justify-content: center;
+      background:
+        radial-gradient(ellipse 80% 60% at 100% 0%, rgba(59, 130, 246, 0.1), transparent),
+        var(--bg);
+    }
+
+    .cover-badge { font-size: 13px; color: var(--text-3); letter-spacing: 0.06em; margin-bottom: 24px; }
+    .cover h1 { font-size: 52px; font-weight: 900; line-height: 1.12; max-width: 820px; }
+    .cover h1 em { font-style: normal; color: var(--accent); }
+    .cover-lead { margin-top: 28px; font-size: 20px; color: var(--text-2); line-height: 1.65; max-width: 640px; }
+
+    .cover-pillars {
+      margin-top: 48px;
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+
+    .pill {
+      padding: 8px 18px;
+      border-radius: 999px;
+      font-size: 15px;
+      font-weight: 600;
+      border: 1px solid var(--border);
+      background: var(--bg-card);
+    }
+
+    /* Principles — 大字四原则 */
+    .principles {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 20px;
+      flex: 1;
+    }
+
+    .principle {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 32px 36px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+    }
+
+    .principle h3 {
+      font-size: 22px;
+      font-weight: 800;
+      margin-bottom: 14px;
+    }
+
+    .principle p {
+      font-size: 17px;
+      color: var(--text-2);
+      line-height: 1.65;
+    }
+
+    .flow-line {
+      margin-top: 28px;
+      padding: 20px 28px;
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      font-size: 17px;
+      color: var(--text-2);
+      text-align: center;
+      line-height: 1.6;
+    }
+
+    .flow-line strong { color: var(--text); }
+
+    /* 六支柱对照表 — 核心页 */
+    .overview-table {
+      width: 100%;
+      border-collapse: collapse;
+      flex: 1;
+    }
+
+    .overview-table th {
+      padding: 14px 20px;
+      text-align: left;
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--text-3);
+      border-bottom: 2px solid var(--border);
+    }
+
+    .overview-table td {
+      padding: 22px 20px;
+      border-bottom: 1px solid var(--border);
+      vertical-align: middle;
+    }
+
+    .overview-table tr:last-child td { border-bottom: none; }
+
+    .col-num {
+      font-size: 28px;
+      font-weight: 900;
+      width: 56px;
+    }
+
+    .col-name {
+      font-size: 20px;
+      font-weight: 800;
+      width: 140px;
+      white-space: nowrap;
+    }
+
+    .col-perception {
+      font-size: 17px;
+      color: var(--text);
+      line-height: 1.65;
+    }
+
+    .col-meta {
+      font-size: 14px;
+      color: var(--text-3);
+      width: 100px;
+      text-align: right;
+    }
+
+    /* 架构 2×3 */
+    .pillar-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      grid-template-rows: repeat(2, 1fr);
+      gap: 18px;
+      flex: 1;
+    }
+
+    .pillar-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 28px 32px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      border-left-width: 4px;
+    }
+
+    .pillar-card .num {
+      font-size: 14px;
+      font-weight: 700;
+      letter-spacing: 0.06em;
+      margin-bottom: 10px;
+      opacity: 0.85;
+    }
+
+    .pillar-card h3 {
+      font-size: 24px;
+      font-weight: 800;
+      margin-bottom: 14px;
+      line-height: 1.25;
+    }
+
+    .pillar-card .sense {
+      font-size: 16px;
+      color: var(--text-2);
+      line-height: 1.65;
+    }
+
+    .zone-labels {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 18px;
+      margin-bottom: 12px;
+    }
+
+    .zone-label {
+      text-align: center;
+      font-size: 13px;
+      font-weight: 700;
+      letter-spacing: 0.12em;
+      color: var(--text-3);
+    }
+
+    /* 单支柱页 */
+    .pillar-slide {
+      display: grid;
+      grid-template-columns: 300px 1fr;
+      gap: 48px;
+      height: 100%;
+      align-items: center;
+    }
+
+    .pillar-brand {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      border-top: 4px solid var(--c);
+      padding: 40px 32px;
+      text-align: center;
+    }
+
+    .pillar-brand .big-num {
+      font-size: 72px;
+      font-weight: 900;
+      color: var(--c);
+      line-height: 1;
+      margin-bottom: 16px;
+    }
+
+    .pillar-brand h2 {
+      font-size: 26px;
+      font-weight: 800;
+      margin-bottom: 24px;
+    }
+
+    .pillar-brand .quote {
+      font-size: 17px;
+      color: var(--text-2);
+      line-height: 1.7;
+      text-align: left;
+    }
+
+    .pillar-main h3 {
+      font-size: 15px;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      color: var(--text-3);
+      margin-bottom: 28px;
+    }
+
+    .value-list {
+      list-style: none;
+    }
+
+    .value-list li {
+      font-size: 22px;
+      font-weight: 600;
+      line-height: 1.45;
+      margin-bottom: 28px;
+      padding-left: 28px;
+      position: relative;
+    }
+
+    .value-list li::before {
+      content: "";
+      position: absolute;
+      left: 0;
+      top: 0.55em;
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      background: var(--c);
+    }
+
+    .value-list li span {
+      display: block;
+      font-size: 16px;
+      font-weight: 400;
+      color: var(--text-2);
+      margin-top: 8px;
+      line-height: 1.6;
+    }
+
+    /* 智能体 — 三列简版 */
+    .agent-row {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 24px;
+      flex: 1;
+      align-content: center;
+    }
+
+    .agent-block {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 36px 32px;
+    }
+
+    .agent-block h3 {
+      font-size: 22px;
+      font-weight: 800;
+      margin-bottom: 16px;
+    }
+
+    .agent-block p {
+      font-size: 17px;
+      color: var(--text-2);
+      line-height: 1.65;
+    }
+
+    .agent-block .agents {
+      margin-top: 20px;
+      font-size: 20px;
+      font-weight: 700;
+      color: var(--text);
+    }
+
+    /* Journey */
+    .journey-row {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 16px;
+      margin-bottom: 36px;
+    }
+
+    .j-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 24px 20px;
+      text-align: center;
+    }
+
+    .j-card h4 { font-size: 18px; font-weight: 800; margin-bottom: 10px; }
+    .j-card p { font-size: 15px; color: var(--text-2); line-height: 1.55; }
+
+    .journey-table td {
+      padding: 18px 20px;
+      font-size: 17px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .journey-table td:first-child { font-weight: 700; width: 120px; }
+    .journey-table td:last-child { color: var(--text-2); line-height: 1.6; }
+
+    /* Phase */
+    .phase-row {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 20px;
+      flex: 1;
+      align-content: center;
+    }
+
+    .phase-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 28px;
+    }
+
+    .phase-card.highlight { border-color: var(--accent); background: rgba(59, 130, 246, 0.06); }
+
+    .phase-card .pid {
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--accent);
+      letter-spacing: 0.08em;
+      margin-bottom: 10px;
+    }
+
+    .phase-card h4 { font-size: 20px; font-weight: 800; margin-bottom: 14px; }
+    .phase-card p { font-size: 16px; color: var(--text-2); line-height: 1.65; }
+
+    /* Controls */
+    .controls {
+      position: fixed;
+      bottom: 20px;
+      left: 50%;
+      transform: translateX(-50%);
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      background: rgba(10, 14, 26, 0.92);
+      border: 1px solid var(--border);
+      border-radius: 999px;
+      padding: 8px 16px;
+      z-index: 100;
+    }
+
+    .controls button {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      color: var(--text);
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      cursor: pointer;
+      font-size: 14px;
+    }
+
+    .progress-text { font-size: 12px; color: var(--text-3); min-width: 64px; text-align: center; }
+
+    .progress-bar {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      height: 3px;
+      background: var(--accent);
+      transition: width 0.3s ease;
+    }
+
+    .hint { position: fixed; top: 16px; right: 20px; font-size: 11px; color: var(--text-3); }
+
+    .overview {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(5, 8, 16, 0.96);
+      z-index: 200;
+      padding: 40px;
+      overflow: auto;
+    }
+
+    .overview.open { display: block; }
+
+    .overview-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 12px;
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+    .overview-item {
+      aspect-ratio: 16/9;
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 12px;
+      cursor: pointer;
+    }
+
+    .overview-item.active { border-color: var(--accent); }
+    .overview-item .num { font-size: 10px; color: var(--text-3); }
+    .overview-item h4 { font-size: 12px; margin-top: 6px; }
+
+    @media (max-width: 900px) {
+      .slide { padding: 32px 28px 64px; }
+      .pillar-slide, .principles, .pillar-grid, .agent-row, .phase-row { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+<div class="hint">← → 翻页 · F 全屏 · O 概览</div>
+
+<div class="deck">
+  <div class="viewport" id="viewport">
+    <div class="progress-bar" id="progressBar"></div>
+
+    <!-- 1 封面 -->
+    <section class="slide cover active" data-title="封面">
+      <div class="cover-badge">BizSim Edu · 商域 · 2026</div>
+      <h1>商域 <em>AI 赋能</em><br>六支柱全景</h1>
+      <p class="cover-lead">从智能教练到 OPC 终局——AI 如何贯穿商赛、生涯、城市模拟与真实商业实践</p>
+      <div class="cover-pillars">
+        <span class="pill" style="color:var(--p1);border-color:var(--p1)">① AI 教练</span>
+        <span class="pill" style="color:var(--p2);border-color:var(--p2)">② 生涯 NPC</span>
+        <span class="pill" style="color:var(--p3);border-color:var(--p3)">③ 赛事对手</span>
+        <span class="pill" style="color:var(--p4);border-color:var(--p4)">④ 拟真城市</span>
+        <span class="pill" style="color:var(--p5);border-color:var(--p5)">⑤ 商业文书</span>
+        <span class="pill" style="color:var(--p6);border-color:var(--p6)">⑥ OPC 终局</span>
+      </div>
+    </section>
+
+    <!-- 2 设计总纲 -->
+    <section class="slide" data-title="设计总纲">
+      <div class="slide-header">
+        <div class="slide-tag">Design</div>
+        <h2 class="slide-title">AI 不是聊天窗口</h2>
+        <p class="slide-lead">而是沿平台主线分布的六类赋能能力——扩展教师、服务学生、支撑终局</p>
+      </div>
+      <div class="slide-body">
+        <div class="principles">
+          <div class="principle">
+            <h3>规则层优先</h3>
+            <p>练习、复盘与城市模拟先靠确定性引擎规模化运转，大模型只用在真正需要理解力的高价值环节。</p>
+          </div>
+          <div class="principle">
+            <h3>LLM 渐进接入</h3>
+            <p>从模板与规则复盘起步，再逐步引入答疑、共写与 Agent——避免一上来就「全站聊天」。</p>
+          </div>
+          <div class="principle">
+            <h3>扩展教师，不替代</h3>
+            <p>AI 帮讲、帮复盘、帮起草，但不替学生做决策，正式赛也不提供隐藏数值加成。</p>
+          </div>
+          <div class="principle">
+            <h3>高利害可审计</h3>
+            <p>文书、母本数据与 OPC 关卡均留痕、可复核；模型不稳定时可降级为模板。</p>
+          </div>
+        </div>
+        <div class="flow-line">
+          <strong>Arena 商赛</strong> → <strong>Career 生涯</strong> → <strong>六支柱 AI</strong> → <strong>OPC · 拟真城市</strong> 双终局
+        </div>
+      </div>
+    </section>
+
+    <!-- 3 六支柱对照 — 核心页 -->
+    <section class="slide" data-title="六支柱对照">
+      <div class="slide-header" style="margin-bottom:24px">
+        <div class="slide-tag">Overview</div>
+        <h2 class="slide-title">六支柱 · 学生感知</h2>
+      </div>
+      <div class="slide-body">
+        <table class="overview-table">
+          <thead>
+            <tr>
+              <th></th>
+              <th>支柱</th>
+              <th>学生感知</th>
+              <th style="text-align:right">阶段</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td class="col-num" style="color:var(--p1)">①</td>
+              <td class="col-name">AI 教练</td>
+              <td class="col-perception">有人帮我把规则讲明白、赛后复盘得失，并告诉我下一步该练什么</td>
+              <td class="col-meta">B～C</td>
+            </tr>
+            <tr>
+              <td class="col-num" style="color:var(--p2)">②</td>
+              <td class="col-name">生涯 NPC</td>
+              <td class="col-perception">家园里有人记得我的成长轨迹，故事与关系随赛季持续推进</td>
+              <td class="col-meta">B～C</td>
+            </tr>
+            <tr>
+              <td class="col-num" style="color:var(--p3)">③</td>
+              <td class="col-name">赛事对手</td>
+              <td class="col-perception">练习对手随时可战、风格鲜明，并会随对局与教练复盘持续进化，越练越有针对性</td>
+              <td class="col-meta">A 起</td>
+            </tr>
+            <tr>
+              <td class="col-num" style="color:var(--p4)">④</td>
+              <td class="col-name">拟真城市</td>
+              <td class="col-perception">无论换哪项赛制，面对的仍是同一座熟悉的城市与人群</td>
+              <td class="col-meta">B～E</td>
+            </tr>
+            <tr>
+              <td class="col-num" style="color:var(--p5)">⑤</td>
+              <td class="col-name">商业文书</td>
+              <td class="col-perception">企划书与 BMC 能写得规范专业，也经得起教师审阅与批改</td>
+              <td class="col-meta">C～E</td>
+            </tr>
+            <tr>
+              <td class="col-num" style="color:var(--p6)">⑥</td>
+              <td class="col-name">OPC 终局</td>
+              <td class="col-perception">像创业者一样带领 AI 团队完成首个项目，并接受关卡式考核</td>
+              <td class="col-meta">E</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- 4 架构 -->
+    <section class="slide" data-title="六支柱架构">
+      <div class="slide-header" style="margin-bottom:20px">
+        <div class="slide-tag">Architecture</div>
+        <h2 class="slide-title">六支柱与产品域</h2>
+      </div>
+      <div class="slide-body">
+        <div class="zone-labels">
+          <div class="zone-label">学与练</div>
+          <div class="zone-label">长期陪伴</div>
+          <div class="zone-label">产出与终局</div>
+        </div>
+        <div class="pillar-grid">
+          <div class="pillar-card" style="border-left-color:var(--p1)">
+            <div class="num" style="color:var(--p1)">①</div>
+            <h3>AI 教练</h3>
+            <p class="sense">讲明白、复盘、指引下一步练习</p>
+          </div>
+          <div class="pillar-card" style="border-left-color:var(--p2)">
+            <div class="num" style="color:var(--p2)">②</div>
+            <h3>生涯 NPC</h3>
+            <p class="sense">长期关系与章节故事持续推进</p>
+          </div>
+          <div class="pillar-card" style="border-left-color:var(--p5)">
+            <div class="num" style="color:var(--p5)">⑤</div>
+            <h3>商业文书</h3>
+            <p class="sense">企划与 BMC 写得像样、能批改</p>
+          </div>
+          <div class="pillar-card" style="border-left-color:var(--p3)">
+            <div class="num" style="color:var(--p3)">③</div>
+            <h3>赛事 AI 对手</h3>
+            <p class="sense">随时开练，复盘驱动对手持续进化</p>
+          </div>
+          <div class="pillar-card" style="border-left-color:var(--p4)">
+            <div class="num" style="color:var(--p4)">④</div>
+            <h3>拟真城市</h3>
+            <p class="sense">跨赛制共享同一座城市</p>
+          </div>
+          <div class="pillar-card" style="border-left-color:var(--p6)">
+            <div class="num" style="color:var(--p6)">⑥</div>
+            <h3>OPC 终局</h3>
+            <p class="sense">AI 团队协作 · 关卡式终考</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 5 智能体 — 简化为三域 -->
+    <section class="slide" data-title="智能体家族">
+      <div class="slide-header">
+        <div class="slide-tag">Agents</div>
+        <h2 class="slide-title">幕后智能体 · 三类分工</h2>
+        <p class="slide-lead">学生只面对 Athena 一个教练入口；其余智能体在后台支撑六支柱运转</p>
+      </div>
+      <div class="slide-body">
+        <div class="agent-row">
+          <div class="agent-block">
+            <h3>教练与文书</h3>
+            <div class="agents">Athena</div>
+            <p style="margin-top:16px">统一复盘、答疑与文书共写入口，贯穿支柱 ① 与 ⑤</p>
+          </div>
+          <div class="agent-block">
+            <h3>陪伴与模拟</h3>
+            <div class="agents">NPC · Demia · Rival</div>
+            <p style="margin-top:16px">生涯对话、城市舆情与谈判练习，支撑支柱 ② ③ ④</p>
+          </div>
+          <div class="agent-block">
+            <h3>终局交付</h3>
+            <div class="agents">Cortex · Gateway</div>
+            <p style="margin-top:16px">任务拆单与阶段考核，支撑支柱 ⑥ OPC 流水线</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 6～11 各支柱 -->
+    <section class="slide" data-title="支柱①">
+      <div class="slide-body pillar-slide">
+        <div class="pillar-brand" style="--c:var(--p1)">
+          <div class="big-num">①</div>
+          <h2>AI 教练</h2>
+          <p class="quote">有人帮我把规则讲明白、赛后复盘得失，并告诉我下一步该练什么</p>
+        </div>
+        <div class="pillar-main" style="--c:var(--p1)">
+          <h3>ATHENA · 教学与成长引导</h3>
+          <ul class="value-list">
+            <li>简单教学<span>把赛制要点与错误决策讲清楚，降低入门门槛</span></li>
+            <li>赛后复盘<span>梳理决策链与机会成本，指出可改进之处</span></li>
+            <li>最近发展区<span>结合掌握度推荐下一练、下一知识点</span></li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <section class="slide" data-title="支柱②">
+      <div class="slide-body pillar-slide">
+        <div class="pillar-brand" style="--c:var(--p2)">
+          <div class="big-num">②</div>
+          <h2>生涯 NPC</h2>
+          <p class="quote">家园里有人记得我的成长轨迹，故事与关系随赛季持续推进</p>
+        </div>
+        <div class="pillar-main" style="--c:var(--p2)">
+          <h3>CAREER · 长期陪伴</h3>
+          <ul class="value-list">
+            <li>记住你<span>导师、伙伴与对手随关系度变化，而非一次性聊天</span></li>
+            <li>推进故事<span>Quest 与章节解锁，把练习与生涯主线连起来</span></li>
+            <li>同一角色 IP<span>与赛事 AI 对手共用面孔，形成陪伴感</span></li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <section class="slide" data-title="支柱③">
+      <div class="slide-body pillar-slide">
+        <div class="pillar-brand" style="--c:var(--p3)">
+          <div class="big-num">③</div>
+          <h2>赛事 AI 对手</h2>
+          <p class="quote">练习对手随时可战、风格鲜明，并会随对局与教练复盘持续进化，越练越有针对性</p>
+        </div>
+        <div class="pillar-main" style="--c:var(--p3)">
+          <h3>ARENA · 会成长的陪练</h3>
+          <ul class="value-list">
+            <li>随时开练<span>浮生记、TechVenture 规则 AI 满局，零 Token 规模化</span></li>
+            <li>有性格的对手<span>激进、稳健、品牌向等策略，同一 NPC 面孔贯穿战报</span></li>
+            <li>复盘驱动进化<span>教练 Debrief 与行为信号调整策略旋钮，下一局更强、更贴你的打法</span></li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <section class="slide" data-title="支柱④">
+      <div class="slide-body pillar-slide">
+        <div class="pillar-brand" style="--c:var(--p4)">
+          <div class="big-num">④</div>
+          <h2>拟真城市</h2>
+          <p class="quote">无论换哪项赛制，面对的仍是同一座熟悉的城市与人群</p>
+        </div>
+        <div class="pillar-main" style="--c:var(--p4)">
+          <h3>WORLD · 共享商业世界</h3>
+          <ul class="value-list">
+            <li>一座城，多种玩法<span>物流、品牌、宏观沙盘共享 city_id 与人群基线</span></li>
+            <li>建设期 AI 辅助<span>起草城市档案与参数区间，教研定稿后入库</span></li>
+            <li>运行期规则优先<span>赛中 POP 由引擎计算，叙事层不改数值</span></li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <section class="slide" data-title="支柱⑤">
+      <div class="slide-body pillar-slide">
+        <div class="pillar-brand" style="--c:var(--p5)">
+          <div class="big-num">⑤</div>
+          <h2>商业文书</h2>
+          <p class="quote">企划书与 BMC 能写得规范专业，也经得起教师审阅与批改</p>
+        </div>
+        <div class="pillar-main" style="--c:var(--p5)">
+          <h3>DOCUMENTS · 专业产出</h3>
+          <ul class="value-list">
+            <li>结构化共写<span>企划书、BMC、宣言与报告均有模板与字段引导</span></li>
+            <li>事实锚定<span>引用对局与知识卡片，不伪造数据来源</span></li>
+            <li>人机分工<span>AI 起草、学生修改、教师或 Gateway 定稿</span></li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <section class="slide" data-title="支柱⑥">
+      <div class="slide-body pillar-slide">
+        <div class="pillar-brand" style="--c:var(--p6)">
+          <div class="big-num">⑥</div>
+          <h2>OPC 终局</h2>
+          <p class="quote">像创业者一样带领 AI 团队完成首个项目，并接受关卡式考核</p>
+        </div>
+        <div class="pillar-main" style="--c:var(--p6)">
+          <h3>OPC · 素养终考</h3>
+          <ul class="value-list">
+            <li>管理者，非聊天者<span>学生带 AI 员工走 IDEATE → BUILD 首项目流水线</span></li>
+            <li>可验收的交付物<span>BMC、MVP、验证报告构成考核矩阵</span></li>
+            <li>Gateway 关卡<span>阶段评审把关，必要时由教师终审</span></li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <!-- 12 学生旅程 -->
+    <section class="slide" data-title="学生旅程">
+      <div class="slide-header">
+        <div class="slide-tag">Journey</div>
+        <h2 class="slide-title">六支柱如何串联</h2>
+      </div>
+      <div class="slide-body">
+        <div class="journey-row">
+          <div class="j-card"><h4>入门</h4><p>教练讲懂规则<br>AI 对手陪练 · 赛后复盘调参</p></div>
+          <div class="j-card"><h4>常驻</h4><p>生涯 NPC 陪伴<br>城市档案阅读</p></div>
+          <div class="j-card"><h4>大赛</h4><p>赛后复盘<br>文书与教师控场</p></div>
+          <div class="j-card"><h4>高阶</h4><p>前五柱沉淀<br>OPC 首项目终考</p></div>
+        </div>
+        <table class="journey-table" style="width:100%;border-collapse:collapse">
+          <tr><td>学习</td><td>Athena 答疑 → 练习赛 → 复盘反馈 → 对手进化 → 再练</td></tr>
+          <tr><td>沉淀</td><td>生涯关系、城市足迹、文书草稿逐步积累</td></tr>
+          <tr><td>终局</td><td>解锁 OPC，以 AI 团队协作完成首个可展示项目</td></tr>
+        </table>
+      </div>
+    </section>
+
+    <!-- 13 阶段路线 — 简化为三幕 -->
+    <section class="slide" data-title="阶段路线">
+      <div class="slide-header">
+        <div class="slide-tag">Roadmap</div>
+        <h2 class="slide-title">三幕式落地</h2>
+      </div>
+      <div class="slide-body">
+        <div class="phase-row">
+          <div class="phase-card highlight">
+            <div class="pid">第一幕 · 现在</div>
+            <h4>能练、能赛</h4>
+            <p>规则 AI 对手已规模化；教练与 OPC 壳已就绪，Phase B 打通复盘与生涯数据。</p>
+          </div>
+          <div class="phase-card">
+            <div class="pid">第二幕 · B～D</div>
+            <h4>有教练、有世界</h4>
+            <p>Athena 复盘与 RAG、生涯 NPC、城市母本、文书辅助陆续上线，形成完整学习闭环。</p>
+          </div>
+          <div class="phase-card">
+            <div class="pid">第三幕 · E～F</div>
+            <h4>能交付、能考核</h4>
+            <p>OPC AI 员工与 Gateway 终考、Demia 城市叙事、机构规模化并行推进。</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 14 结语 -->
+    <section class="slide cover" data-title="谢谢">
+      <div class="cover-badge">BizSim Edu · 商域</div>
+      <h1 style="font-size:44px;line-height:1.2">规则引擎规模化陪练<br>渐进式智能教练<br><em style="color:var(--p6)">OPC 终局孵化</em></h1>
+      <p class="cover-lead" style="margin-top:32px">inspire/81- · PPT/AI赋能/index.html</p>
+    </section>
+
+  </div>
+</div>
+
+<div class="controls">
+  <button id="btnPrev">◀</button>
+  <span class="progress-text" id="progressText">1 / 14</span>
+  <button id="btnNext">▶</button>
+  <button id="btnOverview">▦</button>
+  <button id="btnFullscreen">⛶</button>
+</div>
+
+<div class="overview" id="overview"><div class="overview-grid" id="overviewGrid"></div></div>
+
+<script>
+(function () {
+  const slides = Array.from(document.querySelectorAll(".slide"));
+  const total = slides.length;
+  let current = 0;
+  let overviewOpen = false;
+  const progressBar = document.getElementById("progressBar");
+  const progressText = document.getElementById("progressText");
+  const overview = document.getElementById("overview");
+  const overviewGrid = document.getElementById("overviewGrid");
+  const viewport = document.getElementById("viewport");
+
+  slides.forEach((slide, i) => {
+    const item = document.createElement("div");
+    item.className = "overview-item";
+    item.innerHTML = `<div class="num">${String(i + 1).padStart(2, "0")}</div><h4>${slide.dataset.title || ""}</h4>`;
+    item.addEventListener("click", () => { go(i); toggleOverview(false); });
+    overviewGrid.appendChild(item);
+  });
+
+  function go(index) {
+    if (index < 0 || index >= total) return;
+    slides[current].classList.remove("active");
+    current = index;
+    slides[current].classList.add("active");
+    progressBar.style.width = ((current + 1) / total * 100) + "%";
+    progressText.textContent = (current + 1) + " / " + total;
+    overviewGrid.querySelectorAll(".overview-item").forEach((el, i) => el.classList.toggle("active", i === current));
+  }
+
+  function toggleOverview(force) {
+    overviewOpen = force !== undefined ? force : !overviewOpen;
+    overview.classList.toggle("open", overviewOpen);
+  }
+
+  document.getElementById("btnNext").addEventListener("click", () => go(current + 1));
+  document.getElementById("btnPrev").addEventListener("click", () => go(current - 1));
+  document.getElementById("btnOverview").addEventListener("click", () => toggleOverview());
+  document.getElementById("btnFullscreen").addEventListener("click", () => {
+    if (!document.fullscreenElement) (viewport.requestFullscreen || document.documentElement.requestFullscreen).call(viewport);
+    else document.exitFullscreen();
+  });
+
+  document.addEventListener("keydown", (e) => {
+    if (overviewOpen && e.key === "Escape") { toggleOverview(false); return; }
+    if (["ArrowRight","ArrowDown"," ","PageDown"].includes(e.key)) { e.preventDefault(); go(current + 1); }
+    else if (["ArrowLeft","ArrowUp","PageUp"].includes(e.key)) { e.preventDefault(); go(current - 1); }
+    else if (e.key === "Home") { e.preventDefault(); go(0); }
+    else if (e.key === "End") { e.preventDefault(); go(total - 1); }
+    else if (e.key === "o" || e.key === "O") toggleOverview();
+    else if (e.key === "f" || e.key === "F") document.getElementById("btnFullscreen").click();
+  });
+
+  let tx = 0;
+  viewport.addEventListener("touchstart", e => { tx = e.changedTouches[0].screenX; }, { passive: true });
+  viewport.addEventListener("touchend", e => {
+    const dx = e.changedTouches[0].screenX - tx;
+    if (Math.abs(dx) > 50) go(dx < 0 ? current + 1 : current - 1);
+  }, { passive: true });
+
+  go(0);
+})();
+</script>
+</body>
+</html>
