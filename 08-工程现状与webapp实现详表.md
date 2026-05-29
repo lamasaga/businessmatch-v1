@@ -5,7 +5,7 @@
 > **读者**：开发、架构、排 Bug  
 > **配套阅读**：[`01-平台愿景与产品架构`](./01-平台愿景与产品架构.md) · [`02-赛事体系与双端产品`](./02-赛事体系与双端产品.md)（双端）· [`03-技术架构与实现现状`](./03-技术架构与实现现状.md)（摘要）· [`04-实施路线与里程碑`](./04-实施路线与里程碑.md) · [`09-分项目开发与集成流程`](./09-分项目开发与集成流程.md)  
 > **安装启动**：[`webapp/README.md`](./webapp/README.md)  
-> **最后更新**：2026-05-29
+> **最后更新**：2026-05-30
 
 **AI 阅读指引**：编码任务默认只读下方 [`AI_DEFAULT`](#ai_default)（约 70 行）。勿全文 attach。深读锚点：`AI_DEEP:demo-paths` · `frontend-routes` · `api-routes` · `matrix-22` · `stores-env-bugs` · `engine-rts` · `alignment` · `doc-code-index`；或 [`webapp/contracts/openapi/`](./webapp/contracts/openapi/)。任务包见 [`09-` §6.1](./09-分项目开发与集成流程.md#61-ai-编程上下文注入清单)。
 
@@ -236,7 +236,7 @@ practice/start 传 game_config_id=trading-v1 → 回合制 market 定价 → 提
 | 鉴权 | `AuthGuard.tsx` + `AppInitializer.tsx`（启动时 `GET /auth/me`） |
 | HTTP | `lib/api.ts`（Axios、`VITE_API_URL` 默认 `http://localhost:8000`） |
 | 全局演示数据 | `data/mockPlatform.ts` |
-| 状态 | Zustand：`authStore`、`careerStore`（persist）、`competitionStore`、`tradingStore`、`OPCStore` |
+| 状态 | Zustand：`authStore`、`careerStore`（persist）、`competitionStore`、`tradingStore`、`techventureStore`、`campStore`（体验营）、`OPCStore` |
 
 #### 2.6.2 路由全表（`App.tsx`）
 
@@ -252,13 +252,15 @@ practice/start 传 game_config_id=trading-v1 → 回合制 market 定价 → 提
 | `/career/debrief/:matchId` | `DebriefPage` | requireAuth | **无（mock）** | 固定 `DEBRIEF_MOCK`，`:matchId` 未使用 |
 | `/quests` | `QuestsPage` | requireAuth | 无 | `DAILY_QUESTS` + localStorage 完成态 |
 | `/achievements` | `AchievementsPage` | requireAuth | 无 | `ACHIEVEMENTS` mock |
+| `/camp` | `MyCampPage` | requireAuth | `teaching-groups/joined` | 体验营首页；多营团时 `/camp/:groupId` |
+| `/camp/join` | `JoinCampPage` | requireAuth | `POST teaching-groups/join` | 6 位营团码 |
+| `/camp/:groupId` | `MyCampPage` | requireAuth | `teaching-groups/{id}/events` | 营内商赛房间码展示 |
 | `/games` | `GamesPage` | requireAuth | `GET/POST competitions` | 房间码加入、列表 |
 | `/games/:id/lobby` | `GameLobbyPage` | requireAuth | `my-status`、start | 正式赛大厅 |
 | `/games/:id/play` | `TradingGamePage` | requireAuth | `trading/*` | **当前唯一可玩对局页** |
 | `/games/:id/techventure/lobby` | `TechVentureLobbyPage` | requireAuth | `techventure/lobby`、`join-team` | **TechVenture 选队等待大厅** |
 | `/games/:id/techventure` | `TechVenturePlayPage` | requireAuth | `techventure/*` | **TechVenture 队伍商赛** |
-| `/organizer/events/create` | `CreateEventPage` | requireAuth | `POST /competitions` | 仅 `role===admin` 时入口可见 |
-| `/wiki` | `WikiPage` | requireAuth | `wiki/*` | Canvas 图谱 |
+| `/wiki` | `WikiPage` | requireAuth | `wiki/*` | Canvas 图谱；**体验营模式下侧栏隐藏** |
 | `/wiki/:id` | `WikiArticlePage` | requireAuth | `wiki/articles/:id` | |
 | `/courses` | `CoursesPage` | requireAuth | `courses/` | |
 | `/courses/:id` | `CourseDetailPage` | requireAuth | `courses/:id` | |
@@ -274,16 +276,27 @@ practice/start 传 game_config_id=trading-v1 → 回合制 market 定价 → 提
 | 侧栏项（`Layout.tsx`） | 路径 | 备注 |
 |------------------------|------|------|
 | 首页 | `/` | |
+| 我的体验营 | `/camp` | `VITE_CAMP_PHASE1` 时显示 |
 | 生涯中枢 | `/career` | |
 | 每日任务 | `/quests` | |
 | 商赛大厅 | `/games` | 无单独「AI 模拟」入口 |
 | 课程学院 | `/courses` | |
-| 知识图谱 | `/wiki` | |
+| 知识图谱 | `/wiki` | 体验营模式下隐藏 |
 | 成就中心 | `/achievements` | |
-| 一人公司 | `/opc` | |
+| 一人公司 | `/opc` | 体验营模式下隐藏 |
 | — | `/wealth-of-nations` | **未进侧栏**，需直链 |
-| — | `/organizer/events/create` | **未进侧栏**，admin 在商赛页按钮进入 |
 | — | `/showcase` | 未登录区入口 |
+
+#### 2.6.5 组织者端路由（`organizer-frontend` :5174）
+
+| 路径 | 页面 | 后端 |
+|------|------|------|
+| `/` | `CampListPage` | `GET teaching-groups/mine` |
+| `/camps/create` | `CreateCampPage` | `POST teaching-groups` |
+| `/camps/:id` | `CampDetailPage` | 详情、成员、`GET organizer/events?teaching_group_id=` |
+| `/events/create?groupId=` | `CreateEventPage` | `POST competitions` + `teaching_group_id` |
+| `/events/:id` | `EventControlPage` | 浮生记 RTS/回合控场 |
+| `/events/:id/techventure` | `TechVentureControl` | TechVenture 控场 |
 
 #### 2.6.4 已实现但未注册路由的页面（死代码）
 
@@ -316,7 +329,7 @@ practice/start 传 game_config_id=trading-v1 → 回合制 market 定价 → 提
 | 模块 | 表/实体 | 用途 |
 |------|---------|------|
 | `models/user.py` | `users` | 认证、角色、`experience`/`level` |
-| `domains/arena/models/` | `organizer_profiles`、`competition_events`（`ArenaMatch`）、`competition_participants`、**`arena_teams`** | 含 `match_kind`、`design_mode`、`game_config_id`；`ArenaTeam` 为通用队伍模型；`migrate_schema.py` 为旧库补列 |
+| `domains/arena/models/` | `organizer_profiles`、`competition_events`（`ArenaMatch`）、`competition_participants`、**`arena_teams`**、**`teaching_groups`**、**`group_memberships`** | 含 `match_kind`、`teaching_group_id`；`migrate_schema.py` 为旧库补列 |
 | `games/trading/models.py` | `trading_rounds`、`trading_decisions`、`trading_prices` | 交易赛回合数据 |
 | `games/techventure/models.py` | `tv_team_state`、`tv_rounds`、`tv_submissions`、`tv_snapshots`、`tv_news` | TechVenture 队伍运行时、轮次、决策、结算快照、新闻 |
 | `domains/career/models/xp_event.py` | `xp_events` | 幂等 XP 账本（`idempotency_key`） |
@@ -332,8 +345,9 @@ practice/start 传 game_config_id=trading-v1 → 回合制 market 定价 → 提
 | **wiki** | `/wiki` | articles, graph, disciplines | 登录后（前端强制） |
 | **courses** | `/courses` | 列表、详情 | 内存/种子数据，非 DB |
 | **OPC** | `/opc` | companies, employees, tasks CRUD | 按 `owner_id` 隔离 |
-| **organizer** | `/organizer` | apply, profile, stats | 组织者档案 |
-| **competitions** | `/competitions` | CRUD、join(房间码)、start、end、standings、my-status | 创建需组织者；start/end 需组织者 |
+| **organizer** | `/organizer` | apply, profile, stats, **events?teaching_group_id=** | 组织者档案与办赛列表 |
+| **teaching_groups** | `/teaching-groups` | POST 建营、GET mine/joined、POST join、GET/PATCH `{id}`、GET `{id}/events` | 教师/admin 建营；学生 join |
+| **competitions** | `/competitions` | CRUD、join(房间码)、start、end、standings、my-status | 创建可带 `teaching_group_id` |
 | **trading** | `/trading` | `GET /events/{id}/state`、`POST /events/{id}/actions`（RTS）、decide/result/next（回合制） | RTS：`state` **只读**不推进 tick；`next` 对 RTS 返回 400 |
 | **trading WS** | `/trading` | `WS /events/{id}/ws?token=` | tick/finished 推送；参赛者或本场组织者 |
 | **practice** | `/practice` | `GET /game-configs`、`POST /trading/start`、`POST /techventure/start`、`GET /my` | 默认 `trading-v2-rts`；TechVenture 练习创建 1 真人 + 5 AI 队 |
@@ -613,6 +627,7 @@ flowchart LR
 
 | 日期 | 摘要 |
 | ---- | ---- |
+| 2026-05-30 | **体验营 P1 文档对齐**：`08-` 路由/API 深读表补全；OpenAPI 导出含 `teaching-groups`；分支 `feature/camp-phase1` |
 | 2026-05-29 | **体验营 P1**：`teaching_groups` API + 双端 `/camp` + `VITE_CAMP_PHASE1`；[ADR-009](./docs/decisions/009-赛季模式与教师端双端演进.md) 营团部分采纳 |
 | 2026-05-29 | **瘦身步骤 2 收尾**：`08-` §一/§2.2/§2.8～§四 标 `AI_DEEP`；§三 与 AI_DEFAULT 去重；`docs-align` 增快照自检 |
 | 2026-05-29 | **权威文档上下文瘦身**：`08-` [AI_DEFAULT](#ai_default)；changelog 归档；`webapp/contracts/`；T0/T1/T2 与 `context-pack` Skill |

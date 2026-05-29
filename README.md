@@ -22,7 +22,8 @@
 Set-Location "d:\businessmatch-v1\webapp"; .\启动.ps1
 ```
 
-　　<http://localhost:5173> · 学生 `student/student123` · 管理 `admin/admin123`
+　　<http://localhost:5173> 学生 · <http://localhost:5174> 教师体验营 · `student/student123` · `admin/admin123`  
+　　体验营功能在分支 **`feature/camp-phase1`**（合并前见 [`webapp/README.md`](./webapp/README.md) §商业体验营）。
 
 ---
 
