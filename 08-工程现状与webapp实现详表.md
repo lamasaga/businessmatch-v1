@@ -7,7 +7,7 @@
 > **安装启动**：[`webapp/README.md`](./webapp/README.md)  
 > **最后更新**：2026-05-29
 
-**AI 阅读指引**：编码任务默认只读下方 [`AI_DEFAULT`](#ai_default) 块（约 120 行）。勿全文 attach。深读：§2.3 演示路径 · §2.6/2.7 全表 · §2.11/2.12 专节 · [`webapp/contracts/openapi/`](./webapp/contracts/openapi/)。任务包见 [`09-` §6.1](./09-分项目开发与集成流程.md#61-ai-编程上下文注入清单)。
+**AI 阅读指引**：编码任务默认只读下方 [`AI_DEFAULT`](#ai_default)（约 70 行）。勿全文 attach。深读锚点：`AI_DEEP:demo-paths` · `frontend-routes` · `api-routes` · `matrix-22` · `stores-env-bugs` · `engine-rts` · `alignment` · `doc-code-index`；或 [`webapp/contracts/openapi/`](./webapp/contracts/openapi/)。任务包见 [`09-` §6.1](./09-分项目开发与集成流程.md#61-ai-编程上下文注入清单)。
 
 ---
 
@@ -98,14 +98,7 @@
 
 ## 一、webapp 角色摘要
 
-　　**商域 BizSim Edu**（目录 `webapp/`）是本仓库唯一可运行应用：FastAPI + React，承载五域演示、**交易赛正式赛闭环**、OPC CRUD。品牌与五域定义见 [`01-`](./01-平台愿景与产品架构.md)；学生端/组织者端分工见 [`02-`](./02-赛事体系与双端产品.md) §五。
-
-| 项 | 说明 |
-|----|------|
-| 代码根 | `webapp/backend`、`webapp/frontend` |
-| 演示账号 | `student/student123`、`admin/admin123` |
-| 最强闭环 | 组织者建赛 → 房间码 → 交易对局 → XP（见 §2.3） |
-| 下一步工程 | [`09-分项目开发与集成流程`](./09-分项目开发与集成流程.md) |
+　　**商域 BizSim Edu**（`webapp/`）为本仓库唯一可运行应用。演示账号、闭环路径、API 模块摘要见上文 [AI_DEFAULT](#ai_default)；产品定义见 [`01-`](./01-平台愿景与产品架构.md)、双端见 [`02-`](./02-赛事体系与双端产品.md) §五、协作见 [`09-`](./09-分项目开发与集成流程.md)。
 
 ---
 
@@ -121,6 +114,10 @@
 | 部署 | Docker Compose + Nginx | 见 `docker-compose.yml` |
 
 ### 2.2 功能模块交付矩阵
+
+> 编码任务默认读 [AI_DEFAULT](#ai_default) 功能矩阵即可。下表含持久化列，供深读维护。
+
+<!-- AI_DEEP:matrix-22 -->
 
 | 模块 | 路由/域 | 后端 API | 前端体验 | 数据持久化 | 成熟度 |
 |------|---------|----------|----------|------------|--------|
@@ -140,6 +137,8 @@
 | Demia / Rival 练习 | `/games/...` 等 | — | ✅ UI | mock 对话 | **演示级** |
 | OPC 一人公司 | `/opc/*` | ✅ CRUD | ✅ 仪表盘/任务/BMC | SQLite OPC 模型 | **数据层可用，AI 未接** |
 | 展示引导 | `/showcase` | — | ✅ | — | **演示级** |
+
+<!-- /AI_DEEP:matrix-22 -->
 
 <!-- AI_DEEP:demo-paths -->
 
@@ -361,6 +360,8 @@ practice/start 传 game_config_id=trading-v1 → 回合制 market 定价 → 提
 
 <!-- /AI_DEEP:api-routes -->
 
+<!-- AI_DEEP:stores-env-bugs -->
+
 ### 2.8 状态管理与数据流
 
 ```mermaid
@@ -460,6 +461,8 @@ flowchart LR
 | S3 | JWT 默认密钥 | 部署前必换 |
 | S4 | 无速率限制 / 审计日志 | 仅 `RequestLoggingMiddleware` 文本日志 |
 
+<!-- AI_DEEP:bug-fixed-history -->
+
 #### 已修复 / 已缓解（记录备查）
 
 | 项 | 说明 |
@@ -470,7 +473,11 @@ flowchart LR
 | RTS 调度器 commit 前启动占坑 | 已改为 `commit` 后 `start_rts_scheduler` |
 | WS `finished` 早于 commit | 已改为 `commit` 后 `broadcast_rts_from_match` |
 
----
+<!-- /AI_DEEP:bug-fixed-history -->
+
+<!-- /AI_DEEP:stores-env-bugs -->
+
+<!-- AI_DEEP:engine-rts -->
 
 ### 2.11 浮生记 RTS v2 工程专节（2026-05-19）
 
@@ -503,9 +510,15 @@ flowchart LR
 
 **关键文件**：`v6_engine.py` · `config.py` · `settle.py` · `models.py` · `ai_team.py` · `practice_flow.py` · `api/techventure.py` · `api/techventure_admin.py`
 
+<!-- /AI_DEEP:engine-rts -->
+
 ---
 
 ## 三、与顶层规划的对齐度
+
+> 百分比以 [AI_DEFAULT](#ai_default)「规划对齐度」为准。深读对照 [`01-`](./01-平台愿景与产品架构.md) 五域 + Career Hub：
+
+<!-- AI_DEEP:alignment -->
 
 　　对照 [`01-平台愿景与产品架构.md`](./01-平台愿景与产品架构.md) 中的五域 + Career Hub（摘要亦见 [`03-`](./03-技术架构与实现现状.md) §五）：
 
@@ -526,9 +539,15 @@ flowchart LR
 
 　　**本文为百分比与状态的唯一真相源**——其余文档（`03-` §五、`01-` §3.1 等）引用此处数据，不自行维护副本。
 
+<!-- /AI_DEEP:alignment -->
+
 ---
 
 ## 四、相关文档与代码入口
+
+> 深读索引；日常编码见 [AI_DEFAULT](#ai_default) 与 [`webapp/contracts/`](./webapp/contracts/README.md)。
+
+<!-- AI_DEEP:doc-code-index -->
 
 | 文档 | 用途 |
 |------|------|
@@ -578,6 +597,8 @@ flowchart LR
 | `organizer-frontend/src/pages/TechVentureJudge.tsx` | TechVenture 评委视角 |
 | `frontend/src/data/mockPlatform.ts` | 演示数据（待逐步废弃） |
 
+<!-- /AI_DEEP:doc-code-index -->
+
 ---
 
 ## 五、维护说明
@@ -589,6 +610,7 @@ flowchart LR
 
 | 日期 | 摘要 |
 | ---- | ---- |
+| 2026-05-29 | **瘦身步骤 2 收尾**：`08-` §一/§2.2/§2.8～§四 标 `AI_DEEP`；§三 与 AI_DEFAULT 去重；`docs-align` 增快照自检 |
 | 2026-05-29 | **权威文档上下文瘦身**：`08-` [AI_DEFAULT](#ai_default)；changelog 归档；`webapp/contracts/`；T0/T1/T2 与 `context-pack` Skill |
 | 2026-05-29 | **赛季模式产品稿**：`02-` 教师端/赛季/T2·T1 规划；`06-` 赛季 vs 日常；[ADR-009](./docs/decisions/009-赛季模式与教师端双端演进.md)（草案；代码仍 `practice`/`official`） |
 | 2026-05-28 | **文档入口与 inspire 编号**：`agent.md` 第一入口；`README`/`00-`/`09-` 分工；`inspire/07-`→`13-` 教学内容生成规范；新增 `inspire/14-` 桌游参考库；`doc-linking`/`inspire-writing` 规则 |

@@ -39,7 +39,8 @@ description: >-
 ```
 
 4. 若任务含 **新路由/API**：提醒跑 `webapp/scripts/export_openapi.py` 并更新 `08-` AI_DEFAULT API 摘要行
-5. 若任务含 **推送**：建议同时启用 docs-align 流程，对齐 `08-` AI_DEFAULT + §5.1 一条
+5. 若任务含 **推送**：建议 docs-align；自检 AI_DEFAULT 与 `AI_DEEP` 深读块无成熟度矛盾
+6. 深读 `08-` 时用 grep `AI_DEEP:` 或 Read 指定锚点（如 `matrix-22`、`api-routes`），勿全文 attach
 
 ## 默认禁令（Phase A）
 
