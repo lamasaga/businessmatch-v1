@@ -1,11 +1,11 @@
 import { Outlet, NavLink, useNavigate } from 'react-router-dom';
-import { LayoutDashboard, PlusCircle, LogOut, Radio } from 'lucide-react';
+import { Tent, PlusCircle, LogOut, GraduationCap } from 'lucide-react';
 import { useAuthStore } from '../stores/authStore';
 import { useOrganizerStore } from '../stores/organizerStore';
 
 const nav = [
-  { to: '/', label: '控制台', icon: LayoutDashboard },
-  { to: '/events/create', label: '创建比赛', icon: PlusCircle },
+  { to: '/', label: '我的体验营', icon: Tent },
+  { to: '/camps/create', label: '创建体验营', icon: PlusCircle },
 ];
 
 export default function Layout() {
@@ -18,8 +18,8 @@ export default function Layout() {
       <aside className="w-56 border-r border-border-subtle bg-background-secondary flex flex-col">
         <div className="p-5 border-b border-border-subtle">
           <div className="flex items-center gap-2">
-            <Radio className="w-5 h-5 text-primary" />
-            <span className="font-semibold text-sm">组织者控制台</span>
+            <GraduationCap className="w-5 h-5 text-primary" />
+            <span className="font-semibold text-sm">教师端 · 体验营</span>
           </div>
           <p className="text-xs text-foreground-muted mt-1 truncate">
             {profile?.organization_name || user?.username}

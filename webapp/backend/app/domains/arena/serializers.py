@@ -14,6 +14,7 @@ def event_to_out(event: ArenaMatch, db: Session) -> CompetitionEventOut:
     data = {
         "id": event.id,
         "organizer_id": event.organizer_id,
+        "teaching_group_id": event.teaching_group_id,
         "room_code": event.room_code,
         "title": event.title,
         "description": event.description,

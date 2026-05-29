@@ -1,5 +1,5 @@
 import { useState, type FormEvent, type ReactNode } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import { ArrowLeft, Plus, Loader2, Settings, Users, Coins, Clock, Briefcase, Zap } from 'lucide-react';
 import { useOrganizerStore } from '../stores/organizerStore';
 
@@ -18,6 +18,9 @@ const RTS_DURATION_OPTIONS = [
 
 export default function CreateEventPage() {
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
+  const groupIdParam = searchParams.get('groupId');
+  const teachingGroupId = groupIdParam ? Number(groupIdParam) : undefined;
   const { createEvent, loading, error } = useOrganizerStore();
 
   const [gamePreset, setGamePreset] = useState<GamePreset>('rts');
@@ -50,9 +53,16 @@ export default function CreateEventPage() {
         game_config_id: preset.game_config_id,
         game_type: preset.game_type,
         config,
+        teaching_group_id: teachingGroupId,
       });
 
-      if (gamePreset === 'techventure') {
+      if (teachingGroupId) {
+        navigate(
+          gamePreset === 'techventure'
+            ? `/events/${event.id}/techventure`
+            : `/events/${event.id}`
+        );
+      } else if (gamePreset === 'techventure') {
         navigate(`/events/${event.id}/techventure`);
       } else {
         navigate(`/events/${event.id}`);
@@ -67,16 +77,24 @@ export default function CreateEventPage() {
       <div className="flex items-center gap-4 mb-8">
         <button
           type="button"
-          onClick={() => navigate('/')}
+          onClick={() => navigate(teachingGroupId ? `/camps/${teachingGroupId}` : '/')}
           className="p-2 hover:bg-background-hover rounded-lg"
         >
           <ArrowLeft className="w-5 h-5 text-foreground-muted" />
         </button>
         <div>
-          <h1 className="text-2xl font-bold">创建比赛</h1>
+          <h1 className="text-2xl font-bold">
+            {teachingGroupId ? '发起营内商赛' : '创建比赛'}
+          </h1>
           <p className="text-sm text-foreground-muted">{preset.label} · {preset.subtitle}</p>
         </div>
       </div>
+
+      {teachingGroupId ? (
+        <p className="mb-4 text-sm text-foreground-muted rounded-xl border border-primary/20 bg-primary/5 px-4 py-3">
+          本场商赛将关联当前体验营；学生入营后使用生成的 <strong className="text-primary font-mono">4 位房间码</strong> 加入（与 6 位营团码不同）。
+        </p>
+      ) : null}
 
       <form onSubmit={handleSubmit} className="space-y-6">
         {/* Game type selector */}

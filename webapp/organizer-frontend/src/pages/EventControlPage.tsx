@@ -84,6 +84,7 @@ export default function EventControlPage() {
   }
 
   const { event, current_round, standings, participants, decisions_submitted, rts } = control;
+  const campId = event.teaching_group_id;
   const isRts = event.config?.mode === 'rts' || event.game_config_id === 'trading-v2-rts';
   const totalRounds = isRts
     ? Number(rts?.total_ticks ?? event.config?.total_ticks ?? 120)
@@ -99,11 +100,11 @@ export default function EventControlPage() {
   return (    <div>
       <button
         type="button"
-        onClick={() => navigate('/')}
+        onClick={() => navigate(campId ? `/camps/${campId}` : '/')}
         className="flex items-center gap-2 text-foreground-muted hover:text-foreground mb-6 text-sm"
       >
         <ArrowLeft className="w-4 h-4" />
-        返回列表
+        {campId ? '返回体验营' : '返回列表'}
       </button>
 
       <div className="flex flex-wrap items-start justify-between gap-4 mb-6">

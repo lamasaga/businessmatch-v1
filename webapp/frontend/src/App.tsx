@@ -26,6 +26,8 @@ import TalentMarketPage from './pages/OPC/TalentMarketPage';
 import MissionControlPage from './pages/OPC/MissionControlPage';
 import BMCPage from './pages/OPC/BMCPage';
 import EmployeeDetailPage from './pages/OPC/EmployeeDetailPage';
+import MyCampPage from './pages/Camp/MyCampPage';
+import JoinCampPage from './pages/Camp/JoinCampPage';
 
 function App() {
   return (
@@ -93,6 +95,30 @@ function App() {
               element={
                 <AuthGuard requireAuth>
                   <AchievementsPage />
+                </AuthGuard>
+              }
+            />
+            <Route
+              path="camp"
+              element={
+                <AuthGuard requireAuth>
+                  <MyCampPage />
+                </AuthGuard>
+              }
+            />
+            <Route
+              path="camp/join"
+              element={
+                <AuthGuard requireAuth>
+                  <JoinCampPage />
+                </AuthGuard>
+              }
+            />
+            <Route
+              path="camp/:groupId"
+              element={
+                <AuthGuard requireAuth>
+                  <MyCampPage />
                 </AuthGuard>
               }
             />

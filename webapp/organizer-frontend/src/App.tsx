@@ -5,7 +5,9 @@ import AuthGuard from './components/AuthGuard';
 import OrganizerBootstrap from './components/OrganizerBootstrap';
 import Layout from './components/Layout';
 import LoginPage from './pages/LoginPage';
-import DashboardPage from './pages/DashboardPage';
+import CampListPage from './pages/CampListPage';
+import CampDetailPage from './pages/CampDetailPage';
+import CreateCampPage from './pages/CreateCampPage';
 import CreateEventPage from './pages/CreateEventPage';
 import EventControlPage from './pages/EventControlPage';
 import TechVentureControl from './pages/TechVentureControl';
@@ -36,7 +38,9 @@ export default function App() {
             </AuthGuard>
           }
         >
-          <Route index element={<DashboardPage />} />
+          <Route index element={<CampListPage />} />
+          <Route path="camps/create" element={<CreateCampPage />} />
+          <Route path="camps/:id" element={<CampDetailPage />} />
           <Route path="events/create" element={<CreateEventPage />} />
           <Route path="events/:id" element={<EventControlPage />} />
           <Route path="events/:id/techventure" element={<TechVentureControl />} />

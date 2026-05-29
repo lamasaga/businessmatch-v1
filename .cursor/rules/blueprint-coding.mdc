@@ -42,6 +42,7 @@ alwaysApply: true
 | 组织者档案 | organizer | `api/organizer.py` |
 | TechVenture 参赛端 | techventure | `api/techventure.py` |
 | TechVenture 组织/大屏/评委 | techventure_admin | `api/techventure_admin.py` |
+| 体验营营团 | teaching_groups | `api/teaching_groups.py` |
 | 课程 / Wiki / OPC | 各自独立 | `api/{courses,wiki,opc}.py` |
 
 禁止创建不在此表中的新路由模块而不先更新 `08-` §2.7 + `main.py`。

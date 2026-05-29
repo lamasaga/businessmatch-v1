@@ -68,6 +68,7 @@ class CompetitionEventCreate(CompetitionEventBase):
     game_config_id: str = Field(default="trading-v2-rts", max_length=64)
     design_mode: str = Field(default="standalone", description="standalone | modular")
     match_kind: str = Field(default="official", description="official | practice")
+    teaching_group_id: Optional[int] = Field(None, description="所属体验营营团 ID")
 
 
 class CompetitionEventUpdate(BaseModel):
@@ -90,6 +91,7 @@ class CompetitionEventOut(BaseModel):
 
     id: int
     organizer_id: Optional[int] = None
+    teaching_group_id: Optional[int] = None
     room_code: str
     title: str
     description: Optional[str]

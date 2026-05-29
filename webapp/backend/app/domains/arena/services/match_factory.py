@@ -29,6 +29,7 @@ def create_official_match(
     design_mode: DesignMode,
     max_players: int,
     config_overrides: Optional[dict] = None,
+    teaching_group_id: Optional[int] = None,
 ) -> ArenaMatch:
     doc = get_game_config(game_config_id)
     engine = GameEngineId(doc.engine)
@@ -47,6 +48,7 @@ def create_official_match(
         config=config,
         max_players=max_players,
         current_round=0,
+        teaching_group_id=teaching_group_id,
     )
     db.add(match)
     db.flush()

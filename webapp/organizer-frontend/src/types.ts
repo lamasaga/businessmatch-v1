@@ -50,6 +50,7 @@ export interface CompetitionEvent {
   max_players: number;
   current_round: number;
   participant_count?: number;
+  teaching_group_id?: number | null;
   created_at: string;
 }
 

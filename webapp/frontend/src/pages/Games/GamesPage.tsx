@@ -1,12 +1,13 @@
 import { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 import { useCompetitionStore } from '../../stores/competitionStore';
 import { api } from '../../lib/api';
 import { useTechVentureStore } from '../../stores/techventureStore';
 import {
   Trophy, Search, Users, Clock, ArrowRight,
-  TrendingUp, MapPin, Zap, Bot, Sparkles, Loader2, Play, Briefcase,
+  TrendingUp, MapPin, Zap, Bot, Sparkles, Loader2, Play, Briefcase, ChevronDown, ChevronUp,
 } from 'lucide-react';
+import { isCampPhase1 } from '../../lib/campPhase';
 
 function gameRoute(eventId: number, configId?: string): string {
   if (configId?.startsWith('techventure')) return `/games/${eventId}/techventure`;
@@ -26,6 +27,7 @@ export default function GamesPage() {
   const [joinError, setJoinError] = useState('');
   const [activeTab, setActiveTab] = useState<'public' | 'my'>('public');
   const [tvLoading, setTvLoading] = useState(false);
+  const [practiceExpanded, setPracticeExpanded] = useState(!isCampPhase1);
 
   useEffect(() => {
     fetchEvents();
@@ -81,12 +83,38 @@ export default function GamesPage() {
   return (
     <div className="max-w-6xl mx-auto">
       {/* Header */}
-      <div className="mb-8">
-        <h1 className="text-3xl font-bold text-foreground tracking-tight">商赛大厅</h1>
-        <p className="text-foreground-muted mt-1">加入比赛，体验真实商业竞争</p>
+      <div className="mb-8 flex flex-wrap items-end justify-between gap-4">
+        <div>
+          <h1 className="text-3xl font-bold text-foreground tracking-tight">商赛大厅</h1>
+          <p className="text-foreground-muted mt-1">
+            {isCampPhase1
+              ? '输入教师提供的 4 位房间码加入营内商赛（营团码为 6 位，在「我的体验营」入营）'
+              : '加入比赛，体验真实商业竞争'}
+          </p>
+        </div>
+        {isCampPhase1 && (
+          <Link
+            to="/camp"
+            className="text-sm text-primary font-medium hover:underline shrink-0"
+          >
+            我的体验营 →
+          </Link>
+        )}
       </div>
 
-      {/* Daily practice */}
+      {isCampPhase1 && (
+        <button
+          type="button"
+          onClick={() => setPracticeExpanded((v) => !v)}
+          className="w-full flex items-center justify-between px-4 py-3 mb-4 rounded-xl border border-border-subtle text-sm text-foreground-muted hover:bg-background-hover"
+        >
+          <span>日常自主练习（可选）</span>
+          {practiceExpanded ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
+        </button>
+      )}
+
+      {practiceExpanded && (
+      <>
       <div className="glass-card p-6 mb-8 border border-accent-teal/20 bg-accent-teal/5">
         <div className="flex flex-col md:flex-row md:items-center gap-4">
           <div className="w-12 h-12 rounded-xl bg-accent-teal/20 flex items-center justify-center shrink-0">
@@ -139,6 +167,8 @@ export default function GamesPage() {
           </button>
         </div>
       </div>
+      </>
+      )}
 
       {/* Join by room code */}
       <div className="glass-card p-6 mb-8">

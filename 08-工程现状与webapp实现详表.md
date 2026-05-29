@@ -37,6 +37,7 @@
 |----|------|
 | 代码根 | `webapp/backend`、`webapp/frontend`、`organizer-frontend` (:5174) |
 | 演示账号 | `student/student123`、`admin/admin123` |
+| 体验营手测 | :5174 建营团(6位码) → :5173 入营 → 营内建赛(4位房间码) → 控场 |
 | 最强闭环 | 组织者建赛 → 房间码 → 交易/TechVenture → XP |
 | API 明细 | 模块摘要见下表；字段级见 [`webapp/contracts/openapi/bundled.yaml`](./webapp/contracts/openapi/bundled.yaml) 或 DEBUG `/openapi.json` |
 | 路由全表 | 见 §2.6.2（深读，非默认 attach） |
@@ -52,6 +53,7 @@
 | 回合制 trading-v1 | 同上 | ✅ | ✅ | 可玩 |
 | TechVenture | `/games/:id/techventure` | ✅ | ✅ 四端 | **核心可玩** |
 | 组织者控场 | :5174 | ✅ | ✅ | 独立端 |
+| **体验营营团 P1** | `/camp` · `/teaching-groups` | ✅ | ✅ | 6 位营团码 + 营内商赛 |
 | OPC | `/opc/*` | ✅ CRUD | ✅ | 数据层，无 Agent |
 | Wiki/课程 | `/wiki` `/courses` | ✅ | ✅ | 可用 |
 
@@ -64,6 +66,7 @@
 | courses | `/courses` | academy | 种子数据 |
 | opc | `/opc` | opc | ✅ CRUD |
 | organizer | `/organizer` | arena | ✅ |
+| teaching_groups | `/teaching-groups` | arena | ✅ P1 |
 | competitions | `/competitions` | arena | ✅ |
 | trading | `/trading` | games/trading | ✅ 回合+RTS |
 | trading WS | `/trading` | games/trading | ✅ |
@@ -86,7 +89,7 @@
 
 | 组件 | 对齐度 | 备注 |
 |------|--------|------|
-| Arena | 🟢 85% | 回合+RTS+TechVenture |
+| Arena | 🟢 88% | 回合+RTS+TechVenture+体验营营团 P1 |
 | Career Hub | 🟡 45% | `xp_events` 有，前端 mock |
 | OPC | 🟡 45% | 无 LangGraph |
 | Athena/Demia/Rival | 🔴 15～25% | 演示 |
@@ -610,16 +613,14 @@ flowchart LR
 
 | 日期 | 摘要 |
 | ---- | ---- |
+| 2026-05-29 | **体验营 P1**：`teaching_groups` API + 双端 `/camp` + `VITE_CAMP_PHASE1`；[ADR-009](./docs/decisions/009-赛季模式与教师端双端演进.md) 营团部分采纳 |
 | 2026-05-29 | **瘦身步骤 2 收尾**：`08-` §一/§2.2/§2.8～§四 标 `AI_DEEP`；§三 与 AI_DEFAULT 去重；`docs-align` 增快照自检 |
 | 2026-05-29 | **权威文档上下文瘦身**：`08-` [AI_DEFAULT](#ai_default)；changelog 归档；`webapp/contracts/`；T0/T1/T2 与 `context-pack` Skill |
-| 2026-05-29 | **赛季模式产品稿**：`02-` 教师端/赛季/T2·T1 规划；`06-` 赛季 vs 日常；[ADR-009](./docs/decisions/009-赛季模式与教师端双端演进.md)（草案；代码仍 `practice`/`official`） |
-| 2026-05-28 | **文档入口与 inspire 编号**：`agent.md` 第一入口；`README`/`00-`/`09-` 分工；`inspire/07-`→`13-` 教学内容生成规范；新增 `inspire/14-` 桌游参考库；`doc-linking`/`inspire-writing` 规则 |
-| 2026-05-28 | **AI 文档与演示推送**：81-/80- 产品框架；`07-` §六～§九；PPT/AI赋能；多文档交叉引用 |
+| 2026-05-29 | **赛季模式产品稿**：`02-` 教师端/赛季/T2·T1 规划；`06-` 赛季 vs 日常；ADR-009 草案 |
+| 2026-05-28 | **文档入口与 inspire 编号**：`agent.md` 第一入口；`README`/`00-`/`09-` 分工；`inspire/13-`/`14-` |
+| 2026-05-28 | **AI 文档与演示推送**：81-/80- 产品框架；`07-` §六～§九；PPT/AI赋能 |
 | 2026-05-27 | **拟真城市文档深化**：`07-` §六～§九；`75-`；`content/world/cities/README`；`04-` Phase B |
-| 2026-05-24 | **文档与规划对齐**：根 `06-生涯模式`；`inspire/76-`；蓝图方法论 v1.1；多文档链接同步 |
-| 2026-05-24 | **生涯文档编号（过渡）**：`inspire/d/04-` → 根 `06-` |
-| 2026-05-23 | **赛事四层模型文档化**：`02-` §5.0；`arena/ARCHITECTURE.md`；组织端等待区 |
-| 2026-05-22 | **根目录 07- 拟真城市阅读合集**；`00～09` 编号补齐 |
+| 2026-05-24 | **文档与规划对齐**：根 `06-生涯模式`；`inspire/76-`；蓝图方法论 v1.1 |
 
 ### 5.2 变更归档（只读）
 

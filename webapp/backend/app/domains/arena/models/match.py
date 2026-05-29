@@ -21,6 +21,7 @@ class ArenaMatch(Base):
 
     id = Column(Integer, primary_key=True, index=True)
     organizer_id = Column(Integer, ForeignKey("organizer_profiles.id"), nullable=True)
+    teaching_group_id = Column(Integer, ForeignKey("teaching_groups.id"), nullable=True, index=True)
     room_code = Column(String(4), unique=True, nullable=False, index=True)
     title = Column(String(100), nullable=False)
     description = Column(Text, nullable=True)
@@ -41,6 +42,7 @@ class ArenaMatch(Base):
     updated_at = Column(DateTime(timezone=True), onupdate=func.now())
 
     organizer = relationship("OrganizerProfile", backref="events")
+    teaching_group = relationship("TeachingGroup", back_populates="events")
     participants = relationship(
         "ArenaParticipant",
         back_populates="match",

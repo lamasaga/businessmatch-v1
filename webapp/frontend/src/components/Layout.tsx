@@ -15,18 +15,21 @@ import {
   Compass,
   Zap,
   Rocket,
+  Tent,
 } from 'lucide-react';
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
+import { filterNavItems, isCampPhase1, type NavItem } from '../lib/campPhase';
 
-const navItems = [
+const allNavItems: NavItem[] = [
   { path: '/', label: '首页', icon: Home },
-  { path: '/career', label: '生涯中枢', icon: Sparkles, highlight: true },
+  { path: '/camp', label: '我的体验营', icon: Tent, highlight: true },
+  { path: '/career', label: '生涯中枢', icon: Sparkles },
   { path: '/quests', label: '每日任务', icon: Flame },
-  { path: '/games', label: '商赛大厅', icon: Gamepad2 },
+  { path: '/games', label: '商赛大厅', icon: Gamepad2, highlight: true },
   { path: '/courses', label: '课程学院', icon: GraduationCap },
   { path: '/wiki', label: '知识图谱', icon: Network },
   { path: '/achievements', label: '成就中心', icon: Award },
-  { path: '/opc', label: 'OPC 一人公司', icon: Rocket, highlight: true },
+  { path: '/opc', label: 'OPC 一人公司', icon: Rocket },
 ];
 
 export default function Layout() {
@@ -34,6 +37,7 @@ export default function Layout() {
   const { careerActive } = useCareerStore();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const location = useLocation();
+  const navItems = useMemo(() => filterNavItems(allNavItems), []);
 
   const isActive = (path: string) => {
     if (path === '/') return location.pathname === '/';
@@ -42,7 +46,6 @@ export default function Layout() {
 
   return (
     <div className="min-h-screen bg-background flex">
-      {/* Desktop Sidebar */}
       <aside className="hidden lg:flex flex-col w-64 bg-background-secondary border-r border-border-subtle fixed h-full z-40">
         <div className="p-6">
           <Link to="/" className="flex items-center gap-3 group">
@@ -51,7 +54,9 @@ export default function Layout() {
             </div>
             <div>
               <h1 className="font-bold text-lg text-foreground tracking-tight">商域</h1>
-              <p className="text-[11px] text-foreground-muted tracking-wide uppercase">BizSim Edu</p>
+              <p className="text-[11px] text-foreground-muted tracking-wide uppercase">
+                {isCampPhase1 ? 'BizSim Camp' : 'BizSim Edu'}
+              </p>
             </div>
           </Link>
         </div>
@@ -93,7 +98,9 @@ export default function Layout() {
                 <p className="text-sm font-medium text-foreground truncate">
                   {user?.username ?? '学员'}
                 </p>
-                <p className="text-xs text-foreground-muted">赛季进行中</p>
+                <p className="text-xs text-foreground-muted">
+                  {isCampPhase1 ? '体验营学员' : '赛季进行中'}
+                </p>
               </div>
             </Link>
           ) : null}
@@ -125,7 +132,6 @@ export default function Layout() {
         </div>
       </aside>
 
-      {/* Mobile Header */}
       <div className="lg:hidden fixed top-0 left-0 right-0 h-16 bg-background-secondary/95 backdrop-blur-xl border-b border-border-subtle z-50 flex items-center justify-between px-4">
         <Link to="/" className="flex items-center gap-2.5">
           <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-primary to-amber-600 flex items-center justify-center">
@@ -142,7 +148,6 @@ export default function Layout() {
         </button>
       </div>
 
-      {/* Mobile Menu */}
       {mobileMenuOpen && (
         <div className="lg:hidden fixed inset-0 top-16 bg-background z-40 p-4 overflow-y-auto">
           <nav className="space-y-1">

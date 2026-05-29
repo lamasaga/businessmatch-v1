@@ -148,12 +148,15 @@ def get_stats(
 @router.get("/events", response_model=ApiResponse[List[CompetitionEventOut]])
 def list_my_events(
     status_filter: Optional[str] = None,
+    teaching_group_id: Optional[int] = None,
     current_user: User = Depends(get_current_active_user),
     db: Session = Depends(get_db),
 ):
     """获取当前组织者主办的比赛列表"""
     profile = _get_profile_or_404(current_user.id, db)
     query = db.query(CompetitionEvent).filter(CompetitionEvent.organizer_id == profile.id)
+    if teaching_group_id is not None:
+        query = query.filter(CompetitionEvent.teaching_group_id == teaching_group_id)
     if status_filter:
         query = query.filter(CompetitionEvent.status == status_filter)
     events = query.order_by(CompetitionEvent.created_at.desc()).all()

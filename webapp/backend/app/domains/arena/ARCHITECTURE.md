@@ -79,6 +79,24 @@
 
 　　**结论**：配置 ID 扩展地区/赛季；`match_kind` 扩展办赛流程；引擎保持单一真相。物理双库/双 App 不必现在做。
 
+## 体验营营团（Teaching Group · Phase A P1）
+
+　　教师端「商业体验营」容器，与单场商赛的 `room_code` **分离**：
+
+| 概念 | 表 / 字段 | 说明 |
+|------|-----------|------|
+| 营团 | `teaching_groups` | 教师 `teacher_user_id`、6 位 `invite_code`（字母数字） |
+| 成员 | `group_memberships` | 学生 `join` 写入；唯一 `(group_id, user_id)` |
+| 营内商赛 | `competition_events.teaching_group_id` | 可空 FK；练习局不带 |
+
+| API | 文件 | 角色 |
+|-----|------|------|
+| `POST/GET/PATCH /teaching-groups` | `api/teaching_groups.py` | 教师建营/改营；学生 `join`/`joined` |
+| `POST /competitions` + `teaching_group_id` | `api/competitions.py` | 校验 `assert_group_teacher` |
+| `GET /organizer/events?teaching_group_id=` | `api/organizer.py` | 营团详情下列出商赛 |
+
+　　**不做**：`seasons` / `milestones`（见 ADR-009）；`match_kind` 仍为 `practice` | `official`。
+
 ## 兼容
 
 `app/models/trading_competition.py` 仅为 re-export，新代码勿再写入业务逻辑。

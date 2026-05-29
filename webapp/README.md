@@ -34,16 +34,28 @@
 ### 对外演示（推荐）
 
 1. 启动前端：`cd frontend` → `npm install` → `npm run dev`
-2. 启动后端：`cd backend` → `.​venv​\Scripts​\python run.py`
+2. 启动后端：`cd backend` → `.venv\Scripts\python run.py`（首次或拉取体验营分支后执行 `python -m app.db.init_db` 建表）
 3. 浏览器打开 http://localhost:5173
 4. 使用测试账户登录：
    - **学生**: `student` / `student123`
-   - **管理员/组织者**: `admin` / `admin123`
+   - **管理员/教师**: `admin` / `admin123`
 5. 体验完整闭环：
    - `/career` 生涯中枢（经验值、等级）
    - `/games` 商赛大厅 → **浮生记 · 日常练习**（默认 RTS v2）或房间码加入正式赛
    - `/games/:id/play` 即时物流商战（WebSocket 刷新 + 指令排队）或回合制交易
-   - 组织者端 http://localhost:5174 创建/控场（RTS 无「推进回合」）
+   - 教师端 http://localhost:5174 营团与商赛控场（RTS 无「推进回合」）
+
+### 商业体验营 Phase 1（开发分支）
+
+　　功能在分支 **`feature/camp-phase1`** 上迭代，稳定后再合并 `main`，避免影响现网演示。
+
+| 端 | 说明 |
+|----|------|
+| 学生 `:5173` | 本地 dev 默认开启体验营壳（`VITE_CAMP_PHASE1` 未设或为 `true`）；生产构建见 `frontend/.env.example` |
+| 教师 `:5174` | 创建营团（**6 位**邀请码）→ 营内发起商赛（**4 位**房间码）→ 控场 |
+| 后端 | `POST/GET /api/v1/teaching-groups/*`；`competition_events.teaching_group_id` |
+
+**手测路径**：教师端建营并复制邀请码 → 学生 `/camp/join` 入营 → 教师营内「发起商赛」→ 学生商赛大厅输入房间码 → 教师控场结束。
 
 ---
 

@@ -19,7 +19,7 @@ interface OrganizerState {
   fetchProfile: () => Promise<boolean>;
   applyOrganizer: (organization_name: string, contact_phone?: string) => Promise<void>;
   fetchStats: () => Promise<void>;
-  fetchEvents: () => Promise<void>;
+  fetchEvents: (teachingGroupId?: number) => Promise<void>;
   fetchControl: (eventId: number) => Promise<void>;
   createEvent: (data: {
     title: string;
@@ -28,6 +28,7 @@ interface OrganizerState {
     game_config_id?: string;
     game_type?: string;
     config?: Record<string, unknown>;
+    teaching_group_id?: number;
   }) => Promise<CompetitionEvent>;
   startEvent: (eventId: number) => Promise<void>;
   endEvent: (eventId: number) => Promise<void>;
@@ -86,10 +87,12 @@ export const useOrganizerStore = create<OrganizerState>((set) => ({
     }
   },
 
-  fetchEvents: async () => {
+  fetchEvents: async (teachingGroupId) => {
     set({ loading: true, error: null });
     try {
-      const res = await api.get<ApiResponse<CompetitionEvent[]>>('/api/v1/organizer/events');
+      const res = await api.get<ApiResponse<CompetitionEvent[]>>('/api/v1/organizer/events', {
+        params: teachingGroupId != null ? { teaching_group_id: teachingGroupId } : undefined,
+      });
       set({ events: res.data.data ?? [], loading: false });
     } catch (err: unknown) {
       set({
@@ -125,6 +128,7 @@ export const useOrganizerStore = create<OrganizerState>((set) => ({
         game_type: gameType,
         game_config_id: configId,
         config: mergedConfig,
+        teaching_group_id: data.teaching_group_id,
       });
       const event = res.data.data!;
       set((s) => ({ events: [event, ...s.events], loading: false }));

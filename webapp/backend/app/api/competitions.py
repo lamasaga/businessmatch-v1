@@ -6,9 +6,13 @@ from sqlalchemy import func
 from typing import List, Optional
 
 from app.db.database import get_db
-from app.models.user import User
+from app.models.user import User, UserRole
 from app.domains.arena.enums import DesignMode, GameEngineId, MatchKind, MatchStatus, ParticipantStatus
-from app.domains.arena.models import OrganizerProfile, ArenaMatch, ArenaParticipant
+from app.domains.arena.models import OrganizerProfile, ArenaMatch, ArenaParticipant, TeachingGroup
+from app.domains.arena.services.teaching_group_service import (
+    assert_group_teacher,
+    ensure_organizer_profile,
+)
 from app.domains.arena.serializers import event_to_out
 from app.domains.arena.services.match_factory import create_official_match
 from app.domains.arena.services.match_lifecycle import begin_match
@@ -250,10 +254,31 @@ def create_competition(
     db: Session = Depends(get_db),
 ):
     """创建比赛"""
-    profile = _get_organizer_profile(current_user.id, db)
+    if current_user.role in (UserRole.admin, UserRole.teacher):
+        profile = ensure_organizer_profile(db, current_user)
+    else:
+        profile = _get_organizer_profile(current_user.id, db)
     config_dict = data.config.model_dump() if data.config else {}
     design = DesignMode(data.design_mode) if data.design_mode else DesignMode.standalone
     config_id = data.game_config_id or "trading-v1"
+
+    group_id = data.teaching_group_id
+    if group_id is not None:
+        group = db.query(TeachingGroup).filter(TeachingGroup.id == group_id).first()
+        if not group:
+            raise BusinessException(
+                message="体验营不存在",
+                code=ErrorCode.NOT_FOUND,
+                status_code=status.HTTP_404_NOT_FOUND,
+            )
+        try:
+            assert_group_teacher(group, current_user)
+        except PermissionError:
+            raise BusinessException(
+                message="无权在该体验营下创建商赛",
+                code=ErrorCode.FORBIDDEN,
+                status_code=status.HTTP_403_FORBIDDEN,
+            )
 
     event = create_official_match(
         db,
@@ -264,6 +289,7 @@ def create_competition(
         design_mode=design,
         max_players=data.max_players,
         config_overrides=config_dict,
+        teaching_group_id=group_id,
     )
     db.commit()
     db.refresh(event)
