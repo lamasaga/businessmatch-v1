@@ -5,12 +5,15 @@
 > **读者**：开发、架构、排 Bug  
 > **配套阅读**：[`01-平台愿景与产品架构`](./01-平台愿景与产品架构.md) · [`02-赛事体系与双端产品`](./02-赛事体系与双端产品.md)（双端）· [`03-技术架构与实现现状`](./03-技术架构与实现现状.md)（摘要）· [`04-实施路线与里程碑`](./04-实施路线与里程碑.md) · [`09-分项目开发与集成流程`](./09-分项目开发与集成流程.md)  
 > **安装启动**：[`webapp/README.md`](./webapp/README.md)  
-> **最后更新**：2026-05-28
+> **最后更新**：2026-05-29
+
+**AI 阅读指引**：编码任务默认只读下方 [`AI_DEFAULT`](#ai_default) 块（约 120 行）。勿全文 attach。深读：§2.3 演示路径 · §2.6/2.7 全表 · §2.11/2.12 专节 · [`webapp/contracts/openapi/`](./webapp/contracts/openapi/)。任务包见 [`09-` §6.1](./09-分项目开发与集成流程.md#61-ai-编程上下文注入清单)。
 
 ---
 
 ## 目录
 
+0. [**AI_DEFAULT 快照**](#ai_default)（编码默认）
 1. [webapp 角色摘要](#一webapp-角色摘要)
 2. [当前实现现状](#二当前实现现状)
    - [2.6 前端路由全表](#26-前端架构与路由全表)
@@ -20,6 +23,76 @@
    - [2.10 已知问题清单](#210-已知问题清单工程向)
 3. [与规划对齐度](#三与顶层规划的对齐度)
 4. [相关文档与代码入口](#四相关文档与代码入口)
+5. [维护说明与变更记录](#五维护说明)
+
+---
+
+<a id="ai_default"></a>
+
+<!-- AI_DEFAULT_START -->
+
+## AI_DEFAULT · 工程快照（编码任务默认读本节）
+
+| 项 | 说明 |
+|----|------|
+| 代码根 | `webapp/backend`、`webapp/frontend`、`organizer-frontend` (:5174) |
+| 演示账号 | `student/student123`、`admin/admin123` |
+| 最强闭环 | 组织者建赛 → 房间码 → 交易/TechVenture → XP |
+| API 明细 | 模块摘要见下表；字段级见 [`webapp/contracts/openapi/bundled.yaml`](./webapp/contracts/openapi/bundled.yaml) 或 DEBUG `/openapi.json` |
+| 路由全表 | 见 §2.6.2（深读，非默认 attach） |
+
+### 功能矩阵（§2.2 摘要）
+
+| 模块 | 路由/域 | 后端 | 前端 | 成熟度 |
+|------|---------|------|------|--------|
+| 认证 | `/login` | ✅ | ✅ | 生产雏形 |
+| 生涯中枢 | `/career` | 部分 | UI+mock | 演示级 |
+| 商赛大厅 | `/games` | ✅ | ✅ | 可用 |
+| 浮生记 RTS v2 | `/games/:id/play` | ✅ WS | ✅ | **核心可玩** |
+| 回合制 trading-v1 | 同上 | ✅ | ✅ | 可玩 |
+| TechVenture | `/games/:id/techventure` | ✅ | ✅ 四端 | **核心可玩** |
+| 组织者控场 | :5174 | ✅ | ✅ | 独立端 |
+| OPC | `/opc/*` | ✅ CRUD | ✅ | 数据层，无 Agent |
+| Wiki/课程 | `/wiki` `/courses` | ✅ | ✅ | 可用 |
+
+### API 模块摘要（§2.7）
+
+| 模块 | 前缀 | 主人域 | 成熟度 |
+|------|------|--------|--------|
+| auth | `/auth` | identity | ✅ |
+| wiki | `/wiki` | atlas | ✅ |
+| courses | `/courses` | academy | 种子数据 |
+| opc | `/opc` | opc | ✅ CRUD |
+| organizer | `/organizer` | arena | ✅ |
+| competitions | `/competitions` | arena | ✅ |
+| trading | `/trading` | games/trading | ✅ 回合+RTS |
+| trading WS | `/trading` | games/trading | ✅ |
+| practice | `/practice` | arena+cybercore | ✅ |
+| techventure | `/techventure` | games/techventure | ✅ |
+| techventure_admin | `/techventure` | arena | ✅ |
+| career | — | career | 🔴 无 `/career/*` |
+
+### P0 开放 Bug（§2.10）
+
+| # | 问题 | 建议 |
+|---|------|------|
+| E1 | 生涯页与登录 XP 脱节 | Career 读 `/auth/me` 或 `/career/profile` |
+| E2 | 生涯域不完整 | 聚合 API + Quest 表 |
+| E3 | 房间码加入后可能无法跳转大厅 | join 后用 `event_id` 导航 |
+| E4 | DB 依赖 lifespan 初始化 | 先启 backend |
+| E5 | 正式赛结束与 debrief 未打通 | 真实 matchId + Debrief API |
+
+### 规划对齐度（§三 · 唯一 % 真相源）
+
+| 组件 | 对齐度 | 备注 |
+|------|--------|------|
+| Arena | 🟢 85% | 回合+RTS+TechVenture |
+| Career Hub | 🟡 45% | `xp_events` 有，前端 mock |
+| OPC | 🟡 45% | 无 LangGraph |
+| Athena/Demia/Rival | 🔴 15～25% | 演示 |
+| Credenti | 🔴 20% | mock |
+
+<!-- AI_DEFAULT_END -->
 
 ---
 
@@ -67,6 +140,8 @@
 | Demia / Rival 练习 | `/games/...` 等 | — | ✅ UI | mock 对话 | **演示级** |
 | OPC 一人公司 | `/opc/*` | ✅ CRUD | ✅ 仪表盘/任务/BMC | SQLite OPC 模型 | **数据层可用，AI 未接** |
 | 展示引导 | `/showcase` | — | ✅ | — | **演示级** |
+
+<!-- AI_DEEP:demo-paths -->
 
 ### 2.3 已打通的核心闭环（对外演示推荐路径）
 
@@ -124,6 +199,8 @@ practice/start 传 game_config_id=trading-v1 → 回合制 market 定价 → 提
 
 　　详见 [`webapp/README.md`](./webapp/README.md)「对外演示」：学生 `student/student123`；组织者 `admin/admin123`（`:5174` 独立端，学生端已无控制台入口）。
 
+<!-- /AI_DEEP:demo-paths -->
+
 ### 2.4 代码结构要点
 
 - **真实业务后端**：`auth`、`wiki`、`courses`、`opc`、`organizer`、`competitions`、`trading`、`trading_ws`、`practice`（见 `main.py`）。
@@ -142,7 +219,11 @@ practice/start 传 game_config_id=trading-v1 → 回合制 market 定价 → 提
 | [`inspire/b商赛界面展示/`](./inspire/b商赛界面展示/) 声明式框架 | `trading-v1.yaml` + `trading-v2-rts.yaml` + `techventure-v1.yaml` + `cybercore.registry` 已加载 | 前端局内 UI 仍部分硬编码；美术管线见 [inspire/76-](./inspire/76-商赛美术资源嵌入与技术选型建议.md)（`game-assets` 待建） |
 | `OPC/` | OPC 页面 + REST | 无 LangGraph/MCP/Gateway |
 
+<!-- AI_DEEP:frontend-routes -->
+
 ### 2.6 前端架构与路由全表
+
+> 深读：完整路由表。默认 attach 仅用 [AI_DEFAULT](#ai_default) 与 §2.2。
 
 #### 2.6.1 技术组成
 
@@ -211,7 +292,13 @@ practice/start 传 game_config_id=trading-v1 → 回合制 market 定价 → 提
 | `Games/GameRoomPage.tsx` | 旧版房间+聊天 mock | **未挂路由**，被 `GameLobbyPage` 替代 |
 | `Dashboard/DashboardPage.tsx` | 旧个人中心 | **未挂路由**，`/dashboard` 已重定向 |
 
+<!-- /AI_DEEP:frontend-routes -->
+
+<!-- AI_DEEP:api-routes -->
+
 ### 2.7 后端架构与 API 全表
+
+> 深读：完整 API/模型表。模块级摘要见 [AI_DEFAULT](#ai_default)；机器可读见 [`webapp/contracts/`](./webapp/contracts/README.md)。
 
 #### 2.7.1 应用入口
 
@@ -271,6 +358,8 @@ practice/start 传 game_config_id=trading-v1 → 回合制 market 定价 → 提
 | `app/services/` | 仍为空；RTS/回合分支在 `trading_rts_handlers.py` |
 
 　　规范见 [`domains/arena/ARCHITECTURE.md`](./webapp/backend/app/domains/arena/ARCHITECTURE.md)。
+
+<!-- /AI_DEEP:api-routes -->
 
 ### 2.8 状态管理与数据流
 
@@ -493,31 +582,26 @@ flowchart LR
 
 ## 五、维护说明
 
-- `webapp/README` 或路由/API 变更时，同步更新 §2.2、§2.6.2、§2.7.3、§2.10。  
-- 规划调整时，同步 §三 对齐度表与 [`03-`](./03-技术架构与实现现状.md) §五。
+- 路由/API 变更时：跑 [`scripts/export_openapi.py`](./webapp/scripts/export_openapi.py)；同步 [AI_DEFAULT](#ai_default)、§2.2、§2.6.2、§2.7.3、§2.10。  
+- 规划调整时，同步 §三 对齐度表与 [`03-`](./03-技术架构与实现现状.md) §五（`03-` 不维护 % 副本）。
 
-### 5.1 变更记录
+### 5.1 变更记录（活跃窗：最近 8 条）
 
 | 日期 | 摘要 |
 | ---- | ---- |
+| 2026-05-29 | **权威文档上下文瘦身**：`08-` [AI_DEFAULT](#ai_default)；changelog 归档；`webapp/contracts/`；T0/T1/T2 与 `context-pack` Skill |
+| 2026-05-29 | **赛季模式产品稿**：`02-` 教师端/赛季/T2·T1 规划；`06-` 赛季 vs 日常；[ADR-009](./docs/decisions/009-赛季模式与教师端双端演进.md)（草案；代码仍 `practice`/`official`） |
 | 2026-05-28 | **文档入口与 inspire 编号**：`agent.md` 第一入口；`README`/`00-`/`09-` 分工；`inspire/07-`→`13-` 教学内容生成规范；新增 `inspire/14-` 桌游参考库；`doc-linking`/`inspire-writing` 规则 |
-| 2026-05-28 | **AI 文档与演示推送**：[81-](./inspire/81-商域AI赋能六支柱全景.md) 六支柱产品框架（含 ③ 复盘→对手进化闭环）；[80-](./inspire/80-角色IP复用与可成长规则NPC-Agent框架.md)；[07-](./07-拟真城市与区域模拟-阅读合集.md) §六～§九；[PPT/AI赋能/](./PPT/AI赋能/index.html) HTML 幻灯片；`75-`/`04-`/`00-`/`01-`/`05-`/`06-`/`77-`/`79-`/`50-`/`README`/`world/cities/README` 交叉引用 |
-| 2026-05-27 | **拟真城市文档深化**：[07-](./07-拟真城市与区域模拟-阅读合集.md) 新增 §六～§九（五层数据颗粒度、POP 设计、数据收集校准、AI 建设分工）；[75-](./inspire/75-拟真城市世界观设计.md) 交叉引用；`content/world/cities/README` 五层与 provenance；`04-` Phase B 母本条目细化 |
-| 2026-05-24 | **文档与规划对齐**：根目录 **`06-生涯模式`** 权威；`06-文档索引` 重定向 stub；**`inspire/76-`** 商赛美术嵌入方案；**蓝图编程方法论 v1.1**（Vibe/Agentic、Token/Skills）；`00`/`01`/`02`/`03`/`09`/`50-`/`d/README` 链接同步 |
-| 2026-05-24 | **生涯文档编号（过渡）**：`inspire/d/04-` → `d/07-` stub → 根 `06-` |
-| 2026-05-23 | **生涯模式设计启动**：[d/07-大循环家园与资源经济](./inspire/d商业模拟教育平台/07-生涯模式-大循环家园与资源经济.md)（T0～T3、资源、家园、NPC、Phase B1～B5）；[career/DESIGN.md](./webapp/backend/app/domains/career/DESIGN.md)；根目录 `04-` Phase B 拆条、`06-` 索引 |
-| 2026-05-21 | **ADR 体系落地**：`docs/decisions/`（README 触发表 + 模板 + ADR-001～008 基线）；`.cursor/rules/adr-writing.mdc`；`00-`/`03-`/`06-`/`09-`/`README` 交叉引用 |
-| 2026-05-23 | **赛事四层模型文档化**：`02-` §5.0 引擎/配置 ID/match_kind/流程；`arena/ARCHITECTURE.md` 对齐；`03-`/`00-`/`09-`/`README`/蓝图附录 A；创想大赢家组织端等待区与 `admin/start` 代码（见 2026-05-21 条目） |
-| 2026-05-21 | **组织端等待区（创想大赢家）**：`admin/state` 扩展房间码与选手列表；`POST admin/.../start` 与 `open_round` 拆分；组织端报名态 UI；学生房间码加入后路由至 `techventure/lobby`；`02-` §5.1 正式赛标准流程 |
-| 2026-05-22 | **根目录 07- 拟真城市阅读合集**：与 05- OPC 并列终局出口；[inspire/75-](./inspire/75-拟真城市世界观设计.md) 降为详设附录；`00～09` 编号补齐；`content/world/cities/` 占位 |
-| 2026-05-21 | **TechVenture 选队大厅**：`GET/POST lobby` + `TechVentureLobbyPage`；学生/组织端入口与赛制选择器 |
-| 2026-05-21 | **TechVenture 赛制迁移**：Arena 域新增通用 `ArenaTeam` 模型 + `ArenaParticipant` 增 `team_id/team_role`；从 Node.js 原版精确翻译 v6 引擎为 Python（`v6_engine.py` Step 0-9）；新增 `techventure-v1.yaml` 配置包（4 轮三城四路线 BQI）；5 张运行时表（`tv_*`）；学生 + 组织者 + 大屏 + 评委四端 React 重写；练习模式 AI 队伍决策；14 条 API 路由 |
-| 2026-05-19 | **浮生记 RTS v2**：`trading-v2-rts`、调度器单写 tick、HTTP 只读、WebSocket 推送、两档练习 AI、10 品；修复双写回合/调度器占坑/估值 bid/提前结束收尾 |
-| 2026-05-21 | **根目录文档体系重组**：`07-` 迁至 `inspire/`；`01-` 重写（普惠教育定位+发展主线+可持续运营）；`03-` 新增 §八智能体编排架构 + §九AI 编程方法论；`04-` 全面重写为有序蓝图（无硬性日期）+ 工程规模与成本估算；百分比统一以 `08-` §三为唯一真相源 |
-| 2026-05-20 | 浮生记回合制供需定价（`market.py`）；练习局 AI + 自动推进（`practice_flow.py`）；单品种库存上限 99（`inventory.py`）；学生端移除组织者入口；修复 AI 不推进 + 单回合多次提交 bug |
-| 2026-05-22 | 根目录文档链接对齐 `inspire/a～f` 新层级（a 商赛主题、b 界面、c 卡片、d 平台规划、e 课程、f 早期调研） |
-| 2026-05-20 | Arena/Career/Cybercore 域分包；`games/trading` 引擎；`practice` API；`trading-v1.yaml`；`xp_events`；课程文档迁至 `inspire/e课程设计/` |
-| 2026-05-19 | 组织者独立端、Docker 三端编排（见上一版提交说明） |
+| 2026-05-28 | **AI 文档与演示推送**：81-/80- 产品框架；`07-` §六～§九；PPT/AI赋能；多文档交叉引用 |
+| 2026-05-27 | **拟真城市文档深化**：`07-` §六～§九；`75-`；`content/world/cities/README`；`04-` Phase B |
+| 2026-05-24 | **文档与规划对齐**：根 `06-生涯模式`；`inspire/76-`；蓝图方法论 v1.1；多文档链接同步 |
+| 2026-05-24 | **生涯文档编号（过渡）**：`inspire/d/04-` → 根 `06-` |
+| 2026-05-23 | **赛事四层模型文档化**：`02-` §5.0；`arena/ARCHITECTURE.md`；组织端等待区 |
+| 2026-05-22 | **根目录 07- 拟真城市阅读合集**；`00～09` 编号补齐 |
+
+### 5.2 变更归档（只读）
+
+　　2026-05-19～05-23 及更早明细见 [`docs/archive/08-changelog-2026-Q2.md`](./docs/archive/08-changelog-2026-Q2.md)。每月可追加一条 rollup 于 §5.1。
 
 ---
 

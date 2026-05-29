@@ -1,7 +1,7 @@
 # agent.md · 商域 BizSim Edu · 项目第一入口
 
 > **你是从哪里开始读的**：打开本仓库后，**请先读本文**，再按任务进入 `00～09` 权威文档或 `webapp/` 代码。  
-> **最后更新**：2026-05-28
+> **最后更新**：2026-05-29
 
 ---
 
@@ -28,7 +28,7 @@
 
 | 我要… | 下一步 |
 | ----- | ------ |
-| **写代码、改 API、查做到哪了** | [`08-工程现状`](./08-工程现状与webapp实现详表.md) → [`03-技术架构`](./03-技术架构与实现现状.md) → 域 [`DESIGN.md`](./webapp/backend/app/domains/career/DESIGN.md) / [`ARCHITECTURE.md`](./webapp/backend/app/domains/arena/ARCHITECTURE.md) |
+| **写代码、改 API、查做到哪了** | [`08-` AI_DEFAULT 快照](./08-工程现状与webapp实现详表.md#ai_default) → 域 [`DESIGN.md`](./webapp/backend/app/domains/career/DESIGN.md) / [`ARCHITECTURE.md`](./webapp/backend/app/domains/arena/ARCHITECTURE.md) → 按需 [`03-`](./03-技术架构与实现现状.md) |
 | **懂产品主线、赛制、双端** | [`01-愿景`](./01-平台愿景与产品架构.md) → [`02-赛事`](./02-赛事体系与双端产品.md) |
 | **排期与 Phase** | [`04-实施路线`](./04-实施路线与里程碑.md) |
 | **竖切开发、AI 协作流程** | [`09-分项目流程`](./09-分项目开发与集成流程.md)（含 **§6.0 会话开场指南**） |
@@ -45,7 +45,7 @@
 
 | 问题 | 唯一 / 首选真相源 |
 | ---- | ---------------- |
-| 路由、API、Bug、实现度 % | [`08-`](./08-工程现状与webapp实现详表.md) |
+| 路由、API、Bug、实现度 % | [`08-` AI_DEFAULT](./08-工程现状与webapp实现详表.md#ai_default)（勿全文 attach `08-`/`07-`） |
 | 练习 / 正式、`game_config_id` | [`02-`](./02-赛事体系与双端产品.md) §5.0 |
 | 域边界、新赛制 checklist | [blueprint-coding.mdc](./.cursor/rules/blueprint-coding.mdc) · [`arena/ARCHITECTURE.md`](./webapp/backend/app/domains/arena/ARCHITECTURE.md) |
 | Phase 门控 | [`04-`](./04-实施路线与里程碑.md) · blueprint §7 |
@@ -57,13 +57,15 @@
 
 ## 四、AI 编程会话：怎么开
 
-　　完整开场模板、示例与注意事项见 **[`09-` §6.0 会话开场指南](./09-分项目开发与集成流程.md#60-会话开场指南主理人--agent-入口)**。每次会话建议用 **2～3 句**声明：
+　　完整开场模板、**T0/T1/T2 任务包**、注入矩阵见 **[`09-` §6.0～6.1](./09-分项目开发与集成流程.md#60-会话开场指南主理人--agent-入口)**。每次会话 **2～3 句**声明：做什么 · Phase · 涉及域。
 
-1. **做什么**（任务描述）  
-2. **属于哪个 Phase**（A/B/C/D/E）  
-3. **涉及哪些域**（arena / trading / career / identity / cybercore / opc …）
+| 层 | 内容 | 预算 |
+|----|------|------|
+| **T0** | 本文 + `.cursor/rules/` | ≤4k（自动） |
+| **T1** | `08-` [AI_DEFAULT](./08-工程现状与webapp实现详表.md#ai_default) + `09-` §6.1 任务包所列 1～2 份 | ≤12k |
+| **T2** | `08-` 全表、`05-`/`07-` 深读、inspire 长文 | 按需 grep/局部 Read |
 
-　　上下文注入清单、会话简报模板、何时开新对话：见 [`09-` §6.1～6.5](./09-分项目开发与集成流程.md#六ai-编程协作工作流)。
+　　**禁止**默认全文 attach [`08-`](./08-工程现状与webapp实现详表.md)、[`07-`](./07-拟真城市与区域模拟-阅读合集.md)、[`蓝图编程方法论`](./蓝图编程方法论——AI辅助大型工程实践指南.md)。
 
 ---
 
@@ -113,6 +115,7 @@
 | ADR 编写 | [adr-writing.mdc](./.cursor/rules/adr-writing.mdc) |
 | Inspire 文风 | [inspire-writing.mdc](./.cursor/rules/inspire-writing.mdc) |
 | 文档链接纪律 | [doc-linking.mdc](./.cursor/rules/doc-linking.mdc) |
+| 任务上下文包 | [.cursor/skills/context-pack/](./.cursor/skills/context-pack/SKILL.md) |
 
 ---
 

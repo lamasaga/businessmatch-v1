@@ -4,7 +4,9 @@
 >
 > **蓝图定位**：OPC 属于 **Phase E**（高级智能体），与 [07-拟真城市](./07-拟真城市与区域模拟-阅读合集.md) 并列**终局出口**；对应 [inspire/81-](./inspire/81-商域AI赋能六支柱全景.md) **支柱⑥**。当前不抢 Phase A/B 优先级。详见 [04-](./04-实施路线与里程碑.md) §二。
 >
-> **最后更新**：2026-05-21
+> **最后更新**：2026-05-29
+
+**AI 阅读指引（Phase 门控）**：Phase A/B **默认只读** §一～§三 + §十 索引。§四～§八 为 Phase E 深读（OPC LangGraph/MCP），编码任务勿默认 attach。webapp 现状见 [`08-` AI_DEFAULT](./08-工程现状与webapp实现详表.md#ai_default)。
 
 ---
 
@@ -83,7 +85,11 @@ Atlas / Academy / Quest / Arena / Credenti
 
 ---
 
+<!-- AI_DEEP:opc-architecture -->
+
 ## 四、系统架构（四层）
+
+> **深读 · Phase E**：四层架构、MCP、LangGraph。Phase A 编码见 `08-` OPC 行与 `api/opc.py`。
 
 | 层 | 内容 |
 |----|------|
@@ -208,6 +214,8 @@ Atlas / Academy / Quest / Arena / Credenti
 ### 与主平台路线图对齐
 
 　　OPC **不抢** Phase A 的 Career / 组织者端 / practice 局优先级；OPC 实质开发始于蓝图 **Phase E**，见 [04-实施路线与蓝图](./04-实施路线与里程碑.md) §二。
+
+<!-- /AI_DEEP:opc-architecture -->
 
 ---
 

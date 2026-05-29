@@ -1,0 +1,6167 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "BizSim Edu API",
+    "description": "商域 - 商业模拟教育平台后端 API",
+    "version": "1.0.0"
+  },
+  "paths": {
+    "/api/v1/auth/register": {
+      "post": {
+        "tags": [
+          "认证"
+        ],
+        "summary": "Register",
+        "description": "用户注册",
+        "operationId": "register_api_v1_auth_register_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UserCreate"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse_AuthResponse_"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/auth/login": {
+      "post": {
+        "tags": [
+          "认证"
+        ],
+        "summary": "Login",
+        "description": "用户登录（JSON格式）——支持邮箱或用户名登录",
+        "operationId": "login_api_v1_auth_login_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UserLogin"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse_AuthResponse_"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/auth/me": {
+      "get": {
+        "tags": [
+          "认证"
+        ],
+        "summary": "Get Me",
+        "description": "获取当前登录用户信息",
+        "operationId": "get_me_api_v1_auth_me_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse_UserResponse_"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "OAuth2PasswordBearer": []
+          }
+        ]
+      }
+    },
+    "/api/v1/auth/refresh": {
+      "post": {
+        "tags": [
+          "认证"
+        ],
+        "summary": "Refresh Token",
+        "description": "刷新访问Token",
+        "operationId": "refresh_token_api_v1_auth_refresh_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RefreshTokenRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse_dict_"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/wiki/articles": {
+      "get": {
+        "tags": [
+          "知识图谱"
+        ],
+        "summary": "Get Articles",
+        "description": "获取知识卡片列表，支持学科、分类和搜索筛选",
+        "operationId": "get_articles_api_v1_wiki_articles_get",
+        "security": [
+          {
+            "OAuth2PasswordBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "discipline",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "description": "学科筛选：经济学/商学/管理学",
+              "title": "Discipline"
+            },
+            "description": "学科筛选：经济学/商学/管理学"
+          },
+          {
+            "name": "category",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "description": "分类筛选",
+              "title": "Category"
+            },
+            "description": "分类筛选"
+          },
+          {
+            "name": "search",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "description": "搜索关键词",
+              "title": "Search"
+            },
+            "description": "搜索关键词"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse_list_"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/wiki/articles/{article_id}": {
+      "get": {
+        "tags": [
+          "知识图谱"
+        ],
+        "summary": "Get Article",
+        "description": "获取单张知识卡片详情",
+        "operationId": "get_article_api_v1_wiki_articles__article_id__get",
+        "security": [
+          {
+            "OAuth2PasswordBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "article_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Article Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse_dict_"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/wiki/graph": {
+      "get": {
+        "tags": [
+          "知识图谱"
+        ],
+        "summary": "Get Graph",
+        "description": "获取完整知识关联图谱数据（节点+边）",
+        "operationId": "get_graph_api_v1_wiki_graph_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse_dict_"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "OAuth2PasswordBearer": []
+          }
+        ]
+      }
+    },
+    "/api/v1/wiki/disciplines": {
+      "get": {
+        "tags": [
+          "知识图谱"
+        ],
+        "summary": "Get Disciplines",
+        "description": "获取学科与分类结构",
+        "operationId": "get_disciplines_api_v1_wiki_disciplines_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse_dict_"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "OAuth2PasswordBearer": []
+          }
+        ]
+      }
+    },
+    "/api/v1/courses": {
+      "get": {
+        "tags": [
+          "课程"
+        ],
+        "summary": "Get Courses",
+        "description": "获取课程列表，支持分类、等级和搜索筛选",
+        "operationId": "get_courses_api_v1_courses_get",
+        "security": [
+          {
+            "OAuth2PasswordBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "category",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "description": "课程分类",
+              "title": "Category"
+            },
+            "description": "课程分类"
+          },
+          {
+            "name": "level",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "description": "难度等级",
+              "title": "Level"
+            },
+            "description": "难度等级"
+          },
+          {
+            "name": "search",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "description": "搜索关键词",
+              "title": "Search"
+            },
+            "description": "搜索关键词"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse_list_"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/courses/{course_id}": {
+      "get": {
+        "tags": [
+          "课程"
+        ],
+        "summary": "Get Course",
+        "description": "获取单个课程详情",
+        "operationId": "get_course_api_v1_courses__course_id__get",
+        "security": [
+          {
+            "OAuth2PasswordBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "course_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Course Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse_dict_"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/opc/companies": {
+      "get": {
+        "tags": [
+          "OPC - 一人公司"
+        ],
+        "summary": "List Companies",
+        "description": "获取公司列表（Demo：返回所有，生产应限制当前用户）",
+        "operationId": "list_companies_api_v1_opc_companies_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse_List_OneCompanyOut__"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "OPC - 一人公司"
+        ],
+        "summary": "Create Company",
+        "description": "创建公司",
+        "operationId": "create_company_api_v1_opc_companies_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/OneCompanyCreate"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse_OneCompanyOut_"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/opc/companies/{company_id}": {
+      "get": {
+        "tags": [
+          "OPC - 一人公司"
+        ],
+        "summary": "Get Company",
+        "description": "获取公司详情（含员工和任务）",
+        "operationId": "get_company_api_v1_opc_companies__company_id__get",
+        "parameters": [
+          {
+            "name": "company_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "title": "Company Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse_CompanyDetailOut_"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      },
+      "patch": {
+        "tags": [
+          "OPC - 一人公司"
+        ],
+        "summary": "Update Company",
+        "operationId": "update_company_api_v1_opc_companies__company_id__patch",
+        "parameters": [
+          {
+            "name": "company_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "title": "Company Id"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/OneCompanyUpdate"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse_OneCompanyOut_"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/opc/companies/{company_id}/employees": {
+      "get": {
+        "tags": [
+          "OPC - 一人公司"
+        ],
+        "summary": "List Employees",
+        "operationId": "list_employees_api_v1_opc_companies__company_id__employees_get",
+        "parameters": [
+          {
+            "name": "company_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "title": "Company Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse_List_AIEmployeeOut__"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "OPC - 一人公司"
+        ],
+        "summary": "Hire Employee",
+        "description": "雇佣 AI 员工",
+        "operationId": "hire_employee_api_v1_opc_companies__company_id__employees_post",
+        "parameters": [
+          {
+            "name": "company_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "title": "Company Id"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AIEmployeeCreate"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse_AIEmployeeOut_"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/opc/employees/{employee_id}": {
+      "get": {
+        "tags": [
+          "OPC - 一人公司"
+        ],
+        "summary": "Get Employee",
+        "operationId": "get_employee_api_v1_opc_employees__employee_id__get",
+        "parameters": [
+          {
+            "name": "employee_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "title": "Employee Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse_AIEmployeeOut_"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/opc/companies/{company_id}/tasks": {
+      "get": {
+        "tags": [
+          "OPC - 一人公司"
+        ],
+        "summary": "List Tasks",
+        "operationId": "list_tasks_api_v1_opc_companies__company_id__tasks_get",
+        "parameters": [
+          {
+            "name": "company_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "title": "Company Id"
+            }
+          },
+          {
+            "name": "status",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "title": "Status"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse_List_AITaskOut__"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "OPC - 一人公司"
+        ],
+        "summary": "Create Task",
+        "description": "创建任务",
+        "operationId": "create_task_api_v1_opc_companies__company_id__tasks_post",
+        "parameters": [
+          {
+            "name": "company_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "title": "Company Id"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AITaskCreate"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse_AITaskOut_"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/opc/tasks/{task_id}": {
+      "patch": {
+        "tags": [
+          "OPC - 一人公司"
+        ],
+        "summary": "Update Task",
+        "operationId": "update_task_api_v1_opc_tasks__task_id__patch",
+        "parameters": [
+          {
+            "name": "task_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "title": "Task Id"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AITaskUpdate"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse_AITaskOut_"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/organizer/apply": {
+      "post": {
+        "tags": [
+          "组织者"
+        ],
+        "summary": "Apply Organizer",
+        "description": "申请成为组织者",
+        "operationId": "apply_organizer_api_v1_organizer_apply_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/OrganizerProfileCreate"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse_OrganizerProfileOut_"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "OAuth2PasswordBearer": []
+          }
+        ]
+      }
+    },
+    "/api/v1/organizer/profile": {
+      "get": {
+        "tags": [
+          "组织者"
+        ],
+        "summary": "Get Profile",
+        "description": "获取组织者档案",
+        "operationId": "get_profile_api_v1_organizer_profile_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse_OrganizerProfileOut_"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "OAuth2PasswordBearer": []
+          }
+        ]
+      },
+      "put": {
+        "tags": [
+          "组织者"
+        ],
+        "summary": "Update Profile",
+        "description": "更新组织者信息",
+        "operationId": "update_profile_api_v1_organizer_profile_put",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/OrganizerProfileUpdate"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse_OrganizerProfileOut_"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "OAuth2PasswordBearer": []
+          }
+        ]
+      }
+    },
+    "/api/v1/organizer/stats": {
+      "get": {
+        "tags": [
+          "组织者"
+        ],
+        "summary": "Get Stats",
+        "description": "获取组织者统计数据",
+        "operationId": "get_stats_api_v1_organizer_stats_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse_OrganizerStats_"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "OAuth2PasswordBearer": []
+          }
+        ]
+      }
+    },
+    "/api/v1/organizer/events": {
+      "get": {
+        "tags": [
+          "组织者"
+        ],
+        "summary": "List My Events",
+        "description": "获取当前组织者主办的比赛列表",
+        "operationId": "list_my_events_api_v1_organizer_events_get",
+        "security": [
+          {
+            "OAuth2PasswordBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "status_filter",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Status Filter"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse_List_CompetitionEventOut__"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/organizer/events/{event_id}/control": {
+      "get": {
+        "tags": [
+          "组织者"
+        ],
+        "summary": "Get Event Control",
+        "description": "组织者控场面板：赛事状态、回合、排行榜、参赛者（无需本人参赛）",
+        "operationId": "get_event_control_api_v1_organizer_events__event_id__control_get",
+        "security": [
+          {
+            "OAuth2PasswordBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "event_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "title": "Event Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse_OrganizerControlOut_"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/competitions": {
+      "get": {
+        "tags": [
+          "比赛"
+        ],
+        "summary": "List Competitions",
+        "description": "获取公开比赛列表（默认仅正式赛）",
+        "operationId": "list_competitions_api_v1_competitions_get",
+        "parameters": [
+          {
+            "name": "status",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Status"
+            }
+          },
+          {
+            "name": "match_kind",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "default": "official",
+              "title": "Match Kind"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse_List_CompetitionEventOut__"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "比赛"
+        ],
+        "summary": "Create Competition",
+        "description": "创建比赛",
+        "operationId": "create_competition_api_v1_competitions_post",
+        "security": [
+          {
+            "OAuth2PasswordBearer": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CompetitionEventCreate"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse_CompetitionEventOut_"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/competitions/{event_id}": {
+      "get": {
+        "tags": [
+          "比赛"
+        ],
+        "summary": "Get Competition",
+        "description": "获取比赛详情",
+        "operationId": "get_competition_api_v1_competitions__event_id__get",
+        "parameters": [
+          {
+            "name": "event_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "title": "Event Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse_CompetitionEventOut_"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "比赛"
+        ],
+        "summary": "Update Competition",
+        "description": "更新比赛信息",
+        "operationId": "update_competition_api_v1_competitions__event_id__put",
+        "security": [
+          {
+            "OAuth2PasswordBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "event_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "title": "Event Id"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CompetitionEventUpdate"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse_CompetitionEventOut_"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/competitions/join": {
+      "post": {
+        "tags": [
+          "比赛"
+        ],
+        "summary": "Join Competition",
+        "description": "通过房间码加入比赛",
+        "operationId": "join_competition_api_v1_competitions_join_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/JoinCompetitionRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse_ParticipantOut_"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "OAuth2PasswordBearer": []
+          }
+        ]
+      }
+    },
+    "/api/v1/competitions/{event_id}/leave": {
+      "post": {
+        "tags": [
+          "比赛"
+        ],
+        "summary": "Leave Competition",
+        "description": "退出比赛",
+        "operationId": "leave_competition_api_v1_competitions__event_id__leave_post",
+        "security": [
+          {
+            "OAuth2PasswordBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "event_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "title": "Event Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse_dict_"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/competitions/{event_id}/standings": {
+      "get": {
+        "tags": [
+          "比赛"
+        ],
+        "summary": "Get Standings",
+        "description": "获取排行榜",
+        "operationId": "get_standings_api_v1_competitions__event_id__standings_get",
+        "parameters": [
+          {
+            "name": "event_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "title": "Event Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse_List_dict__"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/competitions/{event_id}/my-status": {
+      "get": {
+        "tags": [
+          "比赛"
+        ],
+        "summary": "Get My Status",
+        "description": "获取我的参赛状态",
+        "operationId": "get_my_status_api_v1_competitions__event_id__my_status_get",
+        "security": [
+          {
+            "OAuth2PasswordBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "event_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "title": "Event Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse_MyCompetitionStatus_"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/competitions/{event_id}/start": {
+      "post": {
+        "tags": [
+          "比赛"
+        ],
+        "summary": "Start Competition",
+        "description": "开始比赛",
+        "operationId": "start_competition_api_v1_competitions__event_id__start_post",
+        "security": [
+          {
+            "OAuth2PasswordBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "event_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "title": "Event Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse_CompetitionEventOut_"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/competitions/{event_id}/end": {
+      "post": {
+        "tags": [
+          "比赛"
+        ],
+        "summary": "End Competition",
+        "description": "结束比赛并计算结果",
+        "operationId": "end_competition_api_v1_competitions__event_id__end_post",
+        "security": [
+          {
+            "OAuth2PasswordBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "event_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "title": "Event Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse_CompetitionEventOut_"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/trading/events/{event_id}/state": {
+      "get": {
+        "tags": [
+          "交易游戏"
+        ],
+        "summary": "Get Game State",
+        "description": "获取当前游戏状态",
+        "operationId": "get_game_state_api_v1_trading_events__event_id__state_get",
+        "security": [
+          {
+            "OAuth2PasswordBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "event_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "title": "Event Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse_GameState_"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/trading/events/{event_id}/actions": {
+      "post": {
+        "tags": [
+          "交易游戏"
+        ],
+        "summary": "Submit Rts Game Action",
+        "description": "RTS：提交即时指令（下 tick 结算）",
+        "operationId": "submit_rts_game_action_api_v1_trading_events__event_id__actions_post",
+        "security": [
+          {
+            "OAuth2PasswordBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "event_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "title": "Event Id"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RtsActionRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse_RtsActionResult_"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/trading/rounds/{round_id}/decide": {
+      "post": {
+        "tags": [
+          "交易游戏"
+        ],
+        "summary": "Submit Decision",
+        "description": "提交交易决策",
+        "operationId": "submit_decision_api_v1_trading_rounds__round_id__decide_post",
+        "security": [
+          {
+            "OAuth2PasswordBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "round_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "title": "Round Id"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/DecisionRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse_SubmitDecisionResult_"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/trading/rounds/{round_id}/result": {
+      "get": {
+        "tags": [
+          "交易游戏"
+        ],
+        "summary": "Get Round Result",
+        "description": "获取回合结果",
+        "operationId": "get_round_result_api_v1_trading_rounds__round_id__result_get",
+        "security": [
+          {
+            "OAuth2PasswordBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "round_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "title": "Round Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse_TradingRoundResult_"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/trading/rounds/{round_id}/next": {
+      "post": {
+        "tags": [
+          "交易游戏"
+        ],
+        "summary": "Next Round",
+        "description": "推进到下一回合（组织者）",
+        "operationId": "next_round_api_v1_trading_rounds__round_id__next_post",
+        "security": [
+          {
+            "OAuth2PasswordBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "round_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "title": "Round Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse_TradingRoundOut_"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/trading/events/{event_id}/history": {
+      "get": {
+        "tags": [
+          "交易游戏"
+        ],
+        "summary": "Get Price History",
+        "description": "获取价格历史",
+        "operationId": "get_price_history_api_v1_trading_events__event_id__history_get",
+        "security": [
+          {
+            "OAuth2PasswordBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "event_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "title": "Event Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse_List_Dict_str__Any___"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/practice/game-configs": {
+      "get": {
+        "tags": [
+          "日常练习"
+        ],
+        "summary": "List Configs",
+        "operationId": "list_configs_api_v1_practice_game_configs_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse_list_"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/practice/trading/start": {
+      "post": {
+        "tags": [
+          "日常练习"
+        ],
+        "summary": "Start Trading Practice",
+        "description": "创建并自动开始一场交易赛日常练习（单人，低权重 XP）",
+        "operationId": "start_trading_practice_api_v1_practice_trading_start_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PracticeStartRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse_CompetitionEventOut_"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "OAuth2PasswordBearer": []
+          }
+        ]
+      }
+    },
+    "/api/v1/practice/techventure/start": {
+      "post": {
+        "tags": [
+          "日常练习"
+        ],
+        "summary": "Start Techventure Practice",
+        "description": "创建并自动开始一场 TechVenture 日常练习（单人 + AI 队伍）",
+        "operationId": "start_techventure_practice_api_v1_practice_techventure_start_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PracticeStartRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse_dict_"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "OAuth2PasswordBearer": []
+          }
+        ]
+      }
+    },
+    "/api/v1/practice/my": {
+      "get": {
+        "tags": [
+          "日常练习"
+        ],
+        "summary": "My Practice Matches",
+        "operationId": "my_practice_matches_api_v1_practice_my_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse_list_"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "OAuth2PasswordBearer": []
+          }
+        ]
+      }
+    },
+    "/api/v1/techventure/events/{event_id}/lobby": {
+      "get": {
+        "tags": [
+          "TechVenture 参赛端"
+        ],
+        "summary": "Get Lobby",
+        "description": "大厅：队伍列表、本人所在队伍、比赛状态。无需已选队。",
+        "operationId": "get_lobby_api_v1_techventure_events__event_id__lobby_get",
+        "security": [
+          {
+            "OAuth2PasswordBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "event_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "title": "Event Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse_dict_"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/techventure/events/{event_id}/join-team": {
+      "post": {
+        "tags": [
+          "TechVenture 参赛端"
+        ],
+        "summary": "Join Team",
+        "description": "学生选择/切换队伍。",
+        "operationId": "join_team_api_v1_techventure_events__event_id__join_team_post",
+        "security": [
+          {
+            "OAuth2PasswordBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "event_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "title": "Event Id"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/JoinTeamRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse_dict_"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/techventure/events/{event_id}/state": {
+      "get": {
+        "tags": [
+          "TechVenture 参赛端"
+        ],
+        "summary": "Get State",
+        "description": "获取参赛端完整状态。",
+        "operationId": "get_state_api_v1_techventure_events__event_id__state_get",
+        "security": [
+          {
+            "OAuth2PasswordBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "event_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "title": "Event Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse_dict_"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/techventure/events/{event_id}/poll": {
+      "get": {
+        "tags": [
+          "TechVenture 参赛端"
+        ],
+        "summary": "Poll",
+        "description": "轻量轮询——前端定时调用。",
+        "operationId": "poll_api_v1_techventure_events__event_id__poll_get",
+        "security": [
+          {
+            "OAuth2PasswordBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "event_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "title": "Event Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse_dict_"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/techventure/events/{event_id}/profile": {
+      "post": {
+        "tags": [
+          "TechVenture 参赛端"
+        ],
+        "summary": "Set Profile",
+        "description": "设置产品名。",
+        "operationId": "set_profile_api_v1_techventure_events__event_id__profile_post",
+        "security": [
+          {
+            "OAuth2PasswordBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "event_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "title": "Event Id"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ProfileRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse_dict_"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/techventure/events/{event_id}/submit": {
+      "post": {
+        "tags": [
+          "TechVenture 参赛端"
+        ],
+        "summary": "Submit Decision",
+        "description": "提交本轮决策。",
+        "operationId": "submit_decision_api_v1_techventure_events__event_id__submit_post",
+        "security": [
+          {
+            "OAuth2PasswordBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "event_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "title": "Event Id"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SubmitDecisionRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse_dict_"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/techventure/events/{event_id}/leaderboard": {
+      "get": {
+        "tags": [
+          "TechVenture 参赛端"
+        ],
+        "summary": "Leaderboard",
+        "description": "公开排行榜。",
+        "operationId": "leaderboard_api_v1_techventure_events__event_id__leaderboard_get",
+        "parameters": [
+          {
+            "name": "event_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "title": "Event Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse_list_"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/techventure/events/{event_id}/news": {
+      "get": {
+        "tags": [
+          "TechVenture 参赛端"
+        ],
+        "summary": "Get News",
+        "description": "获取所有新闻条目。",
+        "operationId": "get_news_api_v1_techventure_events__event_id__news_get",
+        "parameters": [
+          {
+            "name": "event_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "title": "Event Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse_list_"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/techventure/admin/events/{event_id}/state": {
+      "get": {
+        "tags": [
+          "TechVenture 组织端"
+        ],
+        "summary": "Admin State",
+        "description": "组织者端完整状态。",
+        "operationId": "admin_state_api_v1_techventure_admin_events__event_id__state_get",
+        "security": [
+          {
+            "OAuth2PasswordBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "event_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "title": "Event Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse_dict_"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/techventure/admin/events/{event_id}/teams": {
+      "post": {
+        "tags": [
+          "TechVenture 组织端"
+        ],
+        "summary": "Create Teams",
+        "description": "批量创建队伍（仅报名阶段）。",
+        "operationId": "create_teams_api_v1_techventure_admin_events__event_id__teams_post",
+        "security": [
+          {
+            "OAuth2PasswordBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "event_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "title": "Event Id"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateTeamsRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse_list_"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/techventure/admin/events/{event_id}/teams/{team_id}": {
+      "patch": {
+        "tags": [
+          "TechVenture 组织端"
+        ],
+        "summary": "Update Team",
+        "description": "更新队伍信息（报名阶段可改队名/产品名）。",
+        "operationId": "update_team_api_v1_techventure_admin_events__event_id__teams__team_id__patch",
+        "security": [
+          {
+            "OAuth2PasswordBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "event_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "title": "Event Id"
+            }
+          },
+          {
+            "name": "team_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "title": "Team Id"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateTeamRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse_dict_"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/techventure/admin/events/{event_id}/start": {
+      "post": {
+        "tags": [
+          "TechVenture 组织端"
+        ],
+        "summary": "Start Match",
+        "description": "报名结束、进入控场态（不自动开放第一轮）。",
+        "operationId": "start_match_api_v1_techventure_admin_events__event_id__start_post",
+        "security": [
+          {
+            "OAuth2PasswordBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "event_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "title": "Event Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse_dict_"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/techventure/admin/events/{event_id}/rounds/open": {
+      "post": {
+        "tags": [
+          "TechVenture 组织端"
+        ],
+        "summary": "Open Round",
+        "description": "开放下一轮。",
+        "operationId": "open_round_api_v1_techventure_admin_events__event_id__rounds_open_post",
+        "security": [
+          {
+            "OAuth2PasswordBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "event_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "title": "Event Id"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/OpenRoundRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse_dict_"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/techventure/admin/events/{event_id}/rounds/settle": {
+      "post": {
+        "tags": [
+          "TechVenture 组织端"
+        ],
+        "summary": "Settle Current Round",
+        "description": "结算当前轮。",
+        "operationId": "settle_current_round_api_v1_techventure_admin_events__event_id__rounds_settle_post",
+        "security": [
+          {
+            "OAuth2PasswordBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "event_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "title": "Event Id"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SettleRoundRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse_dict_"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/techventure/admin/events/{event_id}/screen": {
+      "get": {
+        "tags": [
+          "TechVenture 组织端"
+        ],
+        "summary": "Screen Data",
+        "description": "大屏投影数据。",
+        "operationId": "screen_data_api_v1_techventure_admin_events__event_id__screen_get",
+        "parameters": [
+          {
+            "name": "event_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "title": "Event Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse_dict_"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/techventure/admin/judge/events/{event_id}/state": {
+      "get": {
+        "tags": [
+          "TechVenture 组织端"
+        ],
+        "summary": "Judge State",
+        "description": "评委视角：每队每轮详细快照。",
+        "operationId": "judge_state_api_v1_techventure_admin_judge_events__event_id__state_get",
+        "parameters": [
+          {
+            "name": "event_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "title": "Event Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse_dict_"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/": {
+      "get": {
+        "summary": "Root",
+        "operationId": "root__get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse_dict_"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/health": {
+      "get": {
+        "summary": "Health Check",
+        "operationId": "health_check_health_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse_dict_"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "AIEmployeeCreate": {
+        "properties": {
+          "codename": {
+            "type": "string",
+            "title": "Codename"
+          },
+          "name": {
+            "type": "string",
+            "title": "Name"
+          },
+          "avatar_emoji": {
+            "type": "string",
+            "title": "Avatar Emoji",
+            "default": "🤖"
+          },
+          "role_type": {
+            "type": "string",
+            "title": "Role Type"
+          },
+          "level": {
+            "type": "integer",
+            "title": "Level",
+            "default": 1
+          },
+          "skills": {
+            "items": {
+              "additionalProperties": true,
+              "type": "object"
+            },
+            "type": "array",
+            "title": "Skills",
+            "default": []
+          }
+        },
+        "type": "object",
+        "required": [
+          "codename",
+          "name",
+          "role_type"
+        ],
+        "title": "AIEmployeeCreate"
+      },
+      "AIEmployeeOut": {
+        "properties": {
+          "codename": {
+            "type": "string",
+            "title": "Codename"
+          },
+          "name": {
+            "type": "string",
+            "title": "Name"
+          },
+          "avatar_emoji": {
+            "type": "string",
+            "title": "Avatar Emoji",
+            "default": "🤖"
+          },
+          "role_type": {
+            "type": "string",
+            "title": "Role Type"
+          },
+          "level": {
+            "type": "integer",
+            "title": "Level",
+            "default": 1
+          },
+          "skills": {
+            "items": {
+              "additionalProperties": true,
+              "type": "object"
+            },
+            "type": "array",
+            "title": "Skills",
+            "default": []
+          },
+          "id": {
+            "type": "integer",
+            "title": "Id"
+          },
+          "company_id": {
+            "type": "integer",
+            "title": "Company Id"
+          },
+          "status": {
+            "type": "string",
+            "title": "Status"
+          },
+          "tasks_completed": {
+            "type": "integer",
+            "title": "Tasks Completed"
+          },
+          "satisfaction_score": {
+            "type": "number",
+            "title": "Satisfaction Score"
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Created At"
+          }
+        },
+        "type": "object",
+        "required": [
+          "codename",
+          "name",
+          "role_type",
+          "id",
+          "company_id",
+          "status",
+          "tasks_completed",
+          "satisfaction_score",
+          "created_at"
+        ],
+        "title": "AIEmployeeOut"
+      },
+      "AITaskCreate": {
+        "properties": {
+          "title": {
+            "type": "string",
+            "title": "Title"
+          },
+          "description": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Description"
+          },
+          "task_type": {
+            "type": "string",
+            "title": "Task Type",
+            "default": "custom"
+          },
+          "priority": {
+            "type": "string",
+            "title": "Priority",
+            "default": "normal"
+          },
+          "requirements": {
+            "additionalProperties": true,
+            "type": "object",
+            "title": "Requirements",
+            "default": {}
+          },
+          "assignee_id": {
+            "type": "integer",
+            "title": "Assignee Id"
+          }
+        },
+        "type": "object",
+        "required": [
+          "title",
+          "assignee_id"
+        ],
+        "title": "AITaskCreate"
+      },
+      "AITaskOut": {
+        "properties": {
+          "title": {
+            "type": "string",
+            "title": "Title"
+          },
+          "description": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Description"
+          },
+          "task_type": {
+            "type": "string",
+            "title": "Task Type",
+            "default": "custom"
+          },
+          "priority": {
+            "type": "string",
+            "title": "Priority",
+            "default": "normal"
+          },
+          "requirements": {
+            "additionalProperties": true,
+            "type": "object",
+            "title": "Requirements",
+            "default": {}
+          },
+          "id": {
+            "type": "integer",
+            "title": "Id"
+          },
+          "company_id": {
+            "type": "integer",
+            "title": "Company Id"
+          },
+          "assignee_id": {
+            "type": "integer",
+            "title": "Assignee Id"
+          },
+          "status": {
+            "type": "string",
+            "title": "Status"
+          },
+          "progress": {
+            "type": "integer",
+            "title": "Progress"
+          },
+          "deliverables": {
+            "items": {
+              "additionalProperties": true,
+              "type": "object"
+            },
+            "type": "array",
+            "title": "Deliverables"
+          },
+          "student_rating": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Student Rating"
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Created At"
+          },
+          "started_at": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date-time"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Started At"
+          },
+          "completed_at": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date-time"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Completed At"
+          }
+        },
+        "type": "object",
+        "required": [
+          "title",
+          "id",
+          "company_id",
+          "assignee_id",
+          "status",
+          "progress",
+          "deliverables",
+          "student_rating",
+          "created_at",
+          "started_at",
+          "completed_at"
+        ],
+        "title": "AITaskOut"
+      },
+      "AITaskUpdate": {
+        "properties": {
+          "status": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Status"
+          },
+          "progress": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Progress"
+          },
+          "student_review": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Student Review"
+          },
+          "student_rating": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Student Rating"
+          }
+        },
+        "type": "object",
+        "title": "AITaskUpdate"
+      },
+      "ApiResponse_AIEmployeeOut_": {
+        "properties": {
+          "success": {
+            "type": "boolean",
+            "title": "Success",
+            "default": true
+          },
+          "code": {
+            "type": "integer",
+            "title": "Code",
+            "default": 0
+          },
+          "message": {
+            "type": "string",
+            "title": "Message",
+            "default": "success"
+          },
+          "data": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/AIEmployeeOut"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          }
+        },
+        "type": "object",
+        "title": "ApiResponse[AIEmployeeOut]"
+      },
+      "ApiResponse_AITaskOut_": {
+        "properties": {
+          "success": {
+            "type": "boolean",
+            "title": "Success",
+            "default": true
+          },
+          "code": {
+            "type": "integer",
+            "title": "Code",
+            "default": 0
+          },
+          "message": {
+            "type": "string",
+            "title": "Message",
+            "default": "success"
+          },
+          "data": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/AITaskOut"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          }
+        },
+        "type": "object",
+        "title": "ApiResponse[AITaskOut]"
+      },
+      "ApiResponse_AuthResponse_": {
+        "properties": {
+          "success": {
+            "type": "boolean",
+            "title": "Success",
+            "default": true
+          },
+          "code": {
+            "type": "integer",
+            "title": "Code",
+            "default": 0
+          },
+          "message": {
+            "type": "string",
+            "title": "Message",
+            "default": "success"
+          },
+          "data": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/AuthResponse"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          }
+        },
+        "type": "object",
+        "title": "ApiResponse[AuthResponse]"
+      },
+      "ApiResponse_CompanyDetailOut_": {
+        "properties": {
+          "success": {
+            "type": "boolean",
+            "title": "Success",
+            "default": true
+          },
+          "code": {
+            "type": "integer",
+            "title": "Code",
+            "default": 0
+          },
+          "message": {
+            "type": "string",
+            "title": "Message",
+            "default": "success"
+          },
+          "data": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/CompanyDetailOut"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          }
+        },
+        "type": "object",
+        "title": "ApiResponse[CompanyDetailOut]"
+      },
+      "ApiResponse_CompetitionEventOut_": {
+        "properties": {
+          "success": {
+            "type": "boolean",
+            "title": "Success",
+            "default": true
+          },
+          "code": {
+            "type": "integer",
+            "title": "Code",
+            "default": 0
+          },
+          "message": {
+            "type": "string",
+            "title": "Message",
+            "default": "success"
+          },
+          "data": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/CompetitionEventOut"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          }
+        },
+        "type": "object",
+        "title": "ApiResponse[CompetitionEventOut]"
+      },
+      "ApiResponse_GameState_": {
+        "properties": {
+          "success": {
+            "type": "boolean",
+            "title": "Success",
+            "default": true
+          },
+          "code": {
+            "type": "integer",
+            "title": "Code",
+            "default": 0
+          },
+          "message": {
+            "type": "string",
+            "title": "Message",
+            "default": "success"
+          },
+          "data": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/GameState"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          }
+        },
+        "type": "object",
+        "title": "ApiResponse[GameState]"
+      },
+      "ApiResponse_List_AIEmployeeOut__": {
+        "properties": {
+          "success": {
+            "type": "boolean",
+            "title": "Success",
+            "default": true
+          },
+          "code": {
+            "type": "integer",
+            "title": "Code",
+            "default": 0
+          },
+          "message": {
+            "type": "string",
+            "title": "Message",
+            "default": "success"
+          },
+          "data": {
+            "anyOf": [
+              {
+                "items": {
+                  "$ref": "#/components/schemas/AIEmployeeOut"
+                },
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Data"
+          }
+        },
+        "type": "object",
+        "title": "ApiResponse[List[AIEmployeeOut]]"
+      },
+      "ApiResponse_List_AITaskOut__": {
+        "properties": {
+          "success": {
+            "type": "boolean",
+            "title": "Success",
+            "default": true
+          },
+          "code": {
+            "type": "integer",
+            "title": "Code",
+            "default": 0
+          },
+          "message": {
+            "type": "string",
+            "title": "Message",
+            "default": "success"
+          },
+          "data": {
+            "anyOf": [
+              {
+                "items": {
+                  "$ref": "#/components/schemas/AITaskOut"
+                },
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Data"
+          }
+        },
+        "type": "object",
+        "title": "ApiResponse[List[AITaskOut]]"
+      },
+      "ApiResponse_List_CompetitionEventOut__": {
+        "properties": {
+          "success": {
+            "type": "boolean",
+            "title": "Success",
+            "default": true
+          },
+          "code": {
+            "type": "integer",
+            "title": "Code",
+            "default": 0
+          },
+          "message": {
+            "type": "string",
+            "title": "Message",
+            "default": "success"
+          },
+          "data": {
+            "anyOf": [
+              {
+                "items": {
+                  "$ref": "#/components/schemas/CompetitionEventOut"
+                },
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Data"
+          }
+        },
+        "type": "object",
+        "title": "ApiResponse[List[CompetitionEventOut]]"
+      },
+      "ApiResponse_List_Dict_str__Any___": {
+        "properties": {
+          "success": {
+            "type": "boolean",
+            "title": "Success",
+            "default": true
+          },
+          "code": {
+            "type": "integer",
+            "title": "Code",
+            "default": 0
+          },
+          "message": {
+            "type": "string",
+            "title": "Message",
+            "default": "success"
+          },
+          "data": {
+            "anyOf": [
+              {
+                "items": {
+                  "additionalProperties": true,
+                  "type": "object"
+                },
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Data"
+          }
+        },
+        "type": "object",
+        "title": "ApiResponse[List[Dict[str, Any]]]"
+      },
+      "ApiResponse_List_OneCompanyOut__": {
+        "properties": {
+          "success": {
+            "type": "boolean",
+            "title": "Success",
+            "default": true
+          },
+          "code": {
+            "type": "integer",
+            "title": "Code",
+            "default": 0
+          },
+          "message": {
+            "type": "string",
+            "title": "Message",
+            "default": "success"
+          },
+          "data": {
+            "anyOf": [
+              {
+                "items": {
+                  "$ref": "#/components/schemas/OneCompanyOut"
+                },
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Data"
+          }
+        },
+        "type": "object",
+        "title": "ApiResponse[List[OneCompanyOut]]"
+      },
+      "ApiResponse_List_dict__": {
+        "properties": {
+          "success": {
+            "type": "boolean",
+            "title": "Success",
+            "default": true
+          },
+          "code": {
+            "type": "integer",
+            "title": "Code",
+            "default": 0
+          },
+          "message": {
+            "type": "string",
+            "title": "Message",
+            "default": "success"
+          },
+          "data": {
+            "anyOf": [
+              {
+                "items": {
+                  "additionalProperties": true,
+                  "type": "object"
+                },
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Data"
+          }
+        },
+        "type": "object",
+        "title": "ApiResponse[List[dict]]"
+      },
+      "ApiResponse_MyCompetitionStatus_": {
+        "properties": {
+          "success": {
+            "type": "boolean",
+            "title": "Success",
+            "default": true
+          },
+          "code": {
+            "type": "integer",
+            "title": "Code",
+            "default": 0
+          },
+          "message": {
+            "type": "string",
+            "title": "Message",
+            "default": "success"
+          },
+          "data": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/MyCompetitionStatus"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          }
+        },
+        "type": "object",
+        "title": "ApiResponse[MyCompetitionStatus]"
+      },
+      "ApiResponse_OneCompanyOut_": {
+        "properties": {
+          "success": {
+            "type": "boolean",
+            "title": "Success",
+            "default": true
+          },
+          "code": {
+            "type": "integer",
+            "title": "Code",
+            "default": 0
+          },
+          "message": {
+            "type": "string",
+            "title": "Message",
+            "default": "success"
+          },
+          "data": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/OneCompanyOut"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          }
+        },
+        "type": "object",
+        "title": "ApiResponse[OneCompanyOut]"
+      },
+      "ApiResponse_OrganizerControlOut_": {
+        "properties": {
+          "success": {
+            "type": "boolean",
+            "title": "Success",
+            "default": true
+          },
+          "code": {
+            "type": "integer",
+            "title": "Code",
+            "default": 0
+          },
+          "message": {
+            "type": "string",
+            "title": "Message",
+            "default": "success"
+          },
+          "data": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/OrganizerControlOut"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          }
+        },
+        "type": "object",
+        "title": "ApiResponse[OrganizerControlOut]"
+      },
+      "ApiResponse_OrganizerProfileOut_": {
+        "properties": {
+          "success": {
+            "type": "boolean",
+            "title": "Success",
+            "default": true
+          },
+          "code": {
+            "type": "integer",
+            "title": "Code",
+            "default": 0
+          },
+          "message": {
+            "type": "string",
+            "title": "Message",
+            "default": "success"
+          },
+          "data": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/OrganizerProfileOut"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          }
+        },
+        "type": "object",
+        "title": "ApiResponse[OrganizerProfileOut]"
+      },
+      "ApiResponse_OrganizerStats_": {
+        "properties": {
+          "success": {
+            "type": "boolean",
+            "title": "Success",
+            "default": true
+          },
+          "code": {
+            "type": "integer",
+            "title": "Code",
+            "default": 0
+          },
+          "message": {
+            "type": "string",
+            "title": "Message",
+            "default": "success"
+          },
+          "data": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/OrganizerStats"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          }
+        },
+        "type": "object",
+        "title": "ApiResponse[OrganizerStats]"
+      },
+      "ApiResponse_ParticipantOut_": {
+        "properties": {
+          "success": {
+            "type": "boolean",
+            "title": "Success",
+            "default": true
+          },
+          "code": {
+            "type": "integer",
+            "title": "Code",
+            "default": 0
+          },
+          "message": {
+            "type": "string",
+            "title": "Message",
+            "default": "success"
+          },
+          "data": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/ParticipantOut"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          }
+        },
+        "type": "object",
+        "title": "ApiResponse[ParticipantOut]"
+      },
+      "ApiResponse_RtsActionResult_": {
+        "properties": {
+          "success": {
+            "type": "boolean",
+            "title": "Success",
+            "default": true
+          },
+          "code": {
+            "type": "integer",
+            "title": "Code",
+            "default": 0
+          },
+          "message": {
+            "type": "string",
+            "title": "Message",
+            "default": "success"
+          },
+          "data": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/RtsActionResult"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          }
+        },
+        "type": "object",
+        "title": "ApiResponse[RtsActionResult]"
+      },
+      "ApiResponse_SubmitDecisionResult_": {
+        "properties": {
+          "success": {
+            "type": "boolean",
+            "title": "Success",
+            "default": true
+          },
+          "code": {
+            "type": "integer",
+            "title": "Code",
+            "default": 0
+          },
+          "message": {
+            "type": "string",
+            "title": "Message",
+            "default": "success"
+          },
+          "data": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/SubmitDecisionResult"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          }
+        },
+        "type": "object",
+        "title": "ApiResponse[SubmitDecisionResult]"
+      },
+      "ApiResponse_TradingRoundOut_": {
+        "properties": {
+          "success": {
+            "type": "boolean",
+            "title": "Success",
+            "default": true
+          },
+          "code": {
+            "type": "integer",
+            "title": "Code",
+            "default": 0
+          },
+          "message": {
+            "type": "string",
+            "title": "Message",
+            "default": "success"
+          },
+          "data": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/TradingRoundOut"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          }
+        },
+        "type": "object",
+        "title": "ApiResponse[TradingRoundOut]"
+      },
+      "ApiResponse_TradingRoundResult_": {
+        "properties": {
+          "success": {
+            "type": "boolean",
+            "title": "Success",
+            "default": true
+          },
+          "code": {
+            "type": "integer",
+            "title": "Code",
+            "default": 0
+          },
+          "message": {
+            "type": "string",
+            "title": "Message",
+            "default": "success"
+          },
+          "data": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/TradingRoundResult"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          }
+        },
+        "type": "object",
+        "title": "ApiResponse[TradingRoundResult]"
+      },
+      "ApiResponse_UserResponse_": {
+        "properties": {
+          "success": {
+            "type": "boolean",
+            "title": "Success",
+            "default": true
+          },
+          "code": {
+            "type": "integer",
+            "title": "Code",
+            "default": 0
+          },
+          "message": {
+            "type": "string",
+            "title": "Message",
+            "default": "success"
+          },
+          "data": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/UserResponse"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          }
+        },
+        "type": "object",
+        "title": "ApiResponse[UserResponse]"
+      },
+      "ApiResponse_dict_": {
+        "properties": {
+          "success": {
+            "type": "boolean",
+            "title": "Success",
+            "default": true
+          },
+          "code": {
+            "type": "integer",
+            "title": "Code",
+            "default": 0
+          },
+          "message": {
+            "type": "string",
+            "title": "Message",
+            "default": "success"
+          },
+          "data": {
+            "anyOf": [
+              {
+                "additionalProperties": true,
+                "type": "object"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Data"
+          }
+        },
+        "type": "object",
+        "title": "ApiResponse[dict]"
+      },
+      "ApiResponse_list_": {
+        "properties": {
+          "success": {
+            "type": "boolean",
+            "title": "Success",
+            "default": true
+          },
+          "code": {
+            "type": "integer",
+            "title": "Code",
+            "default": 0
+          },
+          "message": {
+            "type": "string",
+            "title": "Message",
+            "default": "success"
+          },
+          "data": {
+            "anyOf": [
+              {
+                "items": {},
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Data"
+          }
+        },
+        "type": "object",
+        "title": "ApiResponse[list]"
+      },
+      "AuthResponse": {
+        "properties": {
+          "user": {
+            "$ref": "#/components/schemas/UserResponse"
+          },
+          "tokens": {
+            "$ref": "#/components/schemas/TokenPair"
+          }
+        },
+        "type": "object",
+        "required": [
+          "user",
+          "tokens"
+        ],
+        "title": "AuthResponse"
+      },
+      "CityMarket": {
+        "properties": {
+          "city": {
+            "type": "string",
+            "title": "City"
+          },
+          "city_name": {
+            "type": "string",
+            "title": "City Name"
+          },
+          "products": {
+            "items": {
+              "$ref": "#/components/schemas/ProductPrice"
+            },
+            "type": "array",
+            "title": "Products"
+          }
+        },
+        "type": "object",
+        "required": [
+          "city",
+          "city_name",
+          "products"
+        ],
+        "title": "CityMarket"
+      },
+      "CompanyDetailOut": {
+        "properties": {
+          "name": {
+            "type": "string",
+            "title": "Name"
+          },
+          "description": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Description"
+          },
+          "id": {
+            "type": "integer",
+            "title": "Id"
+          },
+          "user_id": {
+            "type": "integer",
+            "title": "User Id"
+          },
+          "slug": {
+            "type": "string",
+            "title": "Slug"
+          },
+          "stage": {
+            "type": "string",
+            "title": "Stage"
+          },
+          "mode": {
+            "type": "string",
+            "title": "Mode"
+          },
+          "total_revenue": {
+            "type": "number",
+            "title": "Total Revenue"
+          },
+          "total_cost": {
+            "type": "number",
+            "title": "Total Cost"
+          },
+          "business_model_canvas": {
+            "additionalProperties": true,
+            "type": "object",
+            "title": "Business Model Canvas"
+          },
+          "brand_config": {
+            "additionalProperties": true,
+            "type": "object",
+            "title": "Brand Config"
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Created At"
+          },
+          "updated_at": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date-time"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Updated At"
+          },
+          "employee_count": {
+            "type": "integer",
+            "title": "Employee Count",
+            "default": 0
+          },
+          "task_stats": {
+            "additionalProperties": {
+              "type": "integer"
+            },
+            "type": "object",
+            "title": "Task Stats",
+            "default": {}
+          },
+          "employees": {
+            "items": {
+              "$ref": "#/components/schemas/AIEmployeeOut"
+            },
+            "type": "array",
+            "title": "Employees",
+            "default": []
+          },
+          "tasks": {
+            "items": {
+              "$ref": "#/components/schemas/AITaskOut"
+            },
+            "type": "array",
+            "title": "Tasks",
+            "default": []
+          }
+        },
+        "type": "object",
+        "required": [
+          "name",
+          "id",
+          "user_id",
+          "slug",
+          "stage",
+          "mode",
+          "total_revenue",
+          "total_cost",
+          "business_model_canvas",
+          "brand_config",
+          "created_at",
+          "updated_at"
+        ],
+        "title": "CompanyDetailOut"
+      },
+      "CompetitionEventCreate": {
+        "properties": {
+          "title": {
+            "type": "string",
+            "maxLength": 100,
+            "minLength": 1,
+            "title": "Title"
+          },
+          "description": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Description"
+          },
+          "game_type": {
+            "type": "string",
+            "title": "Game Type",
+            "default": "trading"
+          },
+          "max_players": {
+            "type": "integer",
+            "maximum": 200.0,
+            "minimum": 2.0,
+            "title": "Max Players",
+            "default": 50
+          },
+          "config": {
+            "$ref": "#/components/schemas/GameConfig"
+          },
+          "game_config_id": {
+            "type": "string",
+            "maxLength": 64,
+            "title": "Game Config Id",
+            "default": "trading-v2-rts"
+          },
+          "design_mode": {
+            "type": "string",
+            "title": "Design Mode",
+            "description": "standalone | modular",
+            "default": "standalone"
+          },
+          "match_kind": {
+            "type": "string",
+            "title": "Match Kind",
+            "description": "official | practice",
+            "default": "official"
+          }
+        },
+        "type": "object",
+        "required": [
+          "title"
+        ],
+        "title": "CompetitionEventCreate"
+      },
+      "CompetitionEventOut": {
+        "properties": {
+          "id": {
+            "type": "integer",
+            "title": "Id"
+          },
+          "organizer_id": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Organizer Id"
+          },
+          "room_code": {
+            "type": "string",
+            "title": "Room Code"
+          },
+          "title": {
+            "type": "string",
+            "title": "Title"
+          },
+          "description": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Description"
+          },
+          "match_kind": {
+            "type": "string",
+            "title": "Match Kind",
+            "default": "official"
+          },
+          "design_mode": {
+            "type": "string",
+            "title": "Design Mode",
+            "default": "standalone"
+          },
+          "game_config_id": {
+            "type": "string",
+            "title": "Game Config Id",
+            "default": "trading-v1"
+          },
+          "game_type": {
+            "type": "string",
+            "title": "Game Type"
+          },
+          "status": {
+            "type": "string",
+            "title": "Status"
+          },
+          "config": {
+            "additionalProperties": true,
+            "type": "object",
+            "title": "Config"
+          },
+          "max_players": {
+            "type": "integer",
+            "title": "Max Players"
+          },
+          "current_round": {
+            "type": "integer",
+            "title": "Current Round"
+          },
+          "starts_at": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date-time"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Starts At"
+          },
+          "ends_at": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date-time"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Ends At"
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Created At"
+          },
+          "participant_count": {
+            "type": "integer",
+            "title": "Participant Count",
+            "default": 0
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "room_code",
+          "title",
+          "description",
+          "game_type",
+          "status",
+          "config",
+          "max_players",
+          "current_round",
+          "starts_at",
+          "ends_at",
+          "created_at"
+        ],
+        "title": "CompetitionEventOut"
+      },
+      "CompetitionEventUpdate": {
+        "properties": {
+          "title": {
+            "anyOf": [
+              {
+                "type": "string",
+                "maxLength": 100,
+                "minLength": 1
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Title"
+          },
+          "description": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Description"
+          },
+          "status": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Status"
+          }
+        },
+        "type": "object",
+        "title": "CompetitionEventUpdate"
+      },
+      "CreateTeamsRequest": {
+        "properties": {
+          "team_names": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "minItems": 1,
+            "title": "Team Names"
+          }
+        },
+        "type": "object",
+        "required": [
+          "team_names"
+        ],
+        "title": "CreateTeamsRequest"
+      },
+      "DecisionOut": {
+        "properties": {
+          "id": {
+            "type": "integer",
+            "title": "Id"
+          },
+          "round_id": {
+            "type": "integer",
+            "title": "Round Id"
+          },
+          "participant_id": {
+            "type": "integer",
+            "title": "Participant Id"
+          },
+          "action_type": {
+            "type": "string",
+            "title": "Action Type"
+          },
+          "action_data": {
+            "additionalProperties": true,
+            "type": "object",
+            "title": "Action Data"
+          },
+          "cash_after": {
+            "type": "number",
+            "title": "Cash After"
+          },
+          "inventory_after": {
+            "additionalProperties": {
+              "type": "integer"
+            },
+            "type": "object",
+            "title": "Inventory After"
+          },
+          "submitted_at": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Submitted At"
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "round_id",
+          "participant_id",
+          "action_type",
+          "action_data",
+          "cash_after",
+          "inventory_after",
+          "submitted_at"
+        ],
+        "title": "DecisionOut"
+      },
+      "DecisionRequest": {
+        "properties": {
+          "action_type": {
+            "type": "string",
+            "title": "Action Type"
+          },
+          "action_data": {
+            "additionalProperties": true,
+            "type": "object",
+            "title": "Action Data",
+            "default": {}
+          }
+        },
+        "type": "object",
+        "required": [
+          "action_type"
+        ],
+        "title": "DecisionRequest"
+      },
+      "GameConfig": {
+        "properties": {
+          "rounds": {
+            "type": "integer",
+            "maximum": 20.0,
+            "minimum": 3.0,
+            "title": "Rounds",
+            "default": 10
+          },
+          "initial_capital": {
+            "type": "integer",
+            "maximum": 100000.0,
+            "minimum": 10000.0,
+            "title": "Initial Capital",
+            "default": 50000
+          },
+          "inventory_limit": {
+            "type": "integer",
+            "maximum": 999.0,
+            "minimum": 5.0,
+            "title": "Inventory Limit",
+            "description": "v1：每种商品上限",
+            "default": 99
+          },
+          "inventory_limit_per_product": {
+            "type": "integer",
+            "maximum": 999.0,
+            "minimum": 5.0,
+            "title": "Inventory Limit Per Product",
+            "default": 99
+          },
+          "move_cost": {
+            "type": "integer",
+            "maximum": 5000.0,
+            "minimum": 100.0,
+            "title": "Move Cost",
+            "default": 1000
+          },
+          "decision_time": {
+            "type": "integer",
+            "maximum": 300.0,
+            "minimum": 15.0,
+            "title": "Decision Time",
+            "default": 60
+          },
+          "mode": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Mode",
+            "description": "rts 即时战略"
+          },
+          "duration_preset": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Duration Preset",
+            "description": "short | standard | long"
+          },
+          "cities": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Cities",
+            "default": [
+              "jingcheng",
+              "hushi",
+              "shenshi",
+              "rongcheng",
+              "bingcheng",
+              "gangcheng"
+            ]
+          },
+          "products": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Products",
+            "default": [
+              "fruit",
+              "vegetable",
+              "daily",
+              "electronics",
+              "clothing",
+              "cosmetics",
+              "jewelry",
+              "antique",
+              "art",
+              "snack"
+            ]
+          }
+        },
+        "additionalProperties": true,
+        "type": "object",
+        "title": "GameConfig"
+      },
+      "GameState": {
+        "properties": {
+          "event": {
+            "$ref": "#/components/schemas/CompetitionEventOut"
+          },
+          "participant": {
+            "$ref": "#/components/schemas/ParticipantOut"
+          },
+          "current_round": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/TradingRoundOut"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "markets": {
+            "items": {
+              "$ref": "#/components/schemas/CityMarket"
+            },
+            "type": "array",
+            "title": "Markets"
+          },
+          "inventory": {
+            "items": {
+              "$ref": "#/components/schemas/PlayerInventoryItem"
+            },
+            "type": "array",
+            "title": "Inventory"
+          },
+          "standings": {
+            "items": {
+              "additionalProperties": true,
+              "type": "object"
+            },
+            "type": "array",
+            "title": "Standings"
+          },
+          "time_remaining": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Time Remaining"
+          },
+          "is_practice": {
+            "type": "boolean",
+            "title": "Is Practice",
+            "default": false
+          },
+          "game_mode": {
+            "type": "string",
+            "title": "Game Mode",
+            "default": "round"
+          },
+          "pricing_mode": {
+            "type": "string",
+            "title": "Pricing Mode",
+            "default": "market"
+          },
+          "market_insights": {
+            "items": {
+              "$ref": "#/components/schemas/MarketInsight"
+            },
+            "type": "array",
+            "title": "Market Insights",
+            "default": []
+          },
+          "has_submitted_this_round": {
+            "type": "boolean",
+            "title": "Has Submitted This Round",
+            "default": false
+          },
+          "can_submit_decision": {
+            "type": "boolean",
+            "title": "Can Submit Decision",
+            "default": false
+          },
+          "inventory_capacity": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/InventoryCapacity"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "rts": {
+            "anyOf": [
+              {
+                "additionalProperties": true,
+                "type": "object"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Rts"
+          }
+        },
+        "type": "object",
+        "required": [
+          "event",
+          "participant",
+          "current_round",
+          "markets",
+          "inventory",
+          "standings"
+        ],
+        "title": "GameState"
+      },
+      "HTTPValidationError": {
+        "properties": {
+          "detail": {
+            "items": {
+              "$ref": "#/components/schemas/ValidationError"
+            },
+            "type": "array",
+            "title": "Detail"
+          }
+        },
+        "type": "object",
+        "title": "HTTPValidationError"
+      },
+      "InventoryCapacity": {
+        "properties": {
+          "limit_per_product": {
+            "type": "integer",
+            "title": "Limit Per Product",
+            "default": 99
+          },
+          "total_items": {
+            "type": "integer",
+            "title": "Total Items",
+            "default": 0
+          },
+          "by_product": {
+            "additionalProperties": true,
+            "type": "object",
+            "title": "By Product",
+            "default": {}
+          },
+          "storage_capacity": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Storage Capacity"
+          },
+          "storage_used": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Storage Used"
+          },
+          "storage_remaining": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Storage Remaining"
+          },
+          "vehicles": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Vehicles"
+          },
+          "max_vehicles": {
+            "type": "integer",
+            "title": "Max Vehicles",
+            "default": 3
+          }
+        },
+        "type": "object",
+        "title": "InventoryCapacity"
+      },
+      "JoinCompetitionRequest": {
+        "properties": {
+          "room_code": {
+            "type": "string",
+            "maxLength": 4,
+            "minLength": 4,
+            "pattern": "^\\d{4}$",
+            "title": "Room Code"
+          }
+        },
+        "type": "object",
+        "required": [
+          "room_code"
+        ],
+        "title": "JoinCompetitionRequest"
+      },
+      "JoinTeamRequest": {
+        "properties": {
+          "team_id": {
+            "type": "integer",
+            "title": "Team Id"
+          }
+        },
+        "type": "object",
+        "required": [
+          "team_id"
+        ],
+        "title": "JoinTeamRequest"
+      },
+      "MarketInsight": {
+        "properties": {
+          "city": {
+            "type": "string",
+            "title": "City"
+          },
+          "city_name": {
+            "type": "string",
+            "title": "City Name"
+          },
+          "product_id": {
+            "type": "string",
+            "title": "Product Id"
+          },
+          "product_name": {
+            "type": "string",
+            "title": "Product Name"
+          },
+          "buy_qty": {
+            "type": "integer",
+            "title": "Buy Qty"
+          },
+          "sell_qty": {
+            "type": "integer",
+            "title": "Sell Qty"
+          },
+          "net_demand": {
+            "type": "integer",
+            "title": "Net Demand"
+          },
+          "pressure": {
+            "type": "number",
+            "title": "Pressure"
+          }
+        },
+        "type": "object",
+        "required": [
+          "city",
+          "city_name",
+          "product_id",
+          "product_name",
+          "buy_qty",
+          "sell_qty",
+          "net_demand",
+          "pressure"
+        ],
+        "title": "MarketInsight"
+      },
+      "MyCompetitionStatus": {
+        "properties": {
+          "event": {
+            "$ref": "#/components/schemas/CompetitionEventOut"
+          },
+          "participant": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/ParticipantOut"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "is_organizer": {
+            "type": "boolean",
+            "title": "Is Organizer"
+          }
+        },
+        "type": "object",
+        "required": [
+          "event",
+          "participant",
+          "is_organizer"
+        ],
+        "title": "MyCompetitionStatus"
+      },
+      "OneCompanyCreate": {
+        "properties": {
+          "name": {
+            "type": "string",
+            "title": "Name"
+          },
+          "description": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Description"
+          }
+        },
+        "type": "object",
+        "required": [
+          "name"
+        ],
+        "title": "OneCompanyCreate"
+      },
+      "OneCompanyOut": {
+        "properties": {
+          "name": {
+            "type": "string",
+            "title": "Name"
+          },
+          "description": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Description"
+          },
+          "id": {
+            "type": "integer",
+            "title": "Id"
+          },
+          "user_id": {
+            "type": "integer",
+            "title": "User Id"
+          },
+          "slug": {
+            "type": "string",
+            "title": "Slug"
+          },
+          "stage": {
+            "type": "string",
+            "title": "Stage"
+          },
+          "mode": {
+            "type": "string",
+            "title": "Mode"
+          },
+          "total_revenue": {
+            "type": "number",
+            "title": "Total Revenue"
+          },
+          "total_cost": {
+            "type": "number",
+            "title": "Total Cost"
+          },
+          "business_model_canvas": {
+            "additionalProperties": true,
+            "type": "object",
+            "title": "Business Model Canvas"
+          },
+          "brand_config": {
+            "additionalProperties": true,
+            "type": "object",
+            "title": "Brand Config"
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Created At"
+          },
+          "updated_at": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date-time"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Updated At"
+          },
+          "employee_count": {
+            "type": "integer",
+            "title": "Employee Count",
+            "default": 0
+          },
+          "task_stats": {
+            "additionalProperties": {
+              "type": "integer"
+            },
+            "type": "object",
+            "title": "Task Stats",
+            "default": {}
+          }
+        },
+        "type": "object",
+        "required": [
+          "name",
+          "id",
+          "user_id",
+          "slug",
+          "stage",
+          "mode",
+          "total_revenue",
+          "total_cost",
+          "business_model_canvas",
+          "brand_config",
+          "created_at",
+          "updated_at"
+        ],
+        "title": "OneCompanyOut"
+      },
+      "OneCompanyUpdate": {
+        "properties": {
+          "name": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Name"
+          },
+          "description": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Description"
+          },
+          "stage": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Stage"
+          },
+          "business_model_canvas": {
+            "anyOf": [
+              {
+                "additionalProperties": true,
+                "type": "object"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Business Model Canvas"
+          }
+        },
+        "type": "object",
+        "title": "OneCompanyUpdate"
+      },
+      "OpenRoundRequest": {
+        "properties": {
+          "event_id_r3": {
+            "type": "string",
+            "title": "Event Id R3",
+            "default": "none"
+          }
+        },
+        "type": "object",
+        "title": "OpenRoundRequest"
+      },
+      "OrganizerControlOut": {
+        "properties": {
+          "event": {
+            "$ref": "#/components/schemas/CompetitionEventOut"
+          },
+          "current_round": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/TradingRoundOut"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "standings": {
+            "items": {
+              "additionalProperties": true,
+              "type": "object"
+            },
+            "type": "array",
+            "title": "Standings",
+            "default": []
+          },
+          "participants": {
+            "items": {
+              "$ref": "#/components/schemas/ParticipantOut"
+            },
+            "type": "array",
+            "title": "Participants",
+            "default": []
+          },
+          "decisions_submitted": {
+            "type": "integer",
+            "title": "Decisions Submitted",
+            "default": 0
+          },
+          "rts": {
+            "anyOf": [
+              {
+                "additionalProperties": true,
+                "type": "object"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Rts"
+          }
+        },
+        "type": "object",
+        "required": [
+          "event"
+        ],
+        "title": "OrganizerControlOut",
+        "description": "组织者控场面板数据（无需参赛即可查看）"
+      },
+      "OrganizerProfileCreate": {
+        "properties": {
+          "organization_name": {
+            "type": "string",
+            "maxLength": 100,
+            "minLength": 1,
+            "title": "Organization Name"
+          },
+          "contact_phone": {
+            "anyOf": [
+              {
+                "type": "string",
+                "maxLength": 20
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Contact Phone"
+          }
+        },
+        "type": "object",
+        "required": [
+          "organization_name"
+        ],
+        "title": "OrganizerProfileCreate"
+      },
+      "OrganizerProfileOut": {
+        "properties": {
+          "organization_name": {
+            "type": "string",
+            "maxLength": 100,
+            "minLength": 1,
+            "title": "Organization Name"
+          },
+          "contact_phone": {
+            "anyOf": [
+              {
+                "type": "string",
+                "maxLength": 20
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Contact Phone"
+          },
+          "id": {
+            "type": "integer",
+            "title": "Id"
+          },
+          "user_id": {
+            "type": "integer",
+            "title": "User Id"
+          },
+          "verified": {
+            "type": "boolean",
+            "title": "Verified"
+          },
+          "total_events_hosted": {
+            "type": "integer",
+            "title": "Total Events Hosted"
+          },
+          "total_participants": {
+            "type": "integer",
+            "title": "Total Participants"
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Created At"
+          }
+        },
+        "type": "object",
+        "required": [
+          "organization_name",
+          "id",
+          "user_id",
+          "verified",
+          "total_events_hosted",
+          "total_participants",
+          "created_at"
+        ],
+        "title": "OrganizerProfileOut"
+      },
+      "OrganizerProfileUpdate": {
+        "properties": {
+          "organization_name": {
+            "anyOf": [
+              {
+                "type": "string",
+                "maxLength": 100,
+                "minLength": 1
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Organization Name"
+          },
+          "contact_phone": {
+            "anyOf": [
+              {
+                "type": "string",
+                "maxLength": 20
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Contact Phone"
+          }
+        },
+        "type": "object",
+        "title": "OrganizerProfileUpdate"
+      },
+      "OrganizerStats": {
+        "properties": {
+          "total_events_hosted": {
+            "type": "integer",
+            "title": "Total Events Hosted"
+          },
+          "total_participants": {
+            "type": "integer",
+            "title": "Total Participants"
+          },
+          "active_events": {
+            "type": "integer",
+            "title": "Active Events"
+          },
+          "finished_events": {
+            "type": "integer",
+            "title": "Finished Events"
+          }
+        },
+        "type": "object",
+        "required": [
+          "total_events_hosted",
+          "total_participants",
+          "active_events",
+          "finished_events"
+        ],
+        "title": "OrganizerStats"
+      },
+      "ParticipantOut": {
+        "properties": {
+          "id": {
+            "type": "integer",
+            "title": "Id"
+          },
+          "event_id": {
+            "type": "integer",
+            "title": "Event Id"
+          },
+          "user_id": {
+            "type": "integer",
+            "title": "User Id"
+          },
+          "username": {
+            "type": "string",
+            "title": "Username"
+          },
+          "avatar": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Avatar"
+          },
+          "cash": {
+            "type": "number",
+            "title": "Cash"
+          },
+          "inventory": {
+            "additionalProperties": {
+              "type": "integer"
+            },
+            "type": "object",
+            "title": "Inventory"
+          },
+          "current_city": {
+            "type": "string",
+            "title": "Current City"
+          },
+          "total_assets": {
+            "type": "number",
+            "title": "Total Assets"
+          },
+          "status": {
+            "type": "string",
+            "title": "Status"
+          },
+          "final_rank": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Final Rank"
+          },
+          "experience_earned": {
+            "type": "integer",
+            "title": "Experience Earned"
+          },
+          "joined_at": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Joined At"
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "event_id",
+          "user_id",
+          "username",
+          "avatar",
+          "cash",
+          "inventory",
+          "current_city",
+          "total_assets",
+          "status",
+          "final_rank",
+          "experience_earned",
+          "joined_at"
+        ],
+        "title": "ParticipantOut"
+      },
+      "PlayerInventoryItem": {
+        "properties": {
+          "product_id": {
+            "type": "string",
+            "title": "Product Id"
+          },
+          "name": {
+            "type": "string",
+            "title": "Name"
+          },
+          "quantity": {
+            "type": "integer",
+            "title": "Quantity"
+          },
+          "avg_cost": {
+            "type": "number",
+            "title": "Avg Cost"
+          },
+          "current_value": {
+            "type": "number",
+            "title": "Current Value"
+          },
+          "volume": {
+            "type": "integer",
+            "title": "Volume",
+            "default": 1
+          }
+        },
+        "type": "object",
+        "required": [
+          "product_id",
+          "name",
+          "quantity",
+          "avg_cost",
+          "current_value"
+        ],
+        "title": "PlayerInventoryItem"
+      },
+      "PracticeStartRequest": {
+        "properties": {
+          "game_config_id": {
+            "type": "string",
+            "title": "Game Config Id",
+            "default": "trading-v2-rts"
+          },
+          "design_mode": {
+            "type": "string",
+            "title": "Design Mode",
+            "default": "standalone"
+          },
+          "title": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Title"
+          },
+          "config": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/GameConfig"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "practice_ai_slots": {
+            "anyOf": [
+              {
+                "items": {
+                  "type": "string"
+                },
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Practice Ai Slots"
+          }
+        },
+        "type": "object",
+        "title": "PracticeStartRequest"
+      },
+      "ProductPrice": {
+        "properties": {
+          "product_id": {
+            "type": "string",
+            "title": "Product Id"
+          },
+          "name": {
+            "type": "string",
+            "title": "Name"
+          },
+          "category": {
+            "type": "string",
+            "title": "Category"
+          },
+          "buy_price": {
+            "type": "integer",
+            "title": "Buy Price"
+          },
+          "sell_price": {
+            "type": "integer",
+            "title": "Sell Price"
+          },
+          "trend": {
+            "type": "string",
+            "title": "Trend"
+          },
+          "trend_percent": {
+            "type": "number",
+            "title": "Trend Percent"
+          },
+          "volume": {
+            "type": "integer",
+            "title": "Volume",
+            "default": 1
+          },
+          "pool_qty": {
+            "type": "number",
+            "title": "Pool Qty",
+            "default": 0.0
+          },
+          "buy_qty": {
+            "type": "integer",
+            "title": "Buy Qty",
+            "default": 0
+          },
+          "sell_qty": {
+            "type": "integer",
+            "title": "Sell Qty",
+            "default": 0
+          },
+          "net_demand": {
+            "type": "integer",
+            "title": "Net Demand",
+            "default": 0
+          },
+          "pressure": {
+            "type": "number",
+            "title": "Pressure",
+            "default": 0.0
+          }
+        },
+        "type": "object",
+        "required": [
+          "product_id",
+          "name",
+          "category",
+          "buy_price",
+          "sell_price",
+          "trend",
+          "trend_percent"
+        ],
+        "title": "ProductPrice"
+      },
+      "ProfileRequest": {
+        "properties": {
+          "product_name": {
+            "type": "string",
+            "maxLength": 40,
+            "title": "Product Name"
+          }
+        },
+        "type": "object",
+        "required": [
+          "product_name"
+        ],
+        "title": "ProfileRequest"
+      },
+      "RefreshTokenRequest": {
+        "properties": {
+          "refresh_token": {
+            "type": "string",
+            "title": "Refresh Token"
+          }
+        },
+        "type": "object",
+        "required": [
+          "refresh_token"
+        ],
+        "title": "RefreshTokenRequest"
+      },
+      "RtsActionRequest": {
+        "properties": {
+          "action_type": {
+            "type": "string",
+            "title": "Action Type"
+          },
+          "payload": {
+            "additionalProperties": true,
+            "type": "object",
+            "title": "Payload"
+          }
+        },
+        "type": "object",
+        "required": [
+          "action_type"
+        ],
+        "title": "RtsActionRequest"
+      },
+      "RtsActionResult": {
+        "properties": {
+          "accepted": {
+            "type": "boolean",
+            "title": "Accepted"
+          },
+          "message": {
+            "type": "string",
+            "title": "Message",
+            "default": ""
+          },
+          "game_state": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/GameState"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          }
+        },
+        "type": "object",
+        "required": [
+          "accepted"
+        ],
+        "title": "RtsActionResult"
+      },
+      "SettleRoundRequest": {
+        "properties": {
+          "event_id_r3": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Event Id R3"
+          }
+        },
+        "type": "object",
+        "title": "SettleRoundRequest"
+      },
+      "SubmitDecisionRequest": {
+        "properties": {
+          "route": {
+            "type": "string",
+            "title": "Route"
+          },
+          "opened_cities": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Opened Cities"
+          },
+          "invest_tech": {
+            "type": "number",
+            "title": "Invest Tech",
+            "default": 0
+          },
+          "invest_fit_by_city": {
+            "additionalProperties": {
+              "type": "number"
+            },
+            "type": "object",
+            "title": "Invest Fit By City"
+          },
+          "invest_show_by_city": {
+            "additionalProperties": {
+              "type": "number"
+            },
+            "type": "object",
+            "title": "Invest Show By City"
+          },
+          "declaration": {
+            "type": "string",
+            "title": "Declaration",
+            "default": ""
+          }
+        },
+        "type": "object",
+        "required": [
+          "route",
+          "opened_cities"
+        ],
+        "title": "SubmitDecisionRequest"
+      },
+      "SubmitDecisionResult": {
+        "properties": {
+          "decision": {
+            "$ref": "#/components/schemas/DecisionOut"
+          },
+          "practice_advanced": {
+            "type": "boolean",
+            "title": "Practice Advanced",
+            "default": false
+          },
+          "event_finished": {
+            "type": "boolean",
+            "title": "Event Finished",
+            "default": false
+          },
+          "current_round": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/TradingRoundOut"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "has_submitted_this_round": {
+            "type": "boolean",
+            "title": "Has Submitted This Round",
+            "default": true
+          },
+          "can_submit_decision": {
+            "type": "boolean",
+            "title": "Can Submit Decision",
+            "default": false
+          }
+        },
+        "type": "object",
+        "required": [
+          "decision"
+        ],
+        "title": "SubmitDecisionResult"
+      },
+      "TokenPair": {
+        "properties": {
+          "access_token": {
+            "type": "string",
+            "title": "Access Token"
+          },
+          "refresh_token": {
+            "type": "string",
+            "title": "Refresh Token"
+          },
+          "token_type": {
+            "type": "string",
+            "title": "Token Type",
+            "default": "bearer"
+          }
+        },
+        "type": "object",
+        "required": [
+          "access_token",
+          "refresh_token"
+        ],
+        "title": "TokenPair"
+      },
+      "TradingRoundOut": {
+        "properties": {
+          "id": {
+            "type": "integer",
+            "title": "Id"
+          },
+          "event_id": {
+            "type": "integer",
+            "title": "Event Id"
+          },
+          "round_number": {
+            "type": "integer",
+            "title": "Round Number"
+          },
+          "status": {
+            "type": "string",
+            "title": "Status"
+          },
+          "events": {
+            "items": {
+              "additionalProperties": true,
+              "type": "object"
+            },
+            "type": "array",
+            "title": "Events"
+          },
+          "price_snapshot": {
+            "additionalProperties": {
+              "additionalProperties": true,
+              "type": "object"
+            },
+            "type": "object",
+            "title": "Price Snapshot"
+          },
+          "started_at": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date-time"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Started At"
+          },
+          "ended_at": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date-time"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Ended At"
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "event_id",
+          "round_number",
+          "status",
+          "events",
+          "price_snapshot",
+          "started_at",
+          "ended_at"
+        ],
+        "title": "TradingRoundOut"
+      },
+      "TradingRoundResult": {
+        "properties": {
+          "round": {
+            "$ref": "#/components/schemas/TradingRoundOut"
+          },
+          "standings": {
+            "items": {
+              "additionalProperties": true,
+              "type": "object"
+            },
+            "type": "array",
+            "title": "Standings"
+          },
+          "my_decision": {
+            "anyOf": [
+              {
+                "additionalProperties": true,
+                "type": "object"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "My Decision"
+          }
+        },
+        "type": "object",
+        "required": [
+          "round",
+          "standings",
+          "my_decision"
+        ],
+        "title": "TradingRoundResult"
+      },
+      "UpdateTeamRequest": {
+        "properties": {
+          "team_name": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Team Name"
+          },
+          "product_name": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Product Name"
+          }
+        },
+        "type": "object",
+        "title": "UpdateTeamRequest"
+      },
+      "UserCreate": {
+        "properties": {
+          "email": {
+            "type": "string",
+            "format": "email",
+            "title": "Email"
+          },
+          "username": {
+            "type": "string",
+            "maxLength": 50,
+            "minLength": 2,
+            "title": "Username"
+          },
+          "password": {
+            "type": "string",
+            "maxLength": 128,
+            "minLength": 6,
+            "title": "Password"
+          }
+        },
+        "type": "object",
+        "required": [
+          "email",
+          "username",
+          "password"
+        ],
+        "title": "UserCreate"
+      },
+      "UserLogin": {
+        "properties": {
+          "email": {
+            "type": "string",
+            "maxLength": 255,
+            "minLength": 1,
+            "title": "Email"
+          },
+          "password": {
+            "type": "string",
+            "minLength": 6,
+            "title": "Password"
+          }
+        },
+        "type": "object",
+        "required": [
+          "email",
+          "password"
+        ],
+        "title": "UserLogin"
+      },
+      "UserResponse": {
+        "properties": {
+          "email": {
+            "type": "string",
+            "format": "email",
+            "title": "Email"
+          },
+          "username": {
+            "type": "string",
+            "maxLength": 50,
+            "minLength": 2,
+            "title": "Username"
+          },
+          "id": {
+            "type": "integer",
+            "title": "Id"
+          },
+          "role": {
+            "$ref": "#/components/schemas/UserRole"
+          },
+          "avatar": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Avatar"
+          },
+          "bio": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Bio"
+          },
+          "experience": {
+            "type": "integer",
+            "title": "Experience",
+            "default": 0
+          },
+          "level": {
+            "type": "integer",
+            "title": "Level",
+            "default": 1
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Created At"
+          }
+        },
+        "type": "object",
+        "required": [
+          "email",
+          "username",
+          "id",
+          "role",
+          "created_at"
+        ],
+        "title": "UserResponse",
+        "description": "用户详细信息（本人查看）"
+      },
+      "UserRole": {
+        "type": "string",
+        "enum": [
+          "student",
+          "teacher",
+          "admin"
+        ],
+        "title": "UserRole"
+      },
+      "ValidationError": {
+        "properties": {
+          "loc": {
+            "items": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "integer"
+                }
+              ]
+            },
+            "type": "array",
+            "title": "Location"
+          },
+          "msg": {
+            "type": "string",
+            "title": "Message"
+          },
+          "type": {
+            "type": "string",
+            "title": "Error Type"
+          },
+          "input": {
+            "title": "Input"
+          },
+          "ctx": {
+            "type": "object",
+            "title": "Context"
+          }
+        },
+        "type": "object",
+        "required": [
+          "loc",
+          "msg",
+          "type"
+        ],
+        "title": "ValidationError"
+      }
+    },
+    "securitySchemes": {
+      "OAuth2PasswordBearer": {
+        "type": "oauth2",
+        "flows": {
+          "password": {
+            "scopes": {},
+            "tokenUrl": "/api/v1/auth/login"
+          }
+        }
+      }
+    }
+  }
+}
