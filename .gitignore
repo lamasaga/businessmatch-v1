@@ -4,8 +4,12 @@ __pycache__/
 *.pyo
 *.pyd
 .DS_Store
+.obsidian/
 *.db
 node_modules/
+# 美术资源原始包解压（精选 SVG 已保留在 art-assets/fushengji 子目录）
+art-assets/fushengji/sources/_extract*/
+art-assets/fushengji/sources/tabler-icons.zip
 # 旧版 Node 参考实现（迁移用，不纳入仓库）
 TechVenture/
 .env

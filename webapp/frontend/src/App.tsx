@@ -28,6 +28,7 @@ import BMCPage from './pages/OPC/BMCPage';
 import EmployeeDetailPage from './pages/OPC/EmployeeDetailPage';
 import MyCampPage from './pages/Camp/MyCampPage';
 import JoinCampPage from './pages/Camp/JoinCampPage';
+import SandboxPage from './pages/Sandbox/SandboxPage';
 
 function App() {
   return (
@@ -240,6 +241,15 @@ function App() {
               element={
                 <AuthGuard requireAuth>
                   <EmployeeDetailPage />
+                </AuthGuard>
+              }
+            />
+            {/* 赛事工坊（开发工具）*/}
+            <Route
+              path="sandbox"
+              element={
+                <AuthGuard requireAuth>
+                  <SandboxPage />
                 </AuthGuard>
               }
             />

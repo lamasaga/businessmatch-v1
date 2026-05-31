@@ -5,7 +5,7 @@
 > **读者**：开发、架构、排 Bug  
 > **配套阅读**：[`01-平台愿景与产品架构`](./01-平台愿景与产品架构.md) · [`02-赛事体系与双端产品`](./02-赛事体系与双端产品.md)（双端）· [`03-技术架构与实现现状`](./03-技术架构与实现现状.md)（摘要）· [`04-实施路线与里程碑`](./04-实施路线与里程碑.md) · [`09-分项目开发与集成流程`](./09-分项目开发与集成流程.md)  
 > **安装启动**：[`webapp/README.md`](./webapp/README.md)  
-> **最后更新**：2026-05-30
+> **最后更新**：2026-06-01
 
 **AI 阅读指引**：编码任务默认只读下方 [`AI_DEFAULT`](#ai_default)（约 70 行）。勿全文 attach。深读锚点：`AI_DEEP:demo-paths` · `frontend-routes` · `api-routes` · `matrix-22` · `stores-env-bugs` · `engine-rts` · `alignment` · `doc-code-index`；或 [`webapp/contracts/openapi/`](./webapp/contracts/openapi/)。任务包见 [`09-` §6.1](./09-分项目开发与集成流程.md#61-ai-编程上下文注入清单)。
 
@@ -54,6 +54,7 @@
 | TechVenture | `/games/:id/techventure` | ✅ | ✅ 四端 | **核心可玩** |
 | 组织者控场 | :5174 | ✅ | ✅ | 独立端 |
 | **体验营营团 P1** | `/camp` · `/teaching-groups` | ✅ | ✅ | 6 位营团码 + 营内商赛 |
+| **赛事工坊 Sandbox** | `/sandbox` | ✅ | ✅ | 内存会话 · 热 YAML · 试跑 |
 | OPC | `/opc/*` | ✅ CRUD | ✅ | 数据层，无 Agent |
 | Wiki/课程 | `/wiki` `/courses` | ✅ | ✅ | 可用 |
 
@@ -73,6 +74,7 @@
 | practice | `/practice` | arena+cybercore | ✅ |
 | techventure | `/techventure` | games/techventure | ✅ |
 | techventure_admin | `/techventure` | arena | ✅ |
+| sandbox | `/sandbox` | sandbox+cybercore | 🟡 MVP（内存会话） |
 | career | — | career | 🔴 无 `/career/*` |
 
 ### P0 开放 Bug（§2.10）
@@ -136,6 +138,7 @@
 | 商赛模拟（**vs AI 练习**） | `/games` → `/games/:id/play` | ✅ `practice/trading/start`（默认 v2 RTS） | ✅ 日常练习卡片 | SQLite + 3 AI 档位 | **核心可玩** |
 | **TechVenture 创想大赢家** | `/games/:id/techventure` | ✅ 参赛端 + 管理端 + 大屏 + 评委 | ✅ React 全重写（学生+组织者+大屏+评委） | SQLite：`tv_*` 5 表 + `arena_teams` | **核心可玩** |
 | 组织者控场 | `organizer-frontend` (:5174) | ✅ | ✅ | 组织者档案 | **Phase 1 独立端** |
+| **赛事工坊 Sandbox** | `/sandbox` | ✅ `sandbox/*` | ✅ 三栏 UI | **内存**（无 DB 表） | **MVP** |
 | 国富论游戏 | `/wealth-of-nations` | — | ✅ 纯前端 | 无 | **教学小游戏** |
 | Demia / Rival 练习 | `/games/...` 等 | — | ✅ UI | mock 对话 | **演示级** |
 | OPC 一人公司 | `/opc/*` | ✅ CRUD | ✅ 仪表盘/任务/BMC | SQLite OPC 模型 | **数据层可用，AI 未接** |
@@ -236,7 +239,7 @@ practice/start 传 game_config_id=trading-v1 → 回合制 market 定价 → 提
 | 鉴权 | `AuthGuard.tsx` + `AppInitializer.tsx`（启动时 `GET /auth/me`） |
 | HTTP | `lib/api.ts`（Axios、`VITE_API_URL` 默认 `http://localhost:8000`） |
 | 全局演示数据 | `data/mockPlatform.ts` |
-| 状态 | Zustand：`authStore`、`careerStore`（persist）、`competitionStore`、`tradingStore`、`techventureStore`、`campStore`（体验营）、`OPCStore` |
+| 状态 | Zustand：`authStore`、`careerStore`（persist）、`competitionStore`、`tradingStore`、`techventureStore`、`campStore`（体验营）、`sandboxStore`（赛事工坊）、`OPCStore` |
 
 #### 2.6.2 路由全表（`App.tsx`）
 
@@ -270,6 +273,7 @@ practice/start 传 game_config_id=trading-v1 → 回合制 market 定价 → 提
 | `/opc/missions` | `MissionControlPage` | requireAuth | `OPC/tasks` | |
 | `/opc/bmc` | `BMCPage` | requireAuth | `PATCH company` | |
 | `/opc/employee/:id` | `EmployeeDetailPage` | requireAuth | `OPC/employees/:id` | |
+| `/sandbox` | `SandboxPage` | requireAuth | `sandbox/*` | **赛事工坊**：YAML 热编辑、试跑、调试；**未进侧栏** |
 
 #### 2.6.3 侧栏导航 vs 路由
 
@@ -353,6 +357,7 @@ practice/start 传 game_config_id=trading-v1 → 回合制 market 定价 → 提
 | **practice** | `/practice` | `GET /game-configs`、`POST /trading/start`、`POST /techventure/start`、`GET /my` | 默认 `trading-v2-rts`；TechVenture 练习创建 1 真人 + 5 AI 队 |
 | **techventure** | `/techventure` | `GET lobby`、`POST join-team`、`GET state`、`GET poll`、`POST submit`、`POST profile`、`GET leaderboard`、`GET news` | 学生参赛端（选队大厅 + 对局） |
 | **techventure_admin** | `/techventure` | `GET admin/state`（含 room_code/participants）、`POST admin/start`、`POST admin/teams`、`PATCH admin/teams/{tid}`、`POST rounds/open`、`POST rounds/settle`、`GET screen`、`GET judge/state` | 组织者 + 大屏 + 评委 |
+| **sandbox** | `/sandbox` | `GET templates`、`POST/GET/DELETE sessions`、`PUT config`、`POST start/step/pause/reset`、`GET state/debug`、`POST publish` | 内存会话；共用 trading 引擎试跑；实现说明见 [inspire/89-](./inspire/89-赛事工坊实现说明与使用指南.md) |
 
 　　**缺失的后端域**（规划中有、代码中无）：`/career/*`（聚合查询）、`/quests/*`、`/credentials/*`、`/ai/athena|demia|rival/*`（通用房间 WS 已有 RTS 专用）。
 
@@ -363,6 +368,7 @@ practice/start 传 game_config_id=trading-v1 → 回合制 market 定价 → 提
 | `domains/arena/services/match_factory.py` | `create_official_match` / `create_practice_match` |
 | `domains/career/services/rewards.py` | `grant_xp`、`settle_match_rewards`（读 YAML 权重） |
 | `domains/cybercore/registry.py` | 加载 `backend/content/game-configs/*.yaml` |
+| `domains/sandbox/` | 赛事工坊：热配置、内存会话、`SandboxRunner` 驱动 trading 引擎试跑 |
 | `games/trading/engine.py` | 回合制交易赛状态机 |
 | `games/trading/rts_scheduler.py` | RTS **唯一** tick 推进 + commit 后 WS 广播 |
 | `games/trading/rts_tick.py` | `maybe_advance_rts`（仅调度器调用）、`finish_rts_match` |
@@ -613,6 +619,10 @@ flowchart LR
 | `organizer-frontend/src/pages/TechVentureScreen.tsx` | TechVenture 大屏投影 |
 | `organizer-frontend/src/pages/TechVentureJudge.tsx` | TechVenture 评委视角 |
 | `frontend/src/data/mockPlatform.ts` | 演示数据（待逐步废弃） |
+| `backend/app/domains/sandbox/api.py` | 赛事工坊 REST |
+| `frontend/src/pages/Sandbox/SandboxPage.tsx` | 赛事工坊三栏 UI |
+| `frontend/src/stores/sandboxStore.ts` | 赛事工坊 Zustand |
+| `art-assets/fushengji/` | 浮生记 SVG 素材归档（manifest + 六城示意） |
 
 <!-- /AI_DEEP:doc-code-index -->
 
@@ -627,6 +637,7 @@ flowchart LR
 
 | 日期 | 摘要 |
 | ---- | ---- |
+| 2026-06-01 | **赛事工坊 MVP + 构想库扩容**：`domains/sandbox` + 前端 `/sandbox`；inspire 89～91、POP 深研、赛事设计子目录；`art-assets/fushengji` 素材归档 |
 | 2026-05-30 | **体验营 P1 文档对齐**：`08-` 路由/API 深读表补全；OpenAPI 导出含 `teaching-groups`；分支 `feature/camp-phase1` |
 | 2026-05-29 | **体验营 P1**：`teaching_groups` API + 双端 `/camp` + `VITE_CAMP_PHASE1`；[ADR-009](./docs/decisions/009-赛季模式与教师端双端演进.md) 营团部分采纳 |
 | 2026-05-29 | **瘦身步骤 2 收尾**：`08-` §一/§2.2/§2.8～§四 标 `AI_DEEP`；§三 与 AI_DEFAULT 去重；`docs-align` 增快照自检 |

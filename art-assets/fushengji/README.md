@@ -1,0 +1,48 @@
+# 浮生记 · 美术资源包（v0.1）
+
+> **对齐**：inspire/赛事设计/浮生记-引擎重设计-PRD §5.2  
+> **许可**：见 [sources/ATTRIBUTION.md](./sources/ATTRIBUTION.md)  
+> **最后更新**：2026-05-30
+
+---
+
+## 目录说明
+
+| 子目录 | 内容 | 数量级 |
+|--------|------|--------|
+| `maps/` | `yangtze_6-schematic.svg` 示意底图 | 1 + 六城节点 |
+| `maps/cities/` | 城徽/节点图标（SVG） | 6 |
+| `items/` | 十类商品图标 | 10 |
+| `icons/` |  coin、仓库、地图钉 | 3 |
+| `vehicles/` | 货车、卡车 | 2 |
+| `characters/` | 交易者情绪占位 | 2 |
+| `events/` | 丰收、拥堵、展会、能源 | 4 |
+| `ui/` | 图表、时钟、包裹、路线 | 4 |
+| `animations/` | .tick 加载、车队、告警（静态 SVG，用 CSS 动画） | 3 |
+| `sources/` | 原始 ZIP、出处说明 | 见 ATTRIBUTION |
+
+---
+
+## 前端引用（规划）
+
+```typescript
+// 复制精选 SVG 至：
+// webapp/frontend/public/assets/fushengji/v1/
+import mapUrl from '/assets/fushengji/v1/maps/yangtze_6-schematic.svg';
+```
+
+　　清单键见 [manifest.yaml](./manifest.yaml)（扩展名已改为 `.svg`）。
+
+---
+
+## 动效说明
+
+　　本阶段 **无 GIF**；`animations/` 内 SVG 可在前端用 CSS `animation`（旋转 `tick-loading`、脉冲 `pulse-alert`）实现轻量动效，符合 PRD 预加载 P1。
+
+---
+
+## 下一步
+
+- [ ] 统一描边/配色（设计 token）  
+- [ ] 导出 PNG @2x 供 Pixi（见 inspire/76-）  
+- [ ] 补充 Kenney CC0 像素包（手动下载至 `sources/`）  

@@ -1,0 +1,58 @@
+# 浮生记美术资源清单（本地 art-assets → 前端 public 映射用）
+version: "0.1.0"
+theme: fushengji-rts
+license_default: CC0-1.0
+
+# 商品十品 → items/（见 PRODUCT_MAP.md）
+products:
+  grain: items/grain.svg
+  produce: items/produce.svg
+  raw_materials: items/raw_materials.svg
+  energy: items/energy.svg
+  furniture: items/furniture.svg
+  textile: items/textile.svg
+  daily_goods: items/daily_goods.svg
+  appliances: items/appliances.svg
+  passenger_car: items/passenger_car.svg
+  luxury: items/luxury.svg
+
+cities:
+  shanghai: maps/cities/shanghai.svg
+  suzhou: maps/cities/suzhou.svg
+  nanjing: maps/cities/nanjing.svg
+  nantong: maps/cities/nantong.svg
+  wuxi: maps/cities/wuxi.svg
+  changzhou: maps/cities/changzhou.svg
+
+map:
+  background_svg: maps/yangtze_6-schematic.svg
+
+vehicles:
+  van: vehicles/van.svg
+  truck: vehicles/truck.svg
+
+ui:
+  coin: icons/coin.svg
+  warehouse: icons/warehouse.svg
+  chart: ui/chart-bar.svg
+  clock: ui/clock.svg
+
+animations:
+  tick_loading: animations/tick-loading.svg
+  fleet_move: animations/fleet-move.svg
+  pulse_alert: animations/pulse-alert.svg
+
+events:
+  harvest: events/harvest.svg
+  traffic: events/traffic.svg
+  trade_fair: events/trade-fair.svg
+  energy_shock: events/energy-shock.svg
+
+characters:
+  trader_neutral: characters/trader-neutral.svg
+  trader_happy: characters/trader-happy.svg
+
+licenses:
+  game_icons: CC-BY-3.0
+  tabler: MIT
+  schematic_map: CC0-project

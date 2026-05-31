@@ -48,6 +48,83 @@ defaults:
     advanced:
       name: 精英型
       description: 跨城 bid/ask 套利、产销地采购、高消费城出货
+
+  # 声明式 AI 策略配置（沙盒可调）
+  ai_strategies:
+    chaotic:
+      name: 混乱型
+      description: 高随机、非理性行为，模拟市场噪音
+      behavior:
+        type: random
+        params:
+          irrationality: 0.8
+      decision_weights:
+        buy: 0.30
+        sell: 0.25
+        move: 0.25
+        hold: 0.20
+
+    advanced:
+      name: 套利型
+      description: 寻找跨城价差，低买高卖
+      behavior:
+        type: arbitrage
+        params:
+          min_spread_ratio: 0.15
+          max_inventory_ratio: 0.3
+          risk_appetite: 0.7
+      decision_weights:
+        buy: 0.35
+        sell: 0.35
+        move: 0.25
+        hold: 0.05
+
+    hoarder:
+      name: 囤积型
+      description: 低价大量买入，等待涨价后抛售
+      behavior:
+        type: value_hoarding
+        params:
+          buy_threshold: 0.85
+          sell_threshold: 1.35
+          target_products: [grain, produce, raw_materials]
+          max_single_buy_ratio: 0.25
+      decision_weights:
+        buy: 0.45
+        sell: 0.20
+        move: 0.15
+        hold: 0.20
+
+    momentum:
+      name: 趋势型
+      description: 追涨杀跌，跟随价格趋势
+      behavior:
+        type: momentum
+        params:
+          trend_window: 3
+          momentum_threshold: 0.08
+          contrarian: false
+      decision_weights:
+        buy: 0.35
+        sell: 0.30
+        move: 0.15
+        hold: 0.20
+
+    conservative:
+      name: 保守型
+      description: 稳健经营，避免大风险
+      behavior:
+        type: conservative
+        params:
+          max_single_trade_ratio: 0.1
+          cash_reserve_ratio: 0.5
+          min_profit_margin: 0.2
+      decision_weights:
+        buy: 0.20
+        sell: 0.25
+        move: 0.15
+        hold: 0.40
+
   pricing:
     mode: pool_ask_bid
     min_spread: 0.08
