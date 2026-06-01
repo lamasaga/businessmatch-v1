@@ -1,0 +1,19 @@
+# POP 行为原语包 — 长三角默认（v0 占位，静态 pool 定价仍由 production/consumption 驱动）
+id: default_yrd
+version: "0.1.0"
+meta:
+  region_id: yangtze_6
+  status: teaching_grade_draft
+primitives:
+  - id: budget_hard
+    enabled: true
+    params: { savings_rate: 0.15 }
+  - id: reference_price
+    enabled: true
+    params: { buy_if_below_pct: -0.08, sell_if_above_pct: 0.10 }
+  - id: scarcity_panic
+    enabled: true
+    params: { empty_ticks_threshold: 2, demand_boost: 0.15 }
+  - id: income_lag
+    enabled: true
+    params: { lag_ticks: 6 }

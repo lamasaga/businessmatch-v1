@@ -1,0 +1,35 @@
+# L1 长三角六城区域包 — 宁 · 苏 · 沪 · 通 · 锡 · 常
+id: yangtze_6
+meta:
+  name: 长三角六城（教学包）
+  world_pack_version: "0.1.0"
+  behavior_pack: default_yrd
+  disclaimer: 教学模拟参数，非经济预测
+cities:
+  - nanjing
+  - suzhou
+  - shanghai
+  - nantong
+  - wuxi
+  - changzhou
+hub_cities:
+  - shanghai
+  - suzhou
+routes:
+  shanghai-suzhou: { base_travel_ticks: 2, move_cost: 600 }
+  suzhou-wuxi: { base_travel_ticks: 2, move_cost: 500 }
+  wuxi-changzhou: { base_travel_ticks: 2, move_cost: 500 }
+  changzhou-nanjing: { base_travel_ticks: 3, move_cost: 700 }
+  shanghai-nantong: { base_travel_ticks: 4, move_cost: 900 }
+  suzhou-nantong: { base_travel_ticks: 3, move_cost: 750 }
+  nanjing-nantong: { base_travel_ticks: 4, move_cost: 850 }
+  shanghai-nanjing: { base_travel_ticks: 4, move_cost: 950 }
+  shanghai-wuxi: { base_travel_ticks: 3, move_cost: 800 }
+  shanghai-changzhou: { base_travel_ticks: 4, move_cost: 900 }
+  nanjing-suzhou: { base_travel_ticks: 4, move_cost: 900 }
+  nanjing-wuxi: { base_travel_ticks: 4, move_cost: 850 }
+  nantong-changzhou: { base_travel_ticks: 4, move_cost: 800 }
+  nantong-wuxi: { base_travel_ticks: 3, move_cost: 700 }
+defaults:
+  min_travel_ticks: 2
+  logistics_multiplier_by_hub: 0.95

@@ -7,6 +7,7 @@ from typing import Dict, List
 import yaml
 
 from app.domains.cybercore.types import GameConfigDocument
+from app.domains.cybercore.world_loader import merge_world_into_game_config
 
 _CONFIG_DIR = Path(__file__).resolve().parents[3] / "content" / "game-configs"
 
@@ -17,6 +18,7 @@ def get_game_config(config_id: str) -> GameConfigDocument:
     if not path.is_file():
         raise KeyError(f"game config not found: {config_id}")
     raw = yaml.safe_load(path.read_text(encoding="utf-8"))
+    raw = merge_world_into_game_config(raw)
     return GameConfigDocument.model_validate(raw)
 
 

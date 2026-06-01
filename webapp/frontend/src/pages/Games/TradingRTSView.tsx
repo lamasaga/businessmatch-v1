@@ -8,15 +8,6 @@ import { useTradingStore } from '../../stores/tradingStore';
 import { useAuthStore } from '../../stores/authStore';
 import type { GameState } from '../../types';
 
-const CITY_LABELS: Record<string, string> = {
-  jingcheng: '京城',
-  hushi: '沪市',
-  shenshi: '深市',
-  rongcheng: '蓉城',
-  bingcheng: '冰城',
-  gangcheng: '港城',
-};
-
 const VEHICLE_LABELS: Record<string, string> = {
   van: '小货车',
   truck: '大卡车',
@@ -58,7 +49,9 @@ export default function TradingRTSView({ gameState, eventId, onRefresh }: Props)
   const transit = rts?.transit as { to_city?: string; arrival_tick?: number } | null | undefined;
   const vehicleDefs = (rts?.vehicles_available ?? {}) as Record<string, { name?: string; cost?: number; capacity_bonus?: number; speed_bonus?: number }>;
 
-  const cityLabel = currentMarket?.city_name || CITY_LABELS[participant.current_city] || participant.current_city;
+  const cityLabel = currentMarket?.city_name || participant.current_city;
+  const resolveCityName = (cityId: string) =>
+    gameState.markets?.find((m) => m.city === cityId)?.city_name || cityId;
 
   const maxBuyQty = (() => {
     if (!selectedProduct || actionType !== 'buy') return 99;
@@ -141,7 +134,7 @@ export default function TradingRTSView({ gameState, eventId, onRefresh }: Props)
             {cityLabel}
             {transit && (
               <span className="ml-2 text-warning">
-                → {CITY_LABELS[transit.to_city || ''] || transit.to_city}（{transit.arrival_tick} tick 到）
+                → {resolveCityName(transit.to_city || '')}（{transit.arrival_tick} tick 到）
               </span>
             )}
             {gameState.is_practice && (
@@ -303,7 +296,7 @@ export default function TradingRTSView({ gameState, eventId, onRefresh }: Props)
                         selectedCity === city ? 'bg-primary text-background' : 'bg-background-secondary'
                       }`}
                     >
-                      {CITY_LABELS[city] || city}
+                      {resolveCityName(city)}
                     </button>
                   ))}
                 </div>

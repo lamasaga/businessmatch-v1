@@ -63,7 +63,7 @@ export const useCompetitionStore = create<CompetitionState>((set) => ({
           inventory_limit: 20,
           move_cost: 1000,
           decision_time: 60,
-          cities: ['jingcheng', 'hushi', 'shenshi', 'rongcheng', 'bingcheng', 'gangcheng'],
+          cities: ['nanjing', 'suzhou', 'shanghai', 'nantong', 'wuxi', 'changzhou'],
           products: ['fruit', 'vegetable', 'daily', 'electronics', 'clothing', 'cosmetics', 'jewelry', 'antique', 'art', 'snack'],
           ...data.config,
         },

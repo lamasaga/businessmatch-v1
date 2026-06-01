@@ -52,7 +52,10 @@ class GameConfig(BaseModel):
     decision_time: int = Field(default=60, ge=15, le=300)
     mode: Optional[str] = Field(default=None, description="rts 即时战略")
     duration_preset: Optional[str] = Field(default=None, description="short | standard | long")
-    cities: List[str] = Field(default=["jingcheng", "hushi", "shenshi", "rongcheng", "bingcheng", "gangcheng"])
+    cities: List[str] = Field(
+        default=["nanjing", "suzhou", "shanghai", "nantong", "wuxi", "changzhou"],
+        description="默认长三角六城；RTS 赛制由 world.region_id 注入",
+    )
     products: List[str] = Field(default=["fruit", "vegetable", "daily", "electronics", "clothing", "cosmetics", "jewelry", "antique", "art", "snack"])
 
 

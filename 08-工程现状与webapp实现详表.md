@@ -49,11 +49,11 @@
 | 认证 | `/login` | ✅ | ✅ | 生产雏形 |
 | 生涯中枢 | `/career` | 部分 | UI+mock | 演示级 |
 | 商赛大厅 | `/games` | ✅ | ✅ | 可用 |
-| 浮生记 RTS v2 | `/games/:id/play` | ✅ WS | ✅ | **核心可玩** |
+| 浮生记 RTS v2 | `/games/:id/play` | ✅ WS | ✅ | **核心可玩** · **长三角六城** `yangtze_6` |
 | 回合制 trading-v1 | 同上 | ✅ | ✅ | 可玩 |
 | TechVenture | `/games/:id/techventure` | ✅ | ✅ 四端 | **核心可玩** |
 | 组织者控场 | :5174 | ✅ | ✅ | 独立端 |
-| **体验营营团 P1** | `/camp` · `/teaching-groups` | ✅ | ✅ | 6 位营团码 + 营内商赛 |
+| **体验营营团 P1+** | `/camp` · `/teaching-groups` · 赛季/分组/作业 | ✅ | 🟡 | 营团 + 赛季编排 API；组织者 Tab 拆分 |
 | **赛事工坊 Sandbox** | `/sandbox` | ✅ | ✅ | 内存会话 · 热 YAML · 试跑 |
 | OPC | `/opc/*` | ✅ CRUD | ✅ | 数据层，无 Agent |
 | Wiki/课程 | `/wiki` `/courses` | ✅ | ✅ | 可用 |
@@ -67,7 +67,9 @@
 | courses | `/courses` | academy | 种子数据 |
 | opc | `/opc` | opc | ✅ CRUD |
 | organizer | `/organizer` | arena | ✅ |
-| teaching_groups | `/teaching-groups` | arena | ✅ P1 |
+| teaching_groups | `/teaching-groups` | arena | ✅ P1+ |
+| seasons | `/seasons` | arena | 🟡 赛季/里程碑 |
+| assignments | `/assignments` | arena | 🟡 作业/提交 |
 | competitions | `/competitions` | arena | ✅ |
 | trading | `/trading` | games/trading | ✅ 回合+RTS |
 | trading WS | `/trading` | games/trading | ✅ |
@@ -96,6 +98,15 @@
 | OPC | 🟡 45% | 无 LangGraph |
 | Athena/Demia/Rival | 🔴 15～25% | 演示 |
 | Credenti | 🔴 20% | mock |
+
+### 拟真城市（Phase B 起步）
+
+| 项 | 状态 |
+|----|------|
+| `content/world/yangtze_6` | ✅ 六城母本 + 路网 + POP 占位 |
+| CyberCore `world_loader` | ✅ 赛制加载时合并 |
+| `domains/world/` 表/API | 🔴 Phase C+ |
+| POP 行为引擎 | 🔴 占位 `behavior_packs/default_yrd` |
 
 <!-- AI_DEFAULT_END -->
 
@@ -637,6 +648,7 @@ flowchart LR
 
 | 日期 | 摘要 |
 | ---- | ---- |
+| 2026-06-01 | **拟真城市 + 体验营 P1+ + OPC 目录迁移**：`content/world/yangtze_6` + `world_loader` + `trading-v2-rts` v2.2；赛季/分组/作业 API + 组织者 Camp Tab；`OPC/` → `inspire/OPC/`；[ADR-010](./docs/decisions/010-拟真城市内容包与CyberCore合并加载.md) |
 | 2026-06-01 | **赛事工坊 MVP + 构想库扩容**：`domains/sandbox` + 前端 `/sandbox`；inspire 89～91、POP 深研、赛事设计子目录；`art-assets/fushengji` 素材归档 |
 | 2026-05-30 | **体验营 P1 文档对齐**：`08-` 路由/API 深读表补全；OpenAPI 导出含 `teaching-groups`；分支 `feature/camp-phase1` |
 | 2026-05-29 | **体验营 P1**：`teaching_groups` API + 双端 `/camp` + `VITE_CAMP_PHASE1`；[ADR-009](./docs/decisions/009-赛季模式与教师端双端演进.md) 营团部分采纳 |

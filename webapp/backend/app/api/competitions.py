@@ -140,7 +140,7 @@ def join_competition(
         user_id=current_user.id,
         cash=initial_capital,
         inventory={},
-        current_city=config.get("cities", ["jingcheng"])[0] if config.get("cities") else "jingcheng",
+        current_city=config.get("cities", ["nanjing"])[0] if config.get("cities") else "nanjing",
         total_assets=initial_capital,
     )
     db.add(participant)

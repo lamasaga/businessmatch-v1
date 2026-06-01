@@ -1,10 +1,10 @@
 # OPC 一人公司 · 阅读合集
 
-> **文档定位**：OPC（一人公司）的**根目录权威阅读版**——合并 `OPC/01～08、99` 的重复叙述，供决策与排期；**规格细则、MCP Schema、SOP 逐日手册**仍在 [`OPC/`](./OPC/) 子目录。
+> **文档定位**：OPC（一人公司）的**根目录权威阅读版**——合并 inspire/OPC/01～08、99 的重复叙述，供决策与排期；**规格细则、MCP Schema、SOP 逐日手册**仍在 [`inspire/OPC/`](./inspire/OPC/) 子目录。
 >
 > **蓝图定位**：OPC 属于 **Phase E**（高级智能体），与 [07-拟真城市](./07-拟真城市与区域模拟-阅读合集.md) 并列**终局出口**；对应 [inspire/81-](./inspire/81-商域AI赋能六支柱全景.md) **支柱⑥**。当前不抢 Phase A/B 优先级。详见 [04-](./04-实施路线与里程碑.md) §二。
 >
-> **最后更新**：2026-05-29
+> **最后更新**：2026-06-01
 
 **AI 阅读指引（Phase 门控）**：Phase A/B **默认只读** §一～§三 + §十 索引。§四～§八 为 Phase E 深读（OPC LangGraph/MCP），编码任务勿默认 attach。webapp 现状见 [`08-` AI_DEFAULT](./08-工程现状与webapp实现详表.md#ai_default)。
 
@@ -36,7 +36,7 @@
 | **渐进真实** | 模拟币 → 测试用户 → 真实付费；**Gateway** 评审把关每一阶段跃迁 |
 | **差异化** | 平台终局出口：模拟教育 → **真实商业能力孵化** |
 
-　　趋势与数据详述：[OPC/01-OPC-愿景与趋势洞察.md](./OPC/01-OPC-愿景与趋势洞察.md)
+　　趋势与数据详述：[OPC/01-OPC-愿景与趋势洞察.md](./inspire/OPC/01-OPC-愿景与趋势洞察.md)
 
 ---
 
@@ -59,7 +59,7 @@ Atlas / Academy / Quest / Arena / Credenti
 | 能力可回溯 | OPC 成就反哺 Credenti / XP |
 | 教师不增负 | AI 承担日常教练；真人可选 Gateway 终审 |
 
-　　融合详述：[OPC/05-与现有平台融合路径.md](./OPC/05-与现有平台融合路径.md)
+　　融合详述：[OPC/05-与现有平台融合路径.md](./inspire/OPC/05-与现有平台融合路径.md)
 
 ---
 
@@ -72,7 +72,7 @@ Atlas / Academy / Quest / Arena / Credenti
 | ③ 解锁 | Gateway + 启航仪式 | Athena 背书 | 进入 OPC |
 | ④ 首项目 | OPC 流水线 | AI 员工 + Cortex 拆单 | BMC、MVP、验证报告 |
 
-　　实施路径全文：[OPC/07-从平台学习到首项目-AI实施路径.md](./OPC/07-从平台学习到首项目-AI实施路径.md)
+　　实施路径全文：[OPC/07-从平台学习到首项目-AI实施路径.md](./inspire/OPC/07-从平台学习到首项目-AI实施路径.md)
 
 ### 「第一个项目」定义（K12～高职）
 
@@ -98,7 +98,7 @@ Atlas / Academy / Quest / Arena / Credenti
 | **能力层** | MCP Servers：memory、atlas、sandbox、ethos、report… |
 | **隔离层** | gVisor 沙箱、权限、伦理审计 |
 
-　　架构详述：[OPC/02-系统架构与AI员工体系.md](./OPC/02-系统架构与AI员工体系.md)
+　　架构详述：[OPC/02-系统架构与AI员工体系.md](./inspire/OPC/02-系统架构与AI员工体系.md)
 
 ### 与 webapp 现状
 
@@ -120,8 +120,8 @@ Atlas / Academy / Quest / Arena / Credenti
 | **LAUNCH** | 获客、定价、发布 | 增长、运营 |
 | **SCALE** | 留存、收入放大 | 财务、自动化 |
 
-　　逐日 SOP：[OPC/venture-playbook/](./OPC/venture-playbook/)（01～05）  
-　　流程总览：[OPC/03-创业孵化流水线.md](./OPC/03-创业孵化流水线.md)
+　　逐日 SOP：[OPC/venture-playbook/](./inspire/OPC/venture-playbook/)（01～05）  
+　　流程总览：[OPC/03-创业孵化流水线.md](./inspire/OPC/03-创业孵化流水线.md)
 
 ---
 
@@ -137,13 +137,13 @@ Atlas / Academy / Quest / Arena / Credenti
 | OPC「代写」风险 | 强制 **Human Artifact** + 验收说明「我改了哪几处」 |
 | 三套运行时未收敛 | **Pedagogy Orchestrator** + 事件 + Worker |
 
-　　全文：[OPC/08-体系诊断与Agentic架构建议.md](./OPC/08-体系诊断与Agentic架构建议.md)
+　　全文：[OPC/08-体系诊断与Agentic架构建议.md](./inspire/OPC/08-体系诊断与Agentic架构建议.md)
 
 ### 6.2 AI 员工（规格级）
 
-- **13 角色**、3 梯队：见 [ai-employee-design/01-AI员工角色全览.md](./OPC/ai-employee-design/01-AI员工角色全览.md)  
-- **Prompt 原则**：[02-系统Prompt设计.md](./OPC/ai-employee-design/02-系统Prompt设计.md)  
-- **人机协议**（可交付 UI）：[04-人机交互协议.md](./OPC/ai-employee-design/04-人机交互协议.md)
+- **13 角色**、3 梯队：见 [ai-employee-design/01-AI员工角色全览.md](./inspire/OPC/ai-employee-design/01-AI员工角色全览.md)  
+- **Prompt 原则**：[02-系统Prompt设计.md](./inspire/OPC/ai-employee-design/02-系统Prompt设计.md)  
+- **人机协议**（可交付 UI）：[04-人机交互协议.md](./inspire/OPC/ai-employee-design/04-人机交互协议.md)
 
 ### 6.3 MCP（实现级）
 
@@ -155,13 +155,13 @@ Atlas / Academy / Quest / Arena / Credenti
 | OPC-ethos | 伦理审计 |
 | OPC-report | 报告生成 |
 
-　　索引：[mcp-server-specs/01-MCP架构总览.md](./OPC/mcp-server-specs/01-MCP架构总览.md)
+　　索引：[mcp-server-specs/01-MCP架构总览.md](./inspire/OPC/mcp-server-specs/01-MCP架构总览.md)
 
 ---
 
 ## 七、技术路线与分期
 
-　　合并 [04-技术栈选型与实现路线](./OPC/04-技术栈选型与实现路线.md) 与 [04-实施路线](./04-实施路线与里程碑.md) §六：
+　　合并 [04-技术栈选型与实现路线](./inspire/OPC/04-技术栈选型与实现路线.md) 与 [04-实施路线](./04-实施路线与里程碑.md) §六：
 
 | 期 | 重点 | 技术 |
 |----|------|------|
@@ -172,7 +172,7 @@ Atlas / Academy / Quest / Arena / Credenti
 
 **技术栈选型**：LangGraph（编排）、MCP（工具）、CrewAI 可选（角色组）、PostgreSQL 与主平台共库。
 
-**代码起点**：[OPC/code-skeleton/](./OPC/code-skeleton/)
+**代码起点**：[OPC/code-skeleton/](./inspire/OPC/code-skeleton/)
 
 ---
 
@@ -190,7 +190,7 @@ Atlas / Academy / Quest / Arena / Credenti
 
 ## 九、现状、缺口与优先级
 
-　　来源：[OPC/99-查漏补缺与现状总结.md](./OPC/99-查漏补缺与现状总结.md)
+　　来源：[OPC/99-查漏补缺与现状总结.md](./inspire/OPC/99-查漏补缺与现状总结.md)
 
 ### 已完成（规格资产）
 
@@ -223,17 +223,17 @@ Atlas / Academy / Quest / Arena / Credenti
 
 | 需求 | 打开 |
 |------|------|
-| 趋势与愿景原文 | `OPC/01-` |
-| 架构与员工体系 | `OPC/02-` |
-| 孵化流程 | `OPC/03-` |
-| 技术选型细节 | `OPC/04-` |
-| 平台融合 | `OPC/05-` |
-| 工具与参考 | `OPC/06-`、`100-开源项目资源库.md` |
-| AI 实施路径 | `OPC/07-` |
-| 体系诊断 | `OPC/08-` |
-| 子系统规格库 | `OPC/00-规格库索引.md` |
+| 趋势与愿景原文 | `inspire/OPC/01-` |
+| 架构与员工体系 | `inspire/OPC/02-` |
+| 孵化流程 | `inspire/OPC/03-` |
+| 技术选型细节 | `inspire/OPC/04-` |
+| 平台融合 | `inspire/OPC/05-` |
+| 工具与参考 | `inspire/OPC/06-`、`100-` |
+| AI 实施路径 | `inspire/OPC/07-` |
+| 体系诊断 | `inspire/OPC/08-` |
+| 子系统规格库 | `inspire/OPC/00-` |
 | webapp OPC 页面 | `webapp/frontend/src/pages/OPC/` |
 
 ---
 
-> **规格库入口**：[OPC/README.md](./OPC/README.md)（已精简为索引，阅读从本文开始。）
+> **规格库入口**：[OPC/README.md](./inspire/OPC/README.md)（已精简为索引，阅读从本文开始。）

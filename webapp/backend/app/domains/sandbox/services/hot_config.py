@@ -5,6 +5,7 @@ import yaml
 
 from app.domains.cybercore.registry import get_game_config
 from app.domains.cybercore.types import GameConfigDocument
+from app.domains.cybercore.world_loader import merge_world_into_game_config
 
 
 class HotConfigManager:
@@ -27,6 +28,7 @@ class HotConfigManager:
     def load_from_yaml(self, session_id: str, yaml_text: str) -> GameConfigDocument:
         """从 YAML 文本加载配置，返回解析后的文档"""
         raw = yaml.safe_load(yaml_text)
+        raw = merge_world_into_game_config(raw)
         doc = GameConfigDocument.model_validate(raw)
         self._configs[session_id] = doc
         self._yaml_texts[session_id] = yaml_text

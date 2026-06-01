@@ -1,0 +1,68 @@
+city_id: shanghai
+display_name: 上海市
+name: 上海市
+type: finance
+description: 金融与高端消费、进出口枢纽；集散、奢侈品与家电进口氛围强，本地农业产出弱
+meta:
+  calibrated_at: "2026-06-01"
+  confidence: teaching_grade
+  paradigm_notes: yangtze_6 v0.1
+  data_sources:
+    - name: 上海统计年鉴（公开摘要，待补 URL）
+      fields_used: [常住人口, 产业结构]
+sim_scale: 0.001
+display_population: 24870000
+population: 2487
+demographics:
+  luxury: 0.50
+  mass: 0.42
+  staple: 0.08
+production:
+  grain: 1
+  produce: 2
+  raw_materials: 2
+  energy: 2
+  furniture: 2
+  textile: 3
+  daily_goods: 4
+  appliances: 5
+  passenger_car: 4
+  luxury: 2
+consumption:
+  grain: 12
+  produce: 14
+  raw_materials: 6
+  energy: 8
+  furniture: 9
+  textile: 10
+  daily_goods: 18
+  appliances: 14
+  passenger_car: 10
+  luxury: 9
+demand_profile:
+  luxury: 1.35
+  passenger_car: 1.25
+  appliances: 1.20
+  daily_goods: 1.15
+  energy: 1.08
+  grain: 0.85
+logistics:
+  hub: true
+  travel_multiplier: 0.95
+pop_segments:
+  - pop_id: mass_consumer
+    share: 0.42
+    income_index: 1.0
+    demand_vector: { daily_goods: 1.15, produce: 1.0, grain: 0.9, luxury: 0.15 }
+  - pop_id: middle_class
+    share: 0.28
+    income_index: 1.15
+    demand_vector: { appliances: 1.1, passenger_car: 1.05, furniture: 1.0 }
+  - pop_id: affluent
+    share: 0.22
+    income_index: 1.8
+    demand_vector: { luxury: 1.2, appliances: 1.05 }
+  - pop_id: industrial
+    share: 0.08
+    income_index: 0.95
+    demand_vector: { raw_materials: 1.1, energy: 1.05 }

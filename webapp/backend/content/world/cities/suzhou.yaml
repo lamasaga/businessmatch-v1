@@ -1,0 +1,67 @@
+city_id: suzhou
+display_name: 苏州市
+name: 苏州市
+type: manufacturing
+description: 先进制造与外向配套；纺织、家电零部件、日用品供给强，原料与能源需求大
+meta:
+  calibrated_at: "2026-06-01"
+  confidence: teaching_grade
+  paradigm_notes: yangtze_6 v0.1
+  data_sources:
+    - name: 苏州统计年鉴（公开摘要，待补 URL）
+      fields_used: [常住人口, 产业结构]
+sim_scale: 0.001
+display_population: 12959000
+population: 1296
+demographics:
+  luxury: 0.44
+  mass: 0.48
+  staple: 0.08
+production:
+  grain: 2
+  produce: 3
+  raw_materials: 6
+  energy: 5
+  furniture: 6
+  textile: 10
+  daily_goods: 12
+  appliances: 10
+  passenger_car: 5
+  luxury: 1
+consumption:
+  grain: 10
+  produce: 12
+  raw_materials: 8
+  energy: 7
+  furniture: 7
+  textile: 9
+  daily_goods: 14
+  appliances: 8
+  passenger_car: 6
+  luxury: 4
+demand_profile:
+  raw_materials: 1.20
+  energy: 1.10
+  textile: 0.85
+  daily_goods: 0.90
+  luxury: 0.95
+logistics:
+  hub: true
+  travel_multiplier: 1.0
+pop_segments:
+  - pop_id: mass_consumer
+    share: 0.48
+    income_index: 1.0
+    demand_vector: { daily_goods: 1.1, textile: 1.0, grain: 0.95 }
+  - pop_id: middle_class
+    share: 0.32
+    income_index: 1.12
+    demand_vector: { appliances: 1.05, furniture: 1.0 }
+  - pop_id: affluent
+    share: 0.12
+    income_index: 1.6
+    demand_vector: { luxury: 1.1, appliances: 1.0 }
+  - pop_id: industrial
+    share: 0.08
+    income_index: 0.95
+    demand_vector: { raw_materials: 1.15, energy: 1.1 }

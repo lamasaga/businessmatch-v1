@@ -1,0 +1,11 @@
+# L0 全局基调（教学模拟世界）
+id: bizsim_cn_v1
+meta:
+  name: 商域拟真中国城市教学世界
+  world_pack_version: "0.1.0"
+  disclaimer: 教学模拟参数，非经济预测或测绘数据
+  default_region: yangtze_6
+sim_defaults:
+  sim_scale: 0.001
+  currency_unit: CNY
+  tick_semantics: abstract_units_per_game_tick

@@ -140,6 +140,7 @@ flowchart LR
 | [007](./007-生涯经验幂等账本.md) | 生涯经验幂等账本 | 已采纳 | 2026-05-21 | XP 走 `xp_events` + `settle_match_rewards` |
 | [008](./008-Phase-A范围门控.md) | Phase A 范围门控 | 已采纳 | 2026-05-21 | 先做商赛闭环，World/OPC/LLM 编排延后 |
 | [009](./009-赛季模式与教师端双端演进.md) | 赛季模式与教师端双端演进 | **部分采纳** | 2026-05-29 | P1：`teaching_groups` 营团已落地；赛季/AOTU 仍规划；Phase A 仍 `official` |
+| [010](./010-拟真城市内容包与CyberCore合并加载.md) | 拟真城市内容包与 CyberCore 合并加载 | 已采纳 | 2026-06-01 | `content/world/yangtze_6`；无 World 域表；浮生记 v2.2 真实六城 |
 
 ---
 

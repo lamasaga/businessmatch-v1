@@ -1,6 +1,7 @@
 """体验营营团 API"""
 
 from typing import List, Optional
+from datetime import datetime, timedelta
 
 from fastapi import APIRouter, Depends, status
 from sqlalchemy import func
@@ -9,7 +10,11 @@ from sqlalchemy.orm import Session
 from app.db.database import get_db
 from app.models.user import User, UserRole
 from app.domains.arena.models import TeachingGroup, GroupMembership, ArenaMatch
+from app.domains.arena.models.participant import ArenaParticipant
+from app.domains.arena.models.announcement import CampAnnouncement
 from app.domains.arena.enums_group import TeachingGroupStatus
+from app.domains.arena.enums import MatchStatus
+from app.domains.career.models.xp_event import XpEvent
 from app.domains.arena.services.teaching_group_service import (
     ensure_organizer_profile,
     unique_group_invite_code,
@@ -21,11 +26,19 @@ from app.schemas.teaching_groups import (
     TeachingGroupOut,
     TeachingGroupDetail,
     GroupMemberOut,
+    AnnouncementCreate,
+    AnnouncementOut,
+    MemberProgressList,
+    MemberProgressOut,
+    MemberProgressSummary,
+    CampDashboardOut,
 )
 from app.schemas.trading_competition import CompetitionEventOut
 from app.domains.arena.serializers import event_to_out
+from app.domains.arena.models.announcement import CampAnnouncement
 from app.core.response import ApiResponse, BusinessException, ErrorCode
 from app.core.dependencies import get_current_active_user
+from datetime import datetime, timedelta
 
 router = APIRouter(prefix="/teaching-groups", tags=["体验营"])
 
@@ -283,3 +296,331 @@ def list_group_events(
         .all()
     )
     return ApiResponse.ok(data=[event_to_out(e, db) for e in events])
+
+
+# ── 公告管理 ──
+
+@router.get("/{group_id}/announcements", response_model=ApiResponse[List[AnnouncementOut]])
+def list_announcements(
+    group_id: int,
+    current_user: User = Depends(get_current_active_user),
+    db: Session = Depends(get_db),
+):
+    group = db.query(TeachingGroup).filter(TeachingGroup.id == group_id).first()
+    if not group:
+        raise BusinessException(
+            message="体验营不存在",
+            code=ErrorCode.NOT_FOUND,
+            status_code=status.HTTP_404_NOT_FOUND,
+        )
+    is_teacher = group.teacher_user_id == current_user.id
+    is_member = (
+        db.query(GroupMembership)
+        .filter(
+            GroupMembership.group_id == group_id,
+            GroupMembership.user_id == current_user.id,
+        )
+        .first()
+    )
+    if not is_teacher and not is_member and current_user.role != UserRole.admin:
+        raise BusinessException(
+            message="无权查看",
+            code=ErrorCode.FORBIDDEN,
+            status_code=status.HTTP_403_FORBIDDEN,
+        )
+    announcements = (
+        db.query(CampAnnouncement)
+        .filter(CampAnnouncement.teaching_group_id == group_id)
+        .order_by(CampAnnouncement.is_pinned.desc(), CampAnnouncement.created_at.desc())
+        .all()
+    )
+    return ApiResponse.ok(data=[AnnouncementOut.model_validate(a) for a in announcements])
+
+
+@router.post("/{group_id}/announcements", response_model=ApiResponse[AnnouncementOut], status_code=status.HTTP_201_CREATED)
+def create_announcement(
+    group_id: int,
+    data: AnnouncementCreate,
+    current_user: User = Depends(get_current_active_user),
+    db: Session = Depends(get_db),
+):
+    _require_teacher(current_user)
+    group = db.query(TeachingGroup).filter(TeachingGroup.id == group_id).first()
+    if not group:
+        raise BusinessException(
+            message="体验营不存在",
+            code=ErrorCode.NOT_FOUND,
+            status_code=status.HTTP_404_NOT_FOUND,
+        )
+    if group.teacher_user_id != current_user.id and current_user.role != UserRole.admin:
+        raise BusinessException(
+            message="无权管理该体验营",
+            code=ErrorCode.FORBIDDEN,
+            status_code=status.HTTP_403_FORBIDDEN,
+        )
+    announcement = CampAnnouncement(
+        teaching_group_id=group_id,
+        title=data.title,
+        content=data.content,
+        created_by=current_user.id,
+    )
+    db.add(announcement)
+    db.commit()
+    db.refresh(announcement)
+    return ApiResponse.ok(data=AnnouncementOut.model_validate(announcement))
+
+
+@router.patch("/{group_id}/announcements/{announcement_id}/pin", response_model=ApiResponse[AnnouncementOut])
+def pin_announcement(
+    group_id: int,
+    announcement_id: int,
+    current_user: User = Depends(get_current_active_user),
+    db: Session = Depends(get_db),
+):
+    _require_teacher(current_user)
+    group = db.query(TeachingGroup).filter(TeachingGroup.id == group_id).first()
+    if not group or group.teacher_user_id != current_user.id:
+        raise BusinessException(
+            message="无权操作",
+            code=ErrorCode.FORBIDDEN,
+            status_code=status.HTTP_403_FORBIDDEN,
+        )
+    announcement = db.query(CampAnnouncement).filter(
+        CampAnnouncement.id == announcement_id,
+        CampAnnouncement.teaching_group_id == group_id,
+    ).first()
+    if not announcement:
+        raise BusinessException(
+            message="公告不存在",
+            code=ErrorCode.NOT_FOUND,
+            status_code=status.HTTP_404_NOT_FOUND,
+        )
+    announcement.is_pinned = not announcement.is_pinned
+    db.commit()
+    db.refresh(announcement)
+    return ApiResponse.ok(data=AnnouncementOut.model_validate(announcement))
+
+
+@router.delete("/{group_id}/announcements/{announcement_id}")
+def delete_announcement(
+    group_id: int,
+    announcement_id: int,
+    current_user: User = Depends(get_current_active_user),
+    db: Session = Depends(get_db),
+):
+    _require_teacher(current_user)
+    group = db.query(TeachingGroup).filter(TeachingGroup.id == group_id).first()
+    if not group or group.teacher_user_id != current_user.id:
+        raise BusinessException(
+            message="无权操作",
+            code=ErrorCode.FORBIDDEN,
+            status_code=status.HTTP_403_FORBIDDEN,
+        )
+    announcement = db.query(CampAnnouncement).filter(
+        CampAnnouncement.id == announcement_id,
+        CampAnnouncement.teaching_group_id == group_id,
+    ).first()
+    if not announcement:
+        raise BusinessException(
+            message="公告不存在",
+            code=ErrorCode.NOT_FOUND,
+            status_code=status.HTTP_404_NOT_FOUND,
+        )
+    db.delete(announcement)
+    db.commit()
+    return ApiResponse.ok(message="公告已删除")
+
+
+# ── 学员进度看板 ──
+
+def _calc_student_status(days_joined: int, match_count: int, last_active_days: Optional[int]) -> str:
+    if match_count >= 2 and (last_active_days is not None and last_active_days <= 7):
+        return "active"
+    if match_count >= 1:
+        return "normal"
+    if days_joined > 7 and match_count == 0:
+        return "attention"
+    return "newcomer"
+
+
+@router.get("/{group_id}/member-progress", response_model=ApiResponse[MemberProgressList])
+def get_member_progress(
+    group_id: int,
+    current_user: User = Depends(get_current_active_user),
+    db: Session = Depends(get_db),
+):
+    _require_teacher(current_user)
+    group = db.query(TeachingGroup).filter(TeachingGroup.id == group_id).first()
+    if not group:
+        raise BusinessException(
+            message="体验营不存在",
+            code=ErrorCode.NOT_FOUND,
+            status_code=status.HTTP_404_NOT_FOUND,
+        )
+    if group.teacher_user_id != current_user.id and current_user.role != UserRole.admin:
+        raise BusinessException(
+            message="无权查看",
+            code=ErrorCode.FORBIDDEN,
+            status_code=status.HTTP_403_FORBIDDEN,
+        )
+
+    now = datetime.now()
+    week_ago = now - timedelta(days=7)
+
+    # 获取所有成员
+    rows = (
+        db.query(GroupMembership, User)
+        .join(User, User.id == GroupMembership.user_id)
+        .filter(GroupMembership.group_id == group_id)
+        .all()
+    )
+
+    # 获取本营团所有 event_ids
+    event_ids = [
+        e.id for e in db.query(ArenaMatch.id).filter(ArenaMatch.teaching_group_id == group_id).all()
+    ]
+
+    members_out: List[MemberProgressOut] = []
+    summary = MemberProgressSummary()
+
+    for m, u in rows:
+        joined_at = m.joined_at.replace(tzinfo=None) if m.joined_at.tzinfo else m.joined_at
+        days_joined = (now - joined_at).days
+
+        # 参赛场次（本营团内）
+        match_count = 0
+        last_active_at = None
+        if event_ids:
+            participant_rows = (
+                db.query(ArenaParticipant)
+                .filter(
+                    ArenaParticipant.user_id == u.id,
+                    ArenaParticipant.event_id.in_(event_ids),
+                )
+                .all()
+            )
+            match_count = len(participant_rows)
+            if participant_rows:
+                last_joined = max(p.joined_at for p in participant_rows)
+                last_active_at = last_joined.replace(tzinfo=None) if last_joined and last_joined.tzinfo else last_joined
+
+        # 累计 XP
+        xp_total = (
+            db.query(func.sum(XpEvent.amount))
+            .filter(XpEvent.user_id == u.id)
+            .scalar()
+        ) or 0
+
+        last_active_days = None
+        if last_active_at:
+            last_active_days = (now - last_active_at).days
+
+        status = _calc_student_status(days_joined, match_count, last_active_days)
+
+        members_out.append(
+            MemberProgressOut(
+                user_id=u.id,
+                username=u.username,
+                joined_at=m.joined_at,
+                match_count=match_count,
+                total_xp=int(xp_total),
+                last_active_at=last_active_at,
+                status=status,
+            )
+        )
+
+        summary.total += 1
+        if status == "active":
+            summary.active += 1
+        elif status == "normal":
+            summary.normal += 1
+        elif status == "attention":
+            summary.attention += 1
+        else:
+            summary.newcomer += 1
+
+    return ApiResponse.ok(data=MemberProgressList(members=members_out, summary=summary))
+
+
+# ── 营团 Dashboard ──
+
+@router.get("/{group_id}/dashboard", response_model=ApiResponse[CampDashboardOut])
+def get_camp_dashboard(
+    group_id: int,
+    current_user: User = Depends(get_current_active_user),
+    db: Session = Depends(get_db),
+):
+    _require_teacher(current_user)
+    group = db.query(TeachingGroup).filter(TeachingGroup.id == group_id).first()
+    if not group:
+        raise BusinessException(
+            message="体验营不存在",
+            code=ErrorCode.NOT_FOUND,
+            status_code=status.HTTP_404_NOT_FOUND,
+        )
+    if group.teacher_user_id != current_user.id and current_user.role != UserRole.admin:
+        raise BusinessException(
+            message="无权查看",
+            code=ErrorCode.FORBIDDEN,
+            status_code=status.HTTP_403_FORBIDDEN,
+        )
+
+    now = datetime.now()
+    week_ago = now - timedelta(days=7)
+
+    # 成员数
+    member_count = db.query(func.count(GroupMembership.id)).filter(
+        GroupMembership.group_id == group_id
+    ).scalar() or 0
+
+    # 进行中商赛数
+    from app.domains.arena.enums import MatchStatus
+    active_event_count = db.query(func.count(ArenaMatch.id)).filter(
+        ArenaMatch.teaching_group_id == group_id,
+        ArenaMatch.status == MatchStatus.playing,
+    ).scalar() or 0
+
+    # 本周活跃人次（参赛）
+    event_ids = [
+        e.id for e in db.query(ArenaMatch.id).filter(ArenaMatch.teaching_group_id == group_id).all()
+    ]
+    weekly_active_count = 0
+    if event_ids:
+        weekly_active_count = db.query(func.count(ArenaParticipant.id)).filter(
+            ArenaParticipant.event_id.in_(event_ids),
+            ArenaParticipant.joined_at >= week_ago,
+        ).scalar() or 0
+
+    # 最新公告（置顶优先）
+    announcements = (
+        db.query(CampAnnouncement)
+        .filter(CampAnnouncement.teaching_group_id == group_id)
+        .order_by(CampAnnouncement.is_pinned.desc(), CampAnnouncement.created_at.desc())
+        .limit(5)
+        .all()
+    )
+
+    # 最近活动
+    recent_events_raw = (
+        db.query(ArenaMatch)
+        .filter(ArenaMatch.teaching_group_id == group_id)
+        .order_by(ArenaMatch.created_at.desc())
+        .limit(5)
+        .all()
+    )
+    recent_events = []
+    for ev in recent_events_raw:
+        recent_events.append({
+            "id": ev.id,
+            "title": ev.title,
+            "status": ev.status.value if ev.status else "draft",
+            "created_at": ev.created_at.isoformat() if ev.created_at else None,
+        })
+
+    return ApiResponse.ok(data=CampDashboardOut(
+        member_count=member_count,
+        active_event_count=active_event_count,
+        weekly_active_count=weekly_active_count,
+        recent_announcements=[AnnouncementOut.model_validate(a) for a in announcements],
+        recent_events=recent_events,
+    ))

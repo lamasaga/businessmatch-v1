@@ -69,7 +69,7 @@ def create_practice_match(
     engine = GameEngineId(doc.engine)
     config = doc.merged_match_config(config_overrides)
     initial_capital = config.get("initial_capital", 50000)
-    start_city = config.get("cities", ["jingcheng"])[0]
+    start_city = config.get("cities", ["nanjing"])[0]
     ai_count = int(config.get("practice_ai_count", 3))
 
     match = ArenaMatch(

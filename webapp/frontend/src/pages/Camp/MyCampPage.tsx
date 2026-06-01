@@ -1,6 +1,6 @@
 import { useEffect } from 'react';
 import { Link, useParams, useNavigate } from 'react-router-dom';
-import { Tent, Users, Gamepad2, Loader2, Plus, GraduationCap } from 'lucide-react';
+import { Tent, Users, Gamepad2, Loader2, Plus, GraduationCap, Megaphone } from 'lucide-react';
 import { useCampStore } from '../../stores/campStore';
 
 export default function MyCampPage() {
@@ -10,11 +10,13 @@ export default function MyCampPage() {
     joined,
     current,
     events,
+    announcements,
     loading,
     error,
     fetchJoined,
     fetchGroup,
     fetchGroupEvents,
+    fetchAnnouncements,
   } = useCampStore();
 
   const activeId = groupId ? Number(groupId) : joined[0]?.id;
@@ -36,8 +38,9 @@ export default function MyCampPage() {
     if (activeId && !Number.isNaN(activeId)) {
       fetchGroup(activeId);
       fetchGroupEvents(activeId);
+      fetchAnnouncements(activeId);
     }
-  }, [activeId, fetchGroup, fetchGroupEvents]);
+  }, [activeId, fetchGroup, fetchGroupEvents, fetchAnnouncements]);
 
   if (!groupId && joined.length === 0 && !loading) {
     return (
@@ -96,6 +99,34 @@ export default function MyCampPage() {
         </div>
       ) : current ? (
         <>
+          {/* 公告 */}
+          {announcements.length > 0 && (
+            <div className="glass-card p-5">
+              <h3 className="font-semibold mb-3 flex items-center gap-2 text-sm">
+                <Megaphone className="w-4 h-4 text-primary" />
+                最新公告
+              </h3>
+              <div className="space-y-2">
+                {announcements.slice(0, 3).map((a) => (
+                  <div
+                    key={a.id}
+                    className={`p-3 rounded-lg text-sm ${
+                      a.is_pinned ? 'border border-primary/30 bg-primary/5' : 'bg-background-secondary/50'
+                    }`}
+                  >
+                    <div className="flex items-center gap-2">
+                      <p className="font-medium">{a.title}</p>
+                      {a.is_pinned && (
+                        <span className="text-xs px-1.5 py-0.5 rounded bg-primary/15 text-primary">置顶</span>
+                      )}
+                    </div>
+                    <p className="text-xs text-foreground-muted mt-1">{a.content}</p>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+
           <div className="glass-card p-6">
             <h2 className="text-lg font-semibold mb-2">{current.name}</h2>
             {current.description && (

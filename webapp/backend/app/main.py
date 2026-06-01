@@ -17,7 +17,7 @@ from app.core.response import (
 )
 from app.core.middleware import RequestLoggingMiddleware
 from app.api import auth, wiki, courses, opc, organizer, competitions, trading, trading_ws, practice, teaching_groups
-from app.api import techventure as techventure_api, techventure_admin
+from app.api import techventure as techventure_api, techventure_admin, seasons, camp_groups, assignments
 from app.domains.sandbox import router as sandbox_router
 from fastapi.exceptions import RequestValidationError, HTTPException as FastAPIHTTPException
 
@@ -81,6 +81,9 @@ app.include_router(trading_ws.router, prefix="/api/v1")
 app.include_router(practice.router, prefix="/api/v1")
 app.include_router(techventure_api.router, prefix="/api/v1")
 app.include_router(techventure_admin.router, prefix="/api/v1")
+app.include_router(seasons.router, prefix="/api/v1")
+app.include_router(camp_groups.router, prefix="/api/v1")
+app.include_router(assignments.router, prefix="/api/v1")
 app.include_router(sandbox_router, prefix="/api/v1")
 
 

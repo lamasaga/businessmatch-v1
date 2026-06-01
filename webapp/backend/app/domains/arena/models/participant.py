@@ -22,7 +22,7 @@ class ArenaParticipant(Base):
     # trading 插件使用的运行时状态（后续可迁入 runtime_state JSON）
     cash = Column(Float, default=0, nullable=False)
     inventory = Column(JSON, default=dict)
-    current_city = Column(String(20), default="jingcheng", nullable=False)
+    current_city = Column(String(20), default="nanjing", nullable=False)
     total_assets = Column(Float, default=0, nullable=False)
 
     # 队伍（可选）：team_id 有值 → 队伍成员；NULL → 个人模式（如浮生记）

@@ -35,16 +35,28 @@ export interface CampEvent {
   teaching_group_id?: number | null;
 }
 
+export interface CampAnnouncement {
+  id: number;
+  teaching_group_id: number;
+  title: string;
+  content: string;
+  created_by: number;
+  is_pinned: boolean;
+  created_at: string;
+}
+
 interface CampState {
   joined: TeachingGroup[];
   current: TeachingGroupDetail | null;
   events: CampEvent[];
+  announcements: CampAnnouncement[];
   loading: boolean;
   error: string | null;
 
   fetchJoined: () => Promise<void>;
   fetchGroup: (id: number) => Promise<void>;
   fetchGroupEvents: (id: number) => Promise<void>;
+  fetchAnnouncements: (id: number) => Promise<void>;
   joinCamp: (inviteCode: string) => Promise<TeachingGroup>;
   clearError: () => void;
 }
@@ -53,6 +65,7 @@ export const useCampStore = create<CampState>((set) => ({
   joined: [],
   current: null,
   events: [],
+  announcements: [],
   loading: false,
   error: null,
 
@@ -89,6 +102,15 @@ export const useCampStore = create<CampState>((set) => ({
       set({ events: res.data.data ?? [] });
     } catch {
       set({ events: [] });
+    }
+  },
+
+  fetchAnnouncements: async (id) => {
+    try {
+      const res = await api.get<{ data: CampAnnouncement[] }>(`/api/v1/teaching-groups/${id}/announcements`);
+      set({ announcements: res.data.data ?? [] });
+    } catch {
+      set({ announcements: [] });
     }
   },
 

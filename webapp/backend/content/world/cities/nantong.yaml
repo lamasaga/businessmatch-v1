@@ -1,0 +1,66 @@
+city_id: nantong
+display_name: 南通市
+name: 南通市
+type: port_agriculture
+description: 临港、船舶与近沪农业转运；粮食与生鲜产出远高于本地消费，能源港口特征明显
+meta:
+  calibrated_at: "2026-06-01"
+  confidence: teaching_grade
+  paradigm_notes: yangtze_6 v0.1
+  data_sources:
+    - name: 南通统计年鉴（公开摘要，待补 URL）
+      fields_used: [常住人口, 产业结构]
+sim_scale: 0.001
+display_population: 7733000
+population: 773
+demographics:
+  luxury: 0.34
+  mass: 0.56
+  staple: 0.10
+production:
+  grain: 14
+  produce: 12
+  raw_materials: 4
+  energy: 5
+  furniture: 3
+  textile: 4
+  daily_goods: 5
+  appliances: 3
+  passenger_car: 2
+  luxury: 0
+consumption:
+  grain: 11
+  produce: 12
+  raw_materials: 5
+  energy: 5
+  furniture: 4
+  textile: 5
+  daily_goods: 9
+  appliances: 5
+  passenger_car: 3
+  luxury: 2
+demand_profile:
+  grain: 0.75
+  produce: 0.80
+  daily_goods: 1.05
+  energy: 1.0
+logistics:
+  hub: false
+  travel_multiplier: 1.02
+pop_segments:
+  - pop_id: mass_consumer
+    share: 0.56
+    income_index: 0.98
+    demand_vector: { daily_goods: 1.1, produce: 1.0, grain: 0.85 }
+  - pop_id: middle_class
+    share: 0.26
+    income_index: 1.05
+    demand_vector: { appliances: 1.0, furniture: 0.95 }
+  - pop_id: affluent
+    share: 0.08
+    income_index: 1.4
+    demand_vector: { luxury: 0.9 }
+  - pop_id: industrial
+    share: 0.10
+    income_index: 0.95
+    demand_vector: { raw_materials: 1.1, energy: 1.08, grain: 1.05, produce: 1.05 }

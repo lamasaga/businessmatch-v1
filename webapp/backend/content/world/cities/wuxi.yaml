@@ -1,0 +1,66 @@
+city_id: wuxi
+display_name: 无锡市
+name: 无锡市
+type: precision_manufacturing
+description: 精密制造与物联网配套；纺织中游、装备零部件供给，原料与能源投入大
+meta:
+  calibrated_at: "2026-06-01"
+  confidence: teaching_grade
+  paradigm_notes: yangtze_6 v0.1
+  data_sources:
+    - name: 无锡统计年鉴（公开摘要，待补 URL）
+      fields_used: [常住人口, 产业结构]
+sim_scale: 0.001
+display_population: 7495000
+population: 750
+demographics:
+  luxury: 0.38
+  mass: 0.52
+  staple: 0.10
+production:
+  grain: 2
+  produce: 3
+  raw_materials: 5
+  energy: 5
+  furniture: 5
+  textile: 8
+  daily_goods: 7
+  appliances: 4
+  passenger_car: 3
+  luxury: 0
+consumption:
+  grain: 9
+  produce: 10
+  raw_materials: 7
+  energy: 6
+  furniture: 5
+  textile: 7
+  daily_goods: 10
+  appliances: 5
+  passenger_car: 4
+  luxury: 2
+demand_profile:
+  raw_materials: 1.15
+  energy: 1.10
+  textile: 0.88
+  daily_goods: 0.95
+logistics:
+  hub: false
+  travel_multiplier: 1.0
+pop_segments:
+  - pop_id: mass_consumer
+    share: 0.52
+    income_index: 1.0
+    demand_vector: { daily_goods: 1.1, textile: 1.0 }
+  - pop_id: middle_class
+    share: 0.28
+    income_index: 1.1
+    demand_vector: { appliances: 1.05, furniture: 1.0 }
+  - pop_id: affluent
+    share: 0.10
+    income_index: 1.5
+    demand_vector: { luxury: 1.05 }
+  - pop_id: industrial
+    share: 0.10
+    income_index: 0.95
+    demand_vector: { raw_materials: 1.15, energy: 1.1 }

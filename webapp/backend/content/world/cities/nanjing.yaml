@@ -1,0 +1,66 @@
+city_id: nanjing
+display_name: 南京市
+name: 南京市
+type: provincial_capital
+description: 省会综合与科教文化；中等工业与日消供给，升级消费与汽车、家电需求稳
+meta:
+  calibrated_at: "2026-06-01"
+  confidence: teaching_grade
+  paradigm_notes: yangtze_6 v0.1
+  data_sources:
+    - name: 南京统计年鉴（公开摘要，待补 URL）
+      fields_used: [常住人口, 产业结构]
+sim_scale: 0.001
+display_population: 9547000
+population: 955
+demographics:
+  luxury: 0.42
+  mass: 0.50
+  staple: 0.08
+production:
+  grain: 3
+  produce: 4
+  raw_materials: 4
+  energy: 3
+  furniture: 4
+  textile: 5
+  daily_goods: 6
+  appliances: 3
+  passenger_car: 2
+  luxury: 0
+consumption:
+  grain: 10
+  produce: 11
+  raw_materials: 5
+  energy: 5
+  furniture: 5
+  textile: 6
+  daily_goods: 12
+  appliances: 6
+  passenger_car: 4
+  luxury: 3
+demand_profile:
+  passenger_car: 1.1
+  appliances: 1.05
+  luxury: 1.0
+  daily_goods: 1.05
+logistics:
+  hub: false
+  travel_multiplier: 1.0
+pop_segments:
+  - pop_id: mass_consumer
+    share: 0.50
+    income_index: 1.0
+    demand_vector: { daily_goods: 1.15, produce: 1.0, grain: 0.9, luxury: 0.15 }
+  - pop_id: middle_class
+    share: 0.30
+    income_index: 1.15
+    demand_vector: { appliances: 1.1, passenger_car: 1.05, furniture: 1.0 }
+  - pop_id: affluent
+    share: 0.12
+    income_index: 1.8
+    demand_vector: { luxury: 1.2, appliances: 1.05 }
+  - pop_id: industrial
+    share: 0.08
+    income_index: 0.95
+    demand_vector: { raw_materials: 1.1, energy: 1.05 }

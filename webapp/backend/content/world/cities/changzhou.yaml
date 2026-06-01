@@ -1,0 +1,66 @@
+city_id: changzhou
+display_name: 常州市
+name: 常州市
+type: equipment
+description: 装备与电动车产业链；汽车、装备、能源相关产出突出，原料与纺织需求稳
+meta:
+  calibrated_at: "2026-06-01"
+  confidence: teaching_grade
+  paradigm_notes: yangtze_6 v0.1
+  data_sources:
+    - name: 常州统计年鉴（公开摘要，待补 URL）
+      fields_used: [常住人口, 产业结构]
+sim_scale: 0.001
+display_population: 5362000
+population: 536
+demographics:
+  luxury: 0.36
+  mass: 0.54
+  staple: 0.10
+production:
+  grain: 3
+  produce: 3
+  raw_materials: 6
+  energy: 6
+  furniture: 6
+  textile: 6
+  daily_goods: 8
+  appliances: 5
+  passenger_car: 8
+  luxury: 0
+consumption:
+  grain: 9
+  produce: 10
+  raw_materials: 6
+  energy: 6
+  furniture: 5
+  textile: 6
+  daily_goods: 10
+  appliances: 5
+  passenger_car: 4
+  luxury: 2
+demand_profile:
+  passenger_car: 0.85
+  raw_materials: 0.90
+  energy: 0.88
+  daily_goods: 0.92
+logistics:
+  hub: false
+  travel_multiplier: 1.0
+pop_segments:
+  - pop_id: mass_consumer
+    share: 0.54
+    income_index: 1.0
+    demand_vector: { daily_goods: 1.1, grain: 0.95 }
+  - pop_id: middle_class
+    share: 0.28
+    income_index: 1.08
+    demand_vector: { passenger_car: 1.05, appliances: 1.0 }
+  - pop_id: affluent
+    share: 0.08
+    income_index: 1.5
+    demand_vector: { luxury: 1.0 }
+  - pop_id: industrial
+    share: 0.10
+    income_index: 0.95
+    demand_vector: { raw_materials: 1.15, energy: 1.12, passenger_car: 1.05 }
