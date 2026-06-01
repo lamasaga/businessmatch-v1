@@ -16,7 +16,7 @@ def run_migrations(engine: Engine) -> None:
         alters = [
             ("competition_events", "match_kind", "VARCHAR(20) DEFAULT 'official' NOT NULL"),
             ("competition_events", "design_mode", "VARCHAR(20) DEFAULT 'standalone' NOT NULL"),
-            ("competition_events", "game_config_id", "VARCHAR(64) DEFAULT 'trading-v1' NOT NULL"),
+            ("competition_events", "game_config_id", "VARCHAR(64) DEFAULT 'fstrading' NOT NULL"),
             ("competition_participants", "is_ai", "INTEGER DEFAULT 0 NOT NULL"),
             ("competition_participants", "team_id", "INTEGER"),
             ("competition_participants", "team_role", "VARCHAR(32)"),

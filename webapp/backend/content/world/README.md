@@ -40,7 +40,7 @@ world/
 | `bingcheng` | `changzhou` | 冰城（重工/汽车链由常州承接） |
 | `gangcheng` | `wuxi` | 港城（制造/枢纽由无锡承接） |
 
-　　**浮生记 RTS v2.2+** 默认 `region_id: yangtze_6`，六城为真实长三角节点；NPC 角色背景须绑定上表真实 id 与 `display_name`。
+　　**FStrading（fstrading）** 默认 `region_id: yangtze_6`，六城为真实长三角节点；NPC 角色背景须绑定上表真实 `city_id` 与 `display_name`。
 
 ## 加载方式
 

@@ -63,7 +63,7 @@ def test_teaching_group_create_join_flow(client: TestClient):
         headers={"Authorization": f"Bearer {admin_token}"},
         json={
             "title": "pytest 营内赛",
-            "game_config_id": "trading-v2-rts",
+            "game_config_id": "fstrading",
             "game_type": "trading",
             "teaching_group_id": group_id,
             "config": {"mode": "rts", "duration_preset": "short"},

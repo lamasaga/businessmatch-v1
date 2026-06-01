@@ -122,11 +122,11 @@ export default function GamesPage() {
           </div>
           <div className="flex-1">
             <h3 className="font-semibold text-foreground flex items-center gap-2">
-              浮生记 · 日常练习
+              FStrading · 日常练习
               <Sparkles className="w-4 h-4 text-accent-teal" />
             </h3>
             <p className="text-sm text-foreground-muted mt-1">
-              六城十品倒卖：3 名 AI 交易员与你共同买卖，物价由供需驱动（非随机摇号）
+              长三角六城十品即时商战：3 名 AI 交易员与你共同买卖，物价由供需驱动
             </p>
           </div>
           <button

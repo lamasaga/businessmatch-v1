@@ -60,7 +60,7 @@ def create_practice_match(
     *,
     platform_organizer: OrganizerProfile,
     user_id: int,
-    game_config_id: str = "trading-v1",
+    game_config_id: str = "fstrading",
     design_mode: DesignMode = DesignMode.standalone,
     title: Optional[str] = None,
     config_overrides: Optional[dict] = None,

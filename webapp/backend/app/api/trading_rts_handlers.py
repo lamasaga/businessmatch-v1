@@ -117,7 +117,7 @@ def build_rts_game_state(
         and status_val == MatchStatus.playing.value
     )
 
-    config_id = event.game_config_id or "trading-v2-rts"
+    config_id = event.game_config_id or "fstrading"
     pricing = get_pricing_config(config_id)
 
     return GameState(

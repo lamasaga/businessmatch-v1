@@ -28,7 +28,7 @@ class ArenaMatch(Base):
 
     match_kind = Column(Enum(MatchKind), default=MatchKind.official, nullable=False)
     design_mode = Column(Enum(DesignMode), default=DesignMode.standalone, nullable=False)
-    game_config_id = Column(String(64), default="trading-v1", nullable=False)
+    game_config_id = Column(String(64), default="fstrading", nullable=False)
     # game_type = 引擎插件 ID（trading / negotiation / strategy）
     game_type = Column(Enum(GameEngineId), default=GameEngineId.trading, nullable=False)
     status = Column(Enum(MatchStatus), default=MatchStatus.draft, nullable=False)

@@ -42,7 +42,7 @@ def start_trading_practice(
     db: Session = Depends(get_db),
 ):
     """创建并自动开始一场交易赛日常练习（单人，低权重 XP）"""
-    config_id = data.game_config_id or "trading-v1"
+    config_id = data.game_config_id or "fstrading"
     doc = get_game_config(config_id)
     if doc.engine != GameEngineId.trading.value:
         raise BusinessException(

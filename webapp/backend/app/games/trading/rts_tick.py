@@ -44,7 +44,7 @@ def ensure_rts_runtime(event: ArenaMatch, config_id: str) -> dict:
 
 
 def create_rts_first_round(db: Session, event: ArenaMatch) -> TradingRound:
-    config_id = event.game_config_id or "trading-v2-rts"
+    config_id = event.game_config_id or "fstrading"
     config = event.config or {}
     rt = init_rts_runtime(config, config_id)
     config["rts_runtime"] = rt
@@ -84,7 +84,7 @@ def maybe_advance_rts(db: Session, event: ArenaMatch) -> Tuple[bool, bool]:
         return False, False
     event = locked
 
-    config_id = event.game_config_id or "trading-v2-rts"
+    config_id = event.game_config_id or "fstrading"
     config = event.config or {}
     rt = ensure_rts_runtime(event, config_id)
 
@@ -113,7 +113,7 @@ def maybe_advance_rts(db: Session, event: ArenaMatch) -> Tuple[bool, bool]:
 
 def advance_one_tick(db: Session, event: ArenaMatch) -> bool:
     """推进一个 tick，返回是否整场结束"""
-    config_id = event.game_config_id or "trading-v2-rts"
+    config_id = event.game_config_id or "fstrading"
     config = event.config or {}
     rt = ensure_rts_runtime(event, config_id)
 

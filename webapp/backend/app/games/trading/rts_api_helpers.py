@@ -26,7 +26,7 @@ def build_rts_markets(
         return []
 
     config = event.config or {}
-    config_id = event.game_config_id or "trading-v2-rts"
+    config_id = event.game_config_id or "fstrading"
     products = product_catalog(config, config_id)
     cities = city_catalog(config, config_id)
     raw = current_round.price_snapshot or {}
@@ -105,7 +105,7 @@ def build_rts_inventory(
     current_round: Optional[TradingRound],
 ) -> List[dict]:
     config = event.config or {}
-    config_id = event.game_config_id or "trading-v2-rts"
+    config_id = event.game_config_id or "fstrading"
     products = product_catalog(config, config_id)
     inventory = participant.inventory or {}
     if not inventory:
@@ -135,7 +135,7 @@ def build_rts_inventory(
 
 def build_rts_capacity(participant: ArenaParticipant, event: ArenaMatch) -> dict:
     config = event.config or {}
-    config_id = event.game_config_id or "trading-v2-rts"
+    config_id = event.game_config_id or "fstrading"
     products = product_catalog(config, config_id)
     ps = player_state(config, participant.id)
     vehicles = list(ps.get("vehicles") or [])
@@ -179,5 +179,5 @@ def build_rts_meta(event: ArenaMatch, participant: ArenaParticipant) -> Dict[str
         "duration_preset": config.get("duration_preset", "standard"),
         "transit": transit,
         "can_trade": can_trade,
-        "vehicles_available": vehicle_defs(config, event.game_config_id or "trading-v2-rts"),
+        "vehicles_available": vehicle_defs(config, event.game_config_id or "fstrading"),
     }

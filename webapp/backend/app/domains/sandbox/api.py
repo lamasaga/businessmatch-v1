@@ -37,7 +37,7 @@ def _get_or_create_runner(session_id: str) -> SandboxRunner:
 # ========== 请求/响应模型 ==========
 
 class CreateSessionRequest(BaseModel):
-    config_id: Optional[str] = None      # 基于的模板（如 trading-v2-rts）
+    config_id: Optional[str] = None      # 基于的模板（如 fstrading）
     config_yaml: Optional[str] = None    # 直接传入 YAML 文本
     title: Optional[str] = "未命名赛事"
 

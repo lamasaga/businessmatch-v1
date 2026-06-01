@@ -96,7 +96,7 @@ def decide_chaotic(
 ) -> None:
     """低级别：高随机、常做错方向，仍能搅动市场。"""
     config = event.config or {}
-    config_id = event.game_config_id or "trading-v2-rts"
+    config_id = event.game_config_id or "fstrading"
     city = p.current_city
     cp = snapshot.get(city, {})
     inventory = dict(p.inventory or {})
@@ -163,7 +163,7 @@ def decide_advanced(
 ) -> None:
     """高级别：跨城 bid/ask 套利、产销地采购、高 bid 城市出货。"""
     config = event.config or {}
-    config_id = event.game_config_id or "trading-v2-rts"
+    config_id = event.game_config_id or "fstrading"
     city = p.current_city
     inventory = dict(p.inventory or {})
     move_cost = move_cash_cost(config)

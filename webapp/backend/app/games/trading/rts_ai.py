@@ -23,7 +23,7 @@ def enqueue_ai_actions(
     runtime: dict,
 ) -> None:
     config = event.config or {}
-    config_id = event.game_config_id or "trading-v2-rts"
+    config_id = event.game_config_id or "fstrading"
     tick = int(runtime.get("tick", 0))
     products = product_catalog(config, config_id)
     cities = list(config.get("cities", []))

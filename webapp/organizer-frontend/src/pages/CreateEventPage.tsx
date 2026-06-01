@@ -3,10 +3,10 @@ import { useNavigate, useSearchParams } from 'react-router-dom';
 import { ArrowLeft, Plus, Loader2, Settings, Users, Coins, Clock, Briefcase, Zap } from 'lucide-react';
 import { useOrganizerStore } from '../stores/organizerStore';
 
-type GamePreset = 'rts' | 'techventure';
+type GamePreset = 'fstrading' | 'techventure';
 
 const PRESET_META: Record<GamePreset, { label: string; subtitle: string; game_config_id: string; game_type: string }> = {
-  rts: { label: '浮生记 RTS', subtitle: '六城十品即时倒卖 · 5 秒 tick', game_config_id: 'trading-v2-rts', game_type: 'trading' },
+  fstrading: { label: 'FStrading', subtitle: '长三角六城十品即时商战 · 5 秒 tick', game_config_id: 'fstrading', game_type: 'trading' },
   techventure: { label: '创想大赢家', subtitle: '4 轮三城策略 · 队伍制 · BQI 评分', game_config_id: 'techventure-v1', game_type: 'techventure' },
 };
 
@@ -23,7 +23,7 @@ export default function CreateEventPage() {
   const teachingGroupId = groupIdParam ? Number(groupIdParam) : undefined;
   const { createEvent, loading, error } = useOrganizerStore();
 
-  const [gamePreset, setGamePreset] = useState<GamePreset>('rts');
+  const [gamePreset, setGamePreset] = useState<GamePreset>('fstrading');
   const [formData, setFormData] = useState({
     title: '',
     description: '',
@@ -38,7 +38,7 @@ export default function CreateEventPage() {
     e.preventDefault();
     try {
       const config: Record<string, unknown> =
-        gamePreset === 'rts'
+        gamePreset === 'fstrading'
           ? {
               mode: 'rts',
               duration_preset: formData.duration_preset,
@@ -106,16 +106,16 @@ export default function CreateEventPage() {
           <div className="grid grid-cols-2 gap-3">
             <button
               type="button"
-              onClick={() => setGamePreset('rts')}
+              onClick={() => setGamePreset('fstrading')}
               className={`p-4 rounded-xl border text-left transition-colors ${
-                gamePreset === 'rts'
+                gamePreset === 'fstrading'
                   ? 'border-emerald-500 bg-emerald-500/10'
                   : 'border-border-subtle hover:border-primary/40'
               }`}
             >
-              <Zap className={`w-5 h-5 mb-2 ${gamePreset === 'rts' ? 'text-emerald-400' : 'text-foreground-muted'}`} />
-              <p className="font-semibold">浮生记 RTS</p>
-              <p className="text-xs text-foreground-muted mt-1">六城十品即时倒卖 · 5 秒 tick</p>
+              <Zap className={`w-5 h-5 mb-2 ${gamePreset === 'fstrading' ? 'text-emerald-400' : 'text-foreground-muted'}`} />
+              <p className="font-semibold">FStrading</p>
+              <p className="text-xs text-foreground-muted mt-1">长三角六城十品即时商战 · 5 秒 tick</p>
             </button>
             <button
               type="button"
@@ -171,7 +171,7 @@ export default function CreateEventPage() {
         </section>
 
         {/* RTS-specific settings */}
-        {gamePreset === 'rts' && (
+        {gamePreset === 'fstrading' && (
           <section className="glass-card p-6 space-y-4">
             <h3 className="font-semibold flex items-center gap-2">
               <Clock className="w-4 h-4 text-primary" />

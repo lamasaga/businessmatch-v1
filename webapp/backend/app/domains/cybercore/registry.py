@@ -11,9 +11,20 @@ from app.domains.cybercore.world_loader import merge_world_into_game_config
 
 _CONFIG_DIR = Path(__file__).resolve().parents[3] / "content" / "game-configs"
 
+# 已废弃赛制包 id → 唯一 trading 配置 fstrading（兼容存量对局）
+_CONFIG_ALIASES: Dict[str, str] = {
+    "trading-v1": "fstrading",
+    "trading-v2-rts": "fstrading",
+}
+
+
+def _resolve_config_id(config_id: str) -> str:
+    return _CONFIG_ALIASES.get(config_id, config_id)
+
 
 @lru_cache(maxsize=32)
 def get_game_config(config_id: str) -> GameConfigDocument:
+    config_id = _resolve_config_id(config_id)
     path = _CONFIG_DIR / f"{config_id}.yaml"
     if not path.is_file():
         raise KeyError(f"game config not found: {config_id}")

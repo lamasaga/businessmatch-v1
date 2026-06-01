@@ -117,7 +117,7 @@ export const useOrganizerStore = create<OrganizerState>((set) => ({
     set({ loading: true, error: null });
     try {
       const gameType = data.game_type || 'trading';
-      const configId = data.game_config_id || 'trading-v2-rts';
+      const configId = data.game_config_id || 'fstrading';
       const mergedConfig = configId.startsWith('techventure')
         ? (data.config || {})
         : { ...DEFAULT_RTS_CONFIG, ...data.config };

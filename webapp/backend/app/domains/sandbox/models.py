@@ -20,7 +20,7 @@ class SandboxSession:
 
     session_id: str = field(default_factory=lambda: str(uuid4())[:8])
     config_yaml: str = ""
-    config_id: Optional[str] = None          # 基于的模板 ID（如 trading-v2-rts）
+    config_id: Optional[str] = None          # 基于的模板 ID（如 fstrading）
     engine: str = ""                         # 引擎名称（trading / techventure / ...）
     run_state: SandboxRunState = SandboxRunState.idle
     current_step: int = 0                    # 当前 tick 或 round

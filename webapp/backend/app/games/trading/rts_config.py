@@ -5,18 +5,19 @@ from __future__ import annotations
 from typing import Any, Dict, List, Tuple
 
 from app.domains.cybercore.registry import get_game_config
+from app.games.trading.constants import DEFAULT_TRADING_CONFIG_ID
 
 
 def is_rts_mode(config: Dict[str, Any] | None) -> bool:
     return (config or {}).get("mode") == "rts"
 
 
-def load_rts_world(config_id: str = "trading-v2-rts"):
+def load_rts_world(config_id: str = DEFAULT_TRADING_CONFIG_ID):
     doc = get_game_config(config_id)
     return doc.products, doc.cities, doc.event_types, doc.defaults
 
 
-def resolve_match_config(event_config: Dict[str, Any], config_id: str = "trading-v2-rts") -> Dict[str, Any]:
+def resolve_match_config(event_config: Dict[str, Any], config_id: str = DEFAULT_TRADING_CONFIG_ID) -> Dict[str, Any]:
     doc = get_game_config(config_id)
     return doc.merged_match_config(event_config)
 

@@ -53,7 +53,7 @@ def apply_pending_actions(
     tick: int,
 ) -> List[dict]:
     config = event.config or {}
-    config_id = event.game_config_id or "trading-v2-rts"
+    config_id = event.game_config_id or "fstrading"
     products = product_catalog(config, config_id)
     pmap = {p.id: p for p in participants}
     results: List[dict] = []
@@ -254,7 +254,7 @@ def validate_queue(
     tick: int,
 ) -> Tuple[bool, str]:
     config = event.config or {}
-    config_id = event.game_config_id or "trading-v2-rts"
+    config_id = event.game_config_id or "fstrading"
     ps = player_state(config, participant.id)
     if not player_can_trade(ps.get("transit"), tick):
         return False, "运输途中无法操作"

@@ -1,6 +1,6 @@
 # 拟真城市母本（World Cities Master）
 
-> **状态**：Phase B — **长三角六城 v0.1 已落盘**；`trading-v2-rts` 通过 `defaults.world.region_id: yangtze_6` 引用本目录。  
+> **状态**：Phase B — **长三角六城 v0.1 已落盘**；`fstrading` 通过 `defaults.world.region_id: yangtze_6` 引用本目录。  
 > **权威阅读**：[07-拟真城市与区域模拟-阅读合集.md](../../../../07-拟真城市与区域模拟-阅读合集.md) · [content/world/README.md](../README.md)
 
 ## 当前区域包

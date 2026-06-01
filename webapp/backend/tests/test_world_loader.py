@@ -11,9 +11,9 @@ def test_load_yangtze_6_region():
     assert "shanghai" in region["cities"]
 
 
-def test_trading_v2_rts_uses_real_cities():
+def test_fstrading_uses_real_cities():
     get_game_config.cache_clear()
-    doc = get_game_config("trading-v2-rts")
+    doc = get_game_config("fstrading")
     assert "shanghai" in doc.cities
     assert doc.cities["shanghai"]["name"] == "上海市"
     assert "jingcheng" not in doc.cities

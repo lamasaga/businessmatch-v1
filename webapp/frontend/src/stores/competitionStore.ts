@@ -47,7 +47,7 @@ export const useCompetitionStore = create<CompetitionState>((set) => ({
       const response = await api.get('/api/v1/competitions');
       set({ events: response.data.data || [], loading: false });
     } catch (err: any) {
-      set({ error: err.message || '获取比赛列表失败', loading: false });
+      set({ error: err.message || '????????', loading: false });
     }
   },
 
@@ -72,7 +72,7 @@ export const useCompetitionStore = create<CompetitionState>((set) => ({
       set({ currentEvent: event, loading: false });
       return event;
     } catch (err: any) {
-      set({ error: err.message || '创建比赛失败', loading: false });
+      set({ error: err.message || '??????', loading: false });
       throw err;
     }
   },
@@ -85,7 +85,7 @@ export const useCompetitionStore = create<CompetitionState>((set) => ({
       set({ myParticipant: participant, loading: false });
       return participant.event_id as number;
     } catch (err: any) {
-      set({ error: err.message || '加入比赛失败', loading: false });
+      set({ error: err.message || '??????', loading: false });
       throw err;
     }
   },
@@ -110,7 +110,7 @@ export const useCompetitionStore = create<CompetitionState>((set) => ({
       const response = await api.post(`/api/v1/competitions/${eventId}/start`);
       set({ currentEvent: response.data.data, loading: false });
     } catch (err: any) {
-      set({ error: err.message || '开始比赛失败', loading: false });
+      set({ error: err.message || '??????', loading: false });
       throw err;
     }
   },
@@ -121,7 +121,7 @@ export const useCompetitionStore = create<CompetitionState>((set) => ({
       const response = await api.post(`/api/v1/competitions/${eventId}/end`);
       set({ currentEvent: response.data.data, loading: false });
     } catch (err: any) {
-      set({ error: err.message || '结束比赛失败', loading: false });
+      set({ error: err.message || '??????', loading: false });
       throw err;
     }
   },
@@ -132,7 +132,7 @@ export const useCompetitionStore = create<CompetitionState>((set) => ({
       await api.post(`/api/v1/trading/rounds/${roundId}/next`);
       set({ loading: false });
     } catch (err: any) {
-      set({ error: err.message || '推进回合失败', loading: false });
+      set({ error: err.message || '??????', loading: false });
       throw err;
     }
   },
@@ -141,14 +141,14 @@ export const useCompetitionStore = create<CompetitionState>((set) => ({
     set({ loading: true, error: null });
     try {
       const response = await api.post('/api/v1/practice/trading/start', {
-        game_config_id: 'trading-v2-rts',
-        title: '浮生记 · 日常练习',
+        game_config_id: 'fstrading',
+        title: 'FStrading � ????',
       });
       const event = response.data.data as CompetitionEvent;
       set({ currentEvent: event, loading: false });
       return event;
     } catch (err: any) {
-      set({ error: err.message || '创建练习局失败', loading: false });
+      set({ error: err.message || '???????', loading: false });
       throw err;
     }
   },

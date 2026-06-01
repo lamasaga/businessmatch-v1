@@ -1,12 +1,12 @@
-# CyberCore 赛制包 — 浮生记 RTS 即时战略 v2
-id: trading-v2-rts
+# CyberCore 赛制包 — FStrading（即时物流商战 · 唯一 trading 配置）
+id: fstrading
 engine: trading
 design_mode: standalone
-version: "2.2.0"
+version: "3.0.0"
 meta:
-  name: 浮生记 · 即时物流商战
-  description: 5 秒 tick；长三角六城真实节点；城市参数来自 content/world/yangtze_6
-  theme: fushengji-rts
+  name: FStrading
+  description: 5 秒 tick 即时商战；长三角六城；城市参数来自 content/world/yangtze_6
+  theme: fstrading
   world_region_id: yangtze_6
   world_pack_version: "0.1.0"
   education_focus:
@@ -18,7 +18,6 @@ meta:
 defaults:
   mode: rts
   tick_interval_sec: 5
-  # 比赛时长由组织者选择 duration_preset；未指定时用 standard
   duration_preset: standard
   duration_presets:
     short:
@@ -38,7 +37,6 @@ defaults:
   storage_capacity_base: 99
   max_vehicles_per_player: 3
   practice_ai_count: 3
-  # 练习局 AI 档位：chaotic=混乱试探，advanced=逐利套利（与 bot 顺序一一对应）
   practice_ai_slots:
     - chaotic
     - advanced
@@ -51,7 +49,6 @@ defaults:
       name: 精英型
       description: 跨城 bid/ask 套利、产销地采购、高消费城出货
 
-  # 声明式 AI 策略配置（沙盒可调）
   ai_strategies:
     chaotic:
       name: 混乱型
@@ -150,9 +147,7 @@ defaults:
     - appliances
     - passenger_car
     - luxury
-  # cities / routes：由 content/world/regions/yangtze_6.yaml 注入
 
-# 体积单位：格（总容量 storage_capacity_base + 车辆加成）
 products:
   grain:
     name: 粮食
@@ -183,7 +178,6 @@ products:
     base_price: 95
     price_range: [45, 180]
     chain: upstream
-    notes: 燃油/电力等，汽车与重工城市的共性投入，此前产业链缺失环节
   furniture:
     name: 家具
     category: industrial_output

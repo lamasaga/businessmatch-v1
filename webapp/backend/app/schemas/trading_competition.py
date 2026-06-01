@@ -68,7 +68,7 @@ class CompetitionEventBase(BaseModel):
 
 
 class CompetitionEventCreate(CompetitionEventBase):
-    game_config_id: str = Field(default="trading-v2-rts", max_length=64)
+    game_config_id: str = Field(default="fstrading", max_length=64)
     design_mode: str = Field(default="standalone", description="standalone | modular")
     match_kind: str = Field(default="official", description="official | practice")
     teaching_group_id: Optional[int] = Field(None, description="所属体验营营团 ID")
@@ -81,7 +81,7 @@ class CompetitionEventUpdate(BaseModel):
 
 
 class PracticeStartRequest(BaseModel):
-    game_config_id: str = Field(default="trading-v2-rts")
+    game_config_id: str = Field(default="fstrading")
     design_mode: str = Field(default="standalone")
     title: Optional[str] = None
     config: Optional[GameConfig] = None
@@ -100,7 +100,7 @@ class CompetitionEventOut(BaseModel):
     description: Optional[str]
     match_kind: str = "official"
     design_mode: str = "standalone"
-    game_config_id: str = "trading-v1"
+    game_config_id: str = "fstrading"
     game_type: str
     status: str
     config: Dict[str, Any]

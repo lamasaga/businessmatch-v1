@@ -20,7 +20,7 @@ def event_to_out(event: ArenaMatch, db: Session) -> CompetitionEventOut:
         "description": event.description,
         "match_kind": event.match_kind.value if event.match_kind else "official",
         "design_mode": event.design_mode.value if event.design_mode else "standalone",
-        "game_config_id": event.game_config_id or "trading-v1",
+        "game_config_id": event.game_config_id or "fstrading",
         "game_type": event.game_type.value if event.game_type else "trading",
         "status": event.status.value if event.status else "draft",
         "config": event.config or {},

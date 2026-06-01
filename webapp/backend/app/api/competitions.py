@@ -260,7 +260,7 @@ def create_competition(
         profile = _get_organizer_profile(current_user.id, db)
     config_dict = data.config.model_dump() if data.config else {}
     design = DesignMode(data.design_mode) if data.design_mode else DesignMode.standalone
-    config_id = data.game_config_id or "trading-v1"
+    config_id = data.game_config_id or "fstrading"
 
     group_id = data.teaching_group_id
     if group_id is not None:
