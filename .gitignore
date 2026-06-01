@@ -1,4 +1,5 @@
 venv/
+venv.bak.*/
 __pycache__/
 *.pyc
 *.pyo
@@ -10,8 +11,8 @@ node_modules/
 # 美术资源原始包解压（精选 SVG 已保留在 art-assets/fushengji 子目录）
 art-assets/fushengji/sources/_extract*/
 art-assets/fushengji/sources/tabler-icons.zip
-# 旧版 Node 参考实现（迁移用，不纳入仓库）
-TechVenture/
+# 旧版 Node 参考实现（迁移用，不纳入仓库；仅根目录，勿匹配 frontend/components/techventure）
+/TechVenture/
 .env
 .env.*
 !.env.example
