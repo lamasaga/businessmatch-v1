@@ -194,7 +194,7 @@ export default function DashboardPage() {
           </div>
           <div className="flex-1">
             <p className="font-semibold text-foreground text-sm">继续学习</p>
-            <p className="text-xs text-foreground-muted mt-0.5">你还有 2 个课程单元和 1 个每日任务待完成</p>
+            <p className="text-xs text-foreground-muted mt-0.5">你还有 2 个课程单元和 1 项日常活动待完成</p>
           </div>
           <Link to="/career" className="px-5 py-2.5 rounded-xl bg-primary text-background text-sm font-semibold hover:bg-primary/90 transition-colors">
             去生涯中枢

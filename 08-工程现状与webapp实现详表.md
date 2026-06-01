@@ -49,9 +49,10 @@
 | 认证 | `/login` | ✅ | ✅ | 生产雏形 |
 | 生涯中枢 | `/career` | 部分 | UI+mock | 演示级 |
 | 商赛大厅 | `/games` | ✅ | ✅ | 可用 |
-| 浮生记 RTS v2 | `/games/:id/play` | ✅ WS | ✅ 地图+路网 | **核心可玩** · **FStrading** `fstrading` |
+| **日常活动** | `/activities` | ✅ | ✅ 单人练习 | FStrading + TechVenture 练习入口；`/quests` 重定向 |
+| 浮生记 RTS | `/games/:id/play` | ✅ WS | ✅ 全屏·地图\|物价 | **FStrading** `fstrading` · `GameFullscreenLayout` |
 | ~~回合制 trading-v1~~ | — | — | — | **已移除**，别名 → `fstrading` |
-| TechVenture | `/games/:id/techventure` | ✅ | ✅ 四端 | **核心可玩** |
+| TechVenture | `/games/:id/techventure` | ✅ | ✅ 全屏·三城图\|情报 | 四端控场；对局 `TvStrategyMapPanel` |
 | 组织者控场 | :5174 | ✅ | ✅ | 独立端 |
 | **体验营营团 P1+** | `/camp` · `/teaching-groups` · 赛季/分组/作业 | ✅ | 🟡 | 营团 + 赛季编排 API；组织者 Tab 拆分 |
 | **赛事工坊 Sandbox** | `/sandbox` | ✅ | ✅ | 内存会话 · 热 YAML · 试跑 |
@@ -176,7 +177,7 @@
 **路径 B — 浮生记 RTS 日常练习（1 人 + 3 AI，默认 v2）**
 
 ```
-学生 /games →「浮生记 · 日常练习」→ POST /practice/trading/start（game_config_id=trading-v2-rts）
+学生 `/activities` → FStrading 单人练习 → POST `/practice/trading/start`（`fstrading`）
     → commit 后启动 rts_scheduler → 每 5s tick（调度器唯一推进）
     → 学生 WebSocket 收 tick → GET /state 刷新 UI → 买卖/移动/购车指令排队下 tick 结算
     → AI（chaotic + advanced×2）同 tick 决策 → 打满 total_ticks 自动 finish + WS finished
@@ -202,7 +203,7 @@ practice/start 传 game_config_id=trading-v1 → 回合制 market 定价 → 提
 **路径 C′ — TechVenture 日常练习（1 人 + AI 队伍）**
 
 ```
-学生 /games →「创想大赢家 · 日常练习」→ POST /practice/techventure/start
+学生 `/activities` → 创想大赢家单人练习 → POST `/practice/techventure/start`
     → 创建 1 真人队 + 5 AI 队 → 自动开轮
     → 学生提交决策 → 自动生成 AI 决策 + 结算 + 开下一轮
     → 4 轮结束后查看最终榜单
@@ -267,16 +268,16 @@ practice/start 传 game_config_id=trading-v1 → 回合制 market 定价 → 提
 | `/career` | `CareerPage` | requireAuth | **无（mock）** | 依赖 `careerActive`，数据来自 `DEMO_CAREER` |
 | `/career/start` | `CareerStartPage` | **无** | 无 | 仅写 `careerStore`，未调后端 |
 | `/career/debrief/:matchId` | `DebriefPage` | requireAuth | **无（mock）** | 固定 `DEBRIEF_MOCK`，`:matchId` 未使用 |
-| `/quests` | `QuestsPage` | requireAuth | 无 | `DAILY_QUESTS` + localStorage 完成态 |
+| `/activities` | `DailyActivitiesPage` | requireAuth | `practice/*` | 单人练习 + 习惯打卡；`/quests` → 重定向 |
 | `/achievements` | `AchievementsPage` | requireAuth | 无 | `ACHIEVEMENTS` mock |
 | `/camp` | `MyCampPage` | requireAuth | `teaching-groups/joined` | 体验营首页；多营团时 `/camp/:groupId` |
 | `/camp/join` | `JoinCampPage` | requireAuth | `POST teaching-groups/join` | 6 位营团码 |
 | `/camp/:groupId` | `MyCampPage` | requireAuth | `teaching-groups/{id}/events` | 营内商赛房间码展示 |
 | `/games` | `GamesPage` | requireAuth | `GET/POST competitions` | 房间码加入、列表 |
 | `/games/:id/lobby` | `GameLobbyPage` | requireAuth | `my-status`、start | 正式赛大厅 |
-| `/games/:id/play` | `TradingGamePage` | requireAuth | `trading/*` | **当前唯一可玩对局页** |
-| `/games/:id/techventure/lobby` | `TechVentureLobbyPage` | requireAuth | `techventure/lobby`、`join-team` | **TechVenture 选队等待大厅** |
-| `/games/:id/techventure` | `TechVenturePlayPage` | requireAuth | `techventure/*` | **TechVenture 队伍商赛** |
+| `/games/:id/play` | `TradingGamePage` | requireAuth | `trading/*` | **全屏对局**（无侧栏）；地图左·物价右 |
+| `/games/:id/techventure/lobby` | `TechVentureLobbyPage` | requireAuth | `techventure/lobby`、`join-team` | 选队大厅（保留平台壳） |
+| `/games/:id/techventure` | `TechVenturePlayPage` | requireAuth | `techventure/*` | **全屏对局**；战略地图左·赛场情报右 |
 | `/wiki` | `WikiPage` | requireAuth | `wiki/*` | Canvas 图谱；**体验营模式下侧栏隐藏** |
 | `/wiki/:id` | `WikiArticlePage` | requireAuth | `wiki/articles/:id` | |
 | `/courses` | `CoursesPage` | requireAuth | `courses/` | |
@@ -651,6 +652,7 @@ flowchart LR
 
 | 日期 | 摘要 |
 | ---- | ---- |
+| 2026-06-01 | **双赛制全屏对局 UI + 日常活动**：`GameFullscreenLayout`；浮生记地图\|物价并排；创想 `TvStrategyMapPanel`；`/activities` 单人练习；商赛大厅仅房间码；`round_presenter` 修组织者控场 |
 | 2026-06-01 | **FStrading × 拟真城市对接**：`geo/yangtze_6`、路网移动校验、`GET .../geo-pack`、对局 `rts.world`；前端 `FushengjiMapStage` + 素材 `public/assets/fushengji/v1/`；`classroom` 240 tick 预设 |
 | 2026-06-01 | **移除浮生记回合制**：删除 `ai_trader`/`round_advance`/`practice_flow`/`engine`；`api/trading` 仅 RTS；前端/组织端去掉回合 UI 与 `/rounds/*` |
 | 2026-06-01 | **FStrading 统一 trading 配置**：删除 `trading-v1`/`trading-v2-rts`，唯一包 `fstrading`；registry 别名兼容存量对局 |

@@ -189,7 +189,7 @@ def get_event_control(
         )
 
     from app.api.competitions import _event_to_out, _participant_to_out, _calc_inventory_value
-    from app.api.trading import _round_to_out
+    from app.games.trading.round_presenter import round_to_out
     from app.games.trading.rts_config import is_rts_mode
     from app.games.trading.rts_state import get_rts_runtime, seconds_until_next_tick
 
@@ -236,7 +236,7 @@ def get_event_control(
 
     return ApiResponse.ok(data=OrganizerControlOut(
         event=_event_to_out(event, db),
-        current_round=_round_to_out(current_round) if current_round else None,
+        current_round=round_to_out(current_round) if current_round else None,
         standings=standings,
         participants=[_participant_to_out(p, db) for p in participants],
         decisions_submitted=decisions_submitted,

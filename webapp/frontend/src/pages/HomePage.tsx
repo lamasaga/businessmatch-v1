@@ -18,13 +18,13 @@ import { isCampPhase1 } from '../lib/campPhase';
 const quickActionsCamp = [
   { icon: Tent, label: '我的体验营', desc: '查看营团与营内商赛', path: '/camp', color: 'text-primary' },
   { icon: Gamepad2, label: '商赛大厅', desc: '输入 4 位房间码加入对局', path: '/games', color: 'text-blue-400' },
+  { icon: Flame, label: '日常活动', desc: '单人赛事练习与习惯打卡', path: '/activities', color: 'text-orange-400' },
   { icon: Target, label: '生涯中枢', desc: '成长进度与赛后复盘', path: '/career', color: 'text-amber-400' },
-  { icon: BookOpen, label: '课程学院', desc: '商业知识学习（可选）', path: '/courses', color: 'text-emerald-400' },
 ];
 
 const quickActionsDefault = [
   { icon: Target, label: '生涯中枢', desc: '查看本周计划与成长进度', path: '/career', color: 'text-primary' },
-  { icon: Flame, label: '每日任务', desc: '完成今日挑战获取经验', path: '/quests', color: 'text-orange-400' },
+  { icon: Flame, label: '日常活动', desc: '单人练习与习惯打卡', path: '/activities', color: 'text-orange-400' },
   { icon: Gamepad2, label: '商赛大厅', desc: '加入对局或创建房间', path: '/games', color: 'text-blue-400' },
   { icon: BookOpen, label: '课程学院', desc: '系统化商业知识学习', path: '/courses', color: 'text-emerald-400' },
 ];

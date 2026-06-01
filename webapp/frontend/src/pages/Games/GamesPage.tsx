@@ -2,10 +2,9 @@ import { useState, useEffect } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { useCompetitionStore } from '../../stores/competitionStore';
 import { api } from '../../lib/api';
-import { useTechVentureStore } from '../../stores/techventureStore';
 import {
   Trophy, Search, Users, Clock, ArrowRight,
-  TrendingUp, MapPin, Zap, Bot, Sparkles, Loader2, Play, Briefcase, ChevronDown, ChevronUp,
+  TrendingUp, MapPin, Zap, Loader2,
 } from 'lucide-react';
 import { isCampPhase1 } from '../../lib/campPhase';
 
@@ -21,13 +20,10 @@ function lobbyRoute(eventId: number, configId?: string): string {
 
 export default function GamesPage() {
   const navigate = useNavigate();
-  const { events, fetchEvents, joinEvent, startPractice, loading } = useCompetitionStore();
-  const tvStore = useTechVentureStore();
+  const { events, fetchEvents, joinEvent, loading } = useCompetitionStore();
   const [roomCode, setRoomCode] = useState('');
   const [joinError, setJoinError] = useState('');
   const [activeTab, setActiveTab] = useState<'public' | 'my'>('public');
-  const [tvLoading, setTvLoading] = useState(false);
-  const [practiceExpanded, setPracticeExpanded] = useState(!isCampPhase1);
 
   useEffect(() => {
     fetchEvents();
@@ -41,136 +37,52 @@ export default function GamesPage() {
     setJoinError('');
     try {
       const eventId = await joinEvent(roomCode);
-      const ev = events.find(e => e.id === eventId);
+      const ev = events.find((e) => e.id === eventId);
       let configId = ev?.game_config_id;
       if (!configId) {
         const res = await api.get(`/api/v1/competitions/${eventId}`);
         configId = res.data.data?.game_config_id;
       }
       navigate(lobbyRoute(eventId, configId));
-    } catch (err: any) {
-      setJoinError(err.message || '加入失败');
+    } catch (err: unknown) {
+      const message = err instanceof Error ? err.message : '加入失败';
+      setJoinError(message);
     }
   };
 
-  const handleStartPractice = async () => {
-    setJoinError('');
-    try {
-      const event = await startPractice();
-      navigate(`/games/${event.id}/play`);
-    } catch (err: any) {
-      setJoinError(err.message || '练习局创建失败');
-    }
-  };
-
-  const handleStartTvPractice = async () => {
-    setJoinError('');
-    setTvLoading(true);
-    try {
-      const result = await tvStore.startPractice();
-      navigate(`/games/${result.event_id}/techventure`);
-    } catch (err: any) {
-      setJoinError(err.message || 'TechVenture 练习创建失败');
-    } finally {
-      setTvLoading(false);
-    }
-  };
-
-  const myEvents = events.filter(e =>
-    e.status === 'playing' || e.status === 'registration'
+  const myEvents = events.filter(
+    (e) => e.status === 'playing' || e.status === 'registration',
   );
 
   return (
     <div className="max-w-6xl mx-auto">
-      {/* Header */}
       <div className="mb-8 flex flex-wrap items-end justify-between gap-4">
         <div>
           <h1 className="text-3xl font-bold text-foreground tracking-tight">商赛大厅</h1>
           <p className="text-foreground-muted mt-1">
             {isCampPhase1
               ? '输入教师提供的 4 位房间码加入营内商赛（营团码为 6 位，在「我的体验营」入营）'
-              : '加入比赛，体验真实商业竞争'}
+              : '输入房间码加入教师或组织者发起的对局'}
           </p>
         </div>
-        {isCampPhase1 && (
+        <div className="flex flex-wrap items-center gap-3 shrink-0">
+          {isCampPhase1 && (
+            <Link
+              to="/camp"
+              className="text-sm text-primary font-medium hover:underline"
+            >
+              我的体验营 →
+            </Link>
+          )}
           <Link
-            to="/camp"
-            className="text-sm text-primary font-medium hover:underline shrink-0"
+            to="/activities"
+            className="text-sm text-accent-teal font-medium hover:underline"
           >
-            我的体验营 →
+            单人练习 → 日常活动
           </Link>
-        )}
-      </div>
-
-      {isCampPhase1 && (
-        <button
-          type="button"
-          onClick={() => setPracticeExpanded((v) => !v)}
-          className="w-full flex items-center justify-between px-4 py-3 mb-4 rounded-xl border border-border-subtle text-sm text-foreground-muted hover:bg-background-hover"
-        >
-          <span>日常自主练习（可选）</span>
-          {practiceExpanded ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
-        </button>
-      )}
-
-      {practiceExpanded && (
-      <>
-      <div className="glass-card p-6 mb-8 border border-accent-teal/20 bg-accent-teal/5">
-        <div className="flex flex-col md:flex-row md:items-center gap-4">
-          <div className="w-12 h-12 rounded-xl bg-accent-teal/20 flex items-center justify-center shrink-0">
-            <Bot className="w-6 h-6 text-accent-teal" />
-          </div>
-          <div className="flex-1">
-            <h3 className="font-semibold text-foreground flex items-center gap-2">
-              FStrading · 日常练习
-              <Sparkles className="w-4 h-4 text-accent-teal" />
-            </h3>
-            <p className="text-sm text-foreground-muted mt-1">
-              长三角六城十品即时商战：3 名 AI 交易员与你共同买卖，物价由供需驱动
-            </p>
-          </div>
-          <button
-            type="button"
-            onClick={handleStartPractice}
-            disabled={loading}
-            className="px-6 py-2.5 bg-accent-teal text-background rounded-xl font-semibold hover:bg-accent-teal/90 transition-colors disabled:opacity-50 flex items-center justify-center gap-2 shrink-0"
-          >
-            {loading ? <Loader2 className="w-4 h-4 animate-spin" /> : <Play className="w-4 h-4" />}
-            开始练习
-          </button>
         </div>
       </div>
 
-      {/* TechVenture Daily practice */}
-      <div className="glass-card p-6 mb-8 border border-purple-500/20 bg-purple-500/5">
-        <div className="flex flex-col md:flex-row md:items-center gap-4">
-          <div className="w-12 h-12 rounded-xl bg-purple-500/20 flex items-center justify-center shrink-0">
-            <Briefcase className="w-6 h-6 text-purple-400" />
-          </div>
-          <div className="flex-1">
-            <h3 className="font-semibold text-foreground flex items-center gap-2">
-              创想大赢家 · 日常练习
-              <Sparkles className="w-4 h-4 text-purple-400" />
-            </h3>
-            <p className="text-sm text-foreground-muted mt-1">
-              4 轮策略商赛：三城布局 + 四条路线 + BQI 评分，与 5 支 AI 队伍对决
-            </p>
-          </div>
-          <button
-            type="button"
-            onClick={handleStartTvPractice}
-            disabled={tvLoading}
-            className="px-6 py-2.5 bg-purple-500 text-white rounded-xl font-semibold hover:bg-purple-500/90 transition-colors disabled:opacity-50 flex items-center justify-center gap-2 shrink-0"
-          >
-            {tvLoading ? <Loader2 className="w-4 h-4 animate-spin" /> : <Play className="w-4 h-4" />}
-            开始练习
-          </button>
-        </div>
-      </div>
-      </>
-      )}
-
-      {/* Join by room code */}
       <div className="glass-card p-6 mb-8">
         <div className="flex items-center gap-4">
           <div className="w-12 h-12 rounded-xl bg-primary-soft flex items-center justify-center">
@@ -178,7 +90,7 @@ export default function GamesPage() {
           </div>
           <div className="flex-1">
             <h3 className="font-semibold text-foreground">输入房间码加入比赛</h3>
-            <p className="text-sm text-foreground-muted">向组织者获取4位数字房间码</p>
+            <p className="text-sm text-foreground-muted">向组织者获取 4 位数字房间码</p>
           </div>
           <div className="flex items-center gap-3">
             <input
@@ -193,6 +105,7 @@ export default function GamesPage() {
               className="w-24 px-4 py-2.5 text-center text-lg font-mono tracking-widest bg-background-secondary border border-border-subtle rounded-xl text-foreground placeholder:text-foreground-muted focus:outline-none focus:border-primary"
             />
             <button
+              type="button"
               onClick={handleJoin}
               disabled={loading || roomCode.length !== 4}
               className="px-6 py-2.5 bg-primary text-background rounded-xl font-semibold hover:bg-primary/90 transition-colors disabled:opacity-50"
@@ -201,14 +114,12 @@ export default function GamesPage() {
             </button>
           </div>
         </div>
-        {joinError && (
-          <p className="mt-3 text-sm text-danger">{joinError}</p>
-        )}
+        {joinError && <p className="mt-3 text-sm text-danger">{joinError}</p>}
       </div>
 
-      {/* Tabs */}
       <div className="flex items-center gap-6 mb-6 border-b border-border-subtle">
         <button
+          type="button"
           onClick={() => setActiveTab('public')}
           className={`pb-3 text-sm font-medium transition-colors ${
             activeTab === 'public'
@@ -219,6 +130,7 @@ export default function GamesPage() {
           公开比赛
         </button>
         <button
+          type="button"
           onClick={() => setActiveTab('my')}
           className={`pb-3 text-sm font-medium transition-colors ${
             activeTab === 'my'
@@ -230,31 +142,49 @@ export default function GamesPage() {
         </button>
       </div>
 
-      {/* Events List */}
       {activeTab === 'public' && (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
           {events.map((event) => (
             <div
               key={event.id}
-              onClick={() => navigate(
-                event.status === 'playing'
-                  ? gameRoute(event.id, event.game_config_id)
-                  : lobbyRoute(event.id, event.game_config_id)
-              )}
+              role="button"
+              tabIndex={0}
+              onClick={() =>
+                navigate(
+                  event.status === 'playing'
+                    ? gameRoute(event.id, event.game_config_id)
+                    : lobbyRoute(event.id, event.game_config_id),
+                )
+              }
+              onKeyDown={(e) => {
+                if (e.key === 'Enter' || e.key === ' ') {
+                  navigate(
+                    event.status === 'playing'
+                      ? gameRoute(event.id, event.game_config_id)
+                      : lobbyRoute(event.id, event.game_config_id),
+                  );
+                }
+              }}
               className="glass-card p-5 cursor-pointer hover:border-primary/30 transition-all group"
             >
               <div className="flex items-start justify-between mb-4">
                 <div className="w-10 h-10 rounded-lg bg-primary-soft flex items-center justify-center">
                   <Trophy className="w-5 h-5 text-primary" />
                 </div>
-                <span className={`text-xs px-2.5 py-1 rounded-full font-medium ${
-                  event.status === 'playing'
-                    ? 'bg-success/10 text-success'
+                <span
+                  className={`text-xs px-2.5 py-1 rounded-full font-medium ${
+                    event.status === 'playing'
+                      ? 'bg-success/10 text-success'
+                      : event.status === 'registration'
+                        ? 'bg-primary/10 text-primary'
+                        : 'bg-foreground-muted/10 text-foreground-muted'
+                  }`}
+                >
+                  {event.status === 'playing'
+                    ? '进行中'
                     : event.status === 'registration'
-                    ? 'bg-primary/10 text-primary'
-                    : 'bg-foreground-muted/10 text-foreground-muted'
-                }`}>
-                  {event.status === 'playing' ? '进行中' : event.status === 'registration' ? '报名中' : '已结束'}
+                      ? '报名中'
+                      : '已结束'}
                 </span>
               </div>
 
@@ -291,7 +221,13 @@ export default function GamesPage() {
             <div className="col-span-full text-center py-16">
               <Trophy className="w-12 h-12 mx-auto text-foreground-muted/30 mb-4" />
               <p className="text-foreground-muted">暂无公开比赛</p>
-              <p className="text-sm text-foreground-muted/60 mt-1">输入房间码加入比赛或等待组织者创建</p>
+              <p className="text-sm text-foreground-muted/60 mt-1">
+                输入房间码加入比赛，或到
+                <Link to="/activities" className="text-primary mx-1 hover:underline">
+                  日常活动
+                </Link>
+                进行单人练习
+              </p>
             </div>
           )}
         </div>
@@ -299,33 +235,43 @@ export default function GamesPage() {
 
       {activeTab === 'my' && (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-          {myEvents.length > 0 ? myEvents.map((event) => (
-            <div
-              key={event.id}
-              onClick={() => navigate(
-                event.status === 'playing'
-                  ? gameRoute(event.id, event.game_config_id)
-                  : lobbyRoute(event.id, event.game_config_id)
-              )}
-              className="glass-card p-5 cursor-pointer hover:border-primary/30 transition-all"
-            >
-              <div className="flex items-start justify-between mb-4">
-                <div className="w-10 h-10 rounded-lg bg-primary-soft flex items-center justify-center">
-                  <Zap className="w-5 h-5 text-primary" />
+          {myEvents.length > 0 ? (
+            myEvents.map((event) => (
+              <div
+                key={event.id}
+                role="button"
+                tabIndex={0}
+                onClick={() =>
+                  navigate(
+                    event.status === 'playing'
+                      ? gameRoute(event.id, event.game_config_id)
+                      : lobbyRoute(event.id, event.game_config_id),
+                  )
+                }
+                className="glass-card p-5 cursor-pointer hover:border-primary/30 transition-all"
+              >
+                <div className="flex items-start justify-between mb-4">
+                  <div className="w-10 h-10 rounded-lg bg-primary-soft flex items-center justify-center">
+                    <Zap className="w-5 h-5 text-primary" />
+                  </div>
+                  <span
+                    className={`text-xs px-2.5 py-1 rounded-full font-medium ${
+                      event.status === 'playing'
+                        ? 'bg-success/10 text-success'
+                        : 'bg-primary/10 text-primary'
+                    }`}
+                  >
+                    {event.status === 'playing' ? '进行中' : '报名中'}
+                  </span>
                 </div>
-                <span className={`text-xs px-2.5 py-1 rounded-full font-medium ${
-                  event.status === 'playing'
-                    ? 'bg-success/10 text-success'
-                    : 'bg-primary/10 text-primary'
-                }`}>
-                  {event.status === 'playing' ? '进行中' : '报名中'}
-                </span>
+                <h3 className="font-semibold text-foreground mb-1">{event.title}</h3>
+                <p className="text-sm text-foreground-muted mb-3">
+                  {event.description || '暂无描述'}
+                </p>
+                <div className="text-xs font-mono text-primary">房间码: {event.room_code}</div>
               </div>
-              <h3 className="font-semibold text-foreground mb-1">{event.title}</h3>
-              <p className="text-sm text-foreground-muted mb-3">{event.description || '暂无描述'}</p>
-              <div className="text-xs font-mono text-primary">房间码: {event.room_code}</div>
-            </div>
-          )) : (
+            ))
+          ) : (
             <div className="col-span-full text-center py-16">
               <MapPin className="w-12 h-12 mx-auto text-foreground-muted/30 mb-4" />
               <p className="text-foreground-muted">您还没有参加任何比赛</p>

@@ -34,6 +34,7 @@ type Props = {
   tick: number;
   transit?: { from_city?: string; to_city?: string; arrival_tick?: number } | null;
   basemapUrl?: string;
+  className?: string;
 };
 
 export default function FushengjiMapStage({
@@ -45,6 +46,7 @@ export default function FushengjiMapStage({
   tick,
   transit,
   basemapUrl = '/assets/fushengji/v1/maps/yangtze_6-schematic.svg',
+  className = '',
 }: Props) {
   const [pack, setPack] = useState<WorldGeoPack | null>(null);
   const [loadError, setLoadError] = useState<string | null>(null);
@@ -92,10 +94,13 @@ export default function FushengjiMapStage({
   const assetBasemap = pack?.assets?.basemap_schematic || basemapUrl;
 
   return (
-    <div className="relative w-full rounded-xl overflow-hidden border border-border-subtle bg-background-secondary">
+    <div
+      className={`relative w-full h-full min-h-[240px] rounded-xl overflow-hidden border border-border-subtle bg-background-secondary flex flex-col ${className}`}
+    >
       <svg
         viewBox={`0 0 ${STAGE_W} ${STAGE_H}`}
-        className="w-full h-auto block"
+        className="w-full h-full flex-1 block object-contain"
+        preserveAspectRatio="xMidYMid meet"
         role="img"
         aria-label="长三角商路地图"
       >

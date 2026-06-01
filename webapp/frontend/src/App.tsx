@@ -8,7 +8,7 @@ import RegisterPage from './pages/Auth/RegisterPage';
 import CareerPage from './pages/Career/CareerPage';
 import CareerStartPage from './pages/Career/CareerStartPage';
 import DebriefPage from './pages/Career/DebriefPage';
-import QuestsPage from './pages/Quests/QuestsPage';
+import DailyActivitiesPage from './pages/Activities/DailyActivitiesPage';
 import AchievementsPage from './pages/Achievements/AchievementsPage';
 import ShowcasePage from './pages/Showcase/ShowcasePage';
 import GamesPage from './pages/Games/GamesPage';
@@ -29,12 +29,25 @@ import EmployeeDetailPage from './pages/OPC/EmployeeDetailPage';
 import MyCampPage from './pages/Camp/MyCampPage';
 import JoinCampPage from './pages/Camp/JoinCampPage';
 import SandboxPage from './pages/Sandbox/SandboxPage';
+import GameFullscreenLayout from './components/GameFullscreenLayout';
 
 function App() {
   return (
     <BrowserRouter>
       <AppInitializer>
         <Routes>
+          {/* 对局全屏：无左侧导航 */}
+          <Route
+            element={
+              <AuthGuard requireAuth>
+                <GameFullscreenLayout />
+              </AuthGuard>
+            }
+          >
+            <Route path="games/:id/play" element={<TradingGamePage />} />
+            <Route path="games/:id/techventure" element={<TechVenturePlayPage />} />
+          </Route>
+
           <Route path="/" element={<Layout />}>
             {/* 公开页面 */}
             <Route index element={<HomePage />} />
@@ -84,13 +97,14 @@ function App() {
               }
             />
             <Route
-              path="quests"
+              path="activities"
               element={
                 <AuthGuard requireAuth>
-                  <QuestsPage />
+                  <DailyActivitiesPage />
                 </AuthGuard>
               }
             />
+            <Route path="quests" element={<Navigate to="/activities" replace />} />
             <Route
               path="achievements"
               element={
@@ -140,26 +154,10 @@ function App() {
               }
             />
             <Route
-              path="games/:id/play"
-              element={
-                <AuthGuard requireAuth>
-                  <TradingGamePage />
-                </AuthGuard>
-              }
-            />
-            <Route
               path="games/:id/techventure/lobby"
               element={
                 <AuthGuard requireAuth>
                   <TechVentureLobbyPage />
-                </AuthGuard>
-              }
-            />
-            <Route
-              path="games/:id/techventure"
-              element={
-                <AuthGuard requireAuth>
-                  <TechVenturePlayPage />
                 </AuthGuard>
               }
             />

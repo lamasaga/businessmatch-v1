@@ -35,22 +35,17 @@ export default function TradingGamePage() {
 
   if (!gameState) {
     return (
-      <div className="flex items-center justify-center h-96">
-        <Loader2 className="w-8 h-8 text-primary animate-spin" />
+      <div className="flex flex-1 items-center justify-center min-h-0">
+        <Loader2 className="w-10 h-10 text-primary animate-spin" />
       </div>
     );
   }
 
   return (
-    <>
-      <TradingRTSView
-        gameState={gameState}
-        eventId={eventId}
-        onRefresh={refresh}
-      />
-      {error && (
-        <p className="mt-4 text-center text-sm text-danger">{error}</p>
-      )}
-    </>
+    <TradingRTSView
+      gameState={gameState}
+      eventId={eventId}
+      onRefresh={refresh}
+    />
   );
 }

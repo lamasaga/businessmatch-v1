@@ -21,11 +21,11 @@ export const FIVE_DOMAINS = [
   },
   {
     id: 'quest',
-    name: '每日任务',
-    code: 'Quest',
+    name: '日常活动',
+    code: 'Activities',
     color: 'from-amber-500 to-orange-600',
-    desc: '每日挑战、连续打卡与班级协作',
-    path: '/quests',
+    desc: '单人赛事练习、习惯打卡与连续奖励',
+    path: '/activities',
   },
   {
     id: 'arena',
@@ -90,7 +90,7 @@ export const DEMO_CAREER = {
     ethical: 70,
   },
   weeklyPlan: [
-    { day: '周一', tasks: ['完成图谱节点「供需关系」', '每日任务 ×1'] },
+    { day: '周一', tasks: ['完成图谱节点「供需关系」', '日常活动 ×1'] },
     { day: '周三', tasks: ['课程单元：定价策略', '谈判练习 15 分钟'] },
     { day: '周五', tasks: ['回合制教学对局', '阅读赛后复盘'] },
   ],
@@ -98,7 +98,7 @@ export const DEMO_CAREER = {
     '第 3 章 · 你从「旁观者」走向「洞察者」：在回合制商赛中决策一致率 92%，静默策略室的书面分析两次被队长采纳。导师建议下月尝试「投资人对决」以锻炼口头表达。',
 };
 
-export const DAILY_QUESTS = [
+export const DAILY_HABITS = [
   {
     id: 'q1',
     title: '阅读概念卡「价格弹性」',
@@ -124,6 +124,9 @@ export const DAILY_QUESTS = [
     athenaHint: '练习模式不计入排位，可放心试错',
   },
 ];
+
+/** @deprecated 使用 DAILY_HABITS */
+export const DAILY_QUESTS = DAILY_HABITS;
 
 export const ACHIEVEMENTS = [
   { id: 'a1', name: '启程者', desc: '开启生涯模式', rarity: 'common', earned: true },
@@ -197,9 +200,9 @@ export const SHOWCASE_STEPS = [
   },
   {
     step: 3,
-    title: '每日任务',
-    path: '/quests',
-    script: '每日挑战维持学习习惯；完成后导师轻反思。与图谱、课程、练习赛形成日循环。',
+    title: '日常活动',
+    path: '/activities',
+    script: '单人赛事练习与习惯打卡；完成后导师轻反思。与图谱、课程、营内商赛形成日循环。',
   },
   {
     step: 4,

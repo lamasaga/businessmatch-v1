@@ -12,6 +12,7 @@ from app.schemas.trading_competition import GameState, RtsActionRequest, RtsActi
 from app.core.response import ApiResponse, BusinessException, ErrorCode
 from app.core.dependencies import get_current_active_user
 from app.api.trading_rts_handlers import build_rts_game_state, submit_rts_action
+from app.games.trading.round_presenter import round_to_out as _round_to_out  # noqa: F401 — 兼容 organizer 等旧导入
 from app.games.trading.rts_config import is_rts_mode
 from app.games.trading.models import TradingRound
 from app.games.trading.world_slice import geo_pack_for_region

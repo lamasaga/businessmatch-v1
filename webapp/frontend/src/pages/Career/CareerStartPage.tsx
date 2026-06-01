@@ -31,7 +31,7 @@ export default function CareerStartPage() {
         </div>
         <h1 className="text-3xl font-bold tracking-tight">开启你的商业探索赛季</h1>
         <p className="text-foreground-muted leading-relaxed max-w-md mx-auto">
-          所有学习活动将汇入同一成长档案：知识图谱、课程学习、每日任务、商赛对局、成就认证。
+          所有学习活动将汇入同一成长档案：知识图谱、课程学习、日常活动、商赛对局、成就认证。
         </p>
       </header>
 

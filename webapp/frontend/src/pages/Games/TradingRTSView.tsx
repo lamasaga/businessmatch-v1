@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import {
   TrendingUp, TrendingDown, Minus, MapPin, Wallet, Package,
   Loader2, Crown, Clock, ShoppingCart, Truck, BarChart3, Box,
+  ArrowLeft, X,
 } from 'lucide-react';
 import { useTradingStore } from '../../stores/tradingStore';
 import { useAuthStore } from '../../stores/authStore';
@@ -34,6 +35,8 @@ export default function TradingRTSView({ gameState, eventId, onRefresh }: Props)
   const [vehicleType, setVehicleType] = useState<'van' | 'truck'>('van');
   const [submitting, setSubmitting] = useState(false);
   const [lastMsg, setLastMsg] = useState('');
+
+  const exitPath = gameState.is_practice ? '/activities' : '/games';
 
   const { event, participant, inventory, standings, rts, inventory_capacity } = gameState;
   const isFinished = event.status === 'finished';
@@ -113,168 +116,179 @@ export default function TradingRTSView({ gameState, eventId, onRefresh }: Props)
   };
 
   return (
-    <div className="max-w-6xl mx-auto">
-      <div className="glass-card p-4 mb-6">
-        <div className="flex items-center justify-between flex-wrap gap-4">
-          <div className="flex items-center gap-6 flex-wrap">
+    <div className="relative flex flex-col h-full min-h-0">
+      {/* 顶栏 HUD */}
+      <header className="shrink-0 border-b border-border-subtle bg-background-secondary/90 backdrop-blur-md px-4 py-2.5">
+        <div className="flex items-center justify-between gap-3 flex-wrap">
+          <div className="flex items-center gap-3">
+            <button
+              type="button"
+              onClick={() => navigate(exitPath)}
+              className="p-2 rounded-lg hover:bg-background-hover text-foreground-muted hover:text-foreground"
+              title="退出对局"
+            >
+              <ArrowLeft className="w-5 h-5" />
+            </button>
             <div>
-              <p className="text-xs text-foreground-muted">Tick</p>
-              <p className="text-lg font-bold text-foreground">
-                {tick} / {totalTicks}
-                <span className="text-xs font-normal text-foreground-muted ml-2">
-                  ({phase === 'warmup' ? '热身' : phase === 'running' ? '正赛' : phase})
+              <h1 className="text-sm font-bold text-foreground leading-tight">
+                {event.title || '浮生记 · 商战'}
+              </h1>
+              <p className="text-[11px] text-foreground-muted">
+                {gameState.is_practice ? '单人练习' : '正式对局'}
+                {' · '}
+                每 {rts?.tick_interval_sec ?? 5}s 一 tick
+              </p>
+            </div>
+          </div>
+
+          <div className="flex items-center gap-4 flex-wrap text-sm">
+            <div className="text-center">
+              <p className="text-[10px] text-foreground-muted uppercase tracking-wide">Tick</p>
+              <p className="font-bold tabular-nums">
+                {tick}/{totalTicks}
+                <span className="text-xs font-normal text-foreground-muted ml-1">
+                  {phase === 'warmup' ? '热身' : phase === 'running' ? '正赛' : phase}
                 </span>
               </p>
             </div>
-            <div>
-              <p className="text-xs text-foreground-muted">下 tick</p>
-              <p className="text-lg font-bold text-accent-teal flex items-center gap-1">
-                <Clock className="w-4 h-4" />
+            <div className="text-center">
+              <p className="text-[10px] text-foreground-muted">倒计时</p>
+              <p className="font-bold text-accent-teal flex items-center gap-1 tabular-nums">
+                <Clock className="w-3.5 h-3.5" />
                 {rts?.seconds_until_next_tick ?? 0}s
               </p>
             </div>
-            <div>
-              <p className="text-xs text-foreground-muted">现金</p>
-              <p className="text-lg font-bold text-success">¥{participant.cash.toLocaleString()}</p>
+            <div className="text-center">
+              <p className="text-[10px] text-foreground-muted">现金</p>
+              <p className="font-bold text-success tabular-nums">¥{participant.cash.toLocaleString()}</p>
             </div>
-            <div>
-              <p className="text-xs text-foreground-muted">总资产</p>
-              <p className="text-lg font-bold text-primary">¥{participant.total_assets.toLocaleString()}</p>
+            <div className="text-center">
+              <p className="text-[10px] text-foreground-muted">总资产</p>
+              <p className="font-bold text-primary tabular-nums">¥{participant.total_assets.toLocaleString()}</p>
             </div>
-            <div>
-              <p className="text-xs text-foreground-muted">仓储</p>
-              <p className="text-lg font-bold text-foreground">
+            <div className="text-center">
+              <p className="text-[10px] text-foreground-muted">仓储</p>
+              <p className="font-bold tabular-nums">
                 {storageUsed}/{storageCap}
               </p>
             </div>
-          </div>
-          <div className="text-sm text-foreground-muted">
-            <MapPin className="w-4 h-4 text-primary inline mr-1" />
-            {cityLabel}
-            {transit && (
-              <span className="ml-2 text-warning">
-                → {resolveCityName(transit.to_city || '')}（{transit.arrival_tick} tick 到）
-              </span>
-            )}
-            {gameState.is_practice && (
-              <span className="ml-2 text-xs px-2 py-0.5 rounded-full bg-accent-teal/15 text-accent-teal">练习</span>
-            )}
+            <div className="hidden sm:flex items-center gap-1 text-foreground-muted max-w-[200px]">
+              <MapPin className="w-4 h-4 text-primary shrink-0" />
+              <span className="truncate text-xs">{cityLabel}</span>
+              {transit && (
+                <span className="text-warning text-xs truncate">
+                  →{resolveCityName(transit.to_city || '')}
+                </span>
+              )}
+            </div>
           </div>
         </div>
-        <div className="mt-3 h-1.5 bg-background-secondary rounded-full overflow-hidden">
+        <div className="mt-2 h-1 bg-background rounded-full overflow-hidden">
           <div
             className="h-full bg-primary transition-all duration-500"
             style={{ width: `${Math.min(100, (tick / totalTicks) * 100)}%` }}
           />
         </div>
-      </div>
-
-      <div className="glass-card p-4 mb-6">
-        <h3 className="text-sm font-semibold mb-3 flex items-center gap-2">
-          <MapPin className="w-4 h-4 text-primary" />
-          商路地图
-        </h3>
-        <FushengjiMapStage
-          configId={gameConfigId}
-          world={worldSlice}
-          currentCity={participant.current_city}
-          selectedCity={mapFocusCity || selectedCity || null}
-          onSelectCity={(id) => {
-            setMapFocusCity(id);
-            if (actionType === 'move' && moveTargets.includes(id)) setSelectedCity(id);
-          }}
-          tick={tick}
-          transit={transit}
-        />
-      </div>
-
-      {isFinished && (
-        <div className="glass-card p-6 mb-6 border border-primary/20 text-center">
-          <Crown className="w-10 h-10 mx-auto text-primary mb-2" />
-          <h3 className="text-lg font-semibold">比赛结束</h3>
-          <p className="text-sm text-foreground-muted mt-1">
-            排名 #{standings.find((s) => s.user_id === user?.id)?.rank ?? '-'}
-          </p>
-          <button
-            type="button"
-            onClick={() => navigate('/games')}
-            className="mt-4 px-6 py-2.5 bg-primary text-background rounded-lg font-medium"
-          >
-            返回大厅
-          </button>
-        </div>
-      )}
+      </header>
 
       {lastMsg && (
-        <p className="text-sm text-accent-teal mb-4 text-center">{lastMsg}</p>
+        <p className="shrink-0 text-center text-xs text-accent-teal py-1 bg-accent-teal/10 border-b border-accent-teal/20">
+          {lastMsg}
+        </p>
       )}
 
-      <div className="glass-card p-4 mb-6 border border-accent-teal/15">
-        <h3 className="text-sm font-semibold text-accent-teal mb-1">即时物流商战</h3>
-        <p className="text-xs text-foreground-muted">
-          每 {gameState.rts?.tick_interval_sec ?? 5} 秒结算一次：买入价 ask、卖出价 bid，同城买卖必有价差。工业城产日用品，科技/工业产家电，农业城产粮与生鲜。
-        </p>
+      {/* 主战区：地图 | 物价 */}
+      <div className="flex-1 min-h-0 flex flex-col lg:flex-row gap-3 p-3 overflow-hidden">
+        <section className="flex-1 min-h-[220px] lg:min-h-0 flex flex-col glass-card overflow-hidden">
+          <div className="shrink-0 px-3 py-2 border-b border-border-subtle flex items-center justify-between">
+            <h2 className="text-sm font-semibold flex items-center gap-2">
+              <MapPin className="w-4 h-4 text-primary" />
+              商路地图
+            </h2>
+            <span className="text-[10px] text-foreground-muted">点击城市查看邻城报价</span>
+          </div>
+          <div className="flex-1 min-h-0 p-2">
+            <FushengjiMapStage
+              configId={gameConfigId}
+              world={worldSlice}
+              currentCity={participant.current_city}
+              selectedCity={mapFocusCity || selectedCity || null}
+              onSelectCity={(id) => {
+                setMapFocusCity(id);
+                if (actionType === 'move' && moveTargets.includes(id)) setSelectedCity(id);
+              }}
+              tick={tick}
+              transit={transit}
+              className="h-full"
+            />
+          </div>
+        </section>
+
+        <section className="flex-1 min-h-[280px] lg:min-h-0 lg:max-w-[44%] xl:max-w-[42%] flex flex-col glass-card overflow-hidden">
+          <div className="shrink-0 px-3 py-2 border-b border-border-subtle">
+            <h2 className="text-sm font-semibold flex items-center gap-2">
+              <BarChart3 className="w-4 h-4 text-primary" />
+              {viewingRemote ? `${resolveCityName(quoteCity)} · 报价` : '本城物价'}
+            </h2>
+            {viewingRemote && (
+              <p className="text-[10px] text-warning mt-0.5">预览邻城；买卖须在本城执行</p>
+            )}
+          </div>
+          <div className="flex-1 min-h-0 overflow-auto">
+            <table className="w-full text-sm">
+              <thead className="sticky top-0 bg-background-card z-10">
+                <tr className="text-left text-[10px] text-foreground-muted border-b border-border-subtle">
+                  <th className="px-3 py-2">商品</th>
+                  <th className="px-2 py-2">体</th>
+                  <th className="px-2 py-2">ask</th>
+                  <th className="px-2 py-2">bid</th>
+                  <th className="px-2 py-2">池</th>
+                  <th className="px-2 py-2" />
+                </tr>
+              </thead>
+              <tbody>
+                {displayPrices.map((product) => (
+                  <tr
+                    key={product.product_id}
+                    onClick={() => canAct && !viewingRemote && setSelectedProduct(product.product_id)}
+                    className={`border-b border-border-subtle/40 ${
+                      canAct && !viewingRemote ? 'cursor-pointer hover:bg-background-hover' : ''
+                    } ${selectedProduct === product.product_id ? 'bg-primary-soft' : ''}`}
+                  >
+                    <td className="px-3 py-2 font-medium">{product.name}</td>
+                    <td className="px-2 py-2 text-foreground-muted">{product.volume ?? 1}</td>
+                    <td className="px-2 py-2 text-danger">¥{product.buy_price}</td>
+                    <td className="px-2 py-2 text-success">¥{product.sell_price}</td>
+                    <td className="px-2 py-2 text-xs text-foreground-muted">
+                      {Math.round(product.pool_qty ?? 0)}
+                    </td>
+                    <td className="px-2 py-2">
+                      {product.trend === 'up' ? (
+                        <TrendingUp className="w-3.5 h-3.5 text-success" />
+                      ) : product.trend === 'down' ? (
+                        <TrendingDown className="w-3.5 h-3.5 text-danger" />
+                      ) : (
+                        <Minus className="w-3.5 h-3.5 text-foreground-muted" />
+                      )}
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </section>
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        <div className="lg:col-span-2 space-y-6">
-          <div className="glass-card p-6">
-            <h3 className="font-semibold mb-4 flex items-center gap-2">
-              <BarChart3 className="w-5 h-5 text-primary" />
-              {viewingRemote ? `${resolveCityName(quoteCity)} · 报价预览` : '本城市场'}
-            </h3>
-            {viewingRemote && (
-              <p className="text-xs text-warning mb-3">仅可查看邻城报价；买入/卖出须在本城执行</p>
-            )}
-            <div className="overflow-x-auto">
-              <table className="w-full text-sm">
-                <thead>
-                  <tr className="text-left text-xs text-foreground-muted border-b border-border-subtle">
-                    <th className="pb-2">商品</th>
-                    <th className="pb-2">体积</th>
-                    <th className="pb-2">买入 ask</th>
-                    <th className="pb-2">卖出 bid</th>
-                    <th className="pb-2">池</th>
-                    <th className="pb-2">趋势</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {displayPrices.map((product) => (
-                    <tr
-                      key={product.product_id}
-                      onClick={() => canAct && !viewingRemote && setSelectedProduct(product.product_id)}
-                      className={`border-b border-border-subtle/50 ${
-                        canAct && !viewingRemote ? 'cursor-pointer hover:bg-background-hover' : ''
-                      } ${selectedProduct === product.product_id ? 'bg-primary-soft' : ''}`}
-                    >
-                      <td className="py-2 font-medium">{product.name}</td>
-                      <td className="py-2 text-foreground-muted">{product.volume ?? 1}</td>
-                      <td className="py-2 text-danger">¥{product.buy_price}</td>
-                      <td className="py-2 text-success">¥{product.sell_price}</td>
-                      <td className="py-2 text-xs text-foreground-muted">{Math.round(product.pool_qty ?? 0)}</td>
-                      <td className="py-2">
-                        {product.trend === 'up' ? (
-                          <TrendingUp className="w-4 h-4 text-success inline" />
-                        ) : product.trend === 'down' ? (
-                          <TrendingDown className="w-4 h-4 text-danger inline" />
-                        ) : (
-                          <Minus className="w-4 h-4 text-foreground-muted inline" />
-                        )}
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-          </div>
-
+      {/* 底栏：操作 + 库存 + 排行 */}
+      <footer className="shrink-0 border-t border-border-subtle bg-background-secondary/80 backdrop-blur-md p-3">
+        <div className="grid grid-cols-1 xl:grid-cols-12 gap-3 max-h-[38vh] xl:max-h-[32vh] overflow-y-auto xl:overflow-visible">
           {!isFinished && isPlaying && (
-            <div className="glass-card p-6">
-              <h3 className="font-semibold mb-3">操作（下 tick 执行）</h3>
+            <div className="xl:col-span-5 glass-card p-3">
+              <h3 className="text-xs font-semibold text-foreground-muted mb-2">操作 · 下 tick 执行</h3>
               {!canAct && transit && (
-                <p className="text-sm text-warning mb-4">运输途中，到达后可交易</p>
+                <p className="text-xs text-warning mb-2">运输途中，到达后可交易</p>
               )}
-              <div className="grid grid-cols-4 gap-2 mb-4">
+              <div className="grid grid-cols-4 gap-1.5 mb-2">
                 {(
                   [
                     { type: 'buy' as const, label: '买入', icon: ShoppingCart },
@@ -288,28 +302,28 @@ export default function TradingRTSView({ gameState, eventId, onRefresh }: Props)
                     type="button"
                     disabled={!canAct || (viewingRemote && (type === 'buy' || type === 'sell'))}
                     onClick={() => setActionType(type)}
-                    className={`py-2 rounded-lg text-sm font-medium flex items-center justify-center gap-1 ${
+                    className={`py-1.5 rounded-lg text-xs font-medium flex items-center justify-center gap-1 ${
                       actionType === type ? 'bg-primary text-background' : 'bg-background-secondary'
                     } disabled:opacity-40`}
                   >
-                    <Icon className="w-4 h-4" />
+                    <Icon className="w-3.5 h-3.5" />
                     {label}
                   </button>
                 ))}
               </div>
 
               {(actionType === 'buy' || actionType === 'sell') && (
-                <div className="space-y-3">
+                <div className="flex gap-2 mb-2">
                   <select
                     value={selectedProduct}
                     onChange={(e) => setSelectedProduct(e.target.value)}
                     disabled={!canAct || viewingRemote}
-                    className="w-full px-3 py-2 bg-background-secondary border border-border-subtle rounded-lg"
+                    className="flex-1 min-w-0 px-2 py-1.5 text-xs bg-background-secondary border border-border-subtle rounded-lg"
                   >
-                    <option value="">选择商品</option>
+                    <option value="">商品</option>
                     {currentCityPrices.map((p) => (
                       <option key={p.product_id} value={p.product_id}>
-                        {p.name} · ask ¥{p.buy_price} / bid ¥{p.sell_price}
+                        {p.name}
                       </option>
                     ))}
                   </select>
@@ -320,48 +334,31 @@ export default function TradingRTSView({ gameState, eventId, onRefresh }: Props)
                     value={quantity}
                     disabled={!canAct || viewingRemote}
                     onChange={(e) => setQuantity(Number(e.target.value) || 1)}
-                    className="w-full px-3 py-2 bg-background-secondary border border-border-subtle rounded-lg"
+                    className="w-16 px-2 py-1.5 text-xs bg-background-secondary border border-border-subtle rounded-lg"
                   />
                 </div>
               )}
 
               {actionType === 'move' && (
-                <div className="grid grid-cols-3 gap-2">
+                <div className="flex flex-wrap gap-1.5 mb-2">
                   {moveTargets.map((city) => (
                     <button
                       key={city}
                       type="button"
                       disabled={!canAct || !!transit}
                       onClick={() => setSelectedCity(city)}
-                      className={`py-2 rounded-lg text-sm ${
+                      className={`px-2.5 py-1 rounded-lg text-xs ${
                         selectedCity === city ? 'bg-primary text-background' : 'bg-background-secondary'
                       }`}
                     >
                       {resolveCityName(city)}
-                      {worldRoutes.length > 0 && (
-                        <span className="block text-[10px] opacity-70">
-                          {worldRoutes.find(
-                            (e) =>
-                              (e.from_city === participant.current_city && e.to_city === city) ||
-                              (e.to_city === participant.current_city && e.from_city === city),
-                          )?.base_travel_ticks ?? '?'}
-                          {' '}
-                          tick
-                        </span>
-                      )}
                     </button>
                   ))}
-                  {moveTargets.length === 0 && (
-                    <p className="col-span-3 text-sm text-foreground-muted">当前无可达邻城</p>
-                  )}
                 </div>
               )}
 
               {actionType === 'buy_vehicle' && (
-                <div className="space-y-2">
-                  <p className="text-xs text-foreground-muted">
-                    已购 {vehicles.length}/{maxVehicles} 辆
-                  </p>
+                <div className="flex gap-2 mb-2">
                   {(['van', 'truck'] as const).map((v) => {
                     const def = vehicleDefs[v] || {};
                     return (
@@ -370,14 +367,11 @@ export default function TradingRTSView({ gameState, eventId, onRefresh }: Props)
                         type="button"
                         disabled={!canAct || vehicles.length >= maxVehicles}
                         onClick={() => setVehicleType(v)}
-                        className={`w-full text-left p-3 rounded-lg border ${
+                        className={`flex-1 text-left px-2 py-1.5 rounded-lg border text-xs ${
                           vehicleType === v ? 'border-primary bg-primary-soft' : 'border-border-subtle'
                         }`}
                       >
-                        <span className="font-medium">{VEHICLE_LABELS[v] || def.name || v}</span>
-                        <span className="text-xs text-foreground-muted block">
-                          ¥{def.cost} · +{def.capacity_bonus} 格 · 速度 -{def.speed_bonus} tick
-                        </span>
+                        {VEHICLE_LABELS[v] || v} ¥{def.cost}
                       </button>
                     );
                   })}
@@ -388,62 +382,89 @@ export default function TradingRTSView({ gameState, eventId, onRefresh }: Props)
                 type="button"
                 onClick={handleSubmit}
                 disabled={!canAct || submitting || loading}
-                className="w-full mt-4 py-3 bg-primary text-background rounded-xl font-semibold disabled:opacity-50 flex justify-center gap-2"
+                className="w-full py-2 bg-primary text-background rounded-lg text-sm font-semibold disabled:opacity-50 flex justify-center gap-2"
               >
-                {(submitting || loading) && <Loader2 className="w-5 h-5 animate-spin" />}
+                {(submitting || loading) && <Loader2 className="w-4 h-4 animate-spin" />}
                 提交指令
               </button>
             </div>
           )}
-        </div>
 
-        <div className="space-y-6">
-          <div className="glass-card p-6">
-            <h3 className="font-semibold mb-3 flex items-center gap-2">
-              <Package className="w-4 h-4 text-primary" />
-              库存 · {storageUsed}/{storageCap} 格
+          <div className={`glass-card p-3 ${!isFinished && isPlaying ? 'xl:col-span-4' : 'xl:col-span-6'}`}>
+            <h3 className="text-xs font-semibold flex items-center gap-1 mb-2">
+              <Package className="w-3.5 h-3.5 text-primary" />
+              库存 {storageUsed}/{storageCap}
             </h3>
-            {vehicles.length > 0 && (
-              <p className="text-xs text-foreground-muted mb-2">
-                车辆：{vehicles.map((v) => VEHICLE_LABELS[v] || v).join('、')}
-              </p>
-            )}
-            {inventory.length ? (
-              inventory.map((item) => (
-                <div key={item.product_id} className="flex justify-between py-2 text-sm border-b border-border-subtle/30">
-                  <span>
-                    {item.name} ×{item.quantity}
-                    <span className="text-xs text-foreground-muted ml-1">({(item.volume ?? 1) * item.quantity}格)</span>
-                  </span>
-                  <span>¥{item.current_value}</span>
-                </div>
-              ))
-            ) : (
-              <p className="text-sm text-foreground-muted text-center py-4">空</p>
-            )}
+            <div className="max-h-24 overflow-y-auto text-xs space-y-1">
+              {inventory.length ? (
+                inventory.map((item) => (
+                  <div key={item.product_id} className="flex justify-between">
+                    <span>
+                      {item.name} ×{item.quantity}
+                    </span>
+                    <span className="text-foreground-muted">¥{item.current_value}</span>
+                  </div>
+                ))
+              ) : (
+                <p className="text-foreground-muted">空</p>
+              )}
+            </div>
           </div>
 
-          <div className="glass-card p-6">
-            <h3 className="font-semibold mb-3 flex items-center gap-2">
-              <Crown className="w-4 h-4 text-primary" />
+          <div className={`glass-card p-3 ${!isFinished && isPlaying ? 'xl:col-span-3' : 'xl:col-span-6'}`}>
+            <h3 className="text-xs font-semibold flex items-center gap-1 mb-2">
+              <Crown className="w-3.5 h-3.5 text-primary" />
               排行榜
             </h3>
-            {standings.slice(0, 8).map((e) => (
-              <div
-                key={e.user_id}
-                className={`flex justify-between py-2 text-sm ${e.user_id === user?.id ? 'text-primary font-medium' : ''}`}
-              >
-                <span>
-                  #{e.rank} {e.username}
-                </span>
-                <span>¥{e.total_assets.toLocaleString()}</span>
-              </div>
-            ))}
+            <div className="max-h-24 overflow-y-auto text-xs space-y-1">
+              {standings.slice(0, 6).map((e) => (
+                <div
+                  key={e.user_id}
+                  className={`flex justify-between ${e.user_id === user?.id ? 'text-primary font-medium' : ''}`}
+                >
+                  <span>
+                    #{e.rank} {e.username}
+                  </span>
+                  <span>¥{e.total_assets.toLocaleString()}</span>
+                </div>
+              ))}
+            </div>
           </div>
         </div>
-      </div>
+      </footer>
 
-      {error && <p className="mt-4 text-center text-sm text-danger">{error}</p>}
+      {isFinished && (
+        <div className="absolute inset-0 z-[60] flex items-center justify-center bg-background/85 backdrop-blur-sm p-6">
+          <div className="glass-card p-8 max-w-md w-full text-center border border-primary/30 relative">
+            <button
+              type="button"
+              onClick={() => navigate(exitPath)}
+              className="absolute top-3 right-3 p-1 rounded-lg hover:bg-background-hover text-foreground-muted"
+              aria-label="关闭"
+            >
+              <X className="w-5 h-5" />
+            </button>
+            <Crown className="w-12 h-12 mx-auto text-primary mb-3" />
+            <h3 className="text-xl font-semibold">比赛结束</h3>
+            <p className="text-sm text-foreground-muted mt-2">
+              你的排名 #{standings.find((s) => s.user_id === user?.id)?.rank ?? '-'}
+            </p>
+            <button
+              type="button"
+              onClick={() => navigate(exitPath)}
+              className="mt-6 px-8 py-2.5 bg-primary text-background rounded-xl font-medium"
+            >
+              {gameState.is_practice ? '返回日常活动' : '返回商赛大厅'}
+            </button>
+          </div>
+        </div>
+      )}
+
+      {error && (
+        <p className="absolute bottom-2 left-1/2 -translate-x-1/2 text-xs text-danger bg-background/90 px-3 py-1 rounded-full">
+          {error}
+        </p>
+      )}
     </div>
   );
 }

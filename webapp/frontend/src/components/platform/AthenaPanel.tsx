@@ -4,7 +4,7 @@ import { Bot, Send, X, Sparkles } from 'lucide-react';
 const quickReplies = [
   '如何提升战略能力？',
   '本周计划怎么安排？',
-  'Daily Quest 有什么奖励？',
+  '日常活动有什么奖励？',
 ];
 
 const athenaReplies: Record<string, string> = {
@@ -14,8 +14,8 @@ const athenaReplies: Record<string, string> = {
     '建议从三方面入手：1）完成「博弈论基础」课程；2）多参与回合制策略赛；3）每次对局后认真复盘，关注资源分配时机。',
   '本周计划怎么安排？':
     '根据你的五维雷达，协作能力相对较弱。本周建议：周一图谱学习、周三谈判练习、周五组队商赛。',
-  'Daily Quest 有什么奖励？':
-    '完成每日任务可获得经验值和连续打卡奖励。连续 7 天完成可解锁「持之以恒」徽章，经验加成 10%。',
+  '日常活动有什么奖励？':
+    '完成习惯打卡与单人练习可获得经验值和连续打卡奖励。连续 7 天完成可解锁「持之以恒」徽章，经验加成 10%。',
 };
 
 interface AthenaPanelProps {

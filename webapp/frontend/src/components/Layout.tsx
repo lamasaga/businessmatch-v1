@@ -24,7 +24,7 @@ const allNavItems: NavItem[] = [
   { path: '/', label: '首页', icon: Home },
   { path: '/camp', label: '我的体验营', icon: Tent, highlight: true },
   { path: '/career', label: '生涯中枢', icon: Sparkles },
-  { path: '/quests', label: '每日任务', icon: Flame },
+  { path: '/activities', label: '日常活动', icon: Flame },
   { path: '/games', label: '商赛大厅', icon: Gamepad2, highlight: true },
   { path: '/courses', label: '课程学院', icon: GraduationCap },
   { path: '/wiki', label: '知识图谱', icon: Network },

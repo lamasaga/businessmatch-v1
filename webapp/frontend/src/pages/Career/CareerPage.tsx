@@ -118,13 +118,13 @@ export default function CareerPage() {
       </section>
 
       <section className="grid md:grid-cols-3 gap-4">
-        <Link to="/quests" className="glass-card p-5 flex items-center gap-4 hover:bg-background-hover/50 transition-colors card-hover">
+        <Link to="/activities" className="glass-card p-5 flex items-center gap-4 hover:bg-background-hover/50 transition-colors card-hover">
           <div className="w-11 h-11 rounded-xl bg-orange-500/10 flex items-center justify-center">
             <Flame className="w-5 h-5 text-orange-400" />
           </div>
           <span>
-            <p className="font-semibold text-sm">今日任务</p>
-            <p className="text-xs text-foreground-muted">完成赚经验 + 导师反思</p>
+            <p className="font-semibold text-sm">日常活动</p>
+            <p className="text-xs text-foreground-muted">单人练习与习惯打卡</p>
           </span>
         </Link>
         <Link to="/games" className="glass-card p-5 flex items-center gap-4 hover:bg-background-hover/50 transition-colors card-hover">
@@ -133,7 +133,7 @@ export default function CareerPage() {
           </div>
           <span>
             <p className="font-semibold text-sm">商赛大厅</p>
-            <p className="text-xs text-foreground-muted">排位赛、练习赛随时开</p>
+            <p className="text-xs text-foreground-muted">房间码加入教师对局</p>
           </span>
         </Link>
         <Link to="/achievements" className="glass-card p-5 flex items-center gap-4 hover:bg-background-hover/50 transition-colors card-hover">
