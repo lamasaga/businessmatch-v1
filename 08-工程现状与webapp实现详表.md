@@ -49,8 +49,8 @@
 | 认证 | `/login` | ✅ | ✅ | 生产雏形 |
 | 生涯中枢 | `/career` | 部分 | UI+mock | 演示级 |
 | 商赛大厅 | `/games` | ✅ | ✅ | 可用 |
-| 浮生记 RTS v2 | `/games/:id/play` | ✅ WS | ✅ | **核心可玩** · **长三角六城** `yangtze_6` |
-| 回合制 trading-v1 | 同上 | ✅ | ✅ | 可玩 |
+| 浮生记 RTS v2 | `/games/:id/play` | ✅ WS | ✅ | **核心可玩** · **FStrading** `fstrading` |
+| ~~回合制 trading-v1~~ | — | — | — | **已移除**，别名 → `fstrading` |
 | TechVenture | `/games/:id/techventure` | ✅ | ✅ 四端 | **核心可玩** |
 | 组织者控场 | :5174 | ✅ | ✅ | 独立端 |
 | **体验营营团 P1+** | `/camp` · `/teaching-groups` · 赛季/分组/作业 | ✅ | 🟡 | 营团 + 赛季编排 API；组织者 Tab 拆分 |
@@ -71,7 +71,7 @@
 | seasons | `/seasons` | arena | 🟡 赛季/里程碑 |
 | assignments | `/assignments` | arena | 🟡 作业/提交 |
 | competitions | `/competitions` | arena | ✅ |
-| trading | `/trading` | games/trading | ✅ 回合+RTS |
+| trading | `/trading` | games/trading | ✅ RTS-only |
 | trading WS | `/trading` | games/trading | ✅ |
 | practice | `/practice` | arena+cybercore | ✅ |
 | techventure | `/techventure` | games/techventure | ✅ |
@@ -93,7 +93,7 @@
 
 | 组件 | 对齐度 | 备注 |
 |------|--------|------|
-| Arena | 🟢 88% | 回合+RTS+TechVenture+体验营营团 P1 |
+| Arena | 🟢 88% | RTS FStrading+TechVenture+体验营营团 P1 |
 | Career Hub | 🟡 45% | `xp_events` 有，前端 mock |
 | OPC | 🟡 45% | 无 LangGraph |
 | Athena/Demia/Rival | 🔴 15～25% | 演示 |
@@ -363,7 +363,7 @@ practice/start 传 game_config_id=trading-v1 → 回合制 market 定价 → 提
 | **organizer** | `/organizer` | apply, profile, stats, **events?teaching_group_id=** | 组织者档案与办赛列表 |
 | **teaching_groups** | `/teaching-groups` | POST 建营、GET mine/joined、POST join、GET/PATCH `{id}`、GET `{id}/events` | 教师/admin 建营；学生 join |
 | **competitions** | `/competitions` | CRUD、join(房间码)、start、end、standings、my-status | 创建可带 `teaching_group_id` |
-| **trading** | `/trading` | `GET /events/{id}/state`、`POST /events/{id}/actions`（RTS）、decide/result/next（回合制） | RTS：`state` **只读**不推进 tick；`next` 对 RTS 返回 400 |
+| **trading** | `/trading` | `GET /events/{id}/state`、`POST /events/{id}/actions`（RTS）、`GET /events/{id}/history` | RTS：`state` **只读**不推进 tick；调度器单写者 |
 | **trading WS** | `/trading` | `WS /events/{id}/ws?token=` | tick/finished 推送；参赛者或本场组织者 |
 | **practice** | `/practice` | `GET /game-configs`、`POST /trading/start`、`POST /techventure/start`、`GET /my` | 默认 `trading-v2-rts`；TechVenture 练习创建 1 真人 + 5 AI 队 |
 | **techventure** | `/techventure` | `GET lobby`、`POST join-team`、`GET state`、`GET poll`、`POST submit`、`POST profile`、`GET leaderboard`、`GET news` | 学生参赛端（选队大厅 + 对局） |
@@ -380,7 +380,8 @@ practice/start 传 game_config_id=trading-v1 → 回合制 market 定价 → 提
 | `domains/career/services/rewards.py` | `grant_xp`、`settle_match_rewards`（读 YAML 权重） |
 | `domains/cybercore/registry.py` | 加载 `backend/content/game-configs/*.yaml` |
 | `domains/sandbox/` | 赛事工坊：热配置、内存会话、`SandboxRunner` 驱动 trading 引擎试跑 |
-| `games/trading/engine.py` | 回合制交易赛状态机 |
+| `games/trading/config_loader.py` | FStrading 城市/商品元数据读取 |
+| `games/trading/rts_*.py` | RTS tick、定价、AI、指令队列 |
 | `games/trading/rts_scheduler.py` | RTS **唯一** tick 推进 + commit 后 WS 广播 |
 | `games/trading/rts_tick.py` | `maybe_advance_rts`（仅调度器调用）、`finish_rts_match` |
 | `games/techventure/v6_engine.py` | TechVenture v6 结算核心（Step 0-9：路线乘数 → 城市份额 → BQI → 排名 → 资金） |
@@ -598,14 +599,13 @@ flowchart LR
 | `backend/app/domains/arena/` | 场次域模型与工厂 |
 | `backend/app/domains/cybercore/registry.py` | 赛制 YAML 加载 |
 | `backend/app/domains/career/services/rewards.py` | XP 发放 |
-| `backend/app/games/trading/market.py` | 供需定价引擎 |
-| `backend/app/games/trading/ai_trader.py` | 练习局 AI 交易员 |
-| `backend/app/games/trading/practice_flow.py` | 练习局自动推进 |
+| `backend/app/games/trading/market.py` | RTS 定价配置读取 |
+| `backend/app/games/trading/config_loader.py` | 城市/商品元数据 |
+| `backend/app/games/trading/rts_ai_levels.py` | RTS 练习 AI |
 | `backend/app/games/trading/inventory.py` | 单品种库存上限 |
-| `backend/app/domains/arena/services/match_lifecycle.py` | 开赛生命周期 |
+| `backend/app/domains/arena/services/match_lifecycle.py` | 开赛生命周期（RTS-only） |
 | `backend/app/api/practice.py` | 日常练习 API |
-| `backend/content/game-configs/trading-v1.yaml` | 回合制赛制包 |
-| `backend/content/game-configs/trading-v2-rts.yaml` | 浮生记 RTS 赛制包 |
+| `backend/content/game-configs/fstrading.yaml` | FStrading 赛制包 |
 | `backend/content/game-configs/techventure-v1.yaml` | TechVenture 赛制包（4 轮三城策略） |
 | `backend/app/games/techventure/v6_engine.py` | TechVenture v6 结算引擎 |
 | `backend/app/games/techventure/config.py` | V6 常量加载 + 辅助函数 |
@@ -648,7 +648,9 @@ flowchart LR
 
 | 日期 | 摘要 |
 | ---- | ---- |
-| 2026-06-01 | **拟真城市 + 体验营 P1+ + OPC 目录迁移**：`content/world/yangtze_6` + `world_loader` + `trading-v2-rts` v2.2；赛季/分组/作业 API + 组织者 Camp Tab；`OPC/` → `inspire/OPC/`；[ADR-010](./docs/decisions/010-拟真城市内容包与CyberCore合并加载.md) |
+| 2026-06-01 | **移除浮生记回合制**：删除 `ai_trader`/`round_advance`/`practice_flow`/`engine`；`api/trading` 仅 RTS；前端/组织端去掉回合 UI 与 `/rounds/*` |
+| 2026-06-01 | **FStrading 统一 trading 配置**：删除 `trading-v1`/`trading-v2-rts`，唯一包 `fstrading`；registry 别名兼容存量对局 |
+| 2026-06-01 | **拟真城市 + 体验营 P1+ + OPC 目录迁移**：`content/world/yangtze_6` + `world_loader`；赛季/分组/作业 API；[ADR-010](./docs/decisions/010-拟真城市内容包与CyberCore合并加载.md) |
 | 2026-06-01 | **赛事工坊 MVP + 构想库扩容**：`domains/sandbox` + 前端 `/sandbox`；inspire 89～91、POP 深研、赛事设计子目录；`art-assets/fushengji` 素材归档 |
 | 2026-05-30 | **体验营 P1 文档对齐**：`08-` 路由/API 深读表补全；OpenAPI 导出含 `teaching-groups`；分支 `feature/camp-phase1` |
 | 2026-05-29 | **体验营 P1**：`teaching_groups` API + 双端 `/camp` + `VITE_CAMP_PHASE1`；[ADR-009](./docs/decisions/009-赛季模式与教师端双端演进.md) 营团部分采纳 |

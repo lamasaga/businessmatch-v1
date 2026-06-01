@@ -8,7 +8,7 @@ from app.domains.cybercore.types import GameConfigDocument
 from app.domains.sandbox.models import SandboxRunState, SandboxSession
 from app.domains.sandbox.services.debugger import DebugCollector
 from app.domains.sandbox.services.ai_engine import AiStrategyEngine, DecisionResult
-from app.games.trading.market import (
+from app.domains.sandbox.services.market_sim import (
     calculate_equilibrium_prices,
     calculate_market_prices,
     generate_market_events,
@@ -56,24 +56,17 @@ class SandboxRunner:
         self.session.touch()
 
     def _setup_trading(self, doc: GameConfigDocument, config: Dict[str, Any]):
-        """初始化交易引擎沙盒"""
+        """初始化 FStrading（RTS）沙盒"""
         ws = self.session.world_state
-        mode = config.get("mode", "turn")
-
-        if mode == "rts":
-            self.session.step_label = "tick"
-            self.session.total_steps = config.get("total_ticks", 120)
-            ws["mode"] = "rts"
-            ws["tick_interval"] = config.get("tick_interval_sec", 5)
-            ws["warmup_ticks"] = config.get("warmup_ticks", 6)
-            ws["current_tick"] = 0
-            ws["pending_actions"] = []
-            ws["phase"] = "warmup"
-        else:
-            self.session.step_label = "round"
-            self.session.total_steps = config.get("rounds", 10)
-            ws["mode"] = "turn"
-            ws["current_round"] = 0
+        ws["config_id"] = doc.id
+        self.session.step_label = "tick"
+        self.session.total_steps = config.get("total_ticks", 120)
+        ws["mode"] = "rts"
+        ws["tick_interval"] = config.get("tick_interval_sec", 5)
+        ws["warmup_ticks"] = config.get("warmup_ticks", 6)
+        ws["current_tick"] = 0
+        ws["pending_actions"] = []
+        ws["phase"] = "warmup"
 
         # 初始化价格（首回合均衡价）
         cities = ws["cities_order"]
@@ -195,7 +188,7 @@ class SandboxRunner:
         if ws.get("mode") == "rts":
             result = self._step_rts()
         else:
-            result = self._step_turn_based()
+            result = {"step": self.session.current_step, "message": "unsupported engine mode"}
 
         # 检查是否结束
         if self.session.current_step >= self.session.total_steps:
@@ -219,71 +212,7 @@ class SandboxRunner:
         # 重新初始化世界（保留配置）
         # 注意：这里不重新 setup，由调用方在更新配置后重新 setup
 
-    # ==================== 回合制推进 ====================
-
-    def _step_turn_based(self) -> Dict[str, Any]:
-        """推进一个回合（交易赛回合制）"""
-        ws = self.session.world_state
-        step = self.session.current_step
-        cities = ws["cities_order"]
-        products = ws["products"]
-        cities_meta = ws["cities"]
-        config = ws["config"]
-
-        # 1. AI 做决策
-        ai_decisions = self._generate_ai_decisions_turn()
-
-        # 2. 生成随机事件
-        events = generate_market_events(step, cities, products)
-        for evt in events:
-            self.debug.record_event(step, evt)
-
-        # 3. 计算新价格
-        participant_city = {f"ai_{i}": t["city"] for i, t in enumerate(ws["participants"])}
-        prices, meta = calculate_market_prices(
-            products, cities, cities_meta,
-            ai_decisions, participant_city, events,
-        )
-
-        # 4. 记录调试数据
-        for city in cities:
-            for pid in products:
-                m = meta.get(city, {}).get(pid, {})
-                self.debug.record_price_calc(
-                    step_number=step,
-                    city=city,
-                    product_id=pid,
-                    base_price=products[pid].get("base_price", 0),
-                    buy_qty=m.get("buy_qty", 0),
-                    sell_qty=m.get("sell_qty", 0),
-                    net_demand=m.get("net_demand", 0),
-                    pressure=m.get("pressure", 0.0),
-                    demand_factor=m.get("demand_factor", 1.0),
-                    final_price=prices.get(city, {}).get(pid, 0),
-                    narrative_events=events,
-                )
-
-        # 5. 更新 AI 状态（执行买卖）
-        self._apply_ai_trades(ai_decisions, prices)
-
-        # 6. 更新世界状态
-        ws["prices"] = prices
-        ws["price_meta"] = meta
-        ws["round_events"] = events
-        ws["history"].append({"step": step, "prices": deepcopy(prices)})
-
-        # 7. 计算排名
-        standings = self._calculate_standings()
-        self.debug.record_world_state(step, prices, standings)
-
-        return {
-            "step": step,
-            "prices": prices,
-            "events": events,
-            "standings": standings,
-            "ai_decisions": len(ai_decisions),
-            "finished": self.session.current_step >= self.session.total_steps,
-        }
+    # ==================== RTS tick 推进 ====================
 
     def _step_rts(self) -> Dict[str, Any]:
         """推进一个 tick（RTS 模式）"""
@@ -299,7 +228,8 @@ class SandboxRunner:
 
         # 汇总行动为类决策格式
         decisions = self._rts_actions_to_decisions(ai_actions)
-        events = generate_market_events(step, cities, products)
+        config_id = ws.get("config_id", "fstrading")
+        events = generate_market_events(step, cities, products, config_id)
 
         participant_city = {f"ai_{i}": t["city"] for i, t in enumerate(ws["participants"])}
         prices, meta = calculate_market_prices(
@@ -334,64 +264,6 @@ class SandboxRunner:
         }
 
     # ==================== AI 决策生成 ====================
-
-    def _generate_ai_decisions_turn(self) -> List[Any]:
-        """生成回合制 AI 决策 — 使用策略引擎"""
-        from app.games.trading.enums import ActionType
-
-        ws = self.session.world_state
-        participants = ws["participants"]
-        decisions = []
-        step = self.session.current_step
-
-        for i, ai in enumerate(participants):
-            strategy_config = ai.get("strategy_config")
-            result = self._ai_engine.decide(ai, ws, strategy_config)
-
-            # 记录 AI 调试数据
-            self.debug.record_ai_decision(
-                step_number=step,
-                ai_name=ai["name"],
-                ai_level=ai.get("level", "unknown"),
-                decision={
-                    "action": result.action,
-                    "product_id": result.product_id,
-                    "quantity": result.quantity,
-                    "target_city": result.target_city,
-                },
-                reasoning=result.reasoning,
-                city=ai["city"],
-                cash=ai["cash"],
-                inventory=ai["inventory"],
-                expected_profit=result.expected_profit,
-                confidence=result.confidence,
-            )
-
-            # 执行决策
-            if result.action == "buy" and result.quantity > 0:
-                decisions.append(_MockDecision(
-                    participant_id=f"ai_{i}",
-                    action_type=ActionType.buy,
-                    action_data={
-                        "trade_city": ai["city"],
-                        "product_id": result.product_id,
-                        "quantity": result.quantity,
-                    },
-                ))
-            elif result.action == "sell" and result.quantity > 0:
-                decisions.append(_MockDecision(
-                    participant_id=f"ai_{i}",
-                    action_type=ActionType.sell,
-                    action_data={
-                        "trade_city": ai["city"],
-                        "product_id": result.product_id,
-                        "quantity": result.quantity,
-                    },
-                ))
-            elif result.action == "move" and result.target_city:
-                ai["city"] = result.target_city
-
-        return decisions
 
     def _generate_ai_actions_rts(self) -> List[Dict[str, Any]]:
         """生成 RTS AI 行动 — 使用策略引擎"""

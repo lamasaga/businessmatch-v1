@@ -32,7 +32,6 @@ interface OrganizerState {
   }) => Promise<CompetitionEvent>;
   startEvent: (eventId: number) => Promise<void>;
   endEvent: (eventId: number) => Promise<void>;
-  nextRound: (roundId: number) => Promise<void>;
   clearError: () => void;
 }
 
@@ -182,20 +181,6 @@ export const useOrganizerStore = create<OrganizerState>((set) => ({
     } catch (err: unknown) {
       set({
         error: (err as { message?: string }).message || '结束失败',
-        loading: false,
-      });
-      throw err;
-    }
-  },
-
-  nextRound: async (roundId) => {
-    set({ loading: true, error: null });
-    try {
-      await api.post(`/api/v1/trading/rounds/${roundId}/next`);
-      set({ loading: false });
-    } catch (err: unknown) {
-      set({
-        error: (err as { message?: string }).message || '推进回合失败',
         loading: false,
       });
       throw err;

@@ -1,9 +1,8 @@
-import { useEffect, useCallback } from 'react';
+import { useEffect, useCallback, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import {
-  ArrowLeft, Play, ChevronRight, Loader2, Crown, Copy, Check,
+  ArrowLeft, Play, Loader2, Crown, Copy, Check,
 } from 'lucide-react';
-import { useState } from 'react';
 import { useOrganizerStore } from '../stores/organizerStore';
 import { connectRtsWebSocket } from '../lib/rtsWebSocket';
 
@@ -25,7 +24,6 @@ export default function EventControlPage() {
     fetchControl,
     startEvent,
     endEvent,
-    nextRound,
     clearError,
   } = useOrganizerStore();
   const [copied, setCopied] = useState(false);
@@ -38,12 +36,8 @@ export default function EventControlPage() {
     refresh();
   }, [refresh]);
 
-  const isRtsEvent =
-    control?.event?.config?.mode === 'rts' ||
-    control?.event?.game_config_id === 'trading-v2-rts';
-
   useEffect(() => {
-    if (!eventId || !isRtsEvent) return;
+    if (!eventId) return;
     if (control?.event?.status !== 'registration' && control?.event?.status !== 'playing') {
       return;
     }
@@ -57,16 +51,7 @@ export default function EventControlPage() {
       disconnect();
       clearInterval(fallback);
     };
-  }, [eventId, isRtsEvent, control?.event?.status, refresh]);
-
-  useEffect(() => {
-    if (!control?.event || isRtsEvent) return;
-    const st = control.event.status;
-    if (st === 'registration' || st === 'playing') {
-      const t = setInterval(refresh, 3000);
-      return () => clearInterval(t);
-    }
-  }, [control?.event?.status, isRtsEvent, refresh]);
+  }, [eventId, control?.event?.status, refresh]);
 
   const copyCode = async () => {
     if (!control?.event.room_code) return;
@@ -83,12 +68,9 @@ export default function EventControlPage() {
     );
   }
 
-  const { event, current_round, standings, participants, decisions_submitted, rts } = control;
+  const { event, standings, participants, rts } = control;
   const campId = event.teaching_group_id;
-  const isRts = event.config?.mode === 'rts' || event.game_config_id === 'trading-v2-rts';
-  const totalRounds = isRts
-    ? Number(rts?.total_ticks ?? event.config?.total_ticks ?? 120)
-    : Number(event.config?.rounds ?? 10);
+  const totalTicks = Number(rts?.total_ticks ?? event.config?.total_ticks ?? 120);
   const hasPlayers = participants.length >= 1;
   const isPlaying = event.status === 'playing';
   const isFinished = event.status === 'finished';
@@ -97,7 +79,8 @@ export default function EventControlPage() {
     hasPlayers &&
     !isFinished;
 
-  return (    <div>
+  return (
+    <div>
       <button
         type="button"
         onClick={() => navigate(campId ? `/camps/${campId}` : '/')}
@@ -112,9 +95,8 @@ export default function EventControlPage() {
           <h1 className="text-2xl font-bold">{event.title}</h1>
           <p className="text-sm text-foreground-muted mt-1">
             {STATUS_LABEL[event.status] || event.status}
-            {isPlaying && (isRts
-              ? ` · Tick ${event.current_round}/${totalRounds}${rts?.phase ? ` (${rts.phase})` : ''}`
-              : ` · 第 ${event.current_round}/${totalRounds} 回合`)}
+            {isPlaying &&
+              ` · Tick ${event.current_round}/${totalTicks}${rts?.phase ? ` (${rts.phase})` : ''}`}
           </p>
         </div>
         <button
@@ -134,75 +116,54 @@ export default function EventControlPage() {
         </button>
       </div>
 
-      <div className="grid md:grid-cols-3 gap-4 mb-6">
+      <div className="grid md:grid-cols-2 gap-4 mb-6">
         <MiniStat label="已加入" value={participants.length} />
         <MiniStat label="最大人数" value={event.max_players} />
-        {isPlaying && current_round && (
-          <MiniStat
-            label="本回合已决策"
-            value={`${decisions_submitted}/${participants.length}`}
-          />
-        )}
       </div>
 
       {!isFinished && (
         <div className="glass-card p-6 mb-6 flex flex-col gap-3">
           <div className="flex flex-wrap gap-3">
-          {canStart && (
-            <button
-              type="button"
-              disabled={loading}
-              onClick={async () => {
-                clearError();
-                try {
-                  await startEvent(eventId);
-                  await fetchControl(eventId);
-                } catch {
-                  /* error in store */
-                }
-              }}
-              className="flex-1 min-w-[140px] py-3 bg-primary text-background rounded-xl font-semibold flex items-center justify-center gap-2 disabled:opacity-50"
-            >
-              {loading ? (
-                <Loader2 className="w-5 h-5 animate-spin" />
-              ) : (
-                <>
-                  <Play className="w-5 h-5" />
-                  开始比赛
-                </>
-              )}
-            </button>
-          )}
-          {isPlaying && current_round && !isRts && (
-            <button
-              type="button"
-              disabled={loading}
-              onClick={async () => {
-                clearError();
-                await nextRound(current_round.id);
-                refresh();
-              }}
-              className="flex-1 min-w-[140px] py-3 bg-success/20 text-success border border-success/30 rounded-xl font-semibold flex items-center justify-center gap-2 disabled:opacity-50"
-            >
-              <ChevronRight className="w-5 h-5" />
-              推进下一回合
-            </button>
-          )}
-          {isPlaying && (
-            <button
-              type="button"
-              disabled={loading}
-              onClick={async () => {
-                if (!window.confirm('确定结束比赛并结算排名？')) return;
-                clearError();
-                await endEvent(eventId);
-                refresh();
-              }}
-              className="flex-1 min-w-[140px] py-3 bg-danger/20 text-danger border border-danger/30 rounded-xl font-semibold disabled:opacity-50"
-            >
-              结束比赛
-            </button>
-          )}
+            {canStart && (
+              <button
+                type="button"
+                disabled={loading}
+                onClick={async () => {
+                  clearError();
+                  try {
+                    await startEvent(eventId);
+                    await fetchControl(eventId);
+                  } catch {
+                    /* error in store */
+                  }
+                }}
+                className="flex-1 min-w-[140px] py-3 bg-primary text-background rounded-xl font-semibold flex items-center justify-center gap-2 disabled:opacity-50"
+              >
+                {loading ? (
+                  <Loader2 className="w-5 h-5 animate-spin" />
+                ) : (
+                  <>
+                    <Play className="w-5 h-5" />
+                    开始比赛
+                  </>
+                )}
+              </button>
+            )}
+            {isPlaying && (
+              <button
+                type="button"
+                disabled={loading}
+                onClick={async () => {
+                  if (!window.confirm('确定结束比赛并结算排名？')) return;
+                  clearError();
+                  await endEvent(eventId);
+                  refresh();
+                }}
+                className="flex-1 min-w-[140px] py-3 bg-danger/20 text-danger border border-danger/30 rounded-xl font-semibold disabled:opacity-50"
+              >
+                结束比赛
+              </button>
+            )}
           </div>
           {!hasPlayers && (event.status === 'registration' || event.status === 'draft') && (
             <p className="text-sm text-foreground-muted">
@@ -211,9 +172,7 @@ export default function EventControlPage() {
           )}
           {isPlaying && (
             <p className="text-sm text-success">
-              {isRts
-                ? 'RTS 模式已自动每 5 秒推进 tick；学生提交指令后下 tick 结算。'
-                : '比赛已开始 — 学生可进入对局；您可在此推进回合或结束比赛。'}
+              FStrading 已自动每 5 秒推进 tick；学生提交指令后下 tick 结算。
             </p>
           )}
         </div>

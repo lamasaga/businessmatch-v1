@@ -2395,160 +2395,6 @@
         }
       }
     },
-    "/api/v1/trading/rounds/{round_id}/decide": {
-      "post": {
-        "tags": [
-          "交易游戏"
-        ],
-        "summary": "Submit Decision",
-        "description": "提交交易决策",
-        "operationId": "submit_decision_api_v1_trading_rounds__round_id__decide_post",
-        "security": [
-          {
-            "OAuth2PasswordBearer": []
-          }
-        ],
-        "parameters": [
-          {
-            "name": "round_id",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "integer",
-              "title": "Round Id"
-            }
-          }
-        ],
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/DecisionRequest"
-              }
-            }
-          }
-        },
-        "responses": {
-          "200": {
-            "description": "Successful Response",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ApiResponse_SubmitDecisionResult_"
-                }
-              }
-            }
-          },
-          "422": {
-            "description": "Validation Error",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/HTTPValidationError"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/api/v1/trading/rounds/{round_id}/result": {
-      "get": {
-        "tags": [
-          "交易游戏"
-        ],
-        "summary": "Get Round Result",
-        "description": "获取回合结果",
-        "operationId": "get_round_result_api_v1_trading_rounds__round_id__result_get",
-        "security": [
-          {
-            "OAuth2PasswordBearer": []
-          }
-        ],
-        "parameters": [
-          {
-            "name": "round_id",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "integer",
-              "title": "Round Id"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Successful Response",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ApiResponse_TradingRoundResult_"
-                }
-              }
-            }
-          },
-          "422": {
-            "description": "Validation Error",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/HTTPValidationError"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/api/v1/trading/rounds/{round_id}/next": {
-      "post": {
-        "tags": [
-          "交易游戏"
-        ],
-        "summary": "Next Round",
-        "description": "推进到下一回合（组织者）",
-        "operationId": "next_round_api_v1_trading_rounds__round_id__next_post",
-        "security": [
-          {
-            "OAuth2PasswordBearer": []
-          }
-        ],
-        "parameters": [
-          {
-            "name": "round_id",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "integer",
-              "title": "Round Id"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Successful Response",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ApiResponse_TradingRoundOut_"
-                }
-              }
-            }
-          },
-          "422": {
-            "description": "Validation Error",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/HTTPValidationError"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
     "/api/v1/trading/events/{event_id}/history": {
       "get": {
         "tags": [
@@ -8069,7 +7915,7 @@
             "type": "string",
             "maxLength": 64,
             "title": "Game Config Id",
-            "default": "trading-v2-rts"
+            "default": "fstrading"
           },
           "design_mode": {
             "type": "string",
@@ -8093,7 +7939,7 @@
               }
             ],
             "title": "Teaching Group Id",
-            "description": "所属体验营营团 ID"
+            "description": "??????? ID"
           }
         },
         "type": "object",
@@ -8162,7 +8008,7 @@
           "game_config_id": {
             "type": "string",
             "title": "Game Config Id",
-            "default": "trading-v1"
+            "default": "fstrading"
           },
           "game_type": {
             "type": "string",
@@ -8428,7 +8274,7 @@
             "maximum": 999.0,
             "minimum": 5.0,
             "title": "Inventory Limit",
-            "description": "v1：每种商品上限",
+            "description": "v1???????",
             "default": 99
           },
           "inventory_limit_per_product": {
@@ -8462,7 +8308,7 @@
               }
             ],
             "title": "Mode",
-            "description": "rts 即时战略"
+            "description": "rts ????"
           },
           "duration_preset": {
             "anyOf": [
@@ -8482,7 +8328,7 @@
             },
             "type": "array",
             "title": "Cities",
-            "description": "默认长三角六城；RTS 赛制由 world.region_id 注入",
+            "description": "????????RTS ??? world.region_id ??",
             "default": [
               "nanjing",
               "suzhou",
@@ -9220,7 +9066,7 @@
           "event"
         ],
         "title": "OrganizerControlOut",
-        "description": "组织者控场面板数据（无需参赛即可查看）"
+        "description": "???????????????????"
       },
       "OrganizerProfileCreate": {
         "properties": {
@@ -9500,7 +9346,7 @@
           "game_config_id": {
             "type": "string",
             "title": "Game Config Id",
-            "default": "trading-v2-rts"
+            "default": "fstrading"
           },
           "design_mode": {
             "type": "string",

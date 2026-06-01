@@ -28,7 +28,6 @@ interface CompetitionState {
   getMyStatus: (eventId: number) => Promise<void>;
   startEvent: (eventId: number) => Promise<void>;
   endEvent: (eventId: number) => Promise<void>;
-  nextRound: (roundId: number) => Promise<void>;
   startPractice: () => Promise<CompetitionEvent>;
   clearError: () => void;
 }
@@ -120,17 +119,6 @@ export const useCompetitionStore = create<CompetitionState>((set) => ({
     try {
       const response = await api.post(`/api/v1/competitions/${eventId}/end`);
       set({ currentEvent: response.data.data, loading: false });
-    } catch (err: any) {
-      set({ error: err.message || '??????', loading: false });
-      throw err;
-    }
-  },
-
-  nextRound: async (roundId) => {
-    set({ loading: true, error: null });
-    try {
-      await api.post(`/api/v1/trading/rounds/${roundId}/next`);
-      set({ loading: false });
     } catch (err: any) {
       set({ error: err.message || '??????', loading: false });
       throw err;

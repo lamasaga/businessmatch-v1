@@ -5,7 +5,6 @@ from sqlalchemy.orm import Session
 
 from app.domains.arena.enums import MatchStatus, ParticipantStatus
 from app.domains.arena.models import ArenaMatch, ArenaParticipant
-from app.games.trading.round_advance import create_first_round
 from app.games.trading.rts_config import is_rts_mode
 from app.games.trading.rts_tick import create_rts_first_round
 from app.core.response import BusinessException, ErrorCode
@@ -37,11 +36,13 @@ def begin_match(db: Session, event: ArenaMatch) -> ArenaMatch:
     event.current_round = 0
     event.starts_at = func.now()
 
-    if is_rts_mode(event.config):
-        create_rts_first_round(db, event)
-    else:
-        event.current_round = 1
-        create_first_round(db, event)
+    if not is_rts_mode(event.config):
+        raise BusinessException(
+            message="仅支持 FStrading（RTS）赛制开局",
+            code=ErrorCode.BAD_REQUEST,
+            status_code=status.HTTP_400_BAD_REQUEST,
+        )
+    create_rts_first_round(db, event)
 
     participants = (
         db.query(ArenaParticipant)
