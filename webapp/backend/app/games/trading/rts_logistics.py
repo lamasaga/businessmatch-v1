@@ -45,8 +45,18 @@ def effective_travel_ticks(
     return max(lg["min_travel_ticks"], base - sb)
 
 
-def move_cash_cost(config: Dict[str, Any]) -> int:
-    return logistics_config(config)["move_cost_per_edge"]
+def move_cash_cost(
+    config: Dict[str, Any],
+    from_city: Optional[str] = None,
+    to_city: Optional[str] = None,
+) -> int:
+    default = logistics_config(config)["move_cost_per_edge"]
+    if from_city and to_city and from_city != to_city:
+        from app.games.trading.world_slice import edge_move_cost
+
+        routes = config.get("routes") or {}
+        return edge_move_cost(from_city, to_city, routes, default)
+    return default
 
 
 def can_add_inventory(

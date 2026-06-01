@@ -32,6 +32,10 @@ defaults:
       label: 完整局
       minutes: 12
       total_ticks: 144
+    classroom:
+      label: 课堂局
+      minutes: 20
+      total_ticks: 240
   warmup_ticks: 6
   initial_capital: 50000
   storage_capacity_base: 99
@@ -136,6 +140,7 @@ defaults:
   world:
     region_id: yangtze_6
     behavior_pack: default_yrd
+  # 地理资源见 content/world/geo/yangtze_6/ · API GET /trading/regions/yangtze_6/geo-pack
   products:
     - grain
     - produce

@@ -281,6 +281,8 @@ export interface ProductPrice {
 export interface CityMarket {
   city: string;
   city_name: string;
+  city_type?: string;
+  hub?: boolean;
   products: ProductPrice[];
 }
 
@@ -323,6 +325,30 @@ export interface RtsMeta {
   transit?: { from_city?: string; to_city?: string; arrival_tick?: number } | null;
   can_trade?: boolean;
   vehicles_available?: Record<string, { name?: string; cost?: number; capacity_bonus?: number; speed_bonus?: number }>;
+  world?: WorldTradeSlice;
+}
+
+export interface WorldTradeSlice {
+  region_id?: string;
+  geo_pack_version?: string;
+  hub_cities?: string[];
+  cities?: Array<{
+    city_id: string;
+    name: string;
+    hub?: boolean;
+    geo?: { lng: number; lat: number; label_offset?: number[] };
+  }>;
+  routes?: Array<{
+    edge_id: string;
+    from_city: string;
+    to_city: string;
+    base_travel_ticks: number;
+    move_cost: number;
+  }>;
+  geo?: {
+    bbox?: number[];
+    assets?: Record<string, string>;
+  };
 }
 
 export interface SubmitDecisionResponse {

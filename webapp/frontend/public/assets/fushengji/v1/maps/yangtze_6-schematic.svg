@@ -1,0 +1,48 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 500" role="img" aria-label="	�m�:">
+  <defs>
+    <linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#e8f4fc"/>
+      <stop offset="100%" style="stop-color:#d4e8f7"/>
+    </linearGradient>
+    <filter id="shadow" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="0" dy="2" stdDeviation="3" flood-opacity="0.15"/>
+    </filter>
+  </defs>
+  <rect width="800" height="500" fill="url(#bg)"/>
+  <text x="400" y="36" text-anchor="middle" font-family="system-ui,sans-serif" font-size="18" fill="#1e3a5f">	�m�Yf: � ^�n0	</text>
+  <!-- �Q -->
+  <g stroke="#6b8cae" stroke-width="3" fill="none" opacity="0.7">
+    <line x1="520" y1="120" x2="620" y2="200"/>
+    <line x1="620" y1="200" x2="680" y2="280"/>
+    <line x1="680" y1="280" x2="560" y2="360"/>
+    <line x1="560" y1="360" x2="400" y2="320"/>
+    <line x1="520" y1="120" x2="400" y2="200"/>
+    <line x1="400" y1="200" x2="280" y2="280"/>
+    <line x1="280" y1="280" x2="400" y2="320"/>
+    <line x1="520" y1="120" x2="720" y2="140"/>
+    <line x1="720" y1="140" x2="680" y2="280"/>
+  </g>
+  <!-- ��� -->
+  <g filter="url(#shadow)" font-family="system-ui,sans-serif" font-size="13" font-weight="600">
+    <g transform="translate(520,120)">
+      <circle r="28" fill="#2563eb"/><text y="5" text-anchor="middle" fill="#fff">
+w</text>
+    </g>
+    <g transform="translate(620,200)">
+      <circle r="24" fill="#0d9488"/><text y="5" text-anchor="middle" fill="#fff">��</text>
+    </g>
+    <g transform="translate(680,280)">
+      <circle r="22" fill="#7c3aed"/><text y="5" text-anchor="middle" fill="#fff">�!</text>
+    </g>
+    <g transform="translate(560,360)">
+      <circle r="22" fill="#ea580c"/><text y="5" text-anchor="middle" fill="#fff">8�</text>
+    </g>
+    <g transform="translate(400,320)">
+      <circle r="24" fill="#4f46e5"/><text y="5" text-anchor="middle" fill="#fff">W�</text>
+    </g>
+    <g transform="translate(720,140)">
+      <circle r="22" fill="#059669"/><text y="5" text-anchor="middle" fill="#fff">W</text>
+    </g>
+  </g>
+  <text x="400" y="480" text-anchor="middle" font-size="11" fill="#64748b">BizSim Edu � fushengji � CC0 :��ӓ��	</text>
+</svg>

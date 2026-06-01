@@ -1,0 +1,19 @@
+# 长三角六城 · 地理包清单（Phase B · 教学投影）
+geo_pack_version: "0.1.0"
+region_id: yangtze_6
+bbox: [118.0, 30.5, 122.5, 33.5]
+projection: equirectangular
+stage_aspect: "16:9"
+cities:
+  - nanjing
+  - suzhou
+  - shanghai
+  - nantong
+  - wuxi
+  - changzhou
+assets:
+  basemap_schematic: /assets/fushengji/v1/maps/yangtze_6-schematic.svg
+  basemap_geo_webp: /assets/fushengji/v1/maps/geo/basemap.webp
+attribution:
+  - "边界：简化行政界，教学用途"
+  - "锚点：WGS84 经纬度，非测绘级"

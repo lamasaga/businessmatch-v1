@@ -7,6 +7,7 @@ from typing import Any, Dict, List, Optional, Tuple
 from app.domains.arena.config_json import persist_match_config
 from app.domains.arena.models import ArenaMatch, ArenaParticipant
 from app.games.trading.rts_config import city_catalog, product_catalog, vehicle_defs
+from app.games.trading.world_slice import route_exists
 from app.games.trading.rts_logistics import (
     can_add_inventory,
     effective_travel_ticks,
@@ -155,11 +156,14 @@ def _execute_one(
     if action_type == "move":
         to_city = payload.get("to_city")
         cities = config.get("cities", [])
+        routes = config.get("routes") or {}
         if to_city not in cities:
             return False, "目标城市无效"
         if to_city == city:
             return False, "已在目标城市"
-        cost = move_cash_cost(config)
+        if not route_exists(city, to_city, routes):
+            return False, "两城之间无直达路网，请选择相邻城市"
+        cost = move_cash_cost(config, city, to_city)
         if cost > participant.cash:
             return False, "路费不足"
         travel = effective_travel_ticks(city, to_city, config, vehicles, config_id)
@@ -292,9 +296,12 @@ def validate_queue(
 
     if action_type == "move":
         to = payload.get("to_city")
+        routes = config.get("routes") or {}
         if to not in config.get("cities", []):
             return False, "无效城市"
-        if move_cash_cost(config) > participant.cash:
+        if not route_exists(city, to, routes):
+            return False, "无直达路网"
+        if move_cash_cost(config, city, to) > participant.cash:
             return False, "路费不足"
         if ps.get("transit"):
             return False, "已在途中"

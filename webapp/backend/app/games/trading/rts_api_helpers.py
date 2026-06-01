@@ -94,6 +94,8 @@ def build_rts_markets(
         markets.append({
             "city": ck,
             "city_name": city_name,
+            "city_type": cities.get(ck, {}).get("type"),
+            "hub": bool((cities.get(ck, {}).get("logistics") or {}).get("hub")),
             "products": product_list,
         })
     return markets

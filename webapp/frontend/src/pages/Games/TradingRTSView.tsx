@@ -7,6 +7,8 @@ import {
 import { useTradingStore } from '../../stores/tradingStore';
 import { useAuthStore } from '../../stores/authStore';
 import type { GameState } from '../../types';
+import FushengjiMapStage from '../../components/fushengji/FushengjiMapStage';
+import { neighborCityIds } from '../../lib/fstradingGeo';
 
 const VEHICLE_LABELS: Record<string, string> = {
   van: '小货车',
@@ -28,6 +30,7 @@ export default function TradingRTSView({ gameState, eventId, onRefresh }: Props)
   const [quantity, setQuantity] = useState(1);
   const [actionType, setActionType] = useState<'buy' | 'sell' | 'move' | 'buy_vehicle'>('buy');
   const [selectedCity, setSelectedCity] = useState('');
+  const [mapFocusCity, setMapFocusCity] = useState('');
   const [vehicleType, setVehicleType] = useState<'van' | 'truck'>('van');
   const [submitting, setSubmitting] = useState(false);
   const [lastMsg, setLastMsg] = useState('');
@@ -38,6 +41,22 @@ export default function TradingRTSView({ gameState, eventId, onRefresh }: Props)
   const canAct = isPlaying && (gameState.can_submit_decision ?? false);
   const currentMarket = gameState.markets?.find((m) => m.city === participant.current_city);
   const currentCityPrices = currentMarket?.products || [];
+  const worldSlice = rts?.world;
+  const worldRoutes = worldSlice?.routes ?? [];
+  const moveTargets = (() => {
+    const all = (event.config?.cities as string[] | undefined) || [];
+    if (worldRoutes.length) {
+      return neighborCityIds(participant.current_city, worldRoutes).filter((id) => id !== participant.current_city);
+    }
+    return all.filter((id) => id !== participant.current_city);
+  })();
+
+  const quoteCity = mapFocusCity || participant.current_city;
+  const quoteMarket = gameState.markets?.find((m) => m.city === quoteCity);
+  const quotePrices = quoteMarket?.products || [];
+  const viewingRemote = quoteCity !== participant.current_city;
+  const displayPrices = viewingRemote ? quotePrices : currentCityPrices;
+  const gameConfigId = (event.config?.game_config_id as string | undefined) || 'fstrading';
   const cap = inventory_capacity;
   const storageUsed = cap?.storage_used ?? 0;
   const storageCap = cap?.storage_capacity ?? 99;
@@ -46,7 +65,7 @@ export default function TradingRTSView({ gameState, eventId, onRefresh }: Props)
   const tick = rts?.tick ?? 0;
   const totalTicks = rts?.total_ticks ?? 120;
   const phase = rts?.phase ?? 'warmup';
-  const transit = rts?.transit as { to_city?: string; arrival_tick?: number } | null | undefined;
+  const transit = rts?.transit as { from_city?: string; to_city?: string; arrival_tick?: number } | null | undefined;
   const vehicleDefs = (rts?.vehicles_available ?? {}) as Record<string, { name?: string; cost?: number; capacity_bonus?: number; speed_bonus?: number }>;
 
   const cityLabel = currentMarket?.city_name || participant.current_city;
@@ -150,6 +169,25 @@ export default function TradingRTSView({ gameState, eventId, onRefresh }: Props)
         </div>
       </div>
 
+      <div className="glass-card p-4 mb-6">
+        <h3 className="text-sm font-semibold mb-3 flex items-center gap-2">
+          <MapPin className="w-4 h-4 text-primary" />
+          商路地图
+        </h3>
+        <FushengjiMapStage
+          configId={gameConfigId}
+          world={worldSlice}
+          currentCity={participant.current_city}
+          selectedCity={mapFocusCity || selectedCity || null}
+          onSelectCity={(id) => {
+            setMapFocusCity(id);
+            if (actionType === 'move' && moveTargets.includes(id)) setSelectedCity(id);
+          }}
+          tick={tick}
+          transit={transit}
+        />
+      </div>
+
       {isFinished && (
         <div className="glass-card p-6 mb-6 border border-primary/20 text-center">
           <Crown className="w-10 h-10 mx-auto text-primary mb-2" />
@@ -183,8 +221,11 @@ export default function TradingRTSView({ gameState, eventId, onRefresh }: Props)
           <div className="glass-card p-6">
             <h3 className="font-semibold mb-4 flex items-center gap-2">
               <BarChart3 className="w-5 h-5 text-primary" />
-              本城市场
+              {viewingRemote ? `${resolveCityName(quoteCity)} · 报价预览` : '本城市场'}
             </h3>
+            {viewingRemote && (
+              <p className="text-xs text-warning mb-3">仅可查看邻城报价；买入/卖出须在本城执行</p>
+            )}
             <div className="overflow-x-auto">
               <table className="w-full text-sm">
                 <thead>
@@ -198,12 +239,12 @@ export default function TradingRTSView({ gameState, eventId, onRefresh }: Props)
                   </tr>
                 </thead>
                 <tbody>
-                  {currentCityPrices.map((product) => (
+                  {displayPrices.map((product) => (
                     <tr
                       key={product.product_id}
-                      onClick={() => canAct && setSelectedProduct(product.product_id)}
+                      onClick={() => canAct && !viewingRemote && setSelectedProduct(product.product_id)}
                       className={`border-b border-border-subtle/50 ${
-                        canAct ? 'cursor-pointer hover:bg-background-hover' : ''
+                        canAct && !viewingRemote ? 'cursor-pointer hover:bg-background-hover' : ''
                       } ${selectedProduct === product.product_id ? 'bg-primary-soft' : ''}`}
                     >
                       <td className="py-2 font-medium">{product.name}</td>
@@ -245,7 +286,7 @@ export default function TradingRTSView({ gameState, eventId, onRefresh }: Props)
                   <button
                     key={type}
                     type="button"
-                    disabled={!canAct}
+                    disabled={!canAct || (viewingRemote && (type === 'buy' || type === 'sell'))}
                     onClick={() => setActionType(type)}
                     className={`py-2 rounded-lg text-sm font-medium flex items-center justify-center gap-1 ${
                       actionType === type ? 'bg-primary text-background' : 'bg-background-secondary'
@@ -262,7 +303,7 @@ export default function TradingRTSView({ gameState, eventId, onRefresh }: Props)
                   <select
                     value={selectedProduct}
                     onChange={(e) => setSelectedProduct(e.target.value)}
-                    disabled={!canAct}
+                    disabled={!canAct || viewingRemote}
                     className="w-full px-3 py-2 bg-background-secondary border border-border-subtle rounded-lg"
                   >
                     <option value="">选择商品</option>
@@ -277,7 +318,7 @@ export default function TradingRTSView({ gameState, eventId, onRefresh }: Props)
                     min={1}
                     max={actionType === 'sell' ? selectedHeld : maxBuyQty}
                     value={quantity}
-                    disabled={!canAct}
+                    disabled={!canAct || viewingRemote}
                     onChange={(e) => setQuantity(Number(e.target.value) || 1)}
                     className="w-full px-3 py-2 bg-background-secondary border border-border-subtle rounded-lg"
                   />
@@ -286,19 +327,33 @@ export default function TradingRTSView({ gameState, eventId, onRefresh }: Props)
 
               {actionType === 'move' && (
                 <div className="grid grid-cols-3 gap-2">
-                  {(event.config?.cities as string[] || []).map((city) => (
+                  {moveTargets.map((city) => (
                     <button
                       key={city}
                       type="button"
-                      disabled={!canAct || city === participant.current_city || !!transit}
+                      disabled={!canAct || !!transit}
                       onClick={() => setSelectedCity(city)}
                       className={`py-2 rounded-lg text-sm ${
                         selectedCity === city ? 'bg-primary text-background' : 'bg-background-secondary'
                       }`}
                     >
                       {resolveCityName(city)}
+                      {worldRoutes.length > 0 && (
+                        <span className="block text-[10px] opacity-70">
+                          {worldRoutes.find(
+                            (e) =>
+                              (e.from_city === participant.current_city && e.to_city === city) ||
+                              (e.to_city === participant.current_city && e.from_city === city),
+                          )?.base_travel_ticks ?? '?'}
+                          {' '}
+                          tick
+                        </span>
+                      )}
                     </button>
                   ))}
+                  {moveTargets.length === 0 && (
+                    <p className="col-span-3 text-sm text-foreground-muted">当前无可达邻城</p>
+                  )}
                 </div>
               )}
 

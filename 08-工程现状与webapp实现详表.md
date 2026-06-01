@@ -49,7 +49,7 @@
 | 认证 | `/login` | ✅ | ✅ | 生产雏形 |
 | 生涯中枢 | `/career` | 部分 | UI+mock | 演示级 |
 | 商赛大厅 | `/games` | ✅ | ✅ | 可用 |
-| 浮生记 RTS v2 | `/games/:id/play` | ✅ WS | ✅ | **核心可玩** · **FStrading** `fstrading` |
+| 浮生记 RTS v2 | `/games/:id/play` | ✅ WS | ✅ 地图+路网 | **核心可玩** · **FStrading** `fstrading` |
 | ~~回合制 trading-v1~~ | — | — | — | **已移除**，别名 → `fstrading` |
 | TechVenture | `/games/:id/techventure` | ✅ | ✅ 四端 | **核心可玩** |
 | 组织者控场 | :5174 | ✅ | ✅ | 独立端 |
@@ -104,7 +104,10 @@
 | 项 | 状态 |
 |----|------|
 | `content/world/yangtze_6` | ✅ 六城母本 + 路网 + POP 占位 |
-| CyberCore `world_loader` | ✅ 赛制加载时合并 |
+| `content/world/geo/yangtze_6` | ✅ 锚点/bbox/示意底图 manifest |
+| CyberCore `world_loader` | ✅ 赛制加载时合并；`load_geo_pack` / `load_trade_slice` |
+| FStrading 路网校验 | ✅ `world_slice.route_exists`；移动仅邻城 |
+| 前端商路地图 | ✅ `FushengjiMapStage` + geo-pack 预加载；`public/assets/fushengji/v1/` |
 | `domains/world/` 表/API | 🔴 Phase C+ |
 | POP 行为引擎 | 🔴 占位 `behavior_packs/default_yrd` |
 
@@ -363,7 +366,7 @@ practice/start 传 game_config_id=trading-v1 → 回合制 market 定价 → 提
 | **organizer** | `/organizer` | apply, profile, stats, **events?teaching_group_id=** | 组织者档案与办赛列表 |
 | **teaching_groups** | `/teaching-groups` | POST 建营、GET mine/joined、POST join、GET/PATCH `{id}`、GET `{id}/events` | 教师/admin 建营；学生 join |
 | **competitions** | `/competitions` | CRUD、join(房间码)、start、end、standings、my-status | 创建可带 `teaching_group_id` |
-| **trading** | `/trading` | `GET /events/{id}/state`、`POST /events/{id}/actions`（RTS）、`GET /events/{id}/history` | RTS：`state` **只读**不推进 tick；调度器单写者 |
+| **trading** | `/trading` | `GET /events/{id}/state`、`POST /events/{id}/actions`（RTS）、`GET /events/{id}/history`、`GET /regions/{id}/geo-pack`、`GET /game-configs/{id}/geo-pack` | RTS：`state` **只读**；`game_state.rts.world` 含贸易切片 |
 | **trading WS** | `/trading` | `WS /events/{id}/ws?token=` | tick/finished 推送；参赛者或本场组织者 |
 | **practice** | `/practice` | `GET /game-configs`、`POST /trading/start`、`POST /techventure/start`、`GET /my` | 默认 `trading-v2-rts`；TechVenture 练习创建 1 真人 + 5 AI 队 |
 | **techventure** | `/techventure` | `GET lobby`、`POST join-team`、`GET state`、`GET poll`、`POST submit`、`POST profile`、`GET leaderboard`、`GET news` | 学生参赛端（选队大厅 + 对局） |
@@ -648,6 +651,7 @@ flowchart LR
 
 | 日期 | 摘要 |
 | ---- | ---- |
+| 2026-06-01 | **FStrading × 拟真城市对接**：`geo/yangtze_6`、路网移动校验、`GET .../geo-pack`、对局 `rts.world`；前端 `FushengjiMapStage` + 素材 `public/assets/fushengji/v1/`；`classroom` 240 tick 预设 |
 | 2026-06-01 | **移除浮生记回合制**：删除 `ai_trader`/`round_advance`/`practice_flow`/`engine`；`api/trading` 仅 RTS；前端/组织端去掉回合 UI 与 `/rounds/*` |
 | 2026-06-01 | **FStrading 统一 trading 配置**：删除 `trading-v1`/`trading-v2-rts`，唯一包 `fstrading`；registry 别名兼容存量对局 |
 | 2026-06-01 | **拟真城市 + 体验营 P1+ + OPC 目录迁移**：`content/world/yangtze_6` + `world_loader`；赛季/分组/作业 API；[ADR-010](./docs/decisions/010-拟真城市内容包与CyberCore合并加载.md) |

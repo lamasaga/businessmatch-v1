@@ -1471,6 +1471,64 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/HTTPValidationError'
+  /api/v1/trading/regions/{region_id}/geo-pack:
+    get:
+      tags:
+      - 交易游戏
+      summary: Get Region Geo Pack
+      description: 获取区域地理包（锚点、bbox、路网、示意底图路径）
+      operationId: get_region_geo_pack_api_v1_trading_regions__region_id__geo_pack_get
+      security:
+      - OAuth2PasswordBearer: []
+      parameters:
+      - name: region_id
+        in: path
+        required: true
+        schema:
+          type: string
+          title: Region Id
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponse_WorldGeoPackOut_'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /api/v1/trading/game-configs/{config_id}/geo-pack:
+    get:
+      tags:
+      - 交易游戏
+      summary: Get Game Config Geo Pack
+      description: 按赛制包 world_region_id 解析地理包
+      operationId: get_game_config_geo_pack_api_v1_trading_game_configs__config_id__geo_pack_get
+      security:
+      - OAuth2PasswordBearer: []
+      parameters:
+      - name: config_id
+        in: path
+        required: true
+        schema:
+          type: string
+          title: Config Id
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponse_WorldGeoPackOut_'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
   /api/v1/practice/game-configs:
     get:
       tags:
@@ -3978,6 +4036,27 @@ components:
           title: Data
       type: object
       title: ApiResponse[List[Dict[str, Any]]]
+    ApiResponse_WorldGeoPackOut_:
+      properties:
+        success:
+          type: boolean
+          title: Success
+          default: true
+        code:
+          type: integer
+          title: Code
+          default: 0
+        message:
+          type: string
+          title: Message
+          default: success
+        data:
+          anyOf:
+          - $ref: '#/components/schemas/WorldGeoPackOut'
+          - type: 'null'
+          title: Data
+      type: object
+      title: ApiResponse[WorldGeoPackOut]
     ApiResponse_List_OneCompanyOut__:
       properties:
         success:
@@ -5228,6 +5307,59 @@ components:
       additionalProperties: true
       type: object
       title: GameConfig
+    WorldGeoPackOut:
+      properties:
+        region_id:
+          type: string
+          title: Region Id
+        geo_pack_version:
+          type: string
+          title: Geo Pack Version
+          default: '0.1.0'
+        world_pack_version:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: World Pack Version
+        bbox:
+          items:
+            type: number
+          type: array
+          title: Bbox
+        projection:
+          type: string
+          title: Projection
+          default: equirectangular
+        stage_aspect:
+          type: string
+          title: Stage Aspect
+          default: '16:9'
+        assets:
+          additionalProperties:
+            type: string
+          type: object
+          title: Assets
+        attribution:
+          items:
+            type: string
+          type: array
+          title: Attribution
+        cities:
+          items:
+            additionalProperties: true
+            type: object
+          type: array
+          title: Cities
+        routes:
+          items:
+            additionalProperties: true
+            type: object
+          type: array
+          title: Routes
+      type: object
+      required:
+      - region_id
+      title: WorldGeoPackOut
     GameState:
       properties:
         event:

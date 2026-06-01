@@ -19,6 +19,7 @@ from app.games.trading.rts_api_helpers import (
 )
 from app.games.trading.rts_state import ensure_player_registered, get_rts_runtime
 from app.games.trading.rts_tick import get_active_round
+from app.games.trading.world_slice import world_context_for_match
 from app.schemas.trading_competition import (
     CityMarket,
     GameState,
@@ -100,6 +101,8 @@ def build_rts_game_state(
         CityMarket(
             city=m["city"],
             city_name=m["city_name"],
+            city_type=m.get("city_type"),
+            hub=bool(m.get("hub")),
             products=[ProductPrice(**p) for p in m["products"]],
         )
         for m in markets_raw
@@ -119,6 +122,7 @@ def build_rts_game_state(
 
     config_id = event.game_config_id or "fstrading"
     pricing = get_pricing_config(config_id)
+    world_ctx = world_context_for_match(config, config_id)
 
     return GameState(
         event=_event_to_out(event, db),
@@ -144,7 +148,7 @@ def build_rts_game_state(
             vehicles=cap_raw.get("vehicles", []),
             max_vehicles=cap_raw.get("max_vehicles", 3),
         ),
-        rts=rts_meta,
+        rts={**rts_meta, "world": world_ctx},
     )
 
 

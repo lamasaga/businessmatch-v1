@@ -1,4 +1,4 @@
-"""商赛 Pydantic Schemas"""
+"""?? Pydantic Schemas"""
 
 from typing import Optional, List, Dict, Any
 from pydantic import BaseModel, ConfigDict, Field
@@ -46,15 +46,15 @@ class GameConfig(BaseModel):
 
     rounds: int = Field(default=10, ge=3, le=20)
     initial_capital: int = Field(default=50000, ge=10000, le=100000)
-    inventory_limit: int = Field(default=99, ge=5, le=999, description="v1：每种商品上限")
+    inventory_limit: int = Field(default=99, ge=5, le=999, description="v1???????")
     inventory_limit_per_product: int = Field(default=99, ge=5, le=999)
     move_cost: int = Field(default=1000, ge=100, le=5000)
     decision_time: int = Field(default=60, ge=15, le=300)
-    mode: Optional[str] = Field(default=None, description="rts 即时战略")
+    mode: Optional[str] = Field(default=None, description="rts ????")
     duration_preset: Optional[str] = Field(default=None, description="short | standard | long")
     cities: List[str] = Field(
         default=["nanjing", "suzhou", "shanghai", "nantong", "wuxi", "changzhou"],
-        description="默认长三角六城；RTS 赛制由 world.region_id 注入",
+        description="????????RTS ??? world.region_id ??",
     )
     products: List[str] = Field(default=["fruit", "vegetable", "daily", "electronics", "clothing", "cosmetics", "jewelry", "antique", "art", "snack"])
 
@@ -71,7 +71,7 @@ class CompetitionEventCreate(CompetitionEventBase):
     game_config_id: str = Field(default="fstrading", max_length=64)
     design_mode: str = Field(default="standalone", description="standalone | modular")
     match_kind: str = Field(default="official", description="official | practice")
-    teaching_group_id: Optional[int] = Field(None, description="所属体验营营团 ID")
+    teaching_group_id: Optional[int] = Field(None, description="??????? ID")
 
 
 class CompetitionEventUpdate(BaseModel):
@@ -85,7 +85,7 @@ class PracticeStartRequest(BaseModel):
     design_mode: str = Field(default="standalone")
     title: Optional[str] = None
     config: Optional[GameConfig] = None
-    # 覆盖 AI 档位顺序，如 ["chaotic","advanced","advanced"]
+    # ?? AI ?????? ["chaotic","advanced","advanced"]
     practice_ai_slots: Optional[List[str]] = Field(default=None)
 
 
@@ -165,7 +165,7 @@ class TradingRoundOut(BaseModel):
     round_number: int
     status: str
     events: List[Dict[str, Any]]
-    # v1: product_id -> int；v2 RTS: product_id -> {ask, bid, pool, pressure}
+    # v1: product_id -> int?v2 RTS: product_id -> {ask, bid, pool, pressure}
     price_snapshot: Dict[str, Dict[str, Any]]
     started_at: Optional[datetime]
     ended_at: Optional[datetime]
@@ -243,6 +243,8 @@ class MarketInsight(BaseModel):
 class CityMarket(BaseModel):
     city: str
     city_name: str
+    city_type: Optional[str] = None
+    hub: bool = False
     products: List[ProductPrice]
 
 
@@ -277,6 +279,21 @@ class RtsActionResult(BaseModel):
     game_state: Optional["GameState"] = None
 
 
+class WorldGeoPackOut(BaseModel):
+    """??????? ? ????? / BDD ???"""
+
+    region_id: str
+    geo_pack_version: str = "0.1.0"
+    world_pack_version: Optional[str] = None
+    bbox: List[float] = Field(default_factory=list)
+    projection: str = "equirectangular"
+    stage_aspect: str = "16:9"
+    assets: Dict[str, str] = Field(default_factory=dict)
+    attribution: List[str] = Field(default_factory=list)
+    cities: List[Dict[str, Any]] = Field(default_factory=list)
+    routes: List[Dict[str, Any]] = Field(default_factory=list)
+
+
 class GameState(BaseModel):
     event: CompetitionEventOut
     participant: ParticipantOut
@@ -286,7 +303,7 @@ class GameState(BaseModel):
     standings: List[Dict[str, Any]]
     time_remaining: Optional[int] = None
     is_practice: bool = False
-    game_mode: str = "round"
+    game_mode: str = "rts"
     pricing_mode: str = "market"
     market_insights: List[MarketInsight] = []
     has_submitted_this_round: bool = False
@@ -326,7 +343,7 @@ class CompetitionResult(BaseModel):
 
 
 class OrganizerControlOut(BaseModel):
-    """组织者控场面板数据（无需参赛即可查看）"""
+    """???????????????????"""
     event: CompetitionEventOut
     current_round: Optional[TradingRoundOut] = None
     standings: List[Dict[str, Any]] = []
@@ -335,6 +352,6 @@ class OrganizerControlOut(BaseModel):
     rts: Optional[Dict[str, Any]] = None
 
 
-# 解决前向引用
+# ??????
 CompetitionEventDetail.model_rebuild()
 RtsActionResult.model_rebuild()

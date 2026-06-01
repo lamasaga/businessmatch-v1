@@ -17,6 +17,10 @@ world/
     nanjing.yaml …          # L2 城市母本 + L3 pop_segments
   behavior_packs/
     default_yrd.yaml        # POP 行为原语包（v0 占位）
+  geo/
+    yangtze_6/
+      manifest.yaml         # bbox、投影、美术资源路径
+      anchors.yaml          # WGS84 锚点（地图层）
 ```
 
 ## 对齐原则（全平台）
@@ -49,7 +53,11 @@ world/
 1. 加载 `regions/<region_id>.yaml`
 2. 按区域 `cities` 列表加载 `cities/<city_id>.yaml`
 3. 合并 `routes`、写入 `GameConfigDocument.cities`
-4. 将 `defaults.cities` 设为区域城市顺序
+4. 将 `defaults.cities` 设为区域城市顺序；`hub_cities` 供练习局出生城
+5. 合并 `geo/yangtze_6/anchors.yaml` 至引擎 `cities[*].geo`（经纬度）
+
+　　**HTTP**：`GET /api/v1/trading/regions/yangtze_6/geo-pack` · `GET /api/v1/trading/game-configs/fstrading/geo-pack`  
+　　**对局 state**：`game_state.rts.world` 含完整贸易切片（城、边、geo 元数据）
 
 　　详见 `app/domains/cybercore/world_loader.py` 与 [ADR-010](../../../docs/decisions/010-拟真城市内容包与CyberCore合并加载.md)。
 
