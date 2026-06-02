@@ -18,6 +18,9 @@ def get_pricing_config(config_id: str = DEFAULT_TRADING_CONFIG_ID) -> Dict[str, 
         "min_spread": float(pricing.get("min_spread", 0.08)),
         "reference_pool": float(pricing.get("reference_pool", 100)),
         "absorption_cap_per_tick": int(pricing.get("absorption_cap_per_tick", 25)),
+        "natural_flow_scale": float(pricing.get("natural_flow_scale", 0.20)),
+        "pool_reversion_rate": float(pricing.get("pool_reversion_rate", 0.03)),
+        "min_pool_ratio": float(pricing.get("min_pool_ratio", 0.10)),
     }
 
 

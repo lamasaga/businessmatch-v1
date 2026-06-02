@@ -38,7 +38,9 @@ def effective_travel_ticks(
     vehicles: List[str],
     config_id: str,
 ) -> int:
-    routes = config.get("routes") or {}
+    from app.games.trading.world_slice import routes_dict_for_match
+
+    routes = routes_dict_for_match(config, config_id)
     base = base_travel_ticks(from_city, to_city, routes)
     lg = logistics_config(config)
     sb = speed_bonus(vehicles, config_id, config)
@@ -53,8 +55,9 @@ def move_cash_cost(
     default = logistics_config(config)["move_cost_per_edge"]
     if from_city and to_city and from_city != to_city:
         from app.games.trading.world_slice import edge_move_cost
+        from app.games.trading.world_slice import routes_dict_for_match
 
-        routes = config.get("routes") or {}
+        routes = routes_dict_for_match(config)
         return edge_move_cost(from_city, to_city, routes, default)
     return default
 

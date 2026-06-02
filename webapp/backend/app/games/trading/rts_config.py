@@ -73,6 +73,9 @@ def pricing_config(config: Dict[str, Any]) -> Dict[str, Any]:
         "elasticity": float(p.get("elasticity", 0.12)),
         "reference_pool": float(p.get("reference_pool", 100)),
         "absorption_cap_per_tick": int(p.get("absorption_cap_per_tick", 25)),
+        "natural_flow_scale": float(p.get("natural_flow_scale", 0.20)),
+        "pool_reversion_rate": float(p.get("pool_reversion_rate", 0.03)),
+        "min_pool_ratio": float(p.get("min_pool_ratio", 0.10)),
     }
 
 

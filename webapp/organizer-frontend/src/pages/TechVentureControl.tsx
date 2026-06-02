@@ -204,38 +204,92 @@ export default function TechVentureControl() {
     editing[t.id] ?? { team_name: t.team_name, product_name: t.product_name || '' };
 
   return (
-    <div className="max-w-5xl mx-auto space-y-6 p-4">
-      <div className="flex flex-wrap items-start justify-between gap-4">
-        <div>
-          <h1 className="text-2xl font-bold">创想大赢家 · 控场</h1>
-          <p className="text-gray-400 text-sm">
-            {state.title} · 场次 #{state.match_id} · {waiting ? '报名等待中' : state.match_status}
-          </p>
-        </div>
-        {waiting && state.room_code && (
-          <button
-            type="button"
-            onClick={copyCode}
-            className="bg-gray-800 border border-gray-600 rounded-lg px-5 py-3 flex items-center gap-3 hover:border-blue-500/50"
-          >
-            <span className="text-xs text-gray-400">房间码（告知选手）</span>
-            <span className="text-3xl font-mono font-bold text-blue-400 tracking-widest">
-              {state.room_code}
-            </span>
-            {copied ? <Check className="w-4 h-4 text-green-400" /> : <Copy className="w-4 h-4 text-gray-400" />}
-          </button>
-        )}
-        {!waiting && (
-          <div className="text-right">
-            <p className="text-lg font-bold">{state.teams.length} 支队伍</p>
-            {state.current_round && (
-              <p className="text-sm text-green-400">
-                第{state.current_round.round_no}轮进行中 ·
-                {submittedSet.size}/{state.current_round.total_teams} 已提交
-              </p>
-            )}
+    <div className="min-h-[calc(100vh-56px)] p-4 space-y-4">
+      {/* Sticky action bar */}
+      <div className="sticky top-2 z-20 bg-gray-950/70 backdrop-blur rounded-2xl border border-gray-800 px-4 py-3">
+        <div className="flex flex-wrap items-center justify-between gap-3">
+          <div className="min-w-[240px]">
+            <h1 className="text-xl font-bold">创想大赢家 · 控场</h1>
+            <p className="text-gray-400 text-xs mt-0.5">
+              {state.title} · 场次 #{state.match_id} · {waiting ? '报名等待中' : state.match_status}
+              {state.current_round ? ` · 第${state.current_round.round_no}轮` : ''}
+            </p>
           </div>
-        )}
+
+          <div className="flex items-center gap-3 text-sm">
+            {waiting && state.room_code && (
+              <button
+                type="button"
+                onClick={copyCode}
+                className="bg-gray-900 border border-gray-700 rounded-xl px-4 py-2 flex items-center gap-3 hover:border-blue-500/50"
+              >
+                <span className="text-[10px] text-gray-400">房间码</span>
+                <span className="text-2xl font-mono font-bold text-blue-400 tracking-widest">
+                  {state.room_code}
+                </span>
+                {copied ? <Check className="w-4 h-4 text-green-400" /> : <Copy className="w-4 h-4 text-gray-400" />}
+              </button>
+            )}
+
+            {!waiting && state.current_round && (
+              <div className="text-right">
+                <p className="text-xs text-gray-400">本轮提交</p>
+                <p className="text-sm font-bold text-green-400">
+                  {submittedSet.size}/{state.current_round.total_teams}
+                </p>
+              </div>
+            )}
+
+            <div className="flex items-center gap-2">
+              {waiting && (
+                <button
+                  type="button"
+                  onClick={handleStartMatch}
+                  disabled={!canStart || actionLoading}
+                  className="px-4 py-2 rounded-xl bg-green-600 hover:bg-green-700 text-white text-sm font-semibold flex items-center gap-2 disabled:opacity-40"
+                >
+                  {actionLoading ? <Loader2 className="w-4 h-4 animate-spin" /> : <Play className="w-4 h-4" />}
+                  开始比赛
+                </button>
+              )}
+
+              {!waiting && !isFinished && (
+                <>
+                  <select
+                    value={selectedEvent}
+                    onChange={(e) => setSelectedEvent(e.target.value)}
+                    className="bg-gray-900 border border-gray-700 rounded-xl px-3 py-2 text-sm"
+                  >
+                    {EVENTS.map((e) => (
+                      <option key={e.id} value={e.id}>{e.label}</option>
+                    ))}
+                  </select>
+                  {state.current_round?.status === 'pending' ? (
+                    <button
+                      type="button"
+                      onClick={handleOpenRound}
+                      disabled={actionLoading}
+                      className="px-4 py-2 rounded-xl bg-green-600 hover:bg-green-700 text-white text-sm flex items-center gap-2 disabled:opacity-50"
+                    >
+                      <Play className="w-4 h-4" />
+                      开放下一轮
+                    </button>
+                  ) : (
+                    <button
+                      type="button"
+                      onClick={handleSettle}
+                      disabled={actionLoading}
+                      className="px-4 py-2 rounded-xl bg-orange-600 hover:bg-orange-700 text-white text-sm flex items-center gap-2 disabled:opacity-50"
+                    >
+                      <Calculator className="w-4 h-4" />
+                      结算当前轮
+                    </button>
+                  )}
+                </>
+              )}
+            </div>
+          </div>
+        </div>
       </div>
 
       {error && (
@@ -364,25 +418,21 @@ export default function TechVentureControl() {
             </div>
           </div>
 
-          <div className="bg-gray-800 rounded-lg p-4 flex flex-col gap-3">
-            <button
-              type="button"
-              onClick={handleStartMatch}
-              disabled={!canStart || actionLoading}
-              className="w-full py-3 bg-green-600 hover:bg-green-700 text-white rounded-lg font-semibold flex items-center justify-center gap-2 disabled:opacity-40"
-            >
-              {actionLoading ? <Loader2 className="w-5 h-5 animate-spin" /> : <Play className="w-5 h-5" />}
-              开始比赛（结束报名）
-            </button>
-            {(state.participant_count ?? 0) < 1 && (
-              <p className="text-sm text-gray-400">至少 1 名选手用房间码加入后方可开始。</p>
-            )}
-            {unassigned > 0 && (
-              <p className="text-sm text-yellow-400">仍有 {unassigned} 名选手未选队，请提醒学生在手机端选队。</p>
-            )}
-            {state.teams.filter(t => t.is_ai === 0).length < 1 && (
-              <p className="text-sm text-gray-400">请先创建至少 1 支队伍，供选手选择。</p>
-            )}
+          <div className="bg-gray-800 rounded-lg p-4">
+            <h2 className="font-medium mb-2 flex items-center gap-2">
+              <Clock className="w-5 h-5" /> 开赛条件检查
+            </h2>
+            <ul className="text-sm space-y-1 text-gray-400">
+              <li className={(state.participant_count ?? 0) < 1 ? 'text-yellow-400' : 'text-green-400'}>
+                {(state.participant_count ?? 0) < 1 ? '✗' : '✓'} 至少 1 名选手加入
+              </li>
+              <li className={unassigned > 0 ? 'text-yellow-400' : 'text-green-400'}>
+                {unassigned > 0 ? '✗' : '✓'} 所有选手已选队（未选队：{unassigned}）
+              </li>
+              <li className={state.teams.filter(t => t.is_ai === 0).length < 1 ? 'text-yellow-400' : 'text-green-400'}>
+                {state.teams.filter(t => t.is_ai === 0).length < 1 ? '✗' : '✓'} 至少 1 支真人队伍
+              </li>
+            </ul>
           </div>
         </>
       )}

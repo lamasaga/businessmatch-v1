@@ -21,7 +21,7 @@ cities:
     lng: 120.8945
     lat: 32.0146
     stage_pct: [0.66, 0.38]
-    stage_offset_px: [0, -150]
+    stage_offset_px: [0, -100]
     label_offset: [0, 12]
   hangzhou:
     lng: 120.1551

@@ -131,9 +131,16 @@ defaults:
   pricing:
     mode: pool_ask_bid
     min_spread: 0.08
-    elasticity: 0.12
-    reference_pool: 100
-    absorption_cap_per_tick: 25
+    # 8 人局：价格对“缺货/囤货”更敏感，但城市不会在前 10 tick 快速断供
+    elasticity: 0.28
+    reference_pool: 400
+    absorption_cap_per_tick: 40
+    # 自然供需流量缩放（prod-cons）每 tick 只推进一小步，避免 5s tick 把城市池抽干
+    natural_flow_scale: 0.20
+    # 均值回归：池子偏离 target_pool 时，会缓慢拉回（防长期为 0）
+    pool_reversion_rate: 0.03
+    # 最低库存（按 target_pool 比例），避免出现“池为 0 但价格几乎不动”的反直觉体验
+    min_pool_ratio: 0.12
   logistics:
     min_travel_ticks: 2
     move_cost_per_edge: 800

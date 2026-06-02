@@ -5,7 +5,7 @@
 > **读者**：开发、架构、排 Bug  
 > **配套阅读**：[`01-平台愿景与产品架构`](./01-平台愿景与产品架构.md) · [`02-赛事体系与双端产品`](./02-赛事体系与双端产品.md)（双端）· [`03-技术架构与实现现状`](./03-技术架构与实现现状.md)（摘要）· [`04-实施路线与里程碑`](./04-实施路线与里程碑.md) · [`09-分项目开发与集成流程`](./09-分项目开发与集成流程.md)  
 > **安装启动**：[`webapp/README.md`](./webapp/README.md)  
-> **最后更新**：2026-06-01
+> **最后更新**：2026-06-02
 
 **AI 阅读指引**：编码任务默认只读下方 [`AI_DEFAULT`](#ai_default)（约 70 行）。勿全文 attach。深读锚点：`AI_DEEP:demo-paths` · `frontend-routes` · `api-routes` · `matrix-22` · `stores-env-bugs` · `engine-rts` · `alignment` · `doc-code-index`；或 [`webapp/contracts/openapi/`](./webapp/contracts/openapi/)。任务包见 [`09-` §6.1](./09-分项目开发与集成流程.md#61-ai-编程上下文注入清单)。
 
@@ -52,7 +52,7 @@
 | **日常活动** | `/activities` | ✅ | ✅ 单人练习 | FStrading + TechVenture 练习入口；`/quests` 重定向 |
 | 浮生记 RTS | `/games/:id/play` | ✅ WS | ✅ 全屏·地图\|物价 | **FStrading** `fstrading` · `GameFullscreenLayout` |
 | ~~回合制 trading-v1~~ | — | — | — | **已移除**，别名 → `fstrading` |
-| TechVenture | `/games/:id/techventure` | ✅ | ✅ 全屏·三城图\|情报 | 四端控场；对局 `TvStrategyMapPanel` |
+| TechVenture | `/games/:id/techventure` | ✅ | ✅ 全屏·无地图（三栏：决策\|反馈\|赛场流） | 四端控场；参赛端去地图化 |
 | 组织者控场 | :5174 | ✅ | ✅ | 独立端 |
 | **体验营营团 P1+** | `/camp` · `/teaching-groups` · 赛季/分组/作业 | ✅ | 🟡 | 营团 + 赛季编排 API；组织者 Tab 拆分 |
 | **赛事工坊 Sandbox** | `/sandbox` | ✅ | ✅ | 内存会话 · 热 YAML · 试跑 |
@@ -652,6 +652,8 @@ flowchart LR
 
 | 日期 | 摘要 |
 | ---- | ---- |
+| 2026-06-02 | **TechVenture 全屏去地图化 + 控场/评委/大屏重排**：学生端三栏全屏（路线/开城选择器 + 预算粘性提交 + KPI/反馈 + 榜单/快讯）；控场 sticky 操作条；评委「左列表/中详情/右对比」；大屏 Top3 大卡 + Top10 分区 |
+| 2026-06-02 | **FStrading 供需/库存节奏修正 + 路网回退**：调大 `reference_pool`、提高 `elasticity`，引入 `natural_flow_scale`/`pool_reversion_rate`/`min_pool_ratio`；对历史对局 `routes` 缺失时回退到 `content/world/regions/yangtze_6.yaml` 路网；南通锚点下移 50px |
 | 2026-06-01 | **yangtze_6 六城**：FStrading 将 `wuxi` 替换为 `hangzhou`（母本/路网/geo v0.1.1、bbox 南扩） |
 | 2026-06-01 | **双赛制全屏对局 UI + 日常活动**：`GameFullscreenLayout`；浮生记地图\|物价并排；创想 `TvStrategyMapPanel`；`/activities` 单人练习；商赛大厅仅房间码；`round_presenter` 修组织者控场 |
 | 2026-06-01 | **FStrading × 拟真城市对接**：`geo/yangtze_6`、路网移动校验、`GET .../geo-pack`、对局 `rts.world`；前端 `FushengjiMapStage` + 素材 `public/assets/fushengji/v1/`；`classroom` 240 tick 预设 |

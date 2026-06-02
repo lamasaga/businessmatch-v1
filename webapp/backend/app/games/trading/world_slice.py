@@ -10,6 +10,7 @@ from app.domains.cybercore.world_loader import (
     load_trade_slice,
     trade_slice_for_match,
 )
+from app.domains.cybercore.world_loader import load_region
 
 
 def region_id_from_config(config: Dict[str, Any], config_id: str = "fstrading") -> str | None:
@@ -32,6 +33,22 @@ def world_context_for_match(
 
 def geo_pack_for_region(region_id: str) -> Dict[str, Any]:
     return load_geo_pack(region_id)
+
+
+def routes_dict_for_match(config: Dict[str, Any], config_id: str = "fstrading") -> Dict[str, Any]:
+    """兼容历史对局：event.config.routes 为空时，回退到 region 路网。"""
+    routes = config.get("routes")
+    if isinstance(routes, dict) and len(routes) > 0:
+        return routes
+    rid = region_id_from_config(config, config_id)
+    if not rid:
+        return {}
+    try:
+        region = load_region(str(rid))
+    except FileNotFoundError:
+        return {}
+    out = region.get("routes") or {}
+    return out if isinstance(out, dict) else {}
 
 
 def list_route_edges(config: Dict[str, Any]) -> List[Dict[str, Any]]:
@@ -69,6 +86,7 @@ __all__ = [
     "list_route_edges",
     "load_trade_slice",
     "region_id_from_config",
+    "routes_dict_for_match",
     "route_exists",
     "edge_move_cost",
     "world_context_for_match",

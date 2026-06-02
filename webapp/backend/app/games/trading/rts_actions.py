@@ -6,7 +6,7 @@ from typing import Any, Dict, List, Optional, Tuple
 
 from app.domains.arena.config_json import persist_match_config
 from app.domains.arena.models import ArenaMatch, ArenaParticipant
-from app.games.trading.rts_config import city_catalog, product_catalog, vehicle_defs
+from app.games.trading.rts_config import city_catalog, pricing_config, product_catalog, vehicle_defs
 from app.games.trading.world_slice import route_exists
 from app.games.trading.rts_logistics import (
     can_add_inventory,
@@ -18,6 +18,7 @@ from app.games.trading.rts_logistics import (
     storage_capacity,
 )
 from app.games.trading.rts_state import get_rts_runtime, player_state
+from app.games.trading.rts_pricing import target_pool
 
 _VALID_ACTIONS = frozenset({"buy", "sell", "move", "buy_vehicle", "hold"})
 
@@ -156,7 +157,9 @@ def _execute_one(
     if action_type == "move":
         to_city = payload.get("to_city")
         cities = list(city_catalog(config, config_id).keys())
-        routes = config.get("routes") or {}
+        from app.games.trading.world_slice import routes_dict_for_match
+
+        routes = routes_dict_for_match(config, config_id)
         if to_city not in cities:
             return False, "目标城市无效"
         if to_city == city:
@@ -207,22 +210,33 @@ def advance_transits(config: dict, participants: List[ArenaParticipant], tick: i
 
 
 def natural_pool_tick(runtime: dict, match_config: dict, config_id: str) -> None:
-    from app.games.trading.rts_pricing import tick_pool_delta
-
     products = product_catalog(match_config, config_id)
     cities = city_catalog(match_config, config_id)
+    pricing = pricing_config(match_config)
+    ref = float(pricing.get("reference_pool", 100))
+    flow_scale = float(pricing.get("natural_flow_scale", 0.20))
+    rev = float(pricing.get("pool_reversion_rate", 0.03))
+    min_ratio = float(pricing.get("min_pool_ratio", 0.10))
+
     for ck, cc in cities.items():
         cs = runtime["cities"].setdefault(ck, {})
         pools = cs.setdefault("pools", {})
         buy_t = cs.get("buy_tick") or {}
         sell_t = cs.get("sell_tick") or {}
         for pid in products:
-            delta = tick_pool_delta(
-                cc, pid,
-                float(buy_t.get(pid, 0)),
-                float(sell_t.get(pid, 0)),
-            )
-            pools[pid] = max(0.0, float(pools.get(pid, 0)) + delta)
+            pool = float(pools.get(pid, 0))
+            tgt = target_pool(cc, pid, ref)
+            prod = float((cc.get("production") or {}).get(pid, 0))
+            cons = float((cc.get("consumption") or {}).get(pid, 0))
+            player_buy = float(buy_t.get(pid, 0))
+            player_sell = float(sell_t.get(pid, 0))
+
+            structural = (prod - cons) * flow_scale
+            reversion = (tgt - pool) * rev
+            delta = structural + reversion - player_buy + player_sell
+
+            floor = max(0.0, tgt * min_ratio)
+            pools[pid] = max(floor, pool + delta)
 
 
 def _refresh_assets(
@@ -296,7 +310,9 @@ def validate_queue(
 
     if action_type == "move":
         to = payload.get("to_city")
-        routes = config.get("routes") or {}
+        from app.games.trading.world_slice import routes_dict_for_match
+
+        routes = routes_dict_for_match(config, config_id)
         if to not in city_catalog(config, config_id):
             return False, "无效城市"
         if not route_exists(city, to, routes):
