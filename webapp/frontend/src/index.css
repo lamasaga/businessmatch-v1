@@ -125,4 +125,271 @@
     background-size: 200% 100%;
     animation: shimmer 3s ease-in-out infinite;
   }
+
+  /* FStrading 城市分布图 · 暖白质感 + 深灰剪影 */
+  @keyframes fs-map-pin-float {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-3px); }
+  }
+
+  @keyframes fs-map-pin-click {
+    0% { transform: scale(1); }
+    45% { transform: scale(0.95); }
+    100% { transform: scale(1.03); }
+  }
+
+  @keyframes fs-map-pin-ring {
+    0% { box-shadow: 0 0 0 0 rgba(212, 168, 83, 0.35); }
+    100% { box-shadow: 0 0 0 10px rgba(212, 168, 83, 0); }
+  }
+
+  .fs-map-pin {
+    --pin-accent: rgb(212, 168, 83);
+    --fs-pin-stroke: #3b82f6;
+    --fs-pin-stroke-hover: #e85d04;
+    --fs-warm-surface: #fffdf8;
+    --fs-warm-edge: rgba(255, 255, 255, 0.95);
+    --fs-icon-gray: #454c57;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.28rem;
+    background: none;
+    border: none;
+    box-shadow: none;
+    padding: 0;
+    transition: transform 0.22s cubic-bezier(0.34, 1.4, 0.64, 1);
+  }
+
+  .fs-map-pin__icon-wrap {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 2.75rem;
+    height: 2.75rem;
+    border-radius: 0.65rem;
+    background: linear-gradient(145deg, #ffffff 0%, var(--fs-warm-surface) 48%, #f3ebe0 100%);
+    border: 2px solid var(--fs-pin-stroke);
+    box-shadow:
+      0 1px 0 var(--fs-warm-edge) inset,
+      0 6px 14px rgba(62, 52, 40, 0.14),
+      0 1px 3px rgba(62, 52, 40, 0.1);
+    transition:
+      box-shadow 0.2s ease,
+      transform 0.2s ease,
+      border-color 0.2s ease;
+  }
+
+  .fs-map-pin__badge {
+    position: absolute;
+    top: -0.3rem;
+    right: -0.35rem;
+    z-index: 2;
+    font-size: 8px;
+    line-height: 1;
+    padding: 0.12rem 0.3rem;
+    border-radius: 0.3rem;
+    background: var(--pin-accent);
+    color: #3d3428;
+    font-weight: 700;
+    box-shadow: 0 1px 4px rgba(62, 52, 40, 0.2);
+  }
+
+  .fs-map-pin__icon {
+    width: 1.65rem;
+    height: 1.65rem;
+    opacity: 0.92;
+    filter: brightness(0) saturate(100%) invert(28%) sepia(6%) saturate(600%) hue-rotate(182deg);
+    transition: transform 0.2s ease;
+  }
+
+  .fs-map-pin__label {
+    font-size: 0.75rem;
+    font-weight: 600;
+    letter-spacing: 0.06em;
+    color: #3d4450;
+    line-height: 1.15;
+    white-space: nowrap;
+    padding: 0.18rem 0.45rem;
+    border-radius: 0.4rem;
+    background: linear-gradient(180deg, #ffffff 0%, var(--fs-warm-surface) 100%);
+    border: 1px solid rgba(255, 255, 255, 0.85);
+    box-shadow:
+      0 1px 0 rgba(255, 255, 255, 0.9) inset,
+      0 3px 8px rgba(62, 52, 40, 0.12);
+    transition: color 0.2s ease, box-shadow 0.2s ease;
+  }
+
+  .fs-map-pin--hover {
+    transform: translateY(-2px) scale(1.05);
+  }
+
+  .fs-map-pin--hover .fs-map-pin__icon-wrap {
+    border-color: var(--fs-pin-stroke-hover);
+    box-shadow:
+      0 1px 0 var(--fs-warm-edge) inset,
+      0 8px 18px rgba(62, 52, 40, 0.18),
+      0 0 0 1px rgba(232, 93, 4, 0.2);
+  }
+
+  .fs-map-pin--selected .fs-map-pin__label {
+    color: #6b4f1a;
+    box-shadow:
+      0 1px 0 rgba(255, 255, 255, 0.9) inset,
+      0 0 0 1.5px rgba(212, 168, 83, 0.55),
+      0 3px 8px rgba(62, 52, 40, 0.12);
+  }
+
+  .fs-map-pin--current .fs-map-pin__icon-wrap {
+    border-color: var(--fs-pin-stroke);
+    box-shadow:
+      0 1px 0 var(--fs-warm-edge) inset,
+      0 6px 14px rgba(62, 52, 40, 0.14),
+      0 0 0 1px rgba(59, 130, 246, 0.25);
+  }
+
+  .fs-map-pin--current.fs-map-pin--hover .fs-map-pin__icon-wrap {
+    border-color: var(--fs-pin-stroke-hover);
+    box-shadow:
+      0 1px 0 var(--fs-warm-edge) inset,
+      0 8px 18px rgba(62, 52, 40, 0.18),
+      0 0 0 1px rgba(232, 93, 4, 0.25);
+  }
+
+  .fs-map-pin--current .fs-map-pin__label {
+    color: #1e5c52;
+    box-shadow:
+      0 1px 0 rgba(255, 255, 255, 0.9) inset,
+      0 0 0 1.5px rgba(45, 140, 120, 0.4),
+      0 3px 8px rgba(62, 52, 40, 0.1);
+  }
+
+  .fs-map-pin--highlight:not(.fs-map-pin--current) .fs-map-pin__icon-wrap {
+    border-color: var(--fs-pin-stroke);
+    box-shadow:
+      0 1px 0 var(--fs-warm-edge) inset,
+      0 6px 14px rgba(62, 52, 40, 0.14),
+      0 0 0 1px rgba(59, 130, 246, 0.2);
+  }
+
+  .fs-map-pin--highlight.fs-map-pin--hover .fs-map-pin__icon-wrap {
+    border-color: var(--fs-pin-stroke-hover);
+  }
+
+  .fs-map-pin--click .fs-map-pin__icon-wrap {
+    animation: fs-map-pin-click 0.45s ease, fs-map-pin-ring 0.5s ease-out;
+  }
+
+  .fs-map-pin--hover.fs-map-pin--current .fs-map-pin__icon-wrap {
+    animation: fs-map-pin-float 1.8s ease-in-out infinite;
+  }
+
+  /* 商队卡车 · 城市间移动 */
+  @keyframes fs-fleet-drive {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-4px); }
+  }
+
+  @keyframes fs-fleet-pulse-ring {
+    0% { transform: scale(0.9); opacity: 0.7; }
+    100% { transform: scale(1.6); opacity: 0; }
+  }
+
+  .fs-fleet-route {
+    stroke: rgba(168, 130, 70, 0.45);
+    stroke-width: 0.35;
+    stroke-dasharray: 1.2 0.9;
+    stroke-linecap: round;
+    vector-effect: non-scaling-stroke;
+    animation: fs-fleet-dash 1.2s linear infinite;
+  }
+
+  .fs-fleet-route-dot {
+    fill: rgba(180, 140, 80, 0.75);
+    animation: fs-fleet-pulse-ring 1.4s ease-out infinite;
+  }
+
+  @keyframes fs-fleet-dash {
+    to { stroke-dashoffset: -4; }
+  }
+
+  .fs-fleet {
+    transition: left 4.6s linear, top 4.6s linear;
+  }
+
+  .fs-fleet__body {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 2.5rem;
+    height: 2.5rem;
+    transition: transform 0.35s ease;
+  }
+
+  .fs-fleet__disc {
+    position: absolute;
+    inset: 0;
+    border-radius: 9999px;
+    background: linear-gradient(145deg, #ffffff 0%, #fffdf8 50%, #f5ebe0 100%);
+    border: 1px solid rgba(255, 255, 255, 0.92);
+    box-shadow:
+      0 1px 0 rgba(255, 255, 255, 0.95) inset,
+      0 5px 14px rgba(62, 52, 40, 0.16),
+      0 0 0 2px rgba(212, 168, 83, 0.22);
+    pointer-events: none;
+  }
+
+  .fs-fleet__truck {
+    position: relative;
+    z-index: 1;
+    width: 1.35rem;
+    height: 1.35rem;
+    filter: brightness(0) saturate(100%) invert(28%) sepia(6%) saturate(600%) hue-rotate(182deg)
+      drop-shadow(0 1px 2px rgba(62, 52, 40, 0.2));
+  }
+
+  .fs-fleet--moving .fs-fleet__body {
+    animation: fs-fleet-drive 0.55s ease-in-out infinite;
+  }
+
+  .fs-fleet--moving .fs-fleet__disc {
+    box-shadow:
+      0 1px 0 rgba(255, 255, 255, 0.95) inset,
+      0 6px 16px rgba(62, 52, 40, 0.18),
+      0 0 0 2px rgba(212, 168, 83, 0.35);
+  }
+
+  .fs-fleet__caption {
+    position: absolute;
+    left: 50%;
+    top: 100%;
+    transform: translateX(-50%);
+    margin-top: 0.2rem;
+    display: flex;
+    align-items: center;
+    gap: 0.3rem;
+    padding: 0.15rem 0.4rem;
+    border-radius: 0.4rem;
+    font-size: 9px;
+    font-weight: 600;
+    white-space: nowrap;
+    color: #5c4a2a;
+    background: linear-gradient(180deg, #ffffff 0%, #fff8ee 100%);
+    border: 1px solid rgba(255, 255, 255, 0.88);
+    box-shadow: 0 2px 6px rgba(62, 52, 40, 0.12);
+  }
+
+  .fs-fleet__caption--here {
+    color: #1e5c52;
+    background: linear-gradient(180deg, #ffffff 0%, #f0faf7 100%);
+    box-shadow: 0 0 0 1px rgba(45, 140, 120, 0.25), 0 2px 6px rgba(62, 52, 40, 0.1);
+  }
+
+  .fs-fleet__pct {
+    font-variant-numeric: tabular-nums;
+    opacity: 0.85;
+  }
 }

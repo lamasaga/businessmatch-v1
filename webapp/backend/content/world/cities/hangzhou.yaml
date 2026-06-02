@@ -1,0 +1,66 @@
+city_id: hangzhou
+display_name: 杭州市
+name: 杭州市
+type: digital_services
+description: 数字经济与电商枢纽；软件信息、文旅与消费升级强，日用品与家电出货高，生鲜与奢侈品需求旺
+meta:
+  calibrated_at: "2026-06-01"
+  confidence: teaching_grade
+  paradigm_notes: yangtze_6 v0.1（无锡→杭州，2026-06-01）
+  data_sources:
+    - name: 杭州统计年鉴（公开摘要，待补 URL）
+      fields_used: [常住人口, 产业结构]
+sim_scale: 0.001
+display_population: 12376000
+population: 1238
+demographics:
+  luxury: 0.46
+  mass: 0.46
+  staple: 0.08
+production:
+  grain: 2
+  produce: 4
+  raw_materials: 4
+  energy: 4
+  furniture: 5
+  textile: 7
+  daily_goods: 10
+  appliances: 8
+  passenger_car: 4
+  luxury: 2
+consumption:
+  grain: 9
+  produce: 12
+  raw_materials: 6
+  energy: 6
+  furniture: 6
+  textile: 8
+  daily_goods: 12
+  appliances: 7
+  passenger_car: 5
+  luxury: 4
+demand_profile:
+  daily_goods: 1.12
+  appliances: 1.08
+  luxury: 1.10
+  produce: 1.05
+logistics:
+  hub: false
+  travel_multiplier: 1.0
+pop_segments:
+  - pop_id: mass_consumer
+    share: 0.46
+    income_index: 1.05
+    demand_vector: { daily_goods: 1.15, produce: 1.05 }
+  - pop_id: middle_class
+    share: 0.30
+    income_index: 1.15
+    demand_vector: { appliances: 1.1, furniture: 1.05 }
+  - pop_id: affluent
+    share: 0.14
+    income_index: 1.6
+    demand_vector: { luxury: 1.2, passenger_car: 1.05 }
+  - pop_id: digital_industry
+    share: 0.10
+    income_index: 1.0
+    demand_vector: { raw_materials: 1.05, energy: 1.05 }

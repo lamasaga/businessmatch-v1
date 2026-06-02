@@ -15,11 +15,11 @@
 
 ## 六城节点
 
-| city_id | 文件 |
-|---------|------|
-| shanghai | `maps/cities/shanghai.svg` |
-| suzhou | `maps/cities/suzhou.svg` |
-| nanjing | `maps/cities/nanjing.svg` |
-| nantong | `maps/cities/nantong.svg` |
-| wuxi | `maps/cities/wuxi.svg` |
-| changzhou | `maps/cities/changzhou.svg` |
+| city_id | 文件 | 剪影说明 |
+|---------|------|----------|
+| shanghai | `maps/cities/shanghai.svg` | 都市天际线 |
+| suzhou | `maps/cities/suzhou.svg` | 多塔楼剪影 |
+| nanjing | `maps/cities/nanjing.svg` | 纪念性建筑 |
+| nantong | `maps/cities/nantong.svg` | 港口帆船 |
+| hangzhou | `maps/cities/hangzhou.svg` | 高层天际线 |
+| changzhou | `maps/cities/changzhou.svg` | 工业城天际线 |

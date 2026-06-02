@@ -12,6 +12,8 @@
 | **Tabler Icons** | [MIT](https://github.com/tabler/tabler-icons/blob/master/LICENSE) | `maps/cities/` 部分 `items/` `ui/` `animations/` | 署名可选；原始包 `sources/tabler-icons.zip` |
 | **Openclipart** | [CC0](https://openclipart.org/) | `sources/openclipart-commerce-sample.svg` | 示例商务 SVG，未默认引用 |
 | **仓库自绘** | CC0（项目内） | `maps/yangtze_6-schematic.svg` | 六城示意底图，非精确地理 |
+| **项目美术** | 教学用途（项目内） | `maps/geo/basemap.webp` | 源自 `art-assets/01.jpeg` 导出；FStrading 对局主底图 |
+| **game-icons.net** | [CC BY 3.0](https://creativecommons.org/licenses/by/3.0/) | `maps/cities/*.svg` | 六城剪影（天际线/建筑/港口等变体） |
 
 ---
 

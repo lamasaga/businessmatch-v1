@@ -10,7 +10,8 @@
 
 | 子目录 | 内容 | 数量级 |
 |--------|------|--------|
-| `maps/` | `yangtze_6-schematic.svg` 示意底图 | 1 + 六城节点 |
+| `maps/geo/` | `basemap.webp` 长三角主底图（FStrading 对局默认） | 1 |
+| `maps/` | `yangtze_6-schematic.svg` 示意底图（降级） | 1 + 六城节点 |
 | `maps/cities/` | 城徽/节点图标（SVG） | 6 |
 | `items/` | 十类商品图标 | 10 |
 | `icons/` |  coin、仓库、地图钉 | 3 |

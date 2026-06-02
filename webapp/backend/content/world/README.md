@@ -42,7 +42,7 @@ world/
 | `shenshi` | `suzhou` | 深市（产业角色由苏州承接） |
 | `rongcheng` | `nantong` | 蓉城（农业/转运由南通承接） |
 | `bingcheng` | `changzhou` | 冰城（重工/汽车链由常州承接） |
-| `gangcheng` | `wuxi` | 港城（制造/枢纽由无锡承接） |
+| `gangcheng` | `hangzhou` | 港城（制造/枢纽由杭州承接） |
 
 　　**FStrading（fstrading）** 默认 `region_id: yangtze_6`，六城为真实长三角节点；NPC 角色背景须绑定上表真实 `city_id` 与 `display_name`。
 

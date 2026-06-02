@@ -21,15 +21,18 @@ cities:
   suzhou: maps/cities/suzhou.svg
   nanjing: maps/cities/nanjing.svg
   nantong: maps/cities/nantong.svg
-  wuxi: maps/cities/wuxi.svg
+  hangzhou: maps/cities/hangzhou.svg
   changzhou: maps/cities/changzhou.svg
 
 map:
+  background_geo_webp: maps/geo/basemap.webp
   background_svg: maps/yangtze_6-schematic.svg
 
 vehicles:
   van: vehicles/van.svg
   truck: vehicles/truck.svg
+
+# 对局地图商队标记（运行时 public/assets/fushengji/v1/vehicles/truck.svg）
 
 ui:
   coin: icons/coin.svg

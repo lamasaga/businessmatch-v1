@@ -652,6 +652,7 @@ flowchart LR
 
 | 日期 | 摘要 |
 | ---- | ---- |
+| 2026-06-01 | **yangtze_6 六城**：FStrading 将 `wuxi` 替换为 `hangzhou`（母本/路网/geo v0.1.1、bbox 南扩） |
 | 2026-06-01 | **双赛制全屏对局 UI + 日常活动**：`GameFullscreenLayout`；浮生记地图\|物价并排；创想 `TvStrategyMapPanel`；`/activities` 单人练习；商赛大厅仅房间码；`round_presenter` 修组织者控场 |
 | 2026-06-01 | **FStrading × 拟真城市对接**：`geo/yangtze_6`、路网移动校验、`GET .../geo-pack`、对局 `rts.world`；前端 `FushengjiMapStage` + 素材 `public/assets/fushengji/v1/`；`classroom` 240 tick 预设 |
 | 2026-06-01 | **移除浮生记回合制**：删除 `ai_trader`/`round_advance`/`practice_flow`/`engine`；`api/trading` 仅 RTS；前端/组织端去掉回合 UI 与 `/rounds/*` |

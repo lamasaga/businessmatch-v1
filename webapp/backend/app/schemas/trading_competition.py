@@ -53,7 +53,7 @@ class GameConfig(BaseModel):
     mode: Optional[str] = Field(default=None, description="rts ????")
     duration_preset: Optional[str] = Field(default=None, description="short | standard | long")
     cities: List[str] = Field(
-        default=["nanjing", "suzhou", "shanghai", "nantong", "wuxi", "changzhou"],
+        default=["nanjing", "suzhou", "shanghai", "nantong", "hangzhou", "changzhou"],
         description="????????RTS ??? world.region_id ??",
     )
     products: List[str] = Field(default=["fruit", "vegetable", "daily", "electronics", "clothing", "cosmetics", "jewelry", "antique", "art", "snack"])

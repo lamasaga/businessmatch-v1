@@ -13,6 +13,12 @@ from app.domains.arena.models.announcement import CampAnnouncement  # noqa: F401
 from app.domains.arena.models.season import Season, SeasonMilestone  # noqa: F401
 from app.domains.arena.models.camp_group import CampGroup, CampGroupMember  # noqa: F401
 from app.domains.arena.models.assignment import Assignment, AssignmentSubmission  # noqa: F401
+from app.domains.arena.models.camp_summer import (  # noqa: F401
+    CampAgendaItem, CampTask, ScoringDimension,
+    TaskSubmission, SubmissionReview,
+    CampCoinBalance, CampCoinTransaction, CampCoinRule, CampShopItem,
+    CampAward, AwardWinner,
+)
 from app.domains.career.models.xp_event import XpEvent  # noqa: F401
 from app.games.trading.models import TradingRound, TradingDecision, TradingPrice  # noqa: F401
 from app.games.techventure.models import TvTeamState, TvRound, TvSubmission, TvSnapshot, TvNews  # noqa: F401

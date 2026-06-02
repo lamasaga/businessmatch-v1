@@ -64,11 +64,18 @@ def city_to_engine_entry(
     if city_data.get("display_population") is not None:
         entry["display_population"] = city_data["display_population"]
     if anchor:
-        entry["geo"] = {
+        geo: Dict[str, Any] = {
             "lng": float(anchor["lng"]),
             "lat": float(anchor["lat"]),
             "label_offset": list(anchor.get("label_offset") or [0, 0]),
         }
+        pct = anchor.get("stage_pct")
+        if isinstance(pct, (list, tuple)) and len(pct) >= 2:
+            geo["stage_pct"] = [float(pct[0]), float(pct[1])]
+        px_off = anchor.get("stage_offset_px")
+        if isinstance(px_off, (list, tuple)) and len(px_off) >= 2:
+            geo["stage_offset_px"] = [float(px_off[0]), float(px_off[1])]
+        entry["geo"] = geo
     return entry
 
 

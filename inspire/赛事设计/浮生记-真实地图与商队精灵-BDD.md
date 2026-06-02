@@ -126,7 +126,7 @@ geo_pack_version: "0.1.0"
 bbox: [118.0, 30.5, 122.5, 33.5]   # 长三角西东南北（教学包）
 projection: equirectangular        # 或 custom_affine 矩阵 6×2
 stage_aspect: "16:9"
-cities: [shanghai, suzhou, nanjing, nantong, wuxi, changzhou]
+cities: [shanghai, suzhou, nanjing, nantong, hangzhou, changzhou]
 attribution:
   - "底图：项目自绘 / OSM ODbL（若启用 G2）"
   - "边界：简化行政界，教学用途"

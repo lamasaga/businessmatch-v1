@@ -10,6 +10,7 @@ import { useAuthStore } from '../../stores/authStore';
 import type { GameState } from '../../types';
 import FushengjiMapStage from '../../components/fushengji/FushengjiMapStage';
 import { neighborCityIds } from '../../lib/fstradingGeo';
+import { resolveCityZhLabel } from '../../lib/fushengjiCityMarkers';
 
 const VEHICLE_LABELS: Record<string, string> = {
   van: '小货车',
@@ -72,8 +73,10 @@ export default function TradingRTSView({ gameState, eventId, onRefresh }: Props)
   const vehicleDefs = (rts?.vehicles_available ?? {}) as Record<string, { name?: string; cost?: number; capacity_bonus?: number; speed_bonus?: number }>;
 
   const cityLabel = currentMarket?.city_name || participant.current_city;
-  const resolveCityName = (cityId: string) =>
-    gameState.markets?.find((m) => m.city === cityId)?.city_name || cityId;
+  const resolveCityName = (cityId: string) => {
+    const marketName = gameState.markets?.find((m) => m.city === cityId)?.city_name;
+    return resolveCityZhLabel(cityId, marketName);
+  };
 
   const maxBuyQty = (() => {
     if (!selectedProduct || actionType !== 'buy') return 99;
@@ -205,7 +208,7 @@ export default function TradingRTSView({ gameState, eventId, onRefresh }: Props)
               <MapPin className="w-4 h-4 text-primary" />
               商路地图
             </h2>
-            <span className="text-[10px] text-foreground-muted">点击城市查看邻城报价</span>
+            <span className="text-[10px] text-foreground-muted">点击城市查看报价</span>
           </div>
           <div className="flex-1 min-h-0 p-2">
             <FushengjiMapStage
@@ -213,6 +216,7 @@ export default function TradingRTSView({ gameState, eventId, onRefresh }: Props)
               world={worldSlice}
               currentCity={participant.current_city}
               selectedCity={mapFocusCity || selectedCity || null}
+              highlightCityIds={actionType === 'move' ? moveTargets : []}
               onSelectCity={(id) => {
                 setMapFocusCity(id);
                 if (actionType === 'move' && moveTargets.includes(id)) setSelectedCity(id);

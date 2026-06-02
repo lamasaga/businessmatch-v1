@@ -1,27 +1,36 @@
-# 六城锚点（WGS84）· 与 regions/yangtze_6 逻辑路网一致
-# label_offset: 舞台像素偏移 [dx, dy]，供前端避让重叠
+# 六城锚点 · stage_pct 为底图上的归一化坐标 [x, y]（0～1），与 city-marker 对齐
 cities:
   nanjing:
     lng: 118.7969
     lat: 32.0603
+    stage_pct: [0.20, 0.42]
+    stage_offset_px: [45, -45]
     label_offset: [0, -14]
   suzhou:
     lng: 120.5853
     lat: 31.2989
+    stage_pct: [0.56, 0.54]
     label_offset: [-10, 8]
   shanghai:
     lng: 121.4737
     lat: 31.2304
+    stage_pct: [0.78, 0.55]
+    stage_offset_px: [40, -40]
     label_offset: [12, 6]
   nantong:
     lng: 120.8945
     lat: 32.0146
+    stage_pct: [0.66, 0.38]
+    stage_offset_px: [0, -150]
     label_offset: [0, 12]
-  wuxi:
-    lng: 120.3019
-    lat: 31.5747
-    label_offset: [-8, -6]
+  hangzhou:
+    lng: 120.1551
+    lat: 30.2741
+    stage_pct: [0.54, 0.86]
+    stage_offset_px: [30, 0]
+    label_offset: [10, 8]
   changzhou:
     lng: 119.9740
     lat: 31.8105
+    stage_pct: [0.44, 0.46]
     label_offset: [-12, 0]

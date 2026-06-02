@@ -1,23 +1,32 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useState, useCallback, type CSSProperties } from 'react';
 import {
-  cityStagePosition,
+  cityMapAnchorStyle,
   fetchGeoPack,
-  fleetPosition,
-  neighborCityIds,
+  mergeMapCities,
   type WorldGeoPack,
 } from '../../lib/fstradingGeo';
-
-const STAGE_W = 800;
-const STAGE_H = 450;
+import FushengjiFleetMarker from './FushengjiFleetMarker';
+import {
+  cityMarkerIconUrl,
+  FSTRADING_CITY_ACCENT,
+  resolveCityZhLabel,
+} from '../../lib/fushengjiCityMarkers';
 
 type Props = {
   configId?: string;
   world?: {
+    geo_pack_version?: string;
     cities?: Array<{
       city_id: string;
       name: string;
       hub?: boolean;
-      geo?: { lng: number; lat: number; label_offset?: number[] };
+      geo?: {
+        lng: number;
+        lat: number;
+        label_offset?: number[];
+        stage_pct?: number[];
+        stage_offset_px?: number[];
+      };
     }>;
     routes?: Array<{
       edge_id: string;
@@ -30,6 +39,7 @@ type Props = {
   };
   currentCity: string;
   selectedCity: string | null;
+  highlightCityIds?: string[];
   onSelectCity: (cityId: string) => void;
   tick: number;
   transit?: { from_city?: string; to_city?: string; arrival_tick?: number } | null;
@@ -42,20 +52,25 @@ export default function FushengjiMapStage({
   world,
   currentCity,
   selectedCity,
+  highlightCityIds = [],
   onSelectCity,
   tick,
   transit,
-  basemapUrl = '/assets/fushengji/v1/maps/yangtze_6-schematic.svg',
+  basemapUrl = '/assets/fushengji/v1/maps/geo/basemap.webp',
   className = '',
 }: Props) {
   const [pack, setPack] = useState<WorldGeoPack | null>(null);
   const [loadError, setLoadError] = useState<string | null>(null);
+  const [hoveredId, setHoveredId] = useState<string | null>(null);
+  const [pulseId, setPulseId] = useState<string | null>(null);
+
+  const worldGeoVersion = world?.geo_pack_version;
 
   useEffect(() => {
     let cancelled = false;
     (async () => {
       try {
-        const p = await fetchGeoPack(configId);
+        const p = await fetchGeoPack(configId, { geoPackVersion: worldGeoVersion });
         if (!cancelled) {
           setPack(p);
           setLoadError(null);
@@ -67,135 +82,118 @@ export default function FushengjiMapStage({
     return () => {
       cancelled = true;
     };
-  }, [configId]);
+  }, [configId, worldGeoVersion]);
 
-  const cities = pack?.cities?.length ? pack.cities : world?.cities ?? [];
-  const routes = pack?.routes?.length ? pack.routes : world?.routes ?? [];
-  const bbox = pack?.bbox?.length === 4 ? pack.bbox : world?.geo?.bbox ?? [118, 30.5, 122.5, 33.5];
-
-  const positions = useMemo(() => {
-    const map: Record<string, { x: number; y: number }> = {};
-    for (const c of cities) {
-      map[c.city_id] = cityStagePosition(c, bbox, STAGE_W, STAGE_H);
-    }
-    return map;
-  }, [cities, bbox]);
-
-  const fleet = useMemo(
-    () => fleetPosition(transit, cities, routes, bbox, STAGE_W, STAGE_H, tick),
-    [transit, cities, routes, bbox, tick],
+  const cities = useMemo(
+    () => mergeMapCities(pack?.cities, world?.cities),
+    [pack?.cities, world?.cities],
   );
+  const routes =
+    world?.routes?.length ? world.routes : pack?.routes?.length ? pack.routes : [];
+  const bbox = pack?.bbox?.length === 4 ? pack.bbox : world?.geo?.bbox ?? [118, 29.8, 122.5, 33.5];
 
-  const neighbors = useMemo(
-    () => new Set(neighborCityIds(currentCity, routes)),
-    [currentCity, routes],
+  const highlightSet = useMemo(() => new Set(highlightCityIds), [highlightCityIds]);
+
+  const assetBasemap =
+    pack?.assets?.basemap_geo_webp || pack?.assets?.basemap_schematic || basemapUrl;
+
+  const handleCityClick = useCallback(
+    (cityId: string) => {
+      setPulseId(cityId);
+      window.setTimeout(() => setPulseId((prev) => (prev === cityId ? null : prev)), 520);
+      onSelectCity(cityId);
+    },
+    [onSelectCity],
   );
-
-  const assetBasemap = pack?.assets?.basemap_schematic || basemapUrl;
 
   return (
     <div
-      className={`relative w-full h-full min-h-[240px] rounded-xl overflow-hidden border border-border-subtle bg-background-secondary flex flex-col ${className}`}
+      className={`relative w-full h-full min-h-[240px] rounded-xl overflow-hidden border border-border-subtle bg-background-secondary ${className}`}
+      role="region"
+      aria-label="长三角城市分布图"
     >
-      <svg
-        viewBox={`0 0 ${STAGE_W} ${STAGE_H}`}
-        className="w-full h-full flex-1 block object-contain"
-        preserveAspectRatio="xMidYMid meet"
-        role="img"
-        aria-label="长三角商路地图"
-      >
-        <image href={assetBasemap} x={0} y={0} width={STAGE_W} height={STAGE_H} opacity={0.85} />
+      <div className="absolute inset-0">
+        <img
+          src={assetBasemap}
+          alt=""
+          className="w-full h-full object-contain bg-[#e8f0e8] pointer-events-none select-none"
+          draggable={false}
+        />
+      </div>
 
-        {routes.map((e) => {
-          const a = positions[e.from_city];
-          const b = positions[e.to_city];
-          if (!a || !b) return null;
-          const active =
-            currentCity === e.from_city ||
-            currentCity === e.to_city ||
-            selectedCity === e.from_city ||
-            selectedCity === e.to_city;
-          return (
-            <g key={e.edge_id}>
-              <line
-                x1={a.x}
-                y1={a.y}
-                x2={b.x}
-                y2={b.y}
-                stroke={active ? 'rgb(45, 212, 191)' : 'rgb(100, 116, 139)'}
-                strokeWidth={active ? 3 : 2}
-                strokeOpacity={0.7}
-              />
-              <text
-                x={(a.x + b.x) / 2}
-                y={(a.y + b.y) / 2 - 6}
-                textAnchor="middle"
-                className="fill-foreground-muted text-[10px]"
-              >
-                {e.base_travel_ticks} tick
-              </text>
-            </g>
-          );
-        })}
-
+      <div className="absolute inset-0 z-10">
         {cities.map((c) => {
-          const p = positions[c.city_id];
-          if (!p) return null;
+          const anchorStyle = cityMapAnchorStyle(c, bbox);
           const isCurrent = c.city_id === currentCity;
           const isSelected = c.city_id === selectedCity;
-          const isNeighbor = neighbors.has(c.city_id);
-          const r = isCurrent ? 14 : isSelected ? 12 : 9;
+          const isHighlight = highlightSet.has(c.city_id);
+          const isHovered = hoveredId === c.city_id;
+          const isPulsing = pulseId === c.city_id;
+          const label = resolveCityZhLabel(c.city_id, c.name);
+          const iconUrl = cityMarkerIconUrl(c.city_id);
+          const accent = FSTRADING_CITY_ACCENT[c.city_id];
+
           return (
-            <g
+            <button
               key={c.city_id}
-              style={{ cursor: 'pointer' }}
-              onClick={() => onSelectCity(c.city_id)}
+              type="button"
+              className={`absolute -translate-x-1/2 -translate-y-[1.375rem] focus:outline-none focus-visible:ring-2 focus-visible:ring-primary/50 ${
+                isHovered ? 'z-30' : 'z-10'
+              }`}
+              style={anchorStyle}
+              onMouseEnter={() => setHoveredId(c.city_id)}
+              onMouseLeave={() => setHoveredId((id) => (id === c.city_id ? null : id))}
+              onClick={() => handleCityClick(c.city_id)}
+              aria-label={`${label}${isCurrent ? '（当前所在）' : ''}`}
+              aria-pressed={isSelected}
             >
-              <circle
-                cx={p.x}
-                cy={p.y}
-                r={r + 4}
-                fill={isCurrent ? 'rgba(45, 212, 191, 0.25)' : 'rgba(15, 23, 42, 0.4)'}
-                stroke={isSelected ? 'rgb(250, 204, 21)' : isNeighbor ? 'rgb(94, 234, 212)' : 'transparent'}
-                strokeWidth={2}
-              />
-              <circle
-                cx={p.x}
-                cy={p.y}
-                r={r}
-                fill={c.hub ? 'rgb(250, 204, 21)' : 'rgb(56, 189, 248)'}
-                stroke="rgb(15, 23, 42)"
-                strokeWidth={1}
-              />
-              <text
-                x={p.x}
-                y={p.y + r + 14}
-                textAnchor="middle"
-                className="fill-foreground text-[11px] font-medium pointer-events-none"
+              <span
+                className={[
+                  'fs-map-pin',
+                  isPulsing ? 'fs-map-pin--click' : '',
+                  isHovered ? 'fs-map-pin--hover' : '',
+                  isSelected ? 'fs-map-pin--selected' : '',
+                  isCurrent ? 'fs-map-pin--current' : '',
+                  isHighlight ? 'fs-map-pin--highlight' : '',
+                ]
+                  .filter(Boolean)
+                  .join(' ')}
+                style={accent ? ({ '--pin-accent': accent } as CSSProperties) : undefined}
               >
-                {c.name}
-              </text>
-            </g>
+                <span className="fs-map-pin__icon-wrap" aria-hidden>
+                  {c.hub && <span className="fs-map-pin__badge">枢纽</span>}
+                  <img src={iconUrl} alt="" className="fs-map-pin__icon" draggable={false} />
+                </span>
+                <span className="fs-map-pin__label">{label}</span>
+              </span>
+            </button>
           );
         })}
 
-        {fleet && (
-          <g>
-            <circle cx={fleet.x} cy={fleet.y} r={10} fill="rgb(251, 191, 36)" stroke="#fff" strokeWidth={2} />
-            <text x={fleet.x} y={fleet.y - 14} textAnchor="middle" className="fill-warning text-[10px] font-bold">
-              商队
-            </text>
-          </g>
+        {currentCity && (
+          <FushengjiFleetMarker
+            currentCity={currentCity}
+            transit={transit}
+            cities={cities}
+            routes={routes}
+            bbox={bbox}
+            tick={tick}
+          />
         )}
-      </svg>
+      </div>
 
       {loadError && (
-        <p className="absolute bottom-2 left-2 text-xs text-warning bg-background/80 px-2 py-1 rounded">
+        <p className="absolute bottom-2 left-2 z-20 text-xs text-warning bg-background/80 px-2 py-1 rounded">
           {loadError}
         </p>
       )}
-      <p className="absolute bottom-2 right-2 text-[10px] text-foreground-muted bg-background/70 px-2 py-0.5 rounded">
-        点击城市查看邻城 · 移动仅可选直连路网
+      <p className="absolute bottom-2 right-2 z-20 text-[10px] text-foreground-muted bg-background/80 px-2 py-0.5 rounded">
+        悬停或点击城市查看报价
+        {import.meta.env.DEV && (worldGeoVersion || pack?.geo_pack_version) && (
+          <span className="ml-1 opacity-70">
+            · geo {worldGeoVersion || pack?.geo_pack_version}
+          </span>
+        )}
       </p>
     </div>
   );

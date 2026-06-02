@@ -155,7 +155,7 @@ def _execute_one(
 
     if action_type == "move":
         to_city = payload.get("to_city")
-        cities = config.get("cities", [])
+        cities = list(city_catalog(config, config_id).keys())
         routes = config.get("routes") or {}
         if to_city not in cities:
             return False, "目标城市无效"
@@ -297,7 +297,7 @@ def validate_queue(
     if action_type == "move":
         to = payload.get("to_city")
         routes = config.get("routes") or {}
-        if to not in config.get("cities", []):
+        if to not in city_catalog(config, config_id):
             return False, "无效城市"
         if not route_exists(city, to, routes):
             return False, "无直达路网"

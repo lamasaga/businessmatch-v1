@@ -7,7 +7,7 @@
 
 | region_id | 城市 | 文件 |
 |-----------|------|------|
-| `yangtze_6` | 南京、苏州、上海、南通、无锡、常州 | `../regions/yangtze_6.yaml` + `*.yaml` |
+| `yangtze_6` | 南京、苏州、上海、南通、杭州、常州 | `../regions/yangtze_6.yaml` + `*.yaml` |
 
 ## canonical `city_id`
 
@@ -16,7 +16,7 @@
 | `shanghai` | 上海市 | 金融与高端消费枢纽 |
 | `suzhou` | 苏州市 | 先进制造与外向配套 |
 | `nanjing` | 南京市 | 省会综合与科教 |
-| `wuxi` | 无锡市 | 精密制造 |
+| `hangzhou` | 杭州市 | 数字经济与电商枢纽 |
 | `changzhou` | 常州市 | 装备与汽车链 |
 | `nantong` | 南通市 | 临港农业与转运 |
 

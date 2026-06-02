@@ -1,8 +1,7 @@
 <!--
+tags: [city, urban, building, skyline]
 category: Buildings
-tags: [goods, manufature, machine, trade, produce, product, worker, industry, industrial, site]
-version: "1.60"
-unicode: "f082"
+source: game-icons.net (CC BY 3.0) — derived from city / offices
 -->
 <svg
   xmlns="http://www.w3.org/2000/svg"
@@ -14,10 +13,14 @@ unicode: "f082"
   stroke-width="2"
   stroke-linecap="round"
   stroke-linejoin="round"
+  aria-hidden="true"
 >
-  <path d="M3 21h18" />
-  <path d="M5 21v-12l5 4v-4l5 4h4" />
-  <path d="M19 21v-8l-1.436 -9.574a.5 .5 0 0 0 -.495 -.426h-1.145a.5 .5 0 0 0 -.494 .418l-1.43 8.582" />
-  <path d="M9 17h1" />
-  <path d="M14 17h1" />
+  <path d="M3 21l18 0" />
+  <path d="M6 21v-8h4v8" />
+  <path d="M10 21v-12l4 -2v14" />
+  <path d="M14 21v-9h4v9" />
+  <path d="M18 21v-15l3 -1v16" />
+  <path d="M8 13h1" />
+  <path d="M12 10h1" />
+  <path d="M16 14h1" />
 </svg>

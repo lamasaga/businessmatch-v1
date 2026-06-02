@@ -8,7 +8,7 @@ meta:
   description: 5 秒 tick 即时商战；长三角六城；城市参数来自 content/world/yangtze_6
   theme: fstrading
   world_region_id: yangtze_6
-  world_pack_version: "0.1.0"
+  world_pack_version: "0.1.2"
   education_focus:
     - 地域产业结构与供需结构
     - 运输时间的机会成本

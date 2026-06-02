@@ -336,7 +336,13 @@ export interface WorldTradeSlice {
     city_id: string;
     name: string;
     hub?: boolean;
-    geo?: { lng: number; lat: number; label_offset?: number[] };
+    geo?: {
+      lng: number;
+      lat: number;
+      label_offset?: number[];
+      stage_pct?: number[];
+      stage_offset_px?: number[];
+    };
   }>;
   routes?: Array<{
     edge_id: string;

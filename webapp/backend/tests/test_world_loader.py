@@ -22,7 +22,10 @@ def test_fstrading_uses_real_cities():
     get_game_config.cache_clear()
     doc = get_game_config("fstrading")
     assert "shanghai" in doc.cities
+    assert "hangzhou" in doc.cities
+    assert "wuxi" not in doc.cities
     assert doc.cities["shanghai"]["name"] == "上海市"
+    assert doc.cities["hangzhou"]["name"] == "杭州市"
     assert doc.cities["shanghai"].get("geo", {}).get("lng") == 121.4737
     assert "jingcheng" not in doc.cities
     assert doc.defaults["cities"][0] == "nanjing"
@@ -44,12 +47,15 @@ def test_trade_slice_geo_pack():
     assert sh["geo"]["lng"] == 121.4737
     assert sh["hub"] is True
     assert any(e["edge_id"] == "shanghai-suzhou" for e in slice_doc["routes"])
+    nt = next(c for c in slice_doc["cities"] if c["city_id"] == "nantong")
+    assert nt["geo"].get("stage_offset_px") == [0.0, -150.0]
 
 
 def test_load_geo_pack_assets():
     pack = load_geo_pack("yangtze_6")
     assert pack["projection"] == "equirectangular"
     assert "basemap_schematic" in pack["assets"]
+    assert pack["assets"]["basemap_geo_webp"].endswith("basemap.webp")
 
 
 def test_route_exists_and_edge_cost():

@@ -43,7 +43,7 @@ def build_rts_markets(
     prev_raw = prev.price_snapshot if prev else {}
 
     markets = []
-    for ck in config.get("cities", list(cities.keys())):
+    for ck in cities.keys():
         if ck not in raw or ck.startswith("_"):
             continue
         city_prices = raw[ck]

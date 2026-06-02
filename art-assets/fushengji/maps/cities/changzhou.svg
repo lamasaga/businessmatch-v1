@@ -1,8 +1,7 @@
 <!--
-tags: [car, motor, automotive, dashboard]
-category: Vehicles
-version: "1.46"
-unicode: "ef7e"
+tags: [city, factory, industrial, building]
+category: Buildings
+source: game-icons.net (CC BY 3.0) — factory / urban
 -->
 <svg
   xmlns="http://www.w3.org/2000/svg"
@@ -14,10 +13,14 @@ unicode: "ef7e"
   stroke-width="2"
   stroke-linecap="round"
   stroke-linejoin="round"
+  aria-hidden="true"
 >
-  <path d="M3 10v6" />
-  <path d="M12 5v3" />
-  <path d="M10 5h4" />
-  <path d="M5 13h-2" />
-  <path d="M6 10h2l2 -2h3.382a1 1 0 0 1 .894 .553l1.448 2.894a1 1 0 0 0 .894 .553h1.382v-2h2a1 1 0 0 1 1 1v6a1 1 0 0 1 -1 1h-2v-2h-3v2a1 1 0 0 1 -1 1h-3.465a1 1 0 0 1 -.832 -.445l-1.703 -2.555h-2v-6z" />
+  <path d="M3 21h18" />
+  <path d="M5 21v-11l4 -2v13" />
+  <path d="M9 21v-8l3 -1v9" />
+  <path d="M12 21v-14l5 -2v16" />
+  <path d="M17 21v-9l4 -1v10" />
+  <path d="M7 14h1" />
+  <path d="M14 10h1" />
+  <path d="M18 15h1" />
 </svg>

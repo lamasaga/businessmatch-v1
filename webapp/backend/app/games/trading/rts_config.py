@@ -29,9 +29,15 @@ def product_catalog(config: Dict[str, Any], config_id: str) -> Dict[str, Dict[st
 
 
 def city_catalog(config: Dict[str, Any], config_id: str) -> Dict[str, Dict[str, Any]]:
+    """对局城市表：以赛制母本为准，剔除已废弃 id（如 wuxi），补全新城（如 hangzhou）。"""
     _, cities, _, _ = load_rts_world(config_id)
-    keys = config.get("cities", list(cities.keys()))
-    return {k: cities[k] for k in keys if k in cities}
+    canonical = list(cities.keys())
+    keys: List[str] = list(config.get("cities") or canonical)
+    keys = [k for k in keys if k in cities]
+    for cid in canonical:
+        if cid not in keys:
+            keys.append(cid)
+    return {k: cities[k] for k in keys}
 
 
 def route_key(a: str, b: str) -> str:

@@ -1,0 +1,26 @@
+<!--
+tags: [city, urban, skyline, office, building]
+category: Buildings
+source: game-icons.net (CC BY 3.0) — building-skyscraper
+-->
+<svg
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+  aria-hidden="true"
+>
+  <path d="M3 21h18" />
+  <path d="M5 21v-14l4 -2v16" />
+  <path d="M9 21v-10l4 -2v12" />
+  <path d="M13 21v-6l4 -1v7" />
+  <path d="M17 21v-12l3 -1v13" />
+  <path d="M9 9h1" />
+  <path d="M13 11h1" />
+  <path d="M17 10h1" />
+</svg>

@@ -1,27 +1,28 @@
 import { useEffect, useState, Suspense, lazy } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import {
-  ArrowLeft, Loader2, Copy, RefreshCw, LayoutDashboard, CalendarDays, Gamepad2, BarChart3, Users, Megaphone, Calendar,
+  ArrowLeft, Loader2, Copy, RefreshCw, LayoutDashboard, Gamepad2, Users,
+  ClipboardList, Building2, Coins, Trophy,
 } from 'lucide-react';
 import { useCampStore } from '../stores/campStore';
 
 // Lazy load tab components for performance
 const OverviewTab = lazy(() => import('./camp/OverviewTab'));
-const SeasonsTab = lazy(() => import('./camp/SeasonsTab'));
+const TaskCenterTab = lazy(() => import('./camp/TaskCenterTab'));
+const CompanyTab = lazy(() => import('./camp/CompanyTab'));
+const CoinEconomyTab = lazy(() => import('./camp/CoinEconomyTab'));
+const ScoringTab = lazy(() => import('./camp/ScoringTab'));
 const EventsTab = lazy(() => import('./camp/EventsTab'));
-const MemberProgressTab = lazy(() => import('./camp/MemberProgressTab'));
-const MembersTab = lazy(() => import('./camp/MembersTab'));
-const GroupsTab = lazy(() => import('./camp/GroupsTab'));
-const AnnouncementsTab = lazy(() => import('./camp/AnnouncementsTab'));
+const MemberManagementTab = lazy(() => import('./camp/MemberManagementTab'));
 
 const TABS = [
   { id: 'overview', label: '概览', icon: LayoutDashboard, component: OverviewTab },
-  { id: 'seasons', label: '赛季', icon: Calendar, component: SeasonsTab },
+  { id: 'tasks', label: '任务中心', icon: ClipboardList, component: TaskCenterTab },
+  { id: 'companies', label: '公司管理', icon: Building2, component: CompanyTab },
+  { id: 'coins', label: '营币经济', icon: Coins, component: CoinEconomyTab },
+  { id: 'scoring', label: '评分评奖', icon: Trophy, component: ScoringTab },
   { id: 'events', label: '营内商赛', icon: Gamepad2, component: EventsTab },
-  { id: 'progress', label: '学员进度', icon: BarChart3, component: MemberProgressTab },
-  { id: 'members', label: '成员名册', icon: Users, component: MembersTab },
-  { id: 'groups', label: '分组管理', icon: Users, component: GroupsTab },
-  { id: 'announcements', label: '公告', icon: Megaphone, component: AnnouncementsTab },
+  { id: 'members', label: '成员管理', icon: Users, component: MemberManagementTab },
 ] as const;
 
 type TabId = typeof TABS[number]['id'];

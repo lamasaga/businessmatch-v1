@@ -7,7 +7,13 @@ export interface WorldGeoCity {
   description?: string;
   hub?: boolean;
   display_population?: number;
-  geo?: { lng: number; lat: number; label_offset?: number[] };
+  geo?: {
+    lng: number;
+    lat: number;
+    label_offset?: number[];
+    stage_pct?: number[];
+    stage_offset_px?: number[];
+  };
 }
 
 export interface WorldRouteEdge {
@@ -50,13 +56,61 @@ export interface WorldTradeSlice {
 
 const geoCache = new Map<string, WorldGeoPack>();
 
-export async function fetchGeoPack(configId = 'fstrading'): Promise<WorldGeoPack> {
-  const key = `cfg:${configId}`;
-  if (geoCache.has(key)) return geoCache.get(key)!;
+/** 开发时改 anchors.yaml 后可在控制台调用，或依赖 geo_pack_version 自动失效 */
+export function clearGeoPackCache(configId?: string): void {
+  if (!configId) {
+    geoCache.clear();
+    return;
+  }
+  for (const key of geoCache.keys()) {
+    if (key.startsWith(`cfg:${configId}:`)) geoCache.delete(key);
+  }
+}
+
+export async function fetchGeoPack(
+  configId = 'fstrading',
+  options?: { force?: boolean; geoPackVersion?: string },
+): Promise<WorldGeoPack> {
+  const ver = options?.geoPackVersion ?? '';
+  const key = `cfg:${configId}:${ver}`;
+  if (!options?.force && geoCache.has(key)) return geoCache.get(key)!;
   const res = await api.get(`/api/v1/trading/game-configs/${configId}/geo-pack`);
   const pack = res.data.data as WorldGeoPack;
-  geoCache.set(key, pack);
+  const cacheKey = `cfg:${configId}:${pack.geo_pack_version ?? ver}`;
+  geoCache.set(cacheKey, pack);
   return pack;
+}
+
+/** 对局内 world 切片优先（随 state 刷新）；地理包仅补全资源与缺省字段 */
+export function mergeMapCities(
+  packCities: WorldGeoCity[] | undefined,
+  worldCities: WorldGeoCity[] | undefined,
+): WorldGeoCity[] {
+  const world = worldCities ?? [];
+  const pack = packCities ?? [];
+  if (!world.length) return pack;
+  if (!pack.length) return world;
+  const packById = new Map(pack.map((c) => [c.city_id, c]));
+  return world.map((wc) => {
+    const pc = packById.get(wc.city_id);
+    if (!pc) return wc;
+    const wg = wc.geo;
+    const pg = pc.geo;
+    if (!wg && !pg) return wc;
+    if (!wg) return pc;
+    if (!pg) return wc;
+    return {
+      ...pc,
+      ...wc,
+      geo: {
+        ...pg,
+        ...wg,
+        stage_pct: wg.stage_pct ?? pg.stage_pct,
+        stage_offset_px: wg.stage_offset_px ?? pg.stage_offset_px,
+        label_offset: wg.label_offset ?? pg.label_offset,
+      },
+    };
+  });
 }
 
 export function projectLngLat(
@@ -80,9 +134,44 @@ export function cityStagePosition(
 ): { x: number; y: number } {
   const g = city.geo;
   if (!g) return { x: width / 2, y: height / 2 };
+  const pct = g.stage_pct;
+  if (pct && pct.length >= 2) {
+    const off = g.label_offset || [0, 0];
+    return { x: pct[0] * width + off[0], y: pct[1] * height + off[1] };
+  }
   const p = projectLngLat(g.lng, g.lat, bbox, width, height);
   const off = g.label_offset || [0, 0];
   return { x: p.x + off[0], y: p.y + off[1] };
+}
+
+/** 舞台归一化坐标 0～1（用于百分比定位） */
+export function cityStagePercent(city: WorldGeoCity, bbox: number[]): { x: number; y: number } {
+  const g = city.geo;
+  if (g?.stage_pct && g.stage_pct.length >= 2) {
+    return { x: g.stage_pct[0], y: g.stage_pct[1] };
+  }
+  if (!g) return { x: 0.5, y: 0.5 };
+  const p = projectLngLat(g.lng, g.lat, bbox, 1, 1);
+  return { x: p.x, y: p.y };
+}
+
+export function cityStageOffsetPx(city: WorldGeoCity): [number, number] {
+  const off = city.geo?.stage_offset_px;
+  if (off && off.length >= 2) return [off[0], off[1]];
+  return [0, 0];
+}
+
+/** 地图锚点：百分比 + 像素微调（与底图手工对齐） */
+export function cityMapAnchorStyle(
+  city: WorldGeoCity,
+  bbox: number[],
+): { left: string; top: string } {
+  const p = cityStagePercent(city, bbox);
+  const [ox, oy] = cityStageOffsetPx(city);
+  return {
+    left: `calc(${p.x * 100}% + ${ox}px)`,
+    top: `calc(${p.y * 100}% + ${oy}px)`,
+  };
 }
 
 export function neighborCityIds(
@@ -120,21 +209,88 @@ export function fleetProgress(
   return Math.max(0, Math.min(1, (tick - depart) / Math.max(1, travel)));
 }
 
-export function fleetPosition(
+export type FleetMarkerState = {
+  xPct: number;
+  yPct: number;
+  offsetPx: [number, number];
+  moving: boolean;
+  progress: number;
+  headingDeg: number;
+  fromCity?: string;
+  toCity?: string;
+};
+
+function cityPercentPoint(cityId: string, cities: WorldGeoCity[], bbox: number[]): { x: number; y: number; ox: number; oy: number } | null {
+  const c = cities.find((x) => x.city_id === cityId);
+  if (!c) return null;
+  const p = cityStagePercent(c, bbox);
+  const [ox, oy] = cityStageOffsetPx(c);
+  return { x: p.x, y: p.y + 0.028, ox, oy };
+}
+
+/** 商队卡车：停留于 currentCity；途中在 from→to 之间插值 */
+export function resolveFleetMarker(
+  currentCity: string,
   transit: { from_city?: string; to_city?: string; arrival_tick?: number } | null | undefined,
   cities: WorldGeoCity[],
   routes: WorldRouteEdge[],
   bbox: number[],
-  width: number,
-  height: number,
   tick: number,
-): { x: number; y: number } | null {
-  if (!transit?.from_city || !transit.to_city) return null;
-  const from = cities.find((c) => c.city_id === transit.from_city);
-  const to = cities.find((c) => c.city_id === transit.to_city);
-  if (!from?.geo || !to?.geo) return null;
-  const p0 = cityStagePosition(from, bbox, width, height);
-  const p1 = cityStagePosition(to, bbox, width, height);
-  const t = fleetProgress(tick, transit, routes);
-  return { x: p0.x + (p1.x - p0.x) * t, y: p0.y + (p1.y - p0.y) * t };
+): FleetMarkerState | null {
+  const fromId = transit?.from_city;
+  const toId = transit?.to_city;
+  const arrival = Number(transit?.arrival_tick ?? 0);
+  const inTransit =
+    Boolean(fromId && toId && fromId !== toId) && arrival > tick;
+
+  if (inTransit && fromId && toId) {
+    const p0 = cityPercentPoint(fromId, cities, bbox);
+    const p1 = cityPercentPoint(toId, cities, bbox);
+    if (!p0 || !p1) return null;
+    const t = fleetProgress(tick, transit, routes);
+    const xPct = p0.x + (p1.x - p0.x) * t;
+    const yPct = p0.y + (p1.y - p0.y) * t;
+    const ox = p0.ox + (p1.ox - p0.ox) * t;
+    const oy = p0.oy + (p1.oy - p0.oy) * t;
+    const headingDeg = (Math.atan2(p1.y - p0.y, p1.x - p0.x) * 180) / Math.PI;
+    return {
+      xPct,
+      yPct,
+      offsetPx: [ox, oy],
+      moving: true,
+      progress: t,
+      headingDeg,
+      fromCity: fromId,
+      toCity: toId,
+    };
+  }
+
+  const anchorCity = currentCity || fromId;
+  if (!anchorCity) return null;
+  const p = cityPercentPoint(anchorCity, cities, bbox);
+  if (!p) return null;
+  return {
+    xPct: p.x,
+    yPct: p.y,
+    offsetPx: [p.ox, p.oy],
+    moving: false,
+    progress: 1,
+    headingDeg: 0,
+  };
+}
+
+export function fleetRouteSegment(
+  transit: { from_city?: string; to_city?: string; arrival_tick?: number } | null | undefined,
+  cities: WorldGeoCity[],
+  bbox: number[],
+  tick: number,
+): { x0: number; y0: number; x1: number; y1: number } | null {
+  const fromId = transit?.from_city;
+  const toId = transit?.to_city;
+  const arrival = Number(transit?.arrival_tick ?? 0);
+  if (!fromId || !toId || fromId === toId || arrival <= tick) return null;
+  const p0 = cityPercentPoint(fromId, cities, bbox);
+  const p1 = cityPercentPoint(toId, cities, bbox);
+  if (!p0 || !p1) return null;
+  return { x0: p0.x, y0: p0.y, x1: p1.x, y1: p1.y };
 }
