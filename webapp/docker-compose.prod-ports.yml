@@ -1,0 +1,11 @@
+# 与 /srv/schedule 共存：避免占用 80 / 8000
+services:
+  backend:
+    ports:
+      - "8001:8000"
+  student:
+    ports:
+      - "8080:80"
+  organizer:
+    ports:
+      - "5174:80"

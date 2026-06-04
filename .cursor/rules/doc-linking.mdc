@@ -8,7 +8,7 @@ alwaysApply: true
 
 ## 1 原则
 
-- **编写代码时的事实与契约**：根目录 **`00～09`**、`agent.md`（导航）、`docs/decisions/`、`**/DESIGN.md`。
+- **编写代码时的事实与契约**：根目录 **`00～10`**、`agent.md`（导航）、`docs/decisions/`、`**/DESIGN.md`。
 - **`inspire/`**：构想、教研、专题蓝图；**可超前于代码**，不构成实现权威。
 - **链接维护成本**集中在少数权威文档，**禁止**在 `inspire/` 内编织大量横向外链。
 
@@ -20,7 +20,7 @@ alwaysApply: true
 | ---- | ---- |
 | 项目第一入口 | `agent.md` |
 | 对外门户 | `README.md` |
-| 权威系列 | `00-` … `09-`（根目录编号文档） |
+| 权威系列 | `00-` … `10-`（根目录编号文档） |
 
 **不允许**（须改为文字指称，无 `](./inspire/...)` 链接）：
 
@@ -32,7 +32,7 @@ alwaysApply: true
 
 | 允许链向 | 示例 |
 | -------- | ---- |
-| 根目录 `00～09` | `[06-生涯模式](../06-生涯模式-大循环家园与资源经济.md)` |
+| 根目录 `00～10` | `[06-生涯模式](../06-生涯模式-大循环家园与资源经济.md)` |
 | `agent.md` | `[agent.md](../agent.md)` |
 | `webapp/` 工程契约 | `[career/DESIGN.md](../webapp/backend/app/domains/career/DESIGN.md)` |
 | `docs/decisions/` | `[ADR-005](../docs/decisions/005-浮生记RTS调度器单写者.md)` |

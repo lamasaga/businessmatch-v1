@@ -361,11 +361,11 @@ export default function TechVenturePlayPage() {
                 </ul>
               </div>
 
-              {snap?.bqi_contribs?.length > 0 && (
+              {(snap?.bqi_contribs?.length ?? 0) > 0 && (
                 <div className="rounded-xl border border-border-subtle bg-background-secondary p-3 text-xs">
                   <p className="text-foreground-muted font-semibold mb-2">上轮 BQI 因素</p>
                   <ul className="space-y-1">
-                    {snap.bqi_contribs.map((c: { delta: number; note: string }, i: number) => (
+                    {(snap?.bqi_contribs ?? []).map((c: { delta: number; note: string }, i: number) => (
                       <li key={i} className="flex gap-2">
                         <span className={c.delta >= 0 ? 'text-success' : 'text-danger'}>
                           {c.delta >= 0 ? '+' : ''}

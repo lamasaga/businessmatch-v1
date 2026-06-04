@@ -7,7 +7,7 @@ import { Loader2 } from 'lucide-react';
 
 export default function TradingGamePage() {
   const { id } = useParams<{ id: string }>();
-  const { gameState, fetchGameState, error } = useTradingStore();
+  const { gameState, fetchGameState } = useTradingStore();
 
   const eventId = Number(id);
 

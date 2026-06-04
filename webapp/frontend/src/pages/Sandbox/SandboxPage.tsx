@@ -1,6 +1,6 @@
 import { useEffect, useState, useCallback } from 'react';
 import {
-  Play, Pause, StepForward, RotateCcw, Save, Upload, Trash2,
+  Play, Pause, StepForward, RotateCcw, Save, Upload,
   ChevronDown, ChevronRight, Terminal, BarChart3, Bug,
   FileCode, Boxes, BrainCircuit, Newspaper, Trophy
 } from 'lucide-react';

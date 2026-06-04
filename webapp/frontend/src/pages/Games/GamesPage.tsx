@@ -4,7 +4,7 @@ import { useCompetitionStore } from '../../stores/competitionStore';
 import { api } from '../../lib/api';
 import {
   Trophy, Search, Users, Clock, ArrowRight,
-  TrendingUp, MapPin, Zap, Loader2,
+  TrendingUp, MapPin, Zap,
 } from 'lucide-react';
 import { isCampPhase1 } from '../../lib/campPhase';
 

@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { Loader2, Plus, CalendarDays, ClipboardList, Image, BarChart3 } from 'lucide-react';
 import { useCampStore } from '../../stores/campStore';
-import type { CampTask, TaskSubmission } from '../../types/camp';
+import type { CampTask, SubmitterType, TaskSubmission, TaskType } from '../../types/camp';
 
 interface Props {
   groupId: number;
@@ -111,9 +111,9 @@ function TaskManager({ groupId }: Props) {
     const fd = new FormData(form);
     await createTask(groupId, {
       title: fd.get('title') as string,
-      task_type: fd.get('task_type') as string,
+      task_type: fd.get('task_type') as TaskType,
       day_number: Number(fd.get('day_number')),
-      submit_type: fd.get('submit_type') as string,
+      submit_type: fd.get('submit_type') as SubmitterType,
       description: fd.get('description') as string,
     });
     setShowModal(false);

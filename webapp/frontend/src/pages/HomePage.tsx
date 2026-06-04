@@ -47,7 +47,7 @@ export default function HomePage() {
   const quickActions = camp ? quickActionsCamp : quickActionsDefault;
   const updates = camp ? recentUpdates : recentUpdatesDefault;
   const domains = camp
-    ? FIVE_DOMAINS.filter((d) => d.path !== '/wiki' && d.path !== '/opc')
+    ? FIVE_DOMAINS.filter((d) => d.path !== '/wiki')
     : FIVE_DOMAINS;
 
   return (

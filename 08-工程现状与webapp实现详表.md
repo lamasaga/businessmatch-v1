@@ -444,7 +444,8 @@ flowchart LR
 | 本地前端 | `cd frontend && npm run dev` → `:5173` |
 | 本地后端 | `cd backend && venv\Scripts\python run.py` → `:8000` |
 | 启动脚本 | `启动.bat` / `启动.ps1` / `启动-前端.bat` / `启动-后端.bat` |
-| Docker | `docker-compose.yml`：backend + frontend(Nginx:80)；**未挂载持久化 DB 卷时需知数据在容器内** |
+| Docker | `docker-compose.yml`：backend + 学生/组织者三端；云演示可用 `docker-compose.prod-ports.yml`（8080/8001/5174）；`scripts/deploy-server.sh` |
+| 四赛制集成 | [`10-四赛制匣子开发与集成指导`](./10-四赛制匣子开发与集成指导.md) |
 | 环境变量 | 前端无 `.env.example`；`VITE_API_URL` 可选 |
 | 安全 | `SECRET_KEY` 默认值；生产必须更换 |
 
@@ -595,7 +596,8 @@ flowchart LR
 | [`04-实施路线与里程碑.md`](./04-实施路线与里程碑.md) | 路线、Phase 验收 |
 | [`01-`](./01-平台愿景与产品架构.md)～[`07-`](./07-拟真城市与区域模拟-阅读合集.md)、[`06-`](./06-生涯模式-大循环家园与资源经济.md) | 战略、生涯、终局 |
 | [`inspire/76-商赛美术资源嵌入与技术选型建议.md`](./inspire/76-商赛美术资源嵌入与技术选型建议.md) | 商赛主题包、对局运行时层规划 |
-| [`蓝图编程方法论`](./蓝图编程方法论——AI辅助大型工程实践指南.md) | AI 协作 v1.1（上下文工程、Skills/Rules） |
+| [`10-四赛制匣子开发与集成指导`](./10-四赛制匣子开发与集成指导.md) | 四赛制 Monorepo、平台挂载、云演示端口 |
+| [inspire/蓝图编程方法论](./inspire/蓝图编程方法论——AI辅助大型工程实践指南.md) | AI 协作 v1.1（上下文工程、Skills/Rules） |
 
 | 代码路径（相对 `webapp/`） | 说明 |
 |---------------------------|------|
@@ -652,6 +654,7 @@ flowchart LR
 
 | 日期 | 摘要 |
 | ---- | ---- |
+| 2026-06-02 | **`10-` 四赛制匣子指导 + 云部署对齐**：新增根目录 `10-`（Monorepo/双轨 TechVenture/演示端口）；`00-`/`09-`/`agent.md` 索引；`docker-compose.prod-ports.yml` + `deploy-server.sh`；双端 Dockerfile `npm install`；组织者 TS 构建修复；蓝图方法论迁至 `inspire/` |
 | 2026-06-02 | **TechVenture 全屏去地图化 + 控场/评委/大屏重排**：学生端三栏全屏（路线/开城选择器 + 预算粘性提交 + KPI/反馈 + 榜单/快讯）；控场 sticky 操作条；评委「左列表/中详情/右对比」；大屏 Top3 大卡 + Top10 分区 |
 | 2026-06-02 | **FStrading 供需/库存节奏修正 + 路网回退**：调大 `reference_pool`、提高 `elasticity`，引入 `natural_flow_scale`/`pool_reversion_rate`/`min_pool_ratio`；对历史对局 `routes` 缺失时回退到 `content/world/regions/yangtze_6.yaml` 路网；南通锚点下移 50px |
 | 2026-06-01 | **yangtze_6 六城**：FStrading 将 `wuxi` 替换为 `hangzhou`（母本/路网/geo v0.1.1、bbox 南扩） |

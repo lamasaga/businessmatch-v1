@@ -60,7 +60,7 @@ export default function TradingRTSView({ gameState, eventId, onRefresh }: Props)
   const quotePrices = quoteMarket?.products || [];
   const viewingRemote = quoteCity !== participant.current_city;
   const displayPrices = viewingRemote ? quotePrices : currentCityPrices;
-  const gameConfigId = (event.config?.game_config_id as string | undefined) || 'fstrading';
+  const gameConfigId = event.game_config_id || 'fstrading';
   const cap = inventory_capacity;
   const storageUsed = cap?.storage_used ?? 0;
   const storageCap = cap?.storage_capacity ?? 99;

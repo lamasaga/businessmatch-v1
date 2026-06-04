@@ -49,6 +49,7 @@ interface AdminState {
   current_round: {
     id: number;
     round_no: number;
+    status?: string;
     submitted_teams: number[];
     total_teams: number;
   } | null;

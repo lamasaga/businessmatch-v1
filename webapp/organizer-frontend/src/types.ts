@@ -86,4 +86,9 @@ export interface OrganizerControl {
   standings: StandingsEntry[];
   participants: Participant[];
   decisions_submitted: number;
+  rts?: {
+    tick?: number;
+    total_ticks?: number;
+    phase?: string;
+  };
 }
