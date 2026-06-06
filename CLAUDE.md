@@ -1,60 +1,62 @@
 # CLAUDE.md
 
-This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
+本文件为 Claude Code（claude.ai/code）提供本项目的工作指引。
 
-## Project Overview
+## 项目概览（Project Overview）
 
-**商域 (BizSim Edu)** is a K12-to-university business simulation education platform. This is a monorepo containing:
+**商域（BizSim Edu）** 是面向 K12 至大学的商业模拟教育平台。本仓库为 monorepo 结构：
 
-- **`webapp/`** — Main application: FastAPI backend + React dual frontend (student + organizer)
-- **`TechVenture/`** — Standalone TechVenture game engine server (Express + TypeScript)
-- **`art-assets/`** — Art assets (including fushengji/tabler icons)
-- **`PPT/`** — Presentation files (HTML/SVG)
-- **`inspire/`** — Vision/research documents (non-authoritative for implementation)
-- **`docs/decisions/`** — Architecture Decision Records (ADR)
+- **`webapp/`** — 主应用：FastAPI 后端 + React 双前端（学生端 Student + 组织者端 Organizer）
+- **`TechVenture/`** — 独立的 TechVenture 赛事引擎演示服务器（Express + TypeScript）
+- **`art-assets/`** — 美术素材（含浮生记/fushengji、tabler 图标等）
+- **`PPT/`** — 演示文件（HTML/SVG）
+- **`inspire/`** — 构想/研究文档（**非编程契约**，non-authoritative）
+- **`docs/decisions/`** — 架构决策记录（ADR, Architecture Decision Records）
 
-Root documents `00-PROJECT.md`, `00-TERMINOLOGY.md`, `01-PRODUCT.md`, `02-ARCHITECTURE.md`, `03-ENGINEERING.md`, `04-ROADMAP.md` are the authoritative source. **Do not treat `inspire/` as implementation authority.**
+根目录权威文档为 `00-PROJECT.md`、`00-TERMINOLOGY.md`、`01-PRODUCT.md`、`02-ARCHITECTURE.md`、`03-ENGINEERING.md`、`04-ROADMAP.md`。**不以 `inspire/` 作为实现依据。**
 
-## Quick Start Commands
+---
 
-### Webapp (Main Application)
+## 快速启动（Quick Start）
 
-**One-shot launch (Windows, recommended):**
+### Webapp（主应用）
+
+**一键启动（Windows，推荐）：**
 ```powershell
 cd webapp
 .\启动.ps1
 ```
-Starts backend (:8000) + student frontend (:5173) + organizer frontend (:5174) in separate windows.
+同时启动后端（:8000）+ 学生端（:5173）+ 组织者端（:5174），各开独立窗口。
 
-**Manual startup:**
+**手动启动：**
 ```powershell
-# Backend (from webapp/backend/)
+# 后端（在 webapp/backend/ 下）
 .\venv\Scripts\python run.py
-# Or with auto-reload (Windows reload can leave orphaned processes):
+# 或带自动重载（Windows 重载可能残留孤儿进程）：
 uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload
 
-# Database init (first time or after schema changes)
+# 数据库初始化（首次或 schema 变更后）
 .\venv\Scripts\python -m app.db.init_db
 
-# Student frontend (from webapp/frontend/)
+# 学生端（在 webapp/frontend/ 下）
 npm install
 npm run dev        # localhost:5173
 
-# Organizer frontend (from webapp/organizer-frontend/)
+# 组织者端（在 webapp/organizer-frontend/ 下）
 npm install
 npm run dev        # localhost:5174
 ```
 
-**Docker (production-like):**
+**Docker（类生产环境）：**
 ```powershell
 cd webapp
 docker compose up -d --build
-# Student at http://localhost, organizer at http://localhost:5174
+# 学生端 http://localhost，组织者端 http://localhost:5174
 ```
 
-**Test accounts:** `student`/`student123`, `admin`/`admin123`
+**测试账号：** `student`/`student123`，`admin`/`admin123`
 
-### TechVenture Server
+### TechVenture 服务器
 
 ```powershell
 cd TechVenture
@@ -64,81 +66,83 @@ npm run build      # tsc → dist/
 npm start          # node dist/index.js
 ```
 
-## High-Level Architecture
+---
 
-### Webapp Backend — Domain-Partitioned Monolith
+## 高层架构（High-Level Architecture）
 
-The backend (`webapp/backend/app/`) is organized around **hard domain boundaries**. Cross-domain writes are forbidden — only API calls or domain events.
+### 后端 — 模块化单体（Domain-Partitioned Monolith）
 
-| Domain | Path | Owned Tables | Key Rule |
-|--------|------|--------------|----------|
-| **identity** | `models/user.py` · `api/auth.py` | `users` | No other domain writes `users.experience` directly |
-| **arena** | `domains/arena/` · `api/{competitions,trading,organizer,practice,teaching_groups}.py` | `competition_events`, `competition_participants`, `organizer_profiles`, `arena_teams` | Game engines must not bypass arena to mutate competition state |
-| **cybercore** | `domains/cybercore/` · `content/game-configs/` | YAML configs | Game rules must be declared in YAML, never hardcoded |
-| **games/trading** | `games/trading/*.py` | `trading_rounds`, `trading_decisions`, `trading_prices` | Arena tables off-limits |
-| **games/techventure** | `games/techventure/*.py` | `tv_team_state`, `tv_rounds`, `tv_submissions`, `tv_snapshots`, `tv_news` | Arena tables off-limits |
-| **career** | `domains/career/` | `xp_events` | XP changes only through `grant_xp` / `settle_match_rewards` |
-| **sandbox** | `domains/sandbox/` | — | Isolated experiment space |
+后端（`webapp/backend/app/`）按**硬域边界（hard domain boundaries）**组织。禁止跨域写入，只经 API 调用或域事件。
 
-**`models/trading_competition.py` is a re-export compatibility layer only.** New business logic belongs in `domains/arena/models/` or `games/<engine>/models.py`.
+| 域（Domain） | 路径 | 独占表 | 核心规则 |
+|-------------|------|--------|---------|
+| **identity** | `models/user.py` · `api/auth.py` | `users` | 其他域不得直接写入 `users.experience` |
+| **arena** | `domains/arena/` · `api/{competitions,trading,organizer,practice,teaching_groups}.py` | `competition_events`, `competition_participants`, `organizer_profiles`, `arena_teams` | 赛事引擎不得绕过 arena 修改比赛状态 |
+| **cybercore** | `domains/cybercore/` · `content/game-configs/` | YAML 配置 | 规则必须声明在 YAML 中，禁止硬编码 |
+| **games/trading** | `games/trading/*.py` | `trading_rounds`, `trading_decisions`, `trading_prices` | 禁止操作 arena 表 |
+| **games/techventure** | `games/techventure/*.py` | `tv_team_state`, `tv_rounds`, `tv_submissions`, `tv_snapshots`, `tv_news` | 禁止操作 arena 表 |
+| **career** | `domains/career/` | `xp_events` | XP 变更只能通过 `grant_xp` / `settle_match_rewards` |
+| **sandbox** | `domains/sandbox/` | — | 隔离实验空间 |
 
-### Arena + Game Engine Separation
+**`models/trading_competition.py` 仅为兼容层（re-export）。** 新逻辑须放入 `domains/arena/models/` 或 `games/<engine>/models.py`。
 
-The platform separates "competition lifecycle" (arena) from "game rules" (engine):
+### Arena + 赛事引擎分离
 
-| Layer | Identifier | Path | Responsibility |
-|-------|-----------|------|----------------|
-| **Engine** | YAML `engine:` | `app/games/<engine>/` | Settlement kernel, runtime tables |
-| **Config ID** | `game_config_id` | `content/game-configs/<id>.yaml` | Rounds, cities, economic constants, rewards |
-| **Match Kind** | `match_kind` | `ArenaMatch.match_kind` | `practice` vs `official`: entry flow, XP weight, room code control |
-| **Flow** | — | `practice.py` / `competitions` / `*_admin` | Lifecycle and security, no engine logic |
+平台将「比赛生命周期（arena）」与「游戏规则（engine）」分离：
 
-Build a match: `get_game_config(game_config_id)` → `merged_match_config(overrides)` → write `match.config` snapshot.
+| 层 | 标识符 | 路径 | 职责 |
+|---|--------|------|------|
+| **引擎** | YAML `engine:` | `app/games/<engine>/` | 结算内核（settlement kernel）、运行时表 |
+| **配置包** | `game_config_id` | `content/game-configs/<id>.yaml` | 轮数、城市、经济常数、奖励 |
+| **场次类型** | `match_kind` | `ArenaMatch.match_kind` | `practice` / `official`：入口流程、XP 权重、房间码控制 |
+| **流程** | — | `practice.py` / `competitions` / `*_admin` | 生命周期与安全，不含引擎逻辑 |
 
-### RTS Real-Time Architecture (FStrading)
+建场流程：`get_game_config(game_config_id)` → `merged_match_config(overrides)` → 写入 `match.config` 快照。
 
-The trading game uses a **scheduler-single-writer** pattern. HTTP endpoints are read-only; they never advance tick.
+### RTS 实时架构（FStrading）
 
-| Rule | Detail |
-|------|--------|
-| Tick advancement | **Only** `rts_scheduler.py` → `maybe_advance_rts` |
-| HTTP `/state` | Read-only. No write/advance in GET handler |
-| HTTP `/actions` | Queue commands; settled on next tick. No immediate advance |
-| WS broadcast | `commit` first, then `broadcast`; never send `finished` before commit |
-| Turn-based advance | Practice matches atomically advance in `practice_flow.py` (human decision + AI decision + advance in same transaction) |
+交易赛事采用**调度器单写者（scheduler-single-writer）**模式。HTTP 端点只读，不推进 tick。
 
-### Dual Frontend Architecture
+| 规则 | 说明 |
+|------|------|
+| Tick 推进 | **仅** `rts_scheduler.py` → `maybe_advance_rts` |
+| HTTP `/state` | 只读。GET 处理程序中不写不推进 |
+| HTTP `/actions` | 队列命令；下一 tick 结算。不立即推进 |
+| WS 广播 | 先 `commit`，后 `broadcast`；commit 前不发 `finished` |
+| 回合制推进 | 练习赛在 `practice_flow.py` 中原子推进（人类决策 + AI 决策 + 推进，同一事务） |
 
-| Frontend | Path | Port | Content |
-|----------|------|------|---------|
-| Student | `webapp/frontend/` | :5173 | All student-facing pages; no organizer controls |
-| Organizer | `webapp/organizer-frontend/` | :5174 | Independent Vite project; competition control panels |
+### 双前端架构（Dual Frontend）
 
-State management: Zustand stores — `authStore`, `careerStore`(persist), `competitionStore`, `tradingStore`, `techventureStore`, `OPCStore`, `campStore`, `sandboxStore`.
+| 前端 | 路径 | 端口 | 内容 |
+|------|------|------|------|
+| **学生端** | `webapp/frontend/` | :5173 | 所有学生面向页面；无组织者控制 |
+| **组织者端** | `webapp/organizer-frontend/` | :5174 | 独立 Vite 项目；比赛控制面板 |
 
-`data/mockPlatform.ts` is for demo only. New features must connect to backend APIs.
+状态管理：Zustand stores — `authStore`、`careerStore`（持久化 persist）、`competitionStore`、`tradingStore`、`techventureStore`、`OPCStore`、`campStore`、`sandboxStore`。
 
-### Single Database, Single API Process
+`data/mockPlatform.ts` 仅供演示。新功能必须对接后端 API。
 
-- One SQLite database (`bizsim.db` or `sqlite:////app/data/bizsim.db` in Docker)
-- One FastAPI process serves all clients
-- Idempotent writes: `xp_events` uses `idempotency_key`
-- Post-match rewards must go through `settle_match_rewards`
+### 单数据库、单 API 进程
 
-### Phase Gating (Current: Phase A)
+- 单 SQLite 数据库（`bizsim.db` 或 Docker 中 `sqlite:////app/data/bizsim.db`）
+- 单 FastAPI 进程服务所有客户端
+- 幂等写入：`xp_events` 使用 `idempotency_key`
+- 赛后奖励须经过 `settle_match_rewards`
 
-The project uses phase gates. When the user does not specify, default to **Phase A** scope only:
+### Phase 门控（当前：Phase A）
 
-| Phase | Can Do | Should Not Do |
-|-------|--------|---------------|
-| **A (current)** | Career frontend integration, formal competition controls, contracts, TechVenture engine, city planning docs | Build `domains/world/`, cross-match persistent city state, modify settlement to hook World |
-| **B** | Hermes-Debrief rules, Quest service, PG migration, city master YAML | Skip rules layer for LLM Agent, build World domain tables early |
-| **C~D** | LangGraph orchestration, Persona, knowledge graph | — |
+项目使用阶段门控。用户未指定时，默认仅限 **Phase A** 范围：
+
+| Phase | 能做 | 不做 |
+|-------|------|------|
+| **A（当前）** | Career 前端对接、正式赛控场、契约文档、TechVenture 引擎、城市规划文档 | 建 `domains/world/` 表、跨比赛持久城市状态、修改结算接入 World |
+| **B** | Hermes-Debrief 规则、Quest 服务、PG 迁移、城市母本 YAML | 跳过规则层直接上 LLM Agent、过早建 World 域表 |
+| **C~D** | LangGraph 编排、Persona、知识图谱 | — |
 | **E** | OPC LangGraph + MCP | — |
 
-### Router Mounting
+### 路由挂载
 
-All routers mount in `app/main.py` under `/api/v1`:
+所有路由在 `app/main.py` 中挂载于 `/api/v1`：
 
 ```python
 app.include_router(auth.router, prefix="/api/v1")
@@ -160,46 +164,54 @@ app.include_router(camp_summer.router, prefix="/api/v1")
 app.include_router(sandbox_router, prefix="/api/v1")
 ```
 
-**Do not create new router modules without first updating `03-ENGINEERING.md` §后端 API 全表 and `main.py`.**
+**新增路由模块须先更新 `03-ENGINEERING.md` §后端 API 全表 与 `main.py`。**
 
-## TechVenture Server
+---
 
-A separate Express + TypeScript server that prototypes the TechVenture game engine. It is **not** the same as the FastAPI backend's `games/techventure/` engine — it exists as a standalone demo/development server.
+## TechVenture 服务器
 
-Key files: `src/engine/v6Engine.ts` (settlement), `src/engine/config.ts` (game config), `src/routes/api.ts` (API routes), `src/services/gameService.ts` (game lifecycle).
+独立的 Express + TypeScript 服务器，用于 TechVenture 赛事引擎原型开发。**与 FastAPI 后端 `games/techventure/` 引擎不是同一事物** —— 它是独立演示/开发服务器。
 
-## Documentation Authority Hierarchy
+关键文件：`src/engine/v6Engine.ts`（结算）、`src/engine/config.ts`（游戏配置）、`src/routes/api.ts`（API 路由）、`src/services/gameService.ts`（游戏生命周期）。
 
-When coding, facts come from (in order):
+---
 
-1. **`00-PROJECT.md` / `00-TERMINOLOGY.md` / `01-PRODUCT.md` / `02-ARCHITECTURE.md` / `03-ENGINEERING.md` / `04-ROADMAP.md`** — especially `03-ENGINEERING.md` for implementation status/API tables
-2. **`docs/decisions/*.md`** — "why" behind architecture choices
-3. **Domain `DESIGN.md` / `ARCHITECTURE.md`** — e.g. `domains/arena/ARCHITECTURE.md`, `domains/career/DESIGN.md`
-4. **Code** — `main.py`, routers, models
+## 文档权威层级（Documentation Authority Hierarchy）
 
-`inspire/` is for vision and research. It may be ahead of code. Do not implement from `inspire/` without confirming against `03-ENGINEERING.md` and phase gates.
+编码时的事实来源（按优先级）：
 
-## Cursor Rules Summary (`.cursor/rules/`)
+1. **`00-PROJECT.md` / `00-TERMINOLOGY.md` / `01-PRODUCT.md` / `02-ARCHITECTURE.md` / `03-ENGINEERING.md` / `04-ROADMAP.md`** —— 尤其 `03-ENGINEERING.md` 用于实现状态/API 表
+2. **`docs/decisions/*.md`** —— 架构选型的「为什么」
+3. **域 `DESIGN.md` / `ARCHITECTURE.md`** —— 如 `domains/arena/ARCHITECTURE.md`、`domains/career/DESIGN.md`
+4. **代码** —— `main.py`、路由、模型
 
-These rules are enforced for AI coding sessions:
+`inspire/` 用于愿景和研究。可能超前于代码。未与 `03-ENGINEERING.md` 及 Phase 门控确认前，不从中实现。
 
-- **blueprint-coding.mdc**: Hard domain boundaries, router assignments, game config extension rules, RTS single-writer, single-db/single-process, dual frontend separation, phase gate constraints, coding style (Python: FastAPI+SQLAlchemy 2, functional; TypeScript: React 19+Zustand+Tailwind)
-- **docs-align-before-push.mdc**: Before pushing to GitHub after large changes, align root docs `00-PROJECT.md` through `04-ROADMAP.md` with code changes; update metadata dates; ensure `03-ENGINEERING.md` AI_DEFAULT has no contradictions
-- **adr-writing.mdc**: Write ADR when architecture choices (M1-M6) or new game modes (R1-R4) happen; 80-200 lines; no code pasting
-- **doc-linking.mdc**: Only `agent.md`, `README.md`, `00-10` may link into `inspire/`; `inspire/` docs must not link to each other (use numbered references)
-- **inspire-writing.mdc**: Narrative style for vision docs; each `##` section needs ≥1 paragraph explaining "why"; no bare bullet lists without narrative
+---
 
-## Key Files for Orientation
+## Cursor 规则摘要（`.cursor/rules/`）
 
-| Purpose | File |
-|---------|------|
-| Session entry | `CLAUDE.md` (Claude Code) · `agent.md` (other AI tools) |
-| Engineering truth | `03-ENGINEERING.md` (AI_DEFAULT snapshot) |
-| Domain boundaries | `.cursor/rules/blueprint-coding.mdc` |
-| Arena architecture | `webapp/backend/app/domains/arena/ARCHITECTURE.md` |
-| Backend entry | `webapp/backend/app/main.py` |
-| Backend config | `webapp/backend/app/core/config.py` |
-| Game configs | `webapp/backend/content/game-configs/*.yaml` |
-| Frontend student entry | `webapp/frontend/src/App.tsx` |
-| Frontend organizer entry | `webapp/organizer-frontend/src/App.tsx` |
-| ADR index | `docs/decisions/README.md` |
+以下规则在 AI 编程会话中强制执行：
+
+- **blueprint-coding.mdc**：硬域边界、路由归属、赛制配置扩展规则、RTS 单写者、单库/单进程、双前端分离、Phase 门控约束、编码风格（Python: FastAPI+SQLAlchemy 2，函数式优先；TypeScript: React 19+Zustand+Tailwind）
+- **docs-align-before-push.mdc**：大型变更推送 GitHub 前，对齐根文档 `00-PROJECT.md` 至 `04-ROADMAP.md` 与代码；更新元数据日期；确保 `03-ENGINEERING.md` AI_DEFAULT 无矛盾
+- **adr-writing.mdc**：发生架构选型（M1-M6）或新赛制（R1-R4）时写 ADR；80-200 行；不粘贴代码
+- **doc-linking.mdc**：仅 `agent.md`、`README.md`、`00~04` 可维护指向 `inspire/` 的链接；`inspire/` 文内禁止互链（用编号指称，索引进 `50-`）
+- **inspire-writing.mdc**：愿景文档须叙述风格；每个 `##` 段落须 ≥1 段说明「为什么」；禁止无叙述的裸列表
+
+---
+
+## 关键文件速查（Key Files）
+
+| 用途 | 文件 |
+|------|------|
+| 会话入口 | `CLAUDE.md`（Claude Code）· `agent.md`（其他 AI 工具） |
+| 工程真相 | `03-ENGINEERING.md`（AI_DEFAULT 快照） |
+| 域边界 | `.cursor/rules/blueprint-coding.mdc` |
+| Arena 架构 | `webapp/backend/app/domains/arena/ARCHITECTURE.md` |
+| 后端入口 | `webapp/backend/app/main.py` |
+| 后端配置 | `webapp/backend/app/core/config.py` |
+| 游戏配置 | `webapp/backend/content/game-configs/*.yaml` |
+| 学生端入口 | `webapp/frontend/src/App.tsx` |
+| 组织者端入口 | `webapp/organizer-frontend/src/App.tsx` |
+| ADR 索引 | `docs/decisions/README.md` |
