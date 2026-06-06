@@ -29,6 +29,14 @@
 | TechVenture 赛制 | v6 引擎 + 四端 React + 通用队伍模型 + 练习 AI | ✅ |
 | Career 前端读账本 | `/career` 对接 `xp_events`，替代 mock | 🔴 |
 
+### Phase A+（A 闭环后，需 ADR/术语登记）
+
+| 工作项 | 验收标准 | 现状 |
+|--------|----------|------|
+| 营内对抗赛 | `match_kind=group_scrimmage` + 营团上下文；非 official | 🔴 |
+| 在线匹配 | 营团内排队 → 真人匹配 → AI 填位 → 开局 | 🔴 |
+| Game Shell 统一入口 | 所有赛制 `/games/:id/play` 全屏进游戏 | 🟡 部分引擎已接 |
+
 ---
 
 ## 三、Phase B：智能教练、生涯中枢与日常体验
@@ -108,7 +116,8 @@
 | Phase | 能做 | 不能做 |
 |-------|------|--------|
 | **A（当前）** | Career 前端、正式赛控场、TechVenture 引擎、契约文档 | 建 `domains/world/` 表、OPC LangGraph 生产化 |
-| **B** | Hermes 规则模板、Quest 服务、PG 迁移、家园 MVP | 跳过规则层直接上 LLM Agent |
+| **A+** | 营内对抗 + 在线匹配 + AI 填位、Game Shell 全引擎 | 抢跑 Hermes LLM、教师教研工作台 |
+| **B** | Hermes-Debrief 规则模板、Plutus 学情、Quest 服务、PG 迁移、家园 MVP | 跳过规则层直接上 LLM Agent |
 | **C** | LangGraph 编排、Persona、World 域 MVP | — |
 | **D** | Tyche/Rival LLM、Atlas API、课程框架 | — |
 | **E** | OPC Worker、MCP Server、Gateway | — |

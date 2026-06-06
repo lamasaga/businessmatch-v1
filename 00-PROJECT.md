@@ -178,6 +178,7 @@ flowchart TB
 | **02** | [技术架构与智能体编排](./02-ARCHITECTURE.md) | 技术栈、域分包、Worker 列表 |
 | **03** | [工程实现与开发规范](./03-ENGINEERING.md) | AI_DEFAULT、API/路由全表、引擎规范 |
 | **04** | [实施路线与里程碑](./04-ROADMAP.md) | Phase A～F、验收标准 |
+| **11** | [引擎盒开发技术栈与实现规范](./11-引擎盒开发技术栈与实现规范.md) | Phaser/React 运行时、美术管线、引擎全栈手册 |
 
 > **ADR**：[docs/decisions/](./docs/decisions/README.md) · **代码**：[webapp/](./webapp/)
 
@@ -188,7 +189,7 @@ flowchart TB
 ```powershell
 # 一键启动（Windows）
 cd webapp
-.\启动.ps1          # 后端:8000 + 学生端:5173 + 组织者端:5174
+.\启动.ps1          # 后端:8000 + 学生端:5173 + 教师端:5174
 
 # 数据库初始化（首次或 schema 变更）
 cd webapp/backend
@@ -209,6 +210,9 @@ businessmatch-v1/
 ├── 02-ARCHITECTURE.md         ★ 技术架构
 ├── 03-ENGINEERING.md          ★ 工程详表
 ├── 04-ROADMAP.md              ★ 路线图
+├── 11-引擎盒开发技术栈与实现规范.md  ★ 引擎全栈手册
+├── docs/
+│   └── bizsim-product-architecture-2026-06.png  产品架构静态图
 ├── CLAUDE.md                  ★ Claude Code 上下文（AI 编程入口）
 ├── agent.md                   ★ 其他 AI 工具入口（备份）
 ├── docs/decisions/            ADR（架构决策记录）
@@ -245,6 +249,7 @@ businessmatch-v1/
 |------|------|
 | OPC 一人公司 | `inspire/OPC/00-规格库索引.md` |
 | 拟真城市详设 | `inspire/75-拟真城市世界观设计.md` |
+| POP 行为涌现与区域市场 | `inspire/POP行为涌现与区域市场/README.md` |
 | AI 六支柱框架 | `inspire/81-商域AI赋能六支柱全景.md` |
 | 商赛美术 | `inspire/76-商赛美术资源嵌入与技术选型建议.md` |
 | 构想库导航 | `inspire/50-目录导航.md` |

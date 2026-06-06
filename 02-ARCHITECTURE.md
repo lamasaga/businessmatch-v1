@@ -183,9 +183,9 @@ webapp/
 ├── frontend/src/
 │   ├── games/                # 赛事引擎局内 UI
 │   │   ├── trading/          # 浮生记 Phaser3 + React
-│   │   ├── techventure/      # TechVenture Phaser3 + React
+│   │   ├── techventure/      # TechVenture React 全屏（runtime=react-game）
 │   │   └── <new-engine>/    # 新增引擎复制此结构
-│   │       ├── scenes/       # Phaser 场景
+│   │       ├── scenes/       # Phaser 场景或占位
 │   │       ├── components/   # React UI 组件
 │   │       ├── hooks/        # 游戏逻辑 hooks
 │   │       └── index.tsx     # 入口挂载
@@ -200,9 +200,9 @@ webapp/
 
 1. 新增 `content/game-configs/<id>.yaml`
 2. 新增 `backend/app/games/<engine>/`（engine.py + models.py + ai.py）
-3. 新增 `frontend/src/games/<engine>/`（Phaser3 + React）
+3. 新增 `frontend/src/games/<engine>/`（按 `meta.runtime` 选 Phaser 或 React 全屏）
 4. 练习入口：`api/practice.py` 指定默认 `game_config_id`
-5. 正式入口：组织者创建比赛可选该 `game_config_id`
+5. 正式入口：教师端创建比赛可选该 `game_config_id`
 6. 前端路由：在 `frontend/src/App.tsx` 或游戏大厅注册局内页路由
 7. 不改 Arena 表结构（除非通用字段扩展）
 

@@ -5,7 +5,7 @@ alwaysApply: true
 
 # 蓝图编程规范（Blueprint Coding）
 
-本项目主要依赖 AI 辅助编程。根目录 `00～09` 是 AI 编程会话的**权威上下文锚点**。所有代码产出须在文档定义的框架内，不得偏离。
+本项目主要依赖 AI 辅助编程。根目录 `00～04` + `11-` 是 AI 编程会话的**权威上下文锚点**。所有代码产出须在文档定义的框架内，不得偏离。
 
 ---
 
@@ -30,7 +30,7 @@ alwaysApply: true
 
 ## 2 路由归属
 
-新增路由必须归入 `08-` §2.7 定义的正确 API 模块，挂载在 `app/main.py` 的 `/api/v1` 前缀下。
+新增路由必须归入 `03-ENGINEERING.md` §一定义的正确 API 模块，挂载在 `app/main.py` 的 `/api/v1` 前缀下。
 
 | 范围 | 归入 | 文件 |
 |------|------|------|
@@ -45,7 +45,7 @@ alwaysApply: true
 | 体验营营团 | teaching_groups | `api/teaching_groups.py` |
 | 课程 / Wiki / OPC | 各自独立 | `api/{courses,wiki,opc}.py` |
 
-禁止创建不在此表中的新路由模块而不先更新 `08-` §2.7 + `main.py`。
+禁止创建不在此表中的新路由模块而不先更新 `03-ENGINEERING.md` §一 + `main.py`。
 
 ---
 
@@ -107,7 +107,7 @@ alwaysApply: true
 | 优先级 | 可以做 | 不该做 |
 |--------|--------|--------|
 | **Phase A（当前）** | Career 前端对接 · 正式赛控场完善 · contracts/ 契约 · TechVenture 赛制引擎 · 拟真城市**规划文档与占位** | 建 `domains/world/` · 跨局持久化城市状态 · 改赛制结算以接入 World |
-| **Phase B** | Athena-Debrief 规则模板 · Quest 服务 · PG 迁移 · **城市母本 YAML** | 跳过规则层直接上 LLM Agent · 提前建 World 域表 |
+| **Phase B** | Hermes-Debrief 规则模板 · Quest 服务 · PG 迁移 · **城市母本 YAML** | 跳过规则层直接上 LLM Agent · 提前建 World 域表 |
 | **Phase C～D** | LangGraph 编排 · Persona · 知识图谱 | 在 Phase A 阶段投入 |
 | **Phase E** | OPC LangGraph + MCP | 在 Phase A/B 阶段抢 OPC 进度 |
 
@@ -134,7 +134,7 @@ alwaysApply: true
 3. 是否需要新增路由？归入哪个 API 模块？
 4. 是否需要新建表？唯一主人域是谁？
 5. 是否涉及 RTS？须遵守调度器单写者模式
-6. **文档 attach**：编码任务默认 [`08-` AI_DEFAULT](08-工程现状与webapp实现详表.md#ai_default) + [`09-` §6.1](09-分项目开发与集成流程.md#61-ai-编程上下文注入清单)；**禁止**默认全文 attach `08-`、`07-`、蓝图方法论
+6. **文档 attach**：编码任务默认 [`03-ENGINEERING.md` AI_DEFAULT](./03-ENGINEERING.md#ai_default) + [`03-ENGINEERING.md` §六](./03-ENGINEERING.md#六开发流程)；**禁止**默认全文 attach `03-ENGINEERING.md` 全文、inspire 长文、蓝图方法论
 
 若任一项有疑问，应向用户确认后再动手。不确定 attach 列表时用 Skill `context-pack`。
 

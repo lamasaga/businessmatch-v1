@@ -9,45 +9,41 @@
 | 步骤 | 文档 |
 | ---- | ---- |
 | **1. 打开项目后先读** | [**agent.md**](./agent.md) — 总入口、导航、AI 协作立场 |
-| **2. 弄清仓库与选读** | [**00-项目全景与目录结构**](./00-项目全景与目录结构.md) |
+| **2. 弄清仓库与选读** | [**00-PROJECT.md**](./00-PROJECT.md) — 项目全景、产品架构共识、inspire 索引 |
 | **3. 本地运行** | [**webapp/README.md**](./webapp/README.md) |
 
-　　编写代码、查 API、对实现度：**以根目录 `00～09` 为权威**。编码默认 attach [`08-` AI_DEFAULT 快照](./08-工程现状与webapp实现详表.md#ai_default)；任务包见 [`09-` §6.1](./09-分项目开发与集成流程.md#61-ai-编程上下文注入清单)。工程近况见 `08-` §5.1。
+　　编写代码、查 API、对实现度：**以根目录 `00～04` + `11-` 为权威**。编码默认 attach [`03-ENGINEERING.md` §AI_DEFAULT](./03-ENGINEERING.md#ai_default)；任务包见 [`03-ENGINEERING.md` §六](./03-ENGINEERING.md#六开发流程)。
 
 ---
 
 ## 快速启动
 
 ```powershell
-Set-Location "d:\businessmatch-v1\webapp"; .\启动.ps1
+Set-Location "d:\1XFAwork\businessmatch-v1\webapp"; .\启动.ps1
 ```
 
-　　<http://localhost:5173> 学生 · <http://localhost:5174> 教师体验营 · `student/student123` · `admin/admin123`  
-　　体验营功能在分支 **`feature/camp-phase1`**（合并前见 [`webapp/README.md`](./webapp/README.md) §商业体验营）。
+　　<http://localhost:5173> 学生端 · <http://localhost:5174> 教师端 · `student/student123` · `admin/admin123`
 
 ---
 
-## 根目录权威文档（00～09）
+## 根目录权威文档（00～04 + 11）
 
-　　完整定位表、按角色选读、inspire 专题索引见 [**00- §一**](./00-项目全景与目录结构.md#一根目录文档0009)。
+| 编号 | 文档 | 定位 |
+| ---- | ---- | ---- |
+| 00 | [项目全景](./00-PROJECT.md) | 仓库地图、产品架构共识、快速开始 |
+| 00 | [统一术语表](./00-TERMINOLOGY.md) | 全项目唯一术语权威源 |
+| 01 | [产品架构与赛事体系](./01-PRODUCT.md) | 五域、赛制、双端、赛季 |
+| 02 | [技术架构与智能体编排](./02-ARCHITECTURE.md) | 技术栈、域分包、Worker 列表 |
+| 03 | [工程实现与开发规范](./03-ENGINEERING.md) | **AI_DEFAULT**、API/路由全表、开发流程 |
+| 04 | [实施路线与里程碑](./04-ROADMAP.md) | Phase A～F、验收标准 |
+| 11 | [引擎盒开发技术栈与实现规范](./11-引擎盒开发技术栈与实现规范.md) | Phaser/React 运行时、美术管线 |
 
-| 编号 | 文档 |
-| ---- | ---- |
-| 00 | [项目全景与目录结构](./00-项目全景与目录结构.md) |
-| 01 | [平台愿景与产品架构](./01-平台愿景与产品架构.md) |
-| 02 | [赛事体系与双端产品](./02-赛事体系与双端产品.md) |
-| 03 | [技术架构与实现现状](./03-技术架构与实现现状.md) |
-| 04 | [实施路线与里程碑](./04-实施路线与里程碑.md) |
-| 05 | [OPC 阅读合集](./05-OPC一人公司-阅读合集.md) |
-| 06 | [生涯模式](./06-生涯模式-大循环家园与资源经济.md) |
-| 07 | [拟真城市阅读合集](./07-拟真城市与区域模拟-阅读合集.md) |
-| 08 | [工程现状与 webapp 详表](./08-工程现状与webapp实现详表.md) |
-| 09 | [分项目开发与集成流程](./09-分项目开发与集成流程.md)（含 **AI 会话开场指南 §6.0**） |
+　　产品架构可视化：[`docs/bizsim-product-architecture-2026-06.png`](./docs/bizsim-product-architecture-2026-06.png)（详见 `00-PROJECT` §产品架构共识）。
 
 ---
 
 ## 其它入口
 
 - **架构决策（ADR）**：[docs/decisions/](./docs/decisions/README.md)
-- **构想库（inspire）**：仅通过 [00- §1.4 索引](./00-项目全景与目录结构.md#14-inspire-专题索引权威外链维护点) 进入；库内目录 [inspire/50-](./inspire/50-目录导航.md)
+- **构想库（inspire）**：仅通过 [00-PROJECT §inspire 专题索引](./00-PROJECT.md#inspire-专题索引) 进入；库内目录 [inspire/50-](./inspire/50-目录导航.md)
 - **协作规则**：[.cursor/rules/](./.cursor/rules/)（蓝图编程、文档对齐、inspire 文风、**链接纪律**）

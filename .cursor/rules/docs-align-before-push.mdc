@@ -5,7 +5,7 @@ alwaysApply: true
 
 # 推送前文档对齐（强制）
 
-本仓库以 **根目录 `00～09` + `README.md`** 为产品与工程权威；可读性与开发稳定性依赖文档约束。**禁止**在大型更新后、用户要求推送到 GitHub 时，跳过文档对齐直接 `git push`。
+本仓库以 **根目录 `00～04` + `11-` + `README.md`** 为产品与工程权威；可读性与开发稳定性依赖文档约束。**禁止**在大型更新后、用户要求推送到 GitHub 时，跳过文档对齐直接 `git push`。
 
 ## 何时触发
 
@@ -21,24 +21,24 @@ alwaysApply: true
 
 1. **盘点代码变更**：`git status` + `git diff --stat`，列出影响模块与对外契约（API、目录、表结构）。
 2. **对齐根目录文档**（按变更范围择要更新，不得与代码矛盾）：
-   - 必查：`README.md`、`00-项目全景与目录结构.md`
-   - 产品/赛制：`01-`、`02-`
-   - 终局出口：`05-`（OPC）、`07-`（拟真城市，若触及 World/城市母本）
-   - 技术摘要：`03-`
-   - 排期与 P0 进展：`04-`（含已落地 / 待办勾选、拟真城市跨 Phase 摘要）
-   - 工程详表：`08-`（**[AI_DEFAULT](08-工程现状与webapp实现详表.md#ai_default)** 快照、§2.2、§2.7 摘要、§三、**§5.1 一条**；路由变更时跑 `webapp/scripts/export_openapi.py`）
-   - 协作流程：`09-`（§一现状段、Phase 验收、目录树路径）
-   - 按需：`06-` 索引链接、`inspire/07-` 仅当内容生产规范受影响
-3. **统一元数据**：相关文档文首 `最后更新` 改为当日（`YYYY-MM-DD`）；路径以仓库**当前真身**为准（如 `webapp/backend/content/game-configs/`、`inspire/a商赛主题与真题库/`、`inspire/e课程设计/`，非已废弃的根目录 `商赛主题与真题库/`、`college/` 等）。
-4. **自检**：`08-` [AI_DEFAULT](08-工程现状与webapp实现详表.md#ai_default) 与 §2.2 深读矩阵、§三 深读对齐度**无矛盾**（深读块可更细，但成熟度/🔴 须一致）；API 与 `webapp/contracts/openapi/bundled.yaml` 或 `main.py` 路由一致；无「待建」项已落地仍标 🔴。
+   - 必查：`README.md`、`00-PROJECT.md`
+   - 产品/赛制：`01-PRODUCT.md`、`02-ARCHITECTURE.md`
+   - 术语：`00-TERMINOLOGY.md`（新增 `match_kind`、对外称谓时）
+   - 技术摘要：`02-ARCHITECTURE.md`
+   - 排期与 P0 进展：`04-ROADMAP.md`（含已落地 / 待办勾选）
+   - 工程详表：`03-ENGINEERING.md`（**[AI_DEFAULT](./03-ENGINEERING.md#ai_default)** 快照、§一 API 全表、§五 引擎规范；路由变更时跑 `webapp/scripts/export_openapi.py`）
+   - 引擎全栈：`11-引擎盒开发技术栈与实现规范.md`（触及运行时/美术管线时）
+   - 按需：`inspire/50-` 索引、`inspire/OPC/` 仅当 OPC 规格受影响
+3. **统一元数据**：相关文档文首 `最后更新` 改为当日（`YYYY-MM-DD`）；路径以仓库**当前真身**为准（如 `webapp/backend/content/game-configs/`、`inspire/a商赛主题与真题库/`）。
+4. **自检**：`03-ENGINEERING.md` [AI_DEFAULT](./03-ENGINEERING.md#ai_default) 与 §一 API 全表、§四 引擎矩阵**无矛盾**；API 与 `webapp/contracts/openapi/bundled.yaml` 或 `main.py` 路由一致；无「待建」项已落地仍标 🔴；`00-PROJECT` §产品架构共识与 `01-`/`02-` 无冲突。
 5. **再提交、再推送**：文档对齐与代码变更**同一推送批次**内完成（可先 commit 代码再 commit 文档，或一次 commit，但**不得**只推代码留文档陈旧）。
 
 ## 禁止事项
 
-- 在未更新 `08-` 或未在 `04-`/`09-` 反映进展时，声称「已与文档同步」
+- 在未更新 `03-ENGINEERING.md` 或未在 `04-ROADMAP.md` 反映进展时，声称「已与文档同步」
 - 用口头摘要代替对权威 `.md` 文件的实质修改
-- 推送后才发现目录/API 与 `00-`/`08-` 不一致
+- 推送后才发现目录/API 与 `00-PROJECT`/`03-ENGINEERING` 不一致
 
 ## 完成定义（向用户汇报时）
 
-简要说明已更新的文档编号、§5.1 变更记录（若有）、以及仍待下一迭代的 🔴 项；然后再执行 `git push`。
+简要说明已更新的文档编号、以及仍待下一迭代的 🔴 项；然后再执行 `git push`。

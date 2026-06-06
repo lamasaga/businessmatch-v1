@@ -44,7 +44,7 @@ alwaysApply: true
 1. 复制 `_template.md` → `docs/decisions/NNN-简述.md`（三位序号，不跳号）
 2. 必填：**上下文 · 决策 · 考虑过的方案 · 后果**；**后果**中须含 **「给初学者的操作提示」** 小节
 3. 更新 `docs/decisions/README.md` §五 索引表一行
-4. 若关联 `08-` 对外契约：在 `08-` §5.1 变更记录加摘要（与用户推送前文档对齐一并做）
+4. 若关联 `03-ENGINEERING.md` 对外契约：在 `03-ENGINEERING.md` §六 变更记录加摘要（与用户推送前文档对齐一并做）
 5. 会话结束前向用户说明：新增了哪条 ADR、下次应 @ 哪些文件
 
 **篇幅**：单篇建议 **80～200 行**；禁止粘贴大段代码，用路径引用即可。
@@ -57,9 +57,9 @@ alwaysApply: true
 |----------|------|
 | `.cursor/rules/blueprint-coding.mdc` | **每次**都要遵守的硬规则（what / must not） |
 | `docs/decisions/*.md` | **为什么**这样定（why / 曾否决什么） |
-| `08-` | **现在**工程状态与 API 表 |
+| `03-ENGINEERING.md` | **现在**工程状态与 API 表 |
 
-　　新增硬规则时：优先更新 `blueprint-coding.mdc` + `08-`；若存在选型故事，**同时**补 ADR。
+　　新增硬规则时：优先更新 `blueprint-coding.mdc` + `03-ENGINEERING.md`；若存在选型故事，**同时**补 ADR。
 
 ---
 

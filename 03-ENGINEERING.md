@@ -15,7 +15,7 @@
 | 代码根 | `webapp/backend`、`webapp/frontend`、`organizer-frontend` (:5174) |
 | 演示账号 | `student/student123`、`admin/admin123` |
 | 体验营手测 | :5174 建营团(6位码) → :5173 入营 → 营内建赛(4位房间码) → 控场 |
-| 最强闭环 | 组织者建赛 → 房间码 → 交易/TechVenture → XP |
+| 最强闭环 | 教师端建赛 → 房间码 → 交易/TechVenture → XP |
 | API 字段级 | `webapp/contracts/openapi/bundled.yaml` 或 DEBUG `/openapi.json` |
 | 默认 Phase | **Phase A**（商赛引擎闭环）；未指定时不抢跑 World/OPC |
 
@@ -28,7 +28,7 @@
 | 商赛大厅 `/games` | ✅ | ✅ | 可用 |
 | 浮生记 RTS | ✅ WS | ✅ 全屏 | **当前主力** |
 | TechVenture | ✅ | ✅ 全屏·无地图 | 四端控场 |
-| 组织者端 :5174 | ✅ | ✅ | 独立端 |
+| 教师端 :5174 | ✅ | ✅ | 独立端（目录 `organizer-frontend`） |
 | 体验营营团 P1 | ✅ | 🟡 | 营团+赛季编排 |
 | 赛事工坊 `/sandbox` | ✅ | ✅ | 内存会话·热 YAML |
 | OPC `/opc/*` | ✅ CRUD | ✅ | 数据层，无 Agent |
@@ -106,7 +106,7 @@
 | `/camp` | 体验营入营 | ✅ |
 | `/showcase` | 新手指引 | ✅ |
 
-### 组织者端 (:5174)
+### 教师端 (:5174)
 
 | 路由 | 页面 |
 |------|------|
@@ -149,29 +149,30 @@
 
 ## 五、赛事引擎开发规范
 
-### 4.1 前端技术栈（强制）
+> **深读**：[`02-ARCHITECTURE.md`](./02-ARCHITECTURE.md) §三 · [`11-引擎盒开发技术栈与实现规范.md`](./11-引擎盒开发技术栈与实现规范.md)
 
-所有赛事引擎的局内 UI 统一使用：
+### 5.1 前端技术栈（按运行时选型）
 
-| 层 | 技术 |
-|----|------|
-| 游戏渲染 | **Phaser 3** |
-| UI 框架 | **React + TypeScript** |
-| 样式 | **Tailwind CSS** + 项目 UI 组件库 |
+　　`game-config.yaml` 声明 `meta.runtime`；Game Shell 按引擎加载对应运行时（见 [`00-PROJECT.md`](./00-PROJECT.md) §对局前端技术路线）。
+
+| 运行时 | 适用引擎 | 技术 |
+|--------|----------|------|
+| `phaser` | trading（浮生记 RTS）、ops-sim 等 | **Phaser 3** Canvas + React HUD overlay |
+| `react-game` | techventure、finance-lab 等 | **React 全屏** + `game-ui` 组件库 |
 
 **目录**：`webapp/frontend/src/games/<engine-id>/`
 ```
 games/<engine-id>/
-├── scenes/                 # Phaser 场景
+├── scenes/                 # Phaser 场景（phaser）或占位（react-game）
 ├── components/             # React UI 组件
 ├── hooks/                  # 游戏逻辑 hooks
 ├── assets/                 # 引擎专属素材
-└── index.tsx               # 入口挂载
+└── index.tsx               # Game Shell 挂载点
 ```
 
-**渲染模式**：Phaser Canvas 作为游戏层，React DOM overlay 渲染 HUD/面板/弹窗。UI 组件复用项目统一组件库（按钮、卡片、表格、表单等）。
+**共享**：`game-ui` 组件库、Game Shell（加载/错误边界）、Zustand store / WebSocket 数据流。
 
-### 4.2 引擎分层
+### 5.2 引擎分层
 
 ```
 引擎（engine）          → app/games/<engine>/  结算内核
@@ -181,7 +182,7 @@ games/<engine-id>/
 场次（match）           → 运行时状态，每局隔离
 ```
 
-### 4.3 引擎匣子协议（平台 ↔ 引擎）
+### 5.3 引擎匣子协议（平台 ↔ 引擎）
 
 引擎作为独立进程通过 HTTP REST 与平台通信：
 
@@ -198,7 +199,7 @@ games/<engine-id>/
 
 **回调**：引擎通过 HTTP 回调通知平台 `match.state_changed` / `match.finished`。
 
-### 4.4 引擎元数据（config.yaml）
+### 5.4 引擎元数据（config.yaml）
 
 ```yaml
 engine_id: techventure
@@ -214,13 +215,13 @@ capabilities:
   rts: false
 ```
 
-### 4.5 新增赛制 Checklist
+### 5.5 新增赛制 Checklist
 
-1. 新增 `content/game-configs/<id>.yaml`
+1. 新增 `content/game-configs/<id>.yaml`（含 `meta.runtime`）
 2. 若无现成引擎：新增 `app/games/<engine>/`
 3. 练习入口：`app/api/practice.py` 指定默认 `game_config_id`
-4. 前端：在 `webapp/frontend/src/games/<engine-id>/` 实现 Phaser3 + React 局内页
-5. 正式入口：组织者创建比赛可选该 `game_config_id`
+4. 前端：在 `webapp/frontend/src/games/<engine-id>/` 按 `runtime` 实现局内页
+5. 正式入口：教师端创建比赛可选该 `game_config_id`
 6. 不改 Arena 表结构（除非通用字段扩展）
 
 ---
@@ -258,7 +259,7 @@ capabilities:
 3. **新赛制** — `game-configs/*.yaml` + `games/<engine>/`；禁止克隆整文件
 4. **RTS** — 仅调度器推进 tick；HTTP 只读
 5. **XP** — `grant_xp` / `settle_match_rewards`；幂等
-6. **双前端** — 学生端/组织者端分离；新功能接 API，不扩 mock
+6. **双前端** — 学生端/教师端分离；新功能接 API，不扩 mock
 7. **Phase A 默认** — 未明确要求时，不建 World 域表、OPC LangGraph
 
 ---

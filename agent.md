@@ -1,7 +1,7 @@
 # agent.md · 商域 BizSim Edu · 项目第一入口
 
 > **你是从哪里开始读的**：打开本仓库后，**请先读本文**，再按任务进入 `00~04` 权威文档或 `webapp/` 代码。  
-> **最后更新**：2026-06-02
+> **最后更新**：2026-06-06
 
 ---
 
@@ -29,7 +29,7 @@
 | 我要… | 下一步 |
 | ----- | ------ |
 | **写代码、改 API、查做到哪了** | [`03-ENGINEERING.md`](./03-ENGINEERING.md) §AI_DEFAULT → 域 [`DESIGN.md`](./webapp/backend/app/domains/career/DESIGN.md) / [`ARCHITECTURE.md`](./webapp/backend/app/domains/arena/ARCHITECTURE.md) → 按需 [`02-`](./02-ARCHITECTURE.md) |
-| **懂产品主线、赛制、双端** | [`01-PRODUCT.md`](./01-PRODUCT.md) |
+| **懂产品主线、赛制、双端** | [`00-PROJECT.md`](./00-PROJECT.md) §产品架构共识 · [`01-PRODUCT.md`](./01-PRODUCT.md) |
 | **排期与 Phase** | [`04-ROADMAP.md`](./04-ROADMAP.md) |
 | **竖切开发、AI 协作流程** | [`03-ENGINEERING.md`](./03-ENGINEERING.md) §开发流程 |
 | **赛事引擎规范** | [`03-ENGINEERING.md`](./03-ENGINEERING.md) §赛事引擎开发规范 |
@@ -80,7 +80,7 @@
 3. **新赛制** — `game-configs/*.yaml` + `games/<engine>/`；禁止克隆整文件  
 4. **RTS** — 仅调度器推进 tick；HTTP 只读  
 5. **XP** — `grant_xp` / `settle_match_rewards`；幂等  
-6. **双前端** — 学生端 / 组织者端分离；新功能接 API，不扩 mock  
+6. **双前端** — 学生端 / 教师端分离；新功能接 API，不扩 mock  
 7. **AI 产品** — 规则优先、LLM 渐进、教师不替代（见 `inspire/81-` 产品框架，入口经 `00-PROJECT.md`）
 
 　　推送 GitHub 前：大型更新须 [docs-align-before-push.mdc](./.cursor/rules/docs-align-before-push.mdc) 对齐 `00~04` / `03-ENGINEERING.md`。
