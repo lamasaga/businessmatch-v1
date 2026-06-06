@@ -114,7 +114,75 @@ webapp/frontend/src/games/<engine-id>/
 
 ---
 
-## 六、RTS 实时架构（浮生记）
+## 六、赛事引擎架构决策
+
+### 6.1 核心结论
+
+| 问题 | 决策 |
+|------|------|
+| 引擎是否独立仓库？ | **否**。同仓库（monorepo），引擎代码在 `games/<engine>/` |
+| 引擎是否独立进程？ | **开发期可独立启动**（独立 dev server），**生产期同进程**（FastAPI 内导入） |
+| 引擎是否独立数据库？ | **否**。单 SQLite，引擎表由自身域拥有 |
+| 新增引擎目录？ | `games/<engine>/` + `frontend/src/games/<engine>/` |
+
+### 6.2 为什么不是独立进程
+
+仓库中存在 `engine_client.py` 等独立进程相关代码，属于**远期预留**（Phase C+ 可选能力）。当前 Phase A/B 采用同进程原因：
+- 单进程避免分布式调试复杂度
+- 避免 HTTP 序列化开销（tick 5s 内完成结算）
+- `games/<engine>/` 已可直接 `import` 调用
+
+若未来确需独立部署，只需在 `engine_client.py` 中切换「本地导入」与「HTTP 调用」两种模式，无需重构引擎内核。
+
+### 6.3 vibe coding 目录规划
+
+```
+webapp/
+├── backend/app/
+│   ├── games/
+│   │   ├── trading/          # 浮生记引擎内核
+│   │   ├── techventure/      # TechVenture 引擎内核
+│   │   └── <new-engine>/    # 新增引擎复制此结构
+│   │       ├── __init__.py
+│   │       ├── engine.py     # 结算入口
+│   │       ├── models.py     # 运行时数据模型
+│   │       ├── ai.py         # AI 对手（纯规则，零 Token）
+│   │       └── config.py     # YAML 加载
+│   ├── api/                  # 路由（practice.py / competitions / *_admin）
+│   └── domains/
+│       ├── arena/            # 比赛生命周期
+│       ├── career/           # XP 账本
+│       └── cybercore/        # YAML 配置加载
+│
+├── frontend/src/
+│   ├── games/                # 赛事引擎局内 UI
+│   │   ├── trading/          # 浮生记 Phaser3 + React
+│   │   ├── techventure/      # TechVenture Phaser3 + React
+│   │   └── <new-engine>/    # 新增引擎复制此结构
+│   │       ├── scenes/       # Phaser 场景
+│   │       ├── components/   # React UI 组件
+│   │       ├── hooks/        # 游戏逻辑 hooks
+│   │       └── index.tsx     # 入口挂载
+│   └── components/game/      # 商赛通用 UI 组件（倒计时、排行榜等）
+│
+└── contracts/
+    ├── openapi/              # OpenAPI 规范
+    └── game-configs/         # YAML Schema
+```
+
+### 6.4 新增引擎 checklist
+
+1. 新增 `content/game-configs/<id>.yaml`
+2. 新增 `backend/app/games/<engine>/`（engine.py + models.py + ai.py）
+3. 新增 `frontend/src/games/<engine>/`（Phaser3 + React）
+4. 练习入口：`api/practice.py` 指定默认 `game_config_id`
+5. 正式入口：组织者创建比赛可选该 `game_config_id`
+6. 前端路由：在 `frontend/src/App.tsx` 或游戏大厅注册局内页路由
+7. 不改 Arena 表结构（除非通用字段扩展）
+
+---
+
+## 七、RTS 实时架构（浮生记）
 
 | 规则 | 说明 |
 |------|------|
