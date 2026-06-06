@@ -1,0 +1,19 @@
+id: finance-lab-v1
+engine: finance_lab
+meta:
+  name: 金融投研实验室
+  description: 投研、交易模拟与估值训练
+  version: "1.0.0"
+  author: BizSim Edu
+  target_age: [16, 24]
+
+defaults:
+  rounds: 8
+  teams: 4
+  initial_capital: 1000000
+  assets: []
+
+# TODO: 补充资产类别、价格运动模型、研报评分规则
+market_events: []
+assets: []
+rewards: {}

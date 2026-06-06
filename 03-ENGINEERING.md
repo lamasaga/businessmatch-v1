@@ -134,14 +134,16 @@
 
 ---
 
-## 四、四赛制产品矩阵
+## 四、六引擎产品矩阵
 
-| 引擎 ID | 产品名 | 现状 | `game_config_id` |
-|---------|--------|------|------------------|
-| **trading** | 浮生记（贸易） | ✅ 回合制 + RTS | `trading-v1` · `trading-v2-rts` |
-| **techventure** | TechVenture（创投） | ✅ 队伍策略四端 | `techventure-v1` |
-| **ops-sim** | 产销运营赛 | 🔴 未建 | 待新增 YAML |
-| **finance-lab** | 金融投研实验室 | 🔴 未建 | 待新增 YAML |
+| # | 引擎 ID | 产品名 | 状态 | `game_config_id` |
+|---|---------|--------|------|------------------|
+| 1 | **trading** | 浮生记（贸易） | ✅ 已搭建：回合制 + RTS | `trading-v1` · `trading-v2-rts` |
+| 2 | **techventure** | TechVenture（创投） | ✅ 已搭建：队伍策略四端 | `techventure-v1` |
+| 3 | **ops-sim** | 产销运营赛 | 🟡 方向已定：供应链产销 | `ops-sim-v1` |
+| 4 | **finance-lab** | 金融投研实验室 | 🟡 方向已定：投研/交易模拟 | `finance-lab-v1` |
+| 5 | **engine5** | 引擎五 | ⚪ 占位 | `engine5-v1` |
+| 6 | **engine6** | 引擎六 | ⚪ 占位 | `engine6-v1` |
 
 ---
 

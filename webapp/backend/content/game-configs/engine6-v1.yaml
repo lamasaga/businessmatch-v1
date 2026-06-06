@@ -1,0 +1,13 @@
+id: engine6-v1
+engine: engine6
+meta:
+  name: 引擎六
+  description: 待确定产品定位
+  version: "0.1.0"
+  author: BizSim Edu
+
+defaults:
+  rounds: 1
+  teams: 2
+
+# TODO: 产品定位确定后补充规则

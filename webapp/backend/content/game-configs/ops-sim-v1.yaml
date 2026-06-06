@@ -1,0 +1,20 @@
+id: ops-sim-v1
+engine: ops_sim
+meta:
+  name: 产销运营赛
+  description: 供应链产销运营模拟，侧重库存、定价与渠道决策
+  version: "1.0.0"
+  author: BizSim Edu
+  target_age: [15, 22]
+
+defaults:
+  rounds: 6
+  teams: 4
+  initial_cash: 10000
+  initial_inventory: 200
+  max_production_per_round: 500
+
+# TODO: 补充 POP 分群、价格弹性、渠道成本等规则
+pop_segments: []
+costs: {}
+rewards: {}
