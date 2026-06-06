@@ -181,6 +181,7 @@
   },
   "active": "45a3761fb4a2aea4",
   "lastOpenFiles": [
+    "02-ARCHITECTURE.md.tmp.16584.2be1e4968dcd",
     "webapp/frontend/dist/assets/index-CwqBZ9e7.css",
     "webapp/frontend/dist/assets/index-OOaxAVQi.js",
     "03-ENGINEERING.md.tmp.16584.39b9163e2c18",
@@ -191,7 +192,6 @@
     "webapp/frontend/src/games/finance-lab/hooks/useGameState.ts.tmp.16584.d851eeebcaa1",
     "webapp/frontend/src/games/finance-lab/components/GameHUD.tsx.tmp.16584.691dcaeb320c",
     "webapp/frontend/src/games/ops-sim/hooks/useGameState.ts.tmp.16584.d3222d95c909",
-    "webapp/frontend/src/games/ops-sim/components/GameHUD.tsx.tmp.16584.c531c654e3b2",
     "webapp/frontend/src/games/techventure/README.md",
     "webapp/frontend/src/games/trading/README.md",
     "inspire/archive/10-四赛制匣子开发与集成指导.md",

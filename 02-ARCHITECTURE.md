@@ -42,25 +42,51 @@
 
 ## 三、赛事引擎前端规范
 
-所有赛事引擎的局内 UI 统一使用以下技术栈：
+### 3.1 总体分层
 
 | 层 | 技术 | 说明 |
 |----|------|------|
-| 游戏渲染 | **Phaser 3** | 2D 游戏场景、动画、交互 |
-| UI 框架 | **React + TypeScript** | 面板、HUD、弹窗、表单 |
-| 样式 | **Tailwind CSS** + 项目 UI 组件库 | 统一视觉 |
-| 构建 | Vite | — |
+| **平台壳** | React + Tailwind + game-ui | 生涯、教师端、大厅、匹配队列 |
+| **对局入口** | Game Shell 全屏路由 | 统一 `/games/:id/play` 进游戏 |
+| **对局运行时 A** | **Phaser 3 + React HUD overlay** | 有地图/空间/实时移动的引擎 |
+| **对局运行时 B** | **React 全屏 + game-ui** | 面板/策略型引擎 |
 
-**目录约定**：
+### 3.2 运行时选型
+
+引擎在 `game-config.yaml` 中声明 `runtime`：
+
+```yaml
+meta:
+  runtime: phaser       # 浮生记 RTS、产销沙盘等
+  # runtime: react-game # TechVenture、金融投研等
+```
+
+| 运行时 | 适用引擎 | 目录特点 |
+|--------|----------|----------|
+| `phaser` | trading（浮生记）、ops-sim（产销沙盘） | `scenes/` 为 Phaser.Scene |
+| `react-game` | techventure、finance-lab、engine5、engine6 | `scenes/` 保留为占位/可选；主界面在 `components/` |
+
+### 3.3 统一目录约定
+
 ```
 webapp/frontend/src/games/<engine-id>/
-├── GameScene.ts          # Phaser 场景入口
+├── scenes/
+│   └── GameScene.ts      # Phaser 场景（phaser 运行时）或占位（react-game）
 ├── components/           # React UI 组件（HUD、面板、弹窗）
+├── hooks/                # 游戏状态 hooks
 ├── assets/               # 引擎专属素材
-└── index.tsx             # React 挂载点
+└── index.tsx             # Game Shell 挂载点
 ```
 
-**渲染模式**：Phaser Canvas 作为底层，React 通过 `react-phaser-fiber` 或 DOM overlay 渲染 UI 层。UI 组件库（按钮、卡片、表格等）复用项目统一组件。
+### 3.4 渲染模式
+
+- **phaser 运行时**：Phaser Canvas 为底，React DOM overlay 渲染 HUD。使用项目统一 UI 组件库。
+- **react-game 运行时**：纯 React 全屏沉浸布局，使用 `game-ui` 组件库，无需 Phaser 依赖。
+
+两种运行时共享：
+- `game-ui` 组件库（`frontend/src/components/game/`）
+- 统一 Game Shell（尺寸、加载状态、错误边界）
+- 相同的数据流（Zustand store / WebSocket）
 
 ---
 
