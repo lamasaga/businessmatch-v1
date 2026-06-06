@@ -13,6 +13,52 @@
 
 ### 三列总览
 
+> **可视化展示**（推荐对外演示）：
+> - **交互版**：在 Cursor 中打开 [BizSim 产品技术架构 Canvas](file:///C:/Users/MECHREVO/.cursor/projects/d-1XFAwork-businessmatch-v1/canvases/bizsim-product-architecture.canvas.tsx)（可并排全屏；含状态色、赛事三档、Game Shell、Phase 门控）。
+> - **静态版（PPT/打印）**：[`docs/bizsim-product-architecture-2026-06.png`](./docs/bizsim-product-architecture-2026-06.png)
+
+```mermaid
+flowchart TB
+  subgraph DATA["数据与引擎"]
+    NPC["NPC 规则 / 生涯事件"]
+    WORLD["拟真城市 World<br/>(占位→渐进 C+)"]
+    ENG["N×引擎盒 Engine Box<br/>浮生记 · TV · 产销 · 金融"]
+    NPC --- WORLD --- ENG
+  end
+
+  subgraph PLATFORM["系统平台 · FastAPI 单库单进程"]
+    AGENT["主控 Agent<br/>Pedagogy Router"]
+    CTRL["平台控制 Platform"]
+    CAREER["生涯 Career"]
+    ARENA["赛事 Arena"]
+    AGENT --- CTRL --- CAREER --> ARENA
+  end
+
+  subgraph FE["用户前端 · React"]
+    subgraph STU["学生端"]
+      S1["生涯日常"]
+      S2["营课"]
+      S3["在线匹配"]
+      S4["Hermes"]
+      S5["OPC (E)"]
+    end
+    subgraph TCH["教师端"]
+      T1["教研工作台"]
+      T2["营课/赛季"]
+      T3["控场/比赛"]
+      T4["Plutus 学情"]
+    end
+    MATCH["商业模拟体验<br/>日常AI · 营内对抗 · 正式赛"]
+    DEBRIEF["Hermes-Debrief 复盘"]
+  end
+
+  DATA -->|"配置/事件"| PLATFORM
+  PLATFORM -->|"API/WS"| FE
+  MATCH --> DEBRIEF
+  S3 --> MATCH
+  T3 --> MATCH
+```
+
 ```text
 ┌─ 数据与引擎 ────────────────────────────────────────────────┐
 │ NPC 规则 / 生涯事件  ↔  拟真城市(World，占位→渐进)  ↔  N×引擎盒 │
