@@ -45,7 +45,7 @@
 ```
 Atlas / Academy / Quest / Arena / Credenti
               ↓
-        Career Hub（统一档案 · Athena）
+        Career Hub（统一档案 · Hermes）
               ↓ [解锁 Gateway]
         OPC
               ↓
@@ -67,9 +67,9 @@ Atlas / Academy / Quest / Arena / Credenti
 
 | 阶段 | 平台域 | AI 角色 | 产出 |
 |------|--------|---------|------|
-| ① 知识 | Atlas + Academy + Quest | Athena：路径、薄弱点 | 掌握度、素养标签 |
-| ② 商赛 | Arena（practice + official） | Demia/Rival；Athena 复盘 | 决策日志、五维变化 |
-| ③ 解锁 | Gateway + 启航仪式 | Athena 背书 | 进入 OPC |
+| ① 知识 | Atlas + Academy + Quest | Hermes：路径、薄弱点 | 掌握度、素养标签 |
+| ② 商赛 | Arena（practice + official） | Tyche/Rival；Hermes 复盘 | 决策日志、五维变化 |
+| ③ 解锁 | Gateway + 启航仪式 | Hermes 背书 | 进入 OPC |
 | ④ 首项目 | OPC 流水线 | AI 员工 + Cortex 拆单 | BMC、MVP、验证报告 |
 
 　　实施路径全文：[OPC/07-从平台学习到首项目-AI实施路径.md](./inspire/OPC/07-从平台学习到首项目-AI实施路径.md)
@@ -132,7 +132,7 @@ Atlas / Academy / Quest / Arena / Credenti
 | 问题 | 整改方向 |
 |------|----------|
 | 竞技 vs 成长叙事冲突 | OPC 解锁**主路径**：课程+图谱+申请；商赛为加成 |
-| AI 面孔过多（Athena/Rival/13 员工…） | 对外**一个教练**；OPC 内为**项目模式 + 临时 Worker** |
+| AI 面孔过多（Hermes/Rival/13 员工…） | 对外**一个教练**；OPC 内为**项目模式 + 临时 Worker** |
 | 交互分裂（聊天 vs 任务卡 vs 表单） | 统一**任务卡片**；对话仅作 brief 输入 |
 | OPC「代写」风险 | 强制 **Human Artifact** + 验收说明「我改了哪几处」 |
 | 三套运行时未收敛 | **Pedagogy Orchestrator** + 事件 + Worker |
@@ -180,7 +180,7 @@ Atlas / Academy / Quest / Arena / Credenti
 
 | 解锁路径（建议） | 条件示例 |
 |------------------|----------|
-| **主路径** | Academy 核心单元 + Atlas 掌握度 + Athena 推荐 |
+| **主路径** | Academy 核心单元 + Atlas 掌握度 + Hermes 推荐 |
 | **加速路径** | 商赛赛季表现 → **资源包**，非唯一资格 |
 | **申请路径** | 教师/导师批准 + 简短陈述 |
 

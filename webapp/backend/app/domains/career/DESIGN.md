@@ -105,8 +105,8 @@ graph | academy | quest | arena | credenti | admin | social | homestead | story
 
 | 事件名 | 发布方 | 订阅方（远期） |
 |--------|--------|----------------|
-| `career.started` | career | Athena, analytics |
-| `career.settlement.applied` | career | Athena debrief, narrative |
+| `career.started` | career | Hermes, analytics |
+| `career.settlement.applied` | career | Hermes debrief, narrative |
 | `homestead.slot.upgraded` | career | Quest unlock |
 | `story.chapter.unlocked` | career | push / 前端 |
 

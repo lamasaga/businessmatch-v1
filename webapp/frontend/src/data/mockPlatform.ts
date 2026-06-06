@@ -47,17 +47,17 @@ export const FIVE_DOMAINS = [
 
 export const AI_PILLARS = [
   {
-    id: 'athena',
-    name: 'Athena',
+    id: 'hermes',
+    name: 'Hermes',
     title: 'AI 生涯导师',
     color: 'text-indigo-400',
     bg: 'bg-indigo-500/10',
     desc: '引导生涯规划、复盘对局与日常反思',
   },
   {
-    id: 'demia',
-    name: 'Demia',
-    title: '智能人群模拟',
+    id: 'tyche',
+    name: 'Tyche',
+    title: '市场叙事智能体',
     color: 'text-cyan-400',
     bg: 'bg-cyan-500/10',
     desc: '模拟消费者需求、舆论变化与市场波动',
@@ -105,7 +105,7 @@ export const DAILY_HABITS = [
     domain: 'Atlas',
     xp: 40,
     done: true,
-    athenaHint: '想一想：奶茶涨价 10%，销量下降多少算「弹性大」？',
+    hermesHint: '想一想：奶茶涨价 10%，销量下降多少算「弹性大」？',
   },
   {
     id: 'q2',
@@ -113,7 +113,7 @@ export const DAILY_HABITS = [
     domain: 'Academy',
     xp: 80,
     done: false,
-    athenaHint: '链接到高中段「商战策略」第 3 单元',
+    hermesHint: '链接到高中段「商战策略」第 3 单元',
   },
   {
     id: 'q3',
@@ -121,7 +121,7 @@ export const DAILY_HABITS = [
     domain: 'Rival',
     xp: 60,
     done: false,
-    athenaHint: '练习模式不计入排位，可放心试错',
+    hermesHint: '练习模式不计入排位，可放心试错',
   },
 ];
 
@@ -137,13 +137,13 @@ export const ACHIEVEMENTS = [
 ];
 
 export const GAME_MODES_AI = {
-  'turn-based': { demia: true, rival: false, athenaDebrief: true },
-  'supply-chain': { demia: false, rival: true, athenaDebrief: true },
-  'auction': { demia: true, rival: true, athenaDebrief: true },
-  'macro': { demia: true, rival: false, athenaDebrief: true },
-  'esg': { demia: true, rival: false, athenaDebrief: true },
-  'investor': { demia: false, rival: true, athenaDebrief: true },
-} as Record<string, { demia: boolean; rival: boolean; athenaDebrief: boolean }>;
+  'turn-based': { tyche: true, rival: false, hermesDebrief: true },
+  'supply-chain': { tyche: false, rival: true, hermesDebrief: true },
+  'auction': { tyche: true, rival: true, hermesDebrief: true },
+  'macro': { tyche: true, rival: false, hermesDebrief: true },
+  'esg': { tyche: true, rival: false, hermesDebrief: true },
+  'investor': { tyche: false, rival: true, hermesDebrief: true },
+} as Record<string, { tyche: boolean; rival: boolean; hermesDebrief: boolean }>;
 
 export const POP_SEGMENTS = [
   { id: 'genz', name: 'Z 世代都市青年', satisfaction: 68, trend: '+8', mood: '讨论性价比与环保' },
@@ -155,7 +155,7 @@ export const RIVAL_NEGOTIATION_SCRIPT = [
   { role: 'rival', text: '我们最多接受单价 ¥42，且交货期不能短于 14 天。你们若坚持 10 天，需要加 8% 加急费。' },
   { role: 'user', text: '我们可以接受 12 天交期，但单价希望压在 ¥40，并锁定三季度量。' },
   { role: 'rival', text: '三季度量可以谈，但 ¥40 会挤压我们的毛利。若你们承担部分物流，我可以回到 ¥41。' },
-  { role: 'athena', text: '（导师提示）注意：对方第二次让步了物流条件——你可以追问「承担多少比例」而不是立刻接受单价。' },
+  { role: 'hermes', text: '（导师提示）注意：对方第二次让步了物流条件——你可以追问「承担多少比例」而不是立刻接受单价。' },
 ];
 
 export const DEBRIEF_MOCK = {

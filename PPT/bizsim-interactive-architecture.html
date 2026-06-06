@@ -1,0 +1,693 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>商域 BizSim Edu · 项目结构与数据流转图</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: "PingFang SC", "Microsoft YaHei", "Noto Sans SC", "Hiragino Sans GB", sans-serif;
+      background: #f1f5f9;
+      color: #1e293b;
+      overflow: hidden;
+    }
+    .container {
+      display: flex;
+      height: 100vh;
+      width: 100vw;
+    }
+    .diagram-area {
+      flex: 1;
+      position: relative;
+      background: #ffffff;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 40px;
+      overflow: auto;
+    }
+    .info-panel {
+      width: 360px;
+      background: #ffffff;
+      border-left: 1px solid #e2e8f0;
+      padding: 32px;
+      overflow-y: auto;
+      box-shadow: -4px 0 24px rgba(0,0,0,0.04);
+    }
+    .info-panel h2 {
+      font-size: 18px;
+      font-weight: 700;
+      color: #0f172a;
+      margin-bottom: 8px;
+    }
+    .info-panel .subtitle {
+      font-size: 13px;
+      color: #64748b;
+      margin-bottom: 24px;
+      padding-bottom: 16px;
+      border-bottom: 1px solid #f1f5f9;
+    }
+    .info-panel .section {
+      margin-bottom: 20px;
+    }
+    .info-panel .section-title {
+      font-size: 12px;
+      font-weight: 600;
+      color: #94a3b8;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      margin-bottom: 8px;
+    }
+    .info-panel p {
+      font-size: 14px;
+      line-height: 1.7;
+      color: #475569;
+    }
+    .info-panel .tag {
+      display: inline-block;
+      padding: 4px 10px;
+      border-radius: 4px;
+      font-size: 12px;
+      font-weight: 500;
+      margin-right: 6px;
+      margin-bottom: 6px;
+    }
+    .info-panel .tag-ai {
+      background: #f3e8ff;
+      color: #6b21a8;
+    }
+    .info-panel .tag-data {
+      background: #e0f2fe;
+      color: #075985;
+    }
+    .info-panel .empty-state {
+      color: #94a3b8;
+      font-size: 14px;
+      text-align: center;
+      margin-top: 40px;
+    }
+    .context-list, .output-list {
+      list-style: none;
+    }
+    .context-list li, .output-list li {
+      padding: 10px 12px;
+      margin-bottom: 8px;
+      border-radius: 6px;
+      font-size: 13px;
+      display: flex;
+      align-items: flex-start;
+      gap: 8px;
+    }
+    .context-list li {
+      background: #f8fafc;
+      border-left: 3px solid #64748b;
+      color: #475569;
+    }
+    .output-list li {
+      background: #f0fdf4;
+      border-left: 3px solid #16a34a;
+      color: #166534;
+    }
+    .arrow-icon {
+      flex-shrink: 0;
+      margin-top: 2px;
+    }
+
+    /* SVG Styles */
+    svg {
+      max-width: 100%;
+      max-height: 100%;
+    }
+    .node {
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+    .node:hover .node-bg {
+      filter: drop-shadow(0 8px 24px rgba(30,58,95,0.12));
+      stroke: #1e3a5f;
+      stroke-width: 2;
+    }
+    .node.active .node-bg {
+      stroke: #1e3a5f;
+      stroke-width: 2.5;
+      filter: drop-shadow(0 0 0 3px rgba(30,58,95,0.08));
+    }
+    .node-bg {
+      fill: #ffffff;
+      stroke: #cbd5e1;
+      stroke-width: 1;
+      transition: all 0.2s ease;
+    }
+    .flow-line {
+      fill: none;
+      stroke: #94a3b8;
+      stroke-width: 1.5;
+      stroke-dasharray: 6,4;
+      opacity: 0.5;
+      transition: all 0.3s ease;
+    }
+    .flow-line.active {
+      stroke: #1e3a5f;
+      stroke-width: 2.5;
+      opacity: 1;
+      animation: dash 1s linear infinite;
+    }
+    .flow-line.ai-flow {
+      stroke: #7c3aed;
+      opacity: 0.6;
+    }
+    .flow-line.ai-flow.active {
+      stroke: #5b21b6;
+      opacity: 1;
+    }
+    @keyframes dash {
+      to { stroke-dashoffset: -20; }
+    }
+    .ai-marker {
+      fill: #7c3aed;
+      stroke: #ffffff;
+      stroke-width: 2;
+    }
+    .node-title {
+      font-size: 15px;
+      font-weight: 700;
+      fill: #0f172a;
+    }
+    .node-label {
+      font-size: 12px;
+      fill: #64748b;
+    }
+    .ai-badge {
+      fill: #f3e8ff;
+      stroke: #7c3aed;
+      stroke-width: 1;
+    }
+    .ai-badge-text {
+      font-size: 10px;
+      font-weight: 700;
+      fill: #6b21a8;
+    }
+    .layer-label {
+      font-size: 11px;
+      fill: #94a3b8;
+      font-weight: 600;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+    }
+    .header {
+      position: absolute;
+      top: 24px;
+      left: 32px;
+    }
+    .header h1 {
+      font-size: 20px;
+      font-weight: 700;
+      color: #0f172a;
+    }
+    .header p {
+      font-size: 13px;
+      color: #64748b;
+      margin-top: 4px;
+    }
+    .legend {
+      position: absolute;
+      bottom: 24px;
+      left: 32px;
+      display: flex;
+      gap: 20px;
+      font-size: 12px;
+      color: #64748b;
+    }
+    .legend-item {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .legend-line {
+      width: 24px;
+      height: 2px;
+      background: #94a3b8;
+    }
+    .legend-line.ai {
+      background: #7c3aed;
+    }
+    .legend-dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      background: #7c3aed;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="diagram-area">
+      <div class="header">
+        <h1>商域 BizSim Edu · 项目结构与数据流转</h1>
+        <p>点击模块查看数据输入、AI 辅助点与输出关系</p>
+      </div>
+
+      <svg width="1400" height="860" viewBox="0 0 1400 860">
+        <defs>
+          <marker id="arrowGray" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto" markerUnits="strokeWidth">
+            <path d="M0,0 L0,6 L9,3 z" fill="#94a3b8"/>
+          </marker>
+          <marker id="arrowActive" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto" markerUnits="strokeWidth">
+            <path d="M0,0 L0,6 L9,3 z" fill="#1e3a5f"/>
+          </marker>
+          <marker id="arrowAI" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto" markerUnits="strokeWidth">
+            <path d="M0,0 L0,6 L9,3 z" fill="#7c3aed"/>
+          </marker>
+          <filter id="softShadow" x="-20%" y="-20%" width="140%" height="140%">
+            <feDropShadow dx="0" dy="2" stdDeviation="5" flood-color="#1e3a5f" flood-opacity="0.08"/>
+          </filter>
+        </defs>
+
+        <!-- Background zones -->
+        <rect x="60" y="80" width="1280" height="160" rx="8" fill="#f8fafc" stroke="#e2e8f0"/>
+        <rect x="60" y="260" width="1280" height="180" rx="8" fill="#f8fafc" stroke="#e2e8f0"/>
+        <rect x="60" y="460" width="1280" height="120" rx="8" fill="#f8fafc" stroke="#e2e8f0"/>
+        <rect x="60" y="620" width="1280" height="140" rx="8" fill="#faf5ff" stroke="#e9d5ff"/>
+
+        <!-- Layer labels -->
+        <text x="80" y="105" class="layer-label">用户层</text>
+        <text x="80" y="285" class="layer-label">平台与赛事层</text>
+        <text x="80" y="485" class="layer-label">生涯中枢</text>
+        <text x="80" y="645" class="layer-label">AI Pedagogy OS</text>
+
+        <!-- === USER LAYER === -->
+
+        <!-- Teacher Terminal -->
+        <g class="node" data-id="teacher" transform="translate(120,130)" filter="url(#softShadow)">
+          <rect class="node-bg" width="240" height="90" rx="10"/>
+          <rect x="0" y="0" width="4" height="90" rx="2" fill="#1e3a5f"/>
+          <text x="20" y="32" class="node-title">教师 / 组织者端</text>
+          <text x="20" y="54" class="node-label">赛季编排 · 控场 · 营团管理</text>
+          <text x="20" y="74" class="node-label">创建 match，指定 game_config_id</text>
+        </g>
+
+        <!-- Student Terminal -->
+        <g class="node" data-id="student" transform="translate(1040,130)" filter="url(#softShadow)">
+          <rect class="node-bg" width="240" height="90" rx="10"/>
+          <rect x="236" y="0" width="4" height="90" rx="2" fill="#1e3a5f"/>
+          <text x="20" y="32" class="node-title">学生端</text>
+          <text x="20" y="54" class="node-label">加入营团 · 参赛 · 日常五域</text>
+          <text x="20" y="74" class="node-label">提交决策，接收反馈与成长数据</text>
+        </g>
+
+        <!-- === ARENA PLATFORM === -->
+        <g class="node" data-id="arena" transform="translate(460,150)" filter="url(#softShadow)">
+          <rect class="node-bg" width="480" height="70" rx="10"/>
+          <rect x="0" y="0" width="480" height="4" rx="2" fill="#1e3a5f"/>
+          <text x="240" y="30" text-anchor="middle" class="node-title">Arena 平台层</text>
+          <text x="240" y="52" text-anchor="middle" class="node-label">建场 · 生命周期 · match_kind 分轨 · 域契约挂载</text>
+        </g>
+
+        <!-- === GAME BOXES === -->
+
+        <!-- Fushengji -->
+        <g class="node" data-id="fushengji" transform="translate(120,300)" filter="url(#softShadow)">
+          <rect class="node-bg" width="240" height="110" rx="10"/>
+          <rect x="0" y="0" width="4" height="110" rx="2" fill="#b45309"/>
+          <text x="20" y="32" class="node-title">浮生记 Fushengji</text>
+          <text x="20" y="56" class="node-label">贸易物流商战</text>
+          <text x="20" y="78" class="node-label">回合制 + RTS 即时</text>
+          <g transform="translate(190, 20)">
+            <circle cx="10" cy="10" r="12" class="ai-badge"/>
+            <text x="10" y="14" text-anchor="middle" class="ai-badge-text">AI</text>
+          </g>
+        </g>
+
+        <!-- TechVenture -->
+        <g class="node" data-id="techventure" transform="translate(420,300)" filter="url(#softShadow)">
+          <rect class="node-bg" width="240" height="110" rx="10"/>
+          <rect x="0" y="0" width="4" height="110" rx="2" fill="#1d4ed8"/>
+          <text x="20" y="32" class="node-title">TechVenture</text>
+          <text x="20" y="56" class="node-label">创投策略赛</text>
+          <text x="20" y="78" class="node-label">四端（玩/控/屏/评）</text>
+          <g transform="translate(190, 20)">
+            <circle cx="10" cy="10" r="12" class="ai-badge"/>
+            <text x="10" y="14" text-anchor="middle" class="ai-badge-text">AI</text>
+          </g>
+        </g>
+
+        <!-- Ops-Sim -->
+        <g class="node" data-id="ops-sim" transform="translate(720,300)" filter="url(#softShadow)">
+          <rect class="node-bg" width="240" height="110" rx="10"/>
+          <rect x="0" y="0" width="4" height="110" rx="2" fill="#047857"/>
+          <text x="20" y="32" class="node-title">Ops-Sim</text>
+          <text x="20" y="56" class="node-label">产销运营模拟</text>
+          <text x="20" y="78" class="node-label">阿思丹类机制（待建）</text>
+          <g transform="translate(190, 20)">
+            <circle cx="10" cy="10" r="12" class="ai-badge"/>
+            <text x="10" y="14" text-anchor="middle" class="ai-badge-text">AI</text>
+          </g>
+        </g>
+
+        <!-- Finance-Lab -->
+        <g class="node" data-id="finance-lab" transform="translate(1020,300)" filter="url(#softShadow)">
+          <rect class="node-bg" width="240" height="110" rx="10"/>
+          <rect x="0" y="0" width="4" height="110" rx="2" fill="#7c3aed"/>
+          <text x="20" y="32" class="node-title">Finance-Lab</text>
+          <text x="20" y="56" class="node-label">金融投研实验室</text>
+          <text x="20" y="78" class="node-label">投研/交易模拟（待建）</text>
+          <g transform="translate(190, 20)">
+            <circle cx="10" cy="10" r="12" class="ai-badge"/>
+            <text x="10" y="14" text-anchor="middle" class="ai-badge-text">AI</text>
+          </g>
+        </g>
+
+        <!-- === CAREER HUB === -->
+        <g class="node" data-id="career" transform="translate(460,480)" filter="url(#softShadow)">
+          <rect class="node-bg" width="480" height="80" rx="10"/>
+          <rect x="0" y="0" width="480" height="4" rx="2" fill="#dc2626"/>
+          <text x="240" y="30" text-anchor="middle" class="node-title">Career Hub 生涯中枢</text>
+          <text x="240" y="52" text-anchor="middle" class="node-label">XP 账本 · 五维雷达 · 家园 · NPC 关系</text>
+          <g transform="translate(430, 16)">
+            <circle cx="10" cy="10" r="12" class="ai-badge"/>
+            <text x="10" y="14" text-anchor="middle" class="ai-badge-text">AI</text>
+          </g>
+        </g>
+
+        <!-- === AI PEDAGOGY OS === -->
+        <g class="node" data-id="ai-os" transform="translate(120,660)" filter="url(#softShadow)">
+          <rect class="node-bg" width="1160" height="80" rx="10"/>
+          <rect x="0" y="0" width="1160" height="4" rx="2" fill="#7c3aed"/>
+          <text x="580" y="30" text-anchor="middle" class="node-title">AI Pedagogy OS · 智能体编排层</text>
+          <text x="580" y="54" text-anchor="middle" class="node-label">LangGraph + 事件路由 + 三层记忆 + 人机检查点</text>
+        </g>
+
+        <!-- === FLOW LINES === -->
+
+        <!-- Teacher -> Arena -->
+        <path id="flow-teacher-arena" class="flow-line" d="M360 175 L460 185" marker-end="url(#arrowGray)"/>
+
+        <!-- Student -> Arena -->
+        <path id="flow-student-arena" class="flow-line" d="M1040 175 L940 185" marker-end="url(#arrowGray)"/>
+
+        <!-- Arena -> Game Boxes -->
+        <path id="flow-arena-fushengji" class="flow-line" d="M560 220 L240 300" marker-end="url(#arrowGray)"/>
+        <path id="flow-arena-techventure" class="flow-line" d="M620 220 L540 300" marker-end="url(#arrowGray)"/>
+        <path id="flow-arena-ops" class="flow-line" d="M780 220 L840 300" marker-end="url(#arrowGray)"/>
+        <path id="flow-arena-finance" class="flow-line" d="M840 220 L1140 300" marker-end="url(#arrowGray)"/>
+
+        <!-- Game Boxes -> Career Hub -->
+        <path id="flow-fushengji-career" class="flow-line" d="M240 410 L500 480" marker-end="url(#arrowGray)"/>
+        <path id="flow-techventure-career" class="flow-line" d="M540 410 L580 480" marker-end="url(#arrowGray)"/>
+        <path id="flow-ops-career" class="flow-line" d="M840 410 L820 480" marker-end="url(#arrowGray)"/>
+        <path id="flow-finance-career" class="flow-line" d="M1140 410 L900 480" marker-end="url(#arrowGray)"/>
+
+        <!-- Career Hub -> AI OS -->
+        <path id="flow-career-ai" class="flow-line ai-flow" d="M700 560 L700 660" marker-end="url(#arrowAI)"/>
+
+        <!-- Arena -> AI OS -->
+        <path id="flow-arena-ai" class="flow-line ai-flow" d="M700 220 L700 300 L1280 300 L1280 660" marker-end="url(#arrowAI)"/>
+
+        <!-- AI OS -> outputs -->
+        <path id="flow-ai-teacher" class="flow-line ai-flow" d="M120 700 L80 700 L80 175 L120 175" marker-end="url(#arrowAI)"/>
+        <path id="flow-ai-student" class="flow-line ai-flow" d="M1280 700 L1320 700 L1320 175 L1280 175" marker-end="url(#arrowAI)"/>
+        <path id="flow-ai-career" class="flow-line ai-flow" d="M700 660 L700 620" marker-end="url(#arrowAI)"/>
+
+        <!-- AI marker dots along flows -->
+        <g transform="translate(240,310)">
+          <circle r="8" class="ai-marker"/>
+          <path d="M-3 0 L3 0 M0 -3 L0 3" stroke="#fff" stroke-width="1.5" transform="rotate(45)"/>
+        </g>
+        <g transform="translate(540,310)">
+          <circle r="8" class="ai-marker"/>
+          <path d="M-3 0 L3 0 M0 -3 L0 3" stroke="#fff" stroke-width="1.5" transform="rotate(45)"/>
+        </g>
+        <g transform="translate(840,310)">
+          <circle r="8" class="ai-marker"/>
+          <path d="M-3 0 L3 0 M0 -3 L0 3" stroke="#fff" stroke-width="1.5" transform="rotate(45)"/>
+        </g>
+        <g transform="translate(1140,310)">
+          <circle r="8" class="ai-marker"/>
+          <path d="M-3 0 L3 0 M0 -3 L0 3" stroke="#fff" stroke-width="1.5" transform="rotate(45)"/>
+        </g>
+      </svg>
+
+      <div class="legend">
+        <div class="legend-item">
+          <div class="legend-line"></div>
+          <span>业务数据流</span>
+        </div>
+        <div class="legend-item">
+          <div class="legend-line ai"></div>
+          <span>AI 上下文流</span>
+        </div>
+        <div class="legend-item">
+          <div class="legend-dot"></div>
+          <span>AI 辅助点</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="info-panel" id="infoPanel">
+      <div class="empty-state">
+        点击左侧任意模块<br>查看数据流转与 AI 辅助关系
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const nodeData = {
+      teacher: {
+        title: "教师 / 组织者端",
+        subtitle: "Course Terminal",
+        desc: "教师通过组织者端创建营团、赛季和比赛。系统是教学导演台，而非简单的管理后台。",
+        inputs: [
+          { text: "从 AI Pedagogy OS 接收：AI 助教建议、班级学情摘要、赛后复盘模板" }
+        ],
+        outputs: [
+          { text: "向 Arena 输出：赛季配置、game_config_id、match_kind、邀请码" }
+        ],
+        ai: " Athena AI 助教辅助备课与课堂提示；赛后自动生成分层复盘摘要。"
+      },
+      student: {
+        title: "学生端",
+        subtitle: "Student Terminal",
+        desc: "学生加入营团后，按赛季节奏参与活动，也可在日常模式自由练习。",
+        inputs: [
+          { text: "从 Arena 接收：对局状态、比赛结果、排行榜" },
+          { text: "从 Career Hub 接收：XP、五维雷达、家园进度" },
+          { text: "从 AI Pedagogy OS 接收：Athena 教练反馈、周计划、赛制推荐" }
+        ],
+        outputs: [
+          { text: "向 Arena 输出：决策数据（交易、投资、队伍策略）" },
+          { text: "向 AI Pedagogy OS 输出：练习行为、提问、测评结果" }
+        ],
+        ai: " Athena 作为生涯导师，基于长期记忆给出个性化路径；Persona 推荐匹配性格的比赛。"
+      },
+      arena: {
+        title: "Arena 平台层",
+        subtitle: "赛事中台",
+        desc: "统一的比赛生命周期管理平台。所有赛制通过契约挂载，共用同一套用户、房间码和结算体系。",
+        inputs: [
+          { text: "从教师端接收：建赛指令、配置参数" },
+          { text: "从学生端接收：加入请求、局内决策" }
+        ],
+        outputs: [
+          { text: "向四赛制匣子输出：game_config_id + match_kind + 玩家快照" },
+          { text: "向 Career Hub 输出：比赛事件（match.finished 等高权重事件）" },
+          { text: "向 AI Pedagogy OS 输出：实时比赛事件流" }
+        ],
+        ai: " 比赛事件触发 AI 复盘；AI 对手（Rival）通过 Arena 进入练习局补位。"
+      },
+      fushengji: {
+        title: "浮生记 Fushengji",
+        subtitle: "贸易物流商战",
+        desc: "已落地的双模式赛制：回合制倒卖 + RTS 即时物流。",
+        inputs: [
+          { text: "从 Arena 接收：比赛配置、玩家列表、初始市场参数" }
+        ],
+        outputs: [
+          { text: "向 Career Hub 输出：结算结果、排名、XP 事件" },
+          { text: "向 AI Pedagogy OS 输出：玩家交易行为、库存决策、物流路径" }
+        ],
+        ai: " 练习 AI（chaotic / advanced 两档）零 Token 陪练；赛后 Athena 基于交易记录生成复盘。"
+      },
+      techventure: {
+        title: "TechVenture",
+        subtitle: "创投策略赛",
+        desc: "队伍策略赛制，包含玩/控/屏/评四端。v6 引擎 Python 版已迁入 webapp。",
+        inputs: [
+          { text: "从 Arena 接收：队伍信息、轮次配置、城市快照" }
+        ],
+        outputs: [
+          { text: "向 Career Hub 输出：BQI 排名、队伍得分" },
+          { text: "向 AI Pedagogy OS 输出：策略选择、投资决策、路演表现" }
+        ],
+        ai: " AI 队伍自动推进练习局；Athena 解析策略优劣并给出改进建议。"
+      },
+      "ops-sim": {
+        title: "Ops-Sim 产销运营",
+        subtitle: "规划中的第三赛制",
+        desc: "阿思丹类产销运营模拟，将走 CyberCore 声明式包，不复制引擎代码。",
+        inputs: [
+          { text: "从 Arena 接收：配置 ID、 match_kind" }
+        ],
+        outputs: [
+          { text: "向 Career Hub 输出：运营结果、供应链得分" },
+          { text: "向 AI Pedagogy OS 输出：产能/库存决策数据" }
+        ],
+        ai: " 规划中：AI 对手模拟市场竞争；Athena 复盘产销策略。"
+      },
+      "finance-lab": {
+        title: "Finance-Lab",
+        subtitle: "金融投研实验室",
+        desc: "面向高阶学生的投研与交易模拟，规划中。",
+        inputs: [
+          { text: "从 Arena 接收：资产包、市场环境、时间周期" }
+        ],
+        outputs: [
+          { text: "向 Career Hub 输出：投资组合收益、风险评级" },
+          { text: "向 AI Pedagogy OS 输出：交易信号、持仓变化" }
+        ],
+        ai: " 规划中：AI 市场评论（Demia）；Athena 基于风险偏好给出投研建议。"
+      },
+      career: {
+        title: "Career Hub 生涯中枢",
+        subtitle: "长期成长主线",
+        desc: "所有比赛、课程、任务的产出最终汇入 Career Hub，形成学生的长期档案。",
+        inputs: [
+          { text: "从 Arena 接收：match.finished 等高权重事件" },
+          { text: "从四赛制匣子接收：结算结果、排名数据" },
+          { text: "从 AI Pedagogy OS 接收：Persona 标签、能力评估、推荐路径" }
+        ],
+        outputs: [
+          { text: "向学生端输出：XP、五维雷达、家园、NPC 解锁" },
+          { text: "向 AI Pedagogy OS 输出：结构化长期记忆（career_profiles）" }
+        ],
+        ai: " Athena PathPlanner 基于 career_profiles 推荐下周学习路径；Persona 写入性格画像。"
+      },
+      "ai-os": {
+        title: "AI Pedagogy OS",
+        subtitle: "智能体编排层",
+        desc: "基于 LangGraph 的事件驱动编排层，不是简单的提示词对话，而是有状态、有记忆、有检查点的教学智能体系统。",
+        inputs: [
+          { text: "从 Arena 接收：match.finished / tick / 玩家决策事件" },
+          { text: "从 Career Hub 接收：五维雷达、XP 历史、Persona 画像" },
+          { text: "从学生端接收：主动提问、Quest 完成、测评结果" },
+          { text: "从四赛制接收：局内行为数据、策略选择" }
+        ],
+        outputs: [
+          { text: "向教师端输出：AI 助教建议、班级复盘摘要、学情提示" },
+          { text: "向学生端输出：Athena 教练反馈、周计划、QA 回答、赛制推荐" },
+          { text: "向 Career Hub 输出：能力评估、Persona 标签、里程碑建议" },
+          { text: "向 Arena 输出：AI 对手决策（Rival / 练习 Bots）" }
+        ],
+        ai: " 规则优先、LLM 渐进、三层记忆、人机检查点，成本可控。"
+      }
+    };
+
+    const flowMap = {
+      teacher: ['flow-teacher-arena', 'flow-ai-teacher'],
+      student: ['flow-student-arena', 'flow-ai-student'],
+      arena: ['flow-teacher-arena', 'flow-student-arena', 'flow-arena-fushengji', 'flow-arena-techventure', 'flow-arena-ops', 'flow-arena-finance', 'flow-arena-ai'],
+      fushengji: ['flow-arena-fushengji', 'flow-fushengji-career'],
+      techventure: ['flow-arena-techventure', 'flow-techventure-career'],
+      'ops-sim': ['flow-arena-ops', 'flow-ops-career'],
+      'finance-lab': ['flow-arena-finance', 'flow-finance-career'],
+      career: ['flow-fushengji-career', 'flow-techventure-career', 'flow-ops-career', 'flow-finance-career', 'flow-career-ai', 'flow-ai-career'],
+      'ai-os': ['flow-career-ai', 'flow-arena-ai', 'flow-ai-teacher', 'flow-ai-student', 'flow-ai-career']
+    };
+
+    const infoPanel = document.getElementById('infoPanel');
+    const nodes = document.querySelectorAll('.node');
+    let activeId = null;
+
+    function renderInfo(id) {
+      const data = nodeData[id];
+      if (!data) return;
+
+      const inputsHtml = data.inputs ? data.inputs.map(i =>
+        `<li><span class="arrow-icon">→</span>${i.text}</li>`
+      ).join('') : '';
+
+      const outputsHtml = data.outputs ? data.outputs.map(o =>
+        `<li><span class="arrow-icon">←</span>${o.text}</li>`
+      ).join('') : '';
+
+      infoPanel.innerHTML = `
+        <h2>${data.title}</h2>
+        <div class="subtitle">${data.subtitle}</div>
+
+        <div class="section">
+          <div class="section-title">模块职责</div>
+          <p>${data.desc}</p>
+        </div>
+
+        ${data.inputs && data.inputs.length ? `
+        <div class="section">
+          <div class="section-title">接收的数据 / 上下文</div>
+          <ul class="context-list">${inputsHtml}</ul>
+        </div>
+        ` : ''}
+
+        ${data.outputs && data.outputs.length ? `
+        <div class="section">
+          <div class="section-title">输出的数据 / 服务</div>
+          <ul class="output-list">${outputsHtml}</ul>
+        </div>
+        ` : ''}
+
+        <div class="section">
+          <div class="section-title">AI 辅助点</div>
+          <p><span class="tag tag-ai">AI</span>${data.ai}</p>
+        </div>
+      `;
+    }
+
+    function highlightFlows(id, isActive) {
+      document.querySelectorAll('.flow-line').forEach(line => {
+        line.classList.remove('active');
+      });
+
+      const lines = flowMap[id] || [];
+      lines.forEach(lineId => {
+        const line = document.getElementById(lineId);
+        if (line) line.classList.add('active');
+      });
+    }
+
+    nodes.forEach(node => {
+      node.addEventListener('click', (e) => {
+        e.stopPropagation();
+        const id = node.dataset.id;
+
+        nodes.forEach(n => n.classList.remove('active'));
+        node.classList.add('active');
+        activeId = id;
+
+        renderInfo(id);
+        highlightFlows(id, true);
+      });
+
+      node.addEventListener('mouseenter', () => {
+        if (!activeId) {
+          highlightFlows(node.dataset.id, false);
+        }
+      });
+
+      node.addEventListener('mouseleave', () => {
+        if (!activeId) {
+          document.querySelectorAll('.flow-line').forEach(line => line.classList.remove('active'));
+        }
+      });
+    });
+
+    document.querySelector('.diagram-area').addEventListener('click', () => {
+      nodes.forEach(n => n.classList.remove('active'));
+      activeId = null;
+      document.querySelectorAll('.flow-line').forEach(line => line.classList.remove('active'));
+      infoPanel.innerHTML = `
+        <div class="empty-state">
+          点击左侧任意模块<br>查看数据流转与 AI 辅助关系
+        </div>
+      `;
+    });
+  </script>
+</body>
+</html>

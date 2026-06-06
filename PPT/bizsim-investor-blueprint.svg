@@ -1,0 +1,513 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1920 1320" width="1920" height="1320" font-family="'PingFang SC','Microsoft YaHei','Noto Sans SC','Hiragino Sans GB',sans-serif">
+  <defs>
+    <!-- Gradients -->
+    <linearGradient id="bgGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#0b1020"/>
+      <stop offset="50%" stop-color="#0f172a"/>
+      <stop offset="100%" stop-color="#131b2e"/>
+    </linearGradient>
+    <linearGradient id="aiGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#7c3aed"/>
+      <stop offset="50%" stop-color="#a855f7"/>
+      <stop offset="100%" stop-color="#c084fc"/>
+    </linearGradient>
+    <linearGradient id="platformGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#0284c7"/>
+      <stop offset="100%" stop-color="#0ea5e9"/>
+    </linearGradient>
+    <linearGradient id="careerGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#ea580c"/>
+      <stop offset="100%" stop-color="#f97316"/>
+    </linearGradient>
+    <linearGradient id="cardLight" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#ffffff"/>
+      <stop offset="100%" stop-color="#f1f5f9"/>
+    </linearGradient>
+    <!-- Glow filter -->
+    <filter id="glow" x="-50%" y="-50%" width="200%" height="200%">
+      <feGaussianBlur stdDeviation="3" result="coloredBlur"/>
+      <feMerge>
+        <feMergeNode in="coloredBlur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+    <filter id="softShadow" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="0" dy="2" stdDeviation="4" flood-color="#000000" flood-opacity="0.25"/>
+    </filter>
+    <!-- Arrow marker -->
+    <marker id="arrow" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto" markerUnits="strokeWidth">
+      <path d="M0,0 L0,6 L9,3 z" fill="#94a3b8"/>
+    </marker>
+  </defs>
+
+  <!-- Background -->
+  <rect width="1920" height="1320" fill="url(#bgGrad)"/>
+
+  <!-- Decorative grid -->
+  <g opacity="0.08" stroke="#38bdf8" stroke-width="1">
+    <line x1="0" y1="160" x2="1920" y2="160"/>
+    <line x1="0" y1="540" x2="1920" y2="540"/>
+    <line x1="0" y1="860" x2="1920" y2="860"/>
+    <line x1="0" y1="1160" x2="1920" y2="1160"/>
+    <line x1="480" y1="0" y2="1320"/>
+    <line x1="960" y1="0" y2="1320"/>
+    <line x1="1440" y1="0" y2="1320"/>
+  </g>
+
+  <!-- ========== HEADER ========== -->
+  <g id="header">
+    <!-- Logo mark -->
+    <circle cx="70" cy="58" r="22" fill="url(#platformGrad)" filter="url(#softShadow)"/>
+    <text x="70" y="66" text-anchor="middle" fill="#fff" font-size="18" font-weight="700">商</text>
+    <!-- Title -->
+    <text x="105" y="52" fill="#f8fafc" font-size="32" font-weight="700" letter-spacing="1">商域 BizSim Edu</text>
+    <text x="105" y="82" fill="#94a3b8" font-size="16" font-weight="400">普惠式商业素养教育基础设施 · 产品技术蓝图</text>
+
+    <!-- Vision pill -->
+    <rect x="600" y="36" width="680" height="44" rx="22" fill="rgba(14,165,233,0.12)" stroke="#0ea5e9" stroke-width="1.5"/>
+    <text x="940" y="64" text-anchor="middle" fill="#e0f2fe" font-size="15" font-weight="500">让商业素养教育像语数英一样可获取 —— 不分城乡、不唯竞赛、AI 驱动、游戏化学习</text>
+
+    <!-- Metric badges -->
+    <g transform="translate(1340,34)">
+      <rect width="130" height="48" rx="10" fill="rgba(255,255,255,0.08)" stroke="rgba(255,255,255,0.15)"/>
+      <text x="65" y="20" text-anchor="middle" fill="#94a3b8" font-size="11">已落地代码</text>
+      <text x="65" y="40" text-anchor="middle" fill="#fff" font-size="15" font-weight="700">~22,000 行</text>
+    </g>
+    <g transform="translate(1490,34)">
+      <rect width="130" height="48" rx="10" fill="rgba(255,255,255,0.08)" stroke="rgba(255,255,255,0.15)"/>
+      <text x="65" y="20" text-anchor="middle" fill="#94a3b8" font-size="11">赛制引擎</text>
+      <text x="65" y="40" text-anchor="middle" fill="#fff" font-size="15" font-weight="700">3 个已运行</text>
+    </g>
+    <g transform="translate(1640,34)">
+      <rect width="130" height="48" rx="10" fill="rgba(255,255,255,0.08)" stroke="rgba(255,255,255,0.15)"/>
+      <text x="65" y="20" text-anchor="middle" fill="#94a3b8" font-size="11">体验营</text>
+      <text x="65" y="40" text-anchor="middle" fill="#fff" font-size="15" font-weight="700">P1 已落地</text>
+    </g>
+  </g>
+
+  <!-- ========== USERS & PRODUCT LAYERS ========== -->
+
+  <!-- Teacher Terminal Panel -->
+  <g transform="translate(40,130)" filter="url(#softShadow)">
+    <rect width="360" height="340" rx="16" fill="url(#cardLight)"/>
+    <rect x="0" y="0" width="8" height="340" rx="4" fill="#0ea5e9"/>
+    <text x="30" y="42" fill="#0f172a" font-size="20" font-weight="700">教师 / 组织者端</text>
+    <text x="30" y="64" fill="#64748b" font-size="12">Course Terminal · 教学导演台</text>
+
+    <!-- Teacher features -->
+    <g transform="translate(24,90)">
+      <rect width="312" height="52" rx="10" fill="#f0f9ff" stroke="#bae6fd"/>
+      <text x="16" y="22" fill="#0369a1" font-size="13" font-weight="600">开设营团 &amp; 赛季</text>
+      <text x="16" y="40" fill="#475569" font-size="11">6位邀请码 · 里程碑编排 · T2班级赛</text>
+    </g>
+    <g transform="translate(24,152)">
+      <rect width="312" height="52" rx="10" fill="#f0f9ff" stroke="#bae6fd"/>
+      <text x="16" y="22" fill="#0369a1" font-size="13" font-weight="600">AOTU 自动辅助备课</text>
+      <text x="16" y="40" fill="#475569" font-size="11">零基础教师也能生成授课节奏与活动</text>
+    </g>
+    <g transform="translate(24,214)">
+      <rect width="312" height="52" rx="10" fill="#f0f9ff" stroke="#bae6fd"/>
+      <text x="16" y="22" fill="#0369a1" font-size="13" font-weight="600">控场 &amp; 复盘大屏</text>
+      <text x="16" y="40" fill="#475569" font-size="11">建赛 · 推进回合 · 发布成绩 · 数据看板</text>
+    </g>
+    <g transform="translate(24,276)">
+      <rect width="312" height="44" rx="10" fill="#faf5ff" stroke="#e9d5ff"/>
+      <text x="16" y="27" fill="#7e22ce" font-size="13" font-weight="600">Athena AI 助教</text>
+      <text x="140" y="27" fill="#64748b" font-size="11">备课 / 课堂提示 / 复盘摘要</text>
+    </g>
+  </g>
+
+  <!-- Student Terminal Panel -->
+  <g transform="translate(1520,130)" filter="url(#softShadow)">
+    <rect width="360" height="340" rx="16" fill="url(#cardLight)"/>
+    <rect x="352" y="0" width="8" height="340" rx="4" fill="#22c55e"/>
+    <text x="30" y="42" fill="#0f172a" font-size="20" font-weight="700">学生端</text>
+    <text x="30" y="64" fill="#64748b" font-size="12">Student Terminal · 学习体验舱</text>
+
+    <!-- Student features -->
+    <g transform="translate(24,90)">
+      <rect width="312" height="52" rx="10" fill="#f0fdf4" stroke="#bbf7d0"/>
+      <text x="16" y="22" fill="#15803d" font-size="13" font-weight="600">加入营团 &amp; 赛季</text>
+      <text x="16" y="40" fill="#475569" font-size="11">邀请码入营 · 按里程碑完成活动</text>
+    </g>
+    <g transform="translate(24,152)">
+      <rect width="312" height="52" rx="10" fill="#f0fdf4" stroke="#bbf7d0"/>
+      <text x="16" y="22" fill="#15803d" font-size="13" font-weight="600">日常五域 &amp; Career Hub</text>
+      <text x="16" y="40" fill="#475569" font-size="11">图谱 / 课程 / 任务 / 成就 / 家园</text>
+    </g>
+    <g transform="translate(24,214)">
+      <rect width="312" height="52" rx="10" fill="#f0fdf4" stroke="#bbf7d0"/>
+      <text x="16" y="22" fill="#15803d" font-size="13" font-weight="600">Arena 商赛大厅</text>
+      <text x="16" y="40" fill="#475569" font-size="11">练习局 · 班级正式赛 · 级别赛事</text>
+    </g>
+    <g transform="translate(24,276)">
+      <rect width="312" height="44" rx="10" fill="#faf5ff" stroke="#e9d5ff"/>
+      <text x="16" y="27" fill="#7e22ce" font-size="13" font-weight="600">Athena 生涯导师</text>
+      <text x="152" y="27" fill="#64748b" font-size="11">复盘 · 周计划 · 路径推荐</text>
+    </g>
+  </g>
+
+  <!-- Arena Platform Center -->
+  <g transform="translate(440,130)">
+    <!-- Main platform card -->
+    <rect width="1040" height="340" rx="20" fill="rgba(15,23,42,0.7)" stroke="#334155" stroke-width="1.5"/>
+    <text x="520" y="40" text-anchor="middle" fill="#e2e8f0" font-size="18" font-weight="600">Arena 平台层（单库单进程 · 域分包 · 契约挂载）</text>
+
+    <!-- Four game boxes -->
+    <!-- Fushengji -->
+    <g transform="translate(40,70)" filter="url(#softShadow)">
+      <rect width="225" height="120" rx="12" fill="url(#cardLight)"/>
+      <rect width="225" height="8" rx="4" fill="#f59e0b"/>
+      <text x="20" y="34" fill="#78350f" font-size="15" font-weight="700">浮生记 Fushengji</text>
+      <text x="20" y="55" fill="#92400e" font-size="12">贸易物流商战</text>
+      <text x="20" y="78" fill="#475569" font-size="11">· 回合制 trading-v1</text>
+      <text x="20" y="96" fill="#475569" font-size="11">· RTS 即时 v2-rts</text>
+      <text x="20" y="114" fill="#475569" font-size="11">· WebSocket 5s tick</text>
+      <circle cx="195" cy="30" r="14" fill="#fef3c7" stroke="#f59e0b"/>
+      <text x="195" y="35" text-anchor="middle" fill="#b45309" font-size="12">✓</text>
+    </g>
+
+    <!-- TechVenture -->
+    <g transform="translate(285,70)" filter="url(#softShadow)">
+      <rect width="225" height="120" rx="12" fill="url(#cardLight)"/>
+      <rect width="225" height="8" rx="4" fill="#3b82f6"/>
+      <text x="20" y="34" fill="#1e3a8a" font-size="15" font-weight="700">TechVenture</text>
+      <text x="20" y="55" fill="#1d4ed8" font-size="12">创投策略 · 四端</text>
+      <text x="20" y="78" fill="#475569" font-size="11">· 玩 / 控 / 屏 / 评</text>
+      <text x="20" y="96" fill="#475569" font-size="11">· v6 引擎 Python 版</text>
+      <text x="20" y="114" fill="#475569" font-size="11">· BQI 三城四路线</text>
+      <circle cx="195" cy="30" r="14" fill="#dbeafe" stroke="#3b82f6"/>
+      <text x="195" y="35" text-anchor="middle" fill="#1d4ed8" font-size="12">✓</text>
+    </g>
+
+    <!-- Ops Sim -->
+    <g transform="translate(530,70)" filter="url(#softShadow)">
+      <rect width="225" height="120" rx="12" fill="url(#cardLight)"/>
+      <rect width="225" height="8" rx="4" fill="#10b981"/>
+      <text x="20" y="34" fill="#064e3b" font-size="15" font-weight="700">Ops-Sim 产销运营</text>
+      <text x="20" y="55" fill="#047857" font-size="12">阿思丹类产销模拟</text>
+      <text x="20" y="82" fill="#64748b" font-size="11">待建：YAML + 引擎骨架</text>
+      <text x="20" y="100" fill="#64748b" font-size="11">复用 CyberCore 声明式</text>
+      <circle cx="195" cy="30" r="14" fill="#d1fae5" stroke="#10b981"/>
+      <text x="195" y="35" text-anchor="middle" fill="#047857" font-size="14">···</text>
+    </g>
+
+    <!-- Finance Lab -->
+    <g transform="translate(775,70)" filter="url(#softShadow)">
+      <rect width="225" height="120" rx="12" fill="url(#cardLight)"/>
+      <rect width="225" height="8" rx="4" fill="#ec4899"/>
+      <text x="20" y="34" fill="#831843" font-size="15" font-weight="700">Finance-Lab</text>
+      <text x="20" y="55" fill="#be185d" font-size="12">金融投研实验室</text>
+      <text x="20" y="82" fill="#64748b" font-size="11">待建：投研/交易模拟</text>
+      <text x="20" y="100" fill="#64748b" font-size="11">接入同一 Career Hub</text>
+      <circle cx="195" cy="30" r="14" fill="#fce7f3" stroke="#ec4899"/>
+      <text x="195" y="35" text-anchor="middle" fill="#be185d" font-size="14">···</text>
+    </g>
+
+    <!-- CyberCore label -->
+    <g transform="translate(40,205)">
+      <rect width="320" height="44" rx="10" fill="rgba(14,165,233,0.12)" stroke="#0ea5e9"/>
+      <text x="16" y="18" fill="#7dd3fc" font-size="12" font-weight="600">CyberCore 声明式赛制引擎</text>
+      <text x="16" y="34" fill="#bae6fd" font-size="11">game-configs/*.yaml + games/&lt;engine&gt;/ 内核 · 不复制代码</text>
+    </g>
+
+    <!-- Match kinds -->
+    <g transform="translate(380,205)">
+      <rect width="280" height="44" rx="10" fill="rgba(100,116,139,0.25)" stroke="#64748b"/>
+      <text x="16" y="18" fill="#e2e8f0" font-size="12" font-weight="600">match_kind 分轨</text>
+      <text x="16" y="34" fill="#94a3b8" font-size="11">practice · official_t2 · official_t1</text>
+    </g>
+
+    <!-- Career Hub -->
+    <g transform="translate(690,205)" filter="url(#softShadow)">
+      <rect width="310" height="110" rx="14" fill="url(#careerGrad)"/>
+      <text x="20" y="32" fill="#fff" font-size="16" font-weight="700">Career Hub 生涯中枢</text>
+      <text x="20" y="52" fill="#ffedd5" font-size="12">XP 幂等账本 · 五维雷达 · 家园 · NPC</text>
+      <text x="20" y="76" fill="#fff" font-size="11">赛季结算 → 生涯汇入 → 解锁 NPC / 家园槽位</text>
+      <text x="20" y="94" fill="#ffedd5" font-size="11">长期成长叙事：从 Arena 赢家 → 超越昨天的自己</text>
+    </g>
+  </g>
+
+  <!-- Connecting arrows between panels -->
+  <g stroke="#475569" stroke-width="2" fill="none" marker-end="url(#arrow)" opacity="0.7">
+    <!-- Teacher to Arena -->
+    <path d="M400 300 L440 300"/>
+    <!-- Arena to Student -->
+    <path d="M1480 300 L1520 300"/>
+  </g>
+
+  <!-- Daily 5 Domains floating strip -->
+  <g transform="translate(1520,490)" filter="url(#softShadow)">
+    <rect width="360" height="90" rx="14" fill="rgba(15,23,42,0.85)" stroke="#334155"/>
+    <text x="20" y="26" fill="#e2e8f0" font-size="13" font-weight="600">学生日常五域（汇入 Career Hub）</text>
+    <g transform="translate(16,42)">
+      <rect width="58" height="34" rx="6" fill="#dbeafe"/><text x="29" y="22" text-anchor="middle" fill="#1e40af" font-size="10" font-weight="600">Atlas</text>
+    </g>
+    <g transform="translate(82,42)">
+      <rect width="62" height="34" rx="6" fill="#dcfce7"/><text x="31" y="22" text-anchor="middle" fill="#166534" font-size="10" font-weight="600">Academy</text>
+    </g>
+    <g transform="translate(152,42)">
+      <rect width="58" height="34" rx="6" fill="#fef3c7"/><text x="29" y="22" text-anchor="middle" fill="#854d0e" font-size="10" font-weight="600">Quest</text>
+    </g>
+    <g transform="translate(218,42)">
+      <rect width="58" height="34" rx="6" fill="#fce7f3"/><text x="29" y="22" text-anchor="middle" fill="#9d174d" font-size="10" font-weight="600">Arena</text>
+    </g>
+    <g transform="translate(284,42)">
+      <rect width="60" height="34" rx="6" fill="#f3e8ff"/><text x="30" y="22" text-anchor="middle" fill="#6b21a8" font-size="10" font-weight="600">Credenti</text>
+    </g>
+  </g>
+
+  <!-- ========== AI PEDAGOGY OS LAYER ========== -->
+  <g transform="translate(40,500)">
+    <!-- AI Layer background -->
+    <rect width="1840" height="160" rx="16" fill="rgba(124,58,237,0.10)" stroke="url(#aiGrad)" stroke-width="2"/>
+    <text x="20" y="32" fill="#e9d5ff" font-size="15" font-weight="700">🧠 AI Pedagogy OS · 智能体编排层（LangGraph + 事件驱动 + 长期记忆）</text>
+
+    <!-- Agent cards -->
+    <g transform="translate(20,50)" filter="url(#softShadow)">
+      <rect width="170" height="90" rx="10" fill="rgba(15,23,42,0.7)" stroke="#a855f7"/>
+      <text x="16" y="26" fill="#f3e8ff" font-size="13" font-weight="700">Athena</text>
+      <text x="16" y="44" fill="#d8b4fe" font-size="11">生涯导师 &amp; 教练</text>
+      <text x="16" y="62" fill="#c4b5fd" font-size="10">Debrief · 路径规划 · QA</text>
+      <text x="16" y="78" fill="#c4b5fd" font-size="10">规则 → RAG → LLM 渐进</text>
+    </g>
+    <g transform="translate(205,50)" filter="url(#softShadow)">
+      <rect width="170" height="90" rx="10" fill="rgba(15,23,42,0.7)" stroke="#a855f7"/>
+      <text x="16" y="26" fill="#f3e8ff" font-size="13" font-weight="700">Demia</text>
+      <text x="16" y="44" fill="#d8b4fe" font-size="11">市场 &amp; 人群模拟</text>
+      <text x="16" y="62" fill="#c4b5fd" font-size="10">赛中叙事 / 弹幕 / 旁白</text>
+      <text x="16" y="78" fill="#c4b5fd" font-size="10">服从 World 数值</text>
+    </g>
+    <g transform="translate(390,50)" filter="url(#softShadow)">
+      <rect width="170" height="90" rx="10" fill="rgba(15,23,42,0.7)" stroke="#a855f7"/>
+      <text x="16" y="26" fill="#f3e8ff" font-size="13" font-weight="700">Rival</text>
+      <text x="16" y="44" fill="#d8b4fe" font-size="11">博弈 AI 对手</text>
+      <text x="16" y="62" fill="#c4b5fd" font-size="10">练习赛谈判 / 对抗</text>
+      <text x="16" y="78" fill="#c4b5fd" font-size="10">规则对手 → LLM 人格</text>
+    </g>
+    <g transform="translate(575,50)" filter="url(#softShadow)">
+      <rect width="170" height="90" rx="10" fill="rgba(15,23,42,0.7)" stroke="#a855f7"/>
+      <text x="16" y="26" fill="#f3e8ff" font-size="13" font-weight="700">Persona</text>
+      <text x="16" y="44" fill="#d8b4fe" font-size="11">性格 &amp; 赛制匹配</text>
+      <text x="16" y="62" fill="#c4b5fd" font-size="10">量表 + 行为数据</text>
+      <text x="16" y="78" fill="#c4b5fd" font-size="10">推荐适合路径</text>
+    </g>
+    <g transform="translate(760,50)" filter="url(#softShadow)">
+      <rect width="170" height="90" rx="10" fill="rgba(15,23,42,0.7)" stroke="#a855f7"/>
+      <text x="16" y="26" fill="#f3e8ff" font-size="13" font-weight="700">练习 AI Bots</text>
+      <text x="16" y="44" fill="#d8b4fe" font-size="11">零 Token 成本</text>
+      <text x="16" y="62" fill="#c4b5fd" font-size="10">trading / RTS / TV</text>
+      <text x="16" y="78" fill="#c4b5fd" font-size="10">规则引擎稳定可控</text>
+    </g>
+    <g transform="translate(945,50)" filter="url(#softShadow)">
+      <rect width="170" height="90" rx="10" fill="rgba(15,23,42,0.7)" stroke="#f59e0b"/>
+      <text x="16" y="26" fill="#fef3c7" font-size="13" font-weight="700">OPC Cortex</text>
+      <text x="16" y="44" fill="#fde68a" font-size="11">一人公司 AI 员工</text>
+      <text x="16" y="62" fill="#fcd34d" font-size="10">拆单 → 开发/市场 Worker</text>
+      <text x="16" y="78" fill="#fcd34d" font-size="10">Phase E · 真实项目孵化</text>
+    </g>
+
+    <!-- AI Value prop -->
+    <g transform="translate(1130,50)">
+      <rect width="310" height="90" rx="10" fill="rgba(255,255,255,0.06)" stroke="rgba(255,255,255,0.15)"/>
+      <text x="16" y="24" fill="#fff" font-size="13" font-weight="600">AI 不是替代教师，而是放大教师</text>
+      <text x="16" y="44" fill="#cbd5e1" font-size="11">· 规则优先 → 渐进引入 LLM，成本可控</text>
+      <text x="16" y="62" fill="#cbd5e1" font-size="11">· 三层记忆：会话缓存 / 向量检索 / 结构化档案</text>
+      <text x="16" y="80" fill="#cbd5e1" font-size="11">· 人机检查点：高风险操作须人工确认</text>
+    </g>
+
+    <!-- Memory stack mini -->
+    <g transform="translate(1460,50)">
+      <rect width="150" height="90" rx="10" fill="rgba(255,255,255,0.06)" stroke="rgba(255,255,255,0.15)"/>
+      <text x="16" y="22" fill="#e9d5ff" font-size="11" font-weight="600">长期记忆</text>
+      <text x="16" y="40" fill="#c4b5fd" font-size="10">五维雷达 · 偏好</text>
+      <text x="16" y="56" fill="#d8b4fe" font-size="11" font-weight="600">中期记忆</text>
+      <text x="16" y="72" fill="#c4b5fd" font-size="10">会话摘要 · 关键决策</text>
+    </g>
+    <g transform="translate(1625,50)">
+      <rect width="135" height="90" rx="10" fill="rgba(255,255,255,0.06)" stroke="rgba(255,255,255,0.15)"/>
+      <text x="16" y="22" fill="#e9d5ff" font-size="11" font-weight="600">短期记忆</text>
+      <text x="16" y="40" fill="#c4b5fd" font-size="10">单次对话上下文</text>
+      <text x="16" y="62" fill="#e9d5ff" font-size="11" font-weight="600">事件总线</text>
+      <text x="16" y="78" fill="#c4b5fd" font-size="10">match.finished 等</text>
+    </g>
+  </g>
+
+  <!-- ========== TECH STACK LAYER ========== -->
+  <g transform="translate(40,680)">
+    <rect width="1200" height="140" rx="16" fill="rgba(30,41,59,0.6)" stroke="#475569"/>
+    <text x="20" y="30" fill="#e2e8f0" font-size="15" font-weight="700">🏗️ 技术实现栈 · 模块化单体</text>
+
+    <!-- Stack boxes -->
+    <g transform="translate(20,48)">
+      <rect width="180" height="72" rx="8" fill="#1e293b" stroke="#64748b"/>
+      <text x="12" y="22" fill="#38bdf8" font-size="12" font-weight="600">前端 Frontend</text>
+      <text x="12" y="42" fill="#cbd5e1" font-size="11">React + TS 双端</text>
+      <text x="12" y="58" fill="#94a3b8" font-size="10">学生端 :5173 · 组织者端 :5174</text>
+    </g>
+    <g transform="translate(215,48)">
+      <rect width="180" height="72" rx="8" fill="#1e293b" stroke="#64748b"/>
+      <text x="12" y="22" fill="#38bdf8" font-size="12" font-weight="600">后端 Backend</text>
+      <text x="12" y="42" fill="#cbd5e1" font-size="11">FastAPI 单进程</text>
+      <text x="12" y="58" fill="#94a3b8" font-size="10">domains / games / api 分包</text>
+    </g>
+    <g transform="translate(410,48)">
+      <rect width="180" height="72" rx="8" fill="#1e293b" stroke="#64748b"/>
+      <text x="12" y="22" fill="#38bdf8" font-size="12" font-weight="600">赛制引擎 CyberCore</text>
+      <text x="12" y="42" fill="#cbd5e1" font-size="11">YAML 声明式配置</text>
+      <text x="12" y="58" fill="#94a3b8" font-size="10">trading + techventure + ...</text>
+    </g>
+    <g transform="translate(605,48)">
+      <rect width="180" height="72" rx="8" fill="#1e293b" stroke="#64748b"/>
+      <text x="12" y="22" fill="#38bdf8" font-size="12" font-weight="600">数据 Data</text>
+      <text x="12" y="42" fill="#cbd5e1" font-size="11">SQLite → PostgreSQL</text>
+      <text x="12" y="58" fill="#94a3b8" font-size="10">Redis · 对象存储 · Alembic</text>
+    </g>
+    <g transform="translate(800,48)">
+      <rect width="180" height="72" rx="8" fill="#1e293b" stroke="#64748b"/>
+      <text x="12" y="22" fill="#38bdf8" font-size="12" font-weight="600">实时 Real-time</text>
+      <text x="12" y="42" fill="#cbd5e1" font-size="11">WebSocket + 调度器单写</text>
+      <text x="12" y="58" fill="#94a3b8" font-size="10">RTS tick 广播 · HTTP 只读</text>
+    </g>
+    <g transform="translate(995,48)">
+      <rect width="180" height="72" rx="8" fill="#1e293b" stroke="#64748b"/>
+      <text x="12" y="22" fill="#38bdf8" font-size="12" font-weight="600">部署 Deploy</text>
+      <text x="12" y="42" fill="#cbd5e1" font-size="11">Docker 三端编排</text>
+      <text x="12" y="58" fill="#94a3b8" font-size="10">已上云 · 演示环境可用</text>
+    </g>
+  </g>
+
+  <!-- ========== BUSINESS MODEL ========== -->
+  <g transform="translate(1260,680)">
+    <rect width="620" height="140" rx="16" fill="rgba(30,41,59,0.6)" stroke="#475569"/>
+    <text x="20" y="30" fill="#e2e8f0" font-size="15" font-weight="700">💰 可持续运营模式 · 普惠底色</text>
+
+    <g transform="translate(20,48)">
+      <rect width="180" height="72" rx="8" fill="#1e293b" stroke="#f59e0b"/>
+      <text x="12" y="22" fill="#fde68a" font-size="12" font-weight="600">首要收入</text>
+      <text x="12" y="42" fill="#fff" font-size="11">校方 / 机构学期订购</text>
+      <text x="12" y="58" fill="#cbd5e1" font-size="10">赛季通行证 · 营团使用权</text>
+    </g>
+    <g transform="translate(215,48)">
+      <rect width="180" height="72" rx="8" fill="#1e293b" stroke="#f59e0b"/>
+      <text x="12" y="22" fill="#fde68a" font-size="12" font-weight="600">次要增值</text>
+      <text x="12" y="42" fill="#fff" font-size="11">高级练习 · OPC 配额</text>
+      <text x="12" y="58" fill="#cbd5e1" font-size="10">认证服务 · 个性化教练</text>
+    </g>
+    <g transform="translate(410,48)">
+      <rect width="180" height="72" rx="8" fill="#1e293b" stroke="#f59e0b"/>
+      <text x="12" y="22" fill="#fde68a" font-size="12" font-weight="600">成本可控</text>
+      <text x="12" y="42" fill="#fff" font-size="11">国产大模型 API</text>
+      <text x="12" y="58" fill="#cbd5e1" font-size="10">练习 AI 零 Token · 规则优先</text>
+    </g>
+  </g>
+
+  <!-- ========== ROADMAP ========== -->
+  <g transform="translate(40,840)">
+    <rect width="1840" height="160" rx="16" fill="rgba(30,41,59,0.5)" stroke="#475569"/>
+    <text x="20" y="30" fill="#e2e8f0" font-size="15" font-weight="700">🗺️ 实施路线 · 从演示到入校试点</text>
+
+    <!-- Phase A -->
+    <g transform="translate(20,50)">
+      <rect width="260" height="90" rx="10" fill="#064e3b" stroke="#22c55e" stroke-width="2"/>
+      <text x="14" y="24" fill="#86efac" font-size="12" font-weight="700">Phase A · 当前</text>
+      <text x="14" y="44" fill="#fff" font-size="13" font-weight="600">商赛引擎闭环</text>
+      <text x="14" y="64" fill="#bbf7d0" font-size="10">正式赛+练习+XP+控场 · 营团 P1</text>
+      <text x="14" y="80" fill="#bbf7d0" font-size="10">3 引擎运行 · Docker 上云</text>
+    </g>
+
+    <!-- Arrow -->
+    <path d="M290 95 L310 95" stroke="#22c55e" stroke-width="2" marker-end="url(#arrow)"/>
+
+    <!-- Phase B -->
+    <g transform="translate(320,50)">
+      <rect width="260" height="90" rx="10" fill="#1e3a8a" stroke="#3b82f6"/>
+      <text x="14" y="24" fill="#93c5fd" font-size="12" font-weight="700">Phase B</text>
+      <text x="14" y="44" fill="#fff" font-size="13" font-weight="600">智能教练 &amp; 生涯中枢</text>
+      <text x="14" y="64" fill="#bfdbfe" font-size="10">Career Hub · Athena 复盘 · Quest</text>
+      <text x="14" y="80" fill="#bfdbfe" font-size="10">PG 迁移 · 拟真城市母本</text>
+    </g>
+
+    <path d="M590 95 L610 95" stroke="#3b82f6" stroke-width="2" marker-end="url(#arrow)"/>
+
+    <!-- Phase C -->
+    <g transform="translate(620,50)">
+      <rect width="260" height="90" rx="10" fill="#581c87" stroke="#a855f7"/>
+      <text x="14" y="24" fill="#d8b4fe" font-size="12" font-weight="700">Phase C</text>
+      <text x="14" y="44" fill="#fff" font-size="13" font-weight="600">生涯深化 &amp; 自我认知</text>
+      <text x="14" y="64" fill="#e9d5ff" font-size="10">LangGraph 上线 · Persona · 五维雷达</text>
+      <text x="14" y="80" fill="#e9d5ff" font-size="10">World 域 MVP</text>
+    </g>
+
+    <path d="M890 95 L910 95" stroke="#a855f7" stroke-width="2" marker-end="url(#arrow)"/>
+
+    <!-- Phase D -->
+    <g transform="translate(920,50)">
+      <rect width="260" height="90" rx="10" fill="#701a75" stroke="#d946ef"/>
+      <text x="14" y="24" fill="#f0abfc" font-size="12" font-weight="700">Phase D</text>
+      <text x="14" y="44" fill="#fff" font-size="13" font-weight="600">知识图谱 &amp; 课程生态</text>
+      <text x="14" y="64" fill="#f5d0fe" font-size="10">Atlas 掌握度 · Academy 进度 · QA RAG</text>
+      <text x="14" y="80" fill="#f5d0fe" font-size="10">第三方课程接入框架</text>
+    </g>
+
+    <path d="M1190 95 L1210 95" stroke="#d946ef" stroke-width="2" marker-end="url(#arrow)"/>
+
+    <!-- Phase E -->
+    <g transform="translate(1220,50)">
+      <rect width="260" height="90" rx="10" fill="#7c2d12" stroke="#f97316"/>
+      <text x="14" y="24" fill="#fdba74" font-size="12" font-weight="700">Phase E</text>
+      <text x="14" y="44" fill="#fff" font-size="13" font-weight="600">OPC &amp; 高级智能体</text>
+      <text x="14" y="64" fill="#fed7aa" font-size="10">Cortex 拆单 · AI 员工 · Gateway</text>
+      <text x="14" y="80" fill="#fed7aa" font-size="10">真实项目孵化</text>
+    </g>
+
+    <path d="M1490 95 L1510 95" stroke="#f97316" stroke-width="2" marker-end="url(#arrow)"/>
+
+    <!-- Phase F -->
+    <g transform="translate(1520,50)">
+      <rect width="260" height="90" rx="10" fill="#1e293b" stroke="#94a3b8"/>
+      <text x="14" y="24" fill="#cbd5e1" font-size="12" font-weight="700">Phase F</text>
+      <text x="14" y="44" fill="#fff" font-size="13" font-weight="600">规模化 &amp; 精细化</text>
+      <text x="14" y="64" fill="#e2e8f0" font-size="10">多租户 · 赛季系统 · 认证链</text>
+      <text x="14" y="80" fill="#e2e8f0" font-size="10">研究合作 · 政策沙盘</text>
+    </g>
+  </g>
+
+  <!-- ========== ENDGAME ========== -->
+  <g transform="translate(40,1020)">
+    <rect width="1840" height="120" rx="16" fill="rgba(15,23,42,0.6)" stroke="url(#aiGrad)" stroke-width="1.5"/>
+    <text x="20" y="32" fill="#e9d5ff" font-size="15" font-weight="700">🚀 终局出口 · 从模拟走向真实</text>
+
+    <!-- Endgame A -->
+    <g transform="translate(20,50)" filter="url(#softShadow)">
+      <rect width="540" height="54" rx="10" fill="url(#careerGrad)"/>
+      <text x="16" y="22" fill="#fff" font-size="14" font-weight="700">OPC 一人公司</text>
+      <text x="16" y="42" fill="#ffedd5" font-size="12">管理者 + AI 员工团队 · IDEATE → BUILD 首项目 · 真实交付孵化</text>
+    </g>
+
+    <!-- Endgame B -->
+    <g transform="translate(580,50)" filter="url(#softShadow)">
+      <rect width="540" height="54" rx="10" fill="url(#platformGrad)"/>
+      <text x="16" y="22" fill="#fff" font-size="14" font-weight="700">拟真城市 World</text>
+      <text x="16" y="42" fill="#e0f2fe" font-size="12">真实中国城市 + POP 人口模拟 · 政策情景沙盘 · 教研与研究合作</text>
+    </g>
+
+    <!-- Value summary -->
+    <g transform="translate(1140,50)">
+      <rect width="660" height="54" rx="10" fill="rgba(255,255,255,0.08)" stroke="rgba(255,255,255,0.15)"/>
+      <text x="16" y="22" fill="#fff" font-size="13" font-weight="600">核心壁垒</text>
+      <text x="16" y="42" fill="#cbd5e1" font-size="12">CyberCore 声明式引擎（新赛制 = YAML + 内核）+ 拟真城市共享世界层 + AI Pedagogy OS 长期记忆</text>
+    </g>
+  </g>
+
+  <!-- ========== FOOTER ========== -->
+  <g transform="translate(40,1160)">
+    <rect width="1840" height="60" rx="12" fill="rgba(255,255,255,0.04)" stroke="rgba(255,255,255,0.08)"/>
+    <text x="20" y="24" fill="#94a3b8" font-size="12">数据来源：根目录 00～10 权威文档（截至 2026-06-05）· 工程现状以 08- AI_DEFAULT 为准</text>
+    <text x="20" y="44" fill="#64748b" font-size="11">注：四赛制匣子（§10）= 浮生记 + TechVenture + Ops-Sim + Finance-Lab，以 Monorepo 形态通过 Arena 契约挂载于同一平台</text>
+  </g>
+
+  <!-- Subtle brand watermark -->
+  <text x="1860" y="1290" text-anchor="end" fill="rgba(255,255,255,0.04)" font-size="48" font-weight="700">BizSim Edu</text>
+</svg>

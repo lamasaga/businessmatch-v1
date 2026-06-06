@@ -41,6 +41,13 @@ class ArenaMatch(Base):
     created_at = Column(DateTime(timezone=True), server_default=func.now())
     updated_at = Column(DateTime(timezone=True), onupdate=func.now())
 
+    # ─── 引擎匣子对接字段 ──────────────────────────────────────────
+    # 当使用独立引擎匣子时，记录引擎侧的比赛 ID 和 endpoint
+    engine_match_id = Column(String(64), nullable=True, index=True)
+    engine_endpoint = Column(String(256), nullable=True)
+    # engine_version: 引擎版本（用于兼容性校验）
+    # engine_error: 最后一次引擎调用错误信息
+
     organizer = relationship("OrganizerProfile", backref="events")
     teaching_group = relationship("TeachingGroup", back_populates="events")
     participants = relationship(

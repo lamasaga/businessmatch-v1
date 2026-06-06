@@ -16,7 +16,7 @@ export default function DemoBanner() {
         <div>
           <p className="font-semibold text-foreground">MVP 演示模式</p>
           <p className="text-sm text-foreground-muted mt-0.5">
-            面向参观解说的可交互原型：五域一体 · 生涯主线 · Athena / Demia / Rival。数据为模拟，无需后端。
+            面向参观解说的可交互原型：五域一体 · 生涯主线 · Hermes / Tyche / Rival。数据为模拟，无需后端。
           </p>
         </div>
       </div>

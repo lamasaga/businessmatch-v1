@@ -1,0 +1,511 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>商域 BizSim Edu · 项目结构与数据流转</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: "PingFang SC", "Microsoft YaHei", "Noto Sans SC", "Hiragino Sans GB", sans-serif;
+      background: #f8fafc;
+      color: #1e293b;
+      height: 100vh;
+      width: 100vw;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+    }
+    .header {
+      padding: 20px 40px 12px;
+      background: #fff;
+      border-bottom: 1px solid #e2e8f0;
+      flex-shrink: 0;
+    }
+    .header h1 {
+      font-size: 20px;
+      font-weight: 700;
+      color: #0f172a;
+    }
+    .header p {
+      font-size: 13px;
+      color: #64748b;
+      margin-top: 4px;
+    }
+    .diagram-wrap {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px 40px 40px;
+      position: relative;
+    }
+    svg {
+      width: 100%;
+      height: 100%;
+      max-width: 1920px;
+      max-height: 860px;
+    }
+
+    #tooltip {
+      position: fixed;
+      pointer-events: none;
+      z-index: 100;
+      background: #0f172a;
+      color: #f8fafc;
+      padding: 12px 16px;
+      border-radius: 8px;
+      font-size: 13px;
+      line-height: 1.6;
+      max-width: 320px;
+      box-shadow: 0 10px 40px rgba(0,0,0,0.25);
+      opacity: 0;
+      transform: translateY(4px);
+      transition: opacity 0.15s ease, transform 0.15s ease;
+    }
+    #tooltip.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+    #tooltip .tt-title {
+      font-weight: 700;
+      font-size: 14px;
+      margin-bottom: 4px;
+      color: #fff;
+    }
+    #tooltip .tt-desc {
+      color: #cbd5e1;
+    }
+    #tooltip .tt-flow {
+      color: #38bdf8;
+      font-weight: 500;
+    }
+
+    .layer-bg {
+      fill: #f1f5f9;
+      stroke: #e2e8f0;
+      stroke-width: 1;
+    }
+    .node {
+      cursor: pointer;
+    }
+    .node-bg {
+      fill: #fff;
+      stroke: #cbd5e1;
+      stroke-width: 1;
+      transition: all 0.2s ease;
+    }
+    .node:hover .node-bg {
+      stroke: #1e3a5f;
+      stroke-width: 2;
+      filter: drop-shadow(0 6px 20px rgba(30,58,95,0.12));
+    }
+    .engine-layer .node-bg {
+      fill: #f8fafc;
+      stroke: #94a3b8;
+      stroke-width: 1.5;
+    }
+    .node-title {
+      font-size: 18px;
+      font-weight: 700;
+      fill: #0f172a;
+      pointer-events: none;
+    }
+    .layer-title {
+      font-size: 11px;
+      font-weight: 600;
+      fill: #94a3b8;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      pointer-events: none;
+    }
+    .ai-badge {
+      fill: #f3e8ff;
+      stroke: #7c3aed;
+      stroke-width: 1;
+      pointer-events: none;
+    }
+    .ai-badge-text {
+      font-size: 9px;
+      font-weight: 700;
+      fill: #6b21a8;
+      pointer-events: none;
+    }
+    .tech-note {
+      fill: #f1f5f9;
+      stroke: #cbd5e1;
+      stroke-width: 1;
+      pointer-events: none;
+    }
+    .tech-note-text {
+      font-size: 11px;
+      fill: #475569;
+      font-weight: 500;
+      pointer-events: none;
+    }
+    .flow-line {
+      fill: none;
+      stroke: #94a3b8;
+      stroke-width: 1.5;
+      stroke-dasharray: 5,4;
+      opacity: 0.4;
+      transition: all 0.25s ease;
+      cursor: pointer;
+    }
+    .flow-line:hover,
+    .flow-line.active {
+      stroke: #1e3a5f;
+      stroke-width: 3;
+      opacity: 1;
+    }
+    .flow-line.ai-flow {
+      stroke: #7c3aed;
+      opacity: 0.55;
+    }
+    .flow-line.ai-flow:hover,
+    .flow-line.ai-flow.active {
+      stroke: #5b21b6;
+      opacity: 1;
+    }
+    .legend {
+      position: absolute;
+      bottom: 24px;
+      left: 40px;
+      display: flex;
+      gap: 24px;
+      font-size: 12px;
+      color: #64748b;
+      background: rgba(255,255,255,0.9);
+      padding: 10px 16px;
+      border-radius: 8px;
+      border: 1px solid #e2e8f0;
+    }
+    .legend-item {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .legend-line {
+      width: 24px;
+      height: 2px;
+      background: #94a3b8;
+    }
+    .legend-line.ai {
+      background: #7c3aed;
+    }
+    .legend-dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      background: #7c3aed;
+    }
+  </style>
+</head>
+<body>
+  <div class="header">
+    <h1>商域 BizSim Edu · 项目结构与数据流转</h1>
+    <p>悬浮模块查看职责并高亮关联数据流；悬浮虚线查看流转内容</p>
+  </div>
+
+  <div class="diagram-wrap">
+    <svg viewBox="0 0 1920 860" preserveAspectRatio="xMidYMid meet">
+      <defs>
+        <marker id="arrowGray" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto" markerUnits="strokeWidth">
+          <path d="M0,0 L0,6 L9,3 z" fill="#94a3b8"/>
+        </marker>
+        <marker id="arrowGrayHover" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto" markerUnits="strokeWidth">
+          <path d="M0,0 L0,6 L9,3 z" fill="#1e3a5f"/>
+        </marker>
+        <marker id="arrowAI" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto" markerUnits="strokeWidth">
+          <path d="M0,0 L0,6 L9,3 z" fill="#7c3aed"/>
+        </marker>
+        <marker id="arrowAIHover" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto" markerUnits="strokeWidth">
+          <path d="M0,0 L0,6 L9,3 z" fill="#5b21b6"/>
+        </marker>
+        <filter id="softShadow" x="-20%" y="-20%" width="140%" height="140%">
+          <feDropShadow dx="0" dy="2" stdDeviation="5" flood-color="#1e3a5f" flood-opacity="0.08"/>
+        </filter>
+      </defs>
+
+      <!-- Background layer zones -->
+      <rect x="60" y="120" width="240" height="520" rx="8" class="layer-bg"/>
+      <rect x="340" y="120" width="260" height="520" rx="8" class="layer-bg"/>
+      <rect x="630" y="120" width="400" height="520" rx="8" class="layer-bg"/>
+      <rect x="1060" y="120" width="240" height="520" rx="8" class="layer-bg" fill="#f0fdf4"/>
+      <rect x="1330" y="120" width="240" height="520" rx="8" class="layer-bg"/>
+      <rect x="1600" y="120" width="240" height="520" rx="8" class="layer-bg" fill="#faf5ff"/>
+
+      <!-- Layer titles -->
+      <text x="180" y="150" text-anchor="middle" class="layer-title">用户层</text>
+      <text x="470" y="150" text-anchor="middle" class="layer-title">平台层</text>
+      <text x="830" y="150" text-anchor="middle" class="layer-title">赛事引擎层</text>
+      <text x="1180" y="150" text-anchor="middle" class="layer-title">数据层</text>
+      <text x="1450" y="150" text-anchor="middle" class="layer-title">生涯中枢</text>
+      <text x="1720" y="150" text-anchor="middle" class="layer-title">AI 编排层</text>
+
+      <!-- === USER LAYER === -->
+      <g class="node" data-connections="flow-teacher-arena,flow-ai-teacher" data-tooltip="教师/组织者端|Course Terminal|创建营团、赛季、比赛；输出配置与邀请码到 Arena。Athena AI 助教辅助备课与赛后复盘。">
+        <rect x="80" y="180" width="200" height="120" rx="10" class="node-bg" filter="url(#softShadow)"/>
+        <rect x="80" y="180" width="4" height="120" rx="2" fill="#1e3a5f"/>
+        <text x="130" y="245" text-anchor="middle" class="node-title">教师端</text>
+        <circle cx="255" cy="200" r="12" class="ai-badge"/>
+        <text x="255" y="204" text-anchor="middle" class="ai-badge-text">AI</text>
+      </g>
+
+      <g class="node" data-connections="flow-student-arena,flow-ai-student" data-tooltip="学生端|Student Terminal|加入营团、参与赛季、提交决策。接收 Career Hub 的成长数据与 Athena 教练反馈。">
+        <rect x="80" y="520" width="200" height="120" rx="10" class="node-bg" filter="url(#softShadow)"/>
+        <rect x="276" y="520" width="4" height="120" rx="2" fill="#1e3a5f"/>
+        <text x="130" y="585" text-anchor="middle" class="node-title">学生端</text>
+        <circle cx="255" cy="540" r="12" class="ai-badge"/>
+        <text x="255" y="544" text-anchor="middle" class="ai-badge-text">AI</text>
+      </g>
+
+      <!-- === ARENA PLATFORM === -->
+      <g class="node" data-connections="flow-teacher-arena,flow-student-arena,flow-arena-engine" data-tooltip="Arena 平台层|赛事中台|统一生命周期管理。接收用户输入，按 game_config_id + match_kind 分发给赛事引擎层，并向 Career Hub 发送比赛事件。">
+        <rect x="370" y="260" width="200" height="200" rx="12" class="node-bg" filter="url(#softShadow)"/>
+        <rect x="370" y="260" width="200" height="4" rx="2" fill="#1e3a5f"/>
+        <text x="470" y="365" text-anchor="middle" class="node-title">Arena</text>
+      </g>
+
+      <!-- === GAME ENGINE LAYER === -->
+      <g class="engine-layer node" data-connections="flow-arena-engine,flow-engine-world,flow-engine-npc" data-tooltip="CyberCore 赛事引擎层|声明式赛制平台|四赛制匣子统一挂载。UI 库 + Phaser3 前端运行时 + Python 算法内核。声明式 YAML，不复制引擎代码。">
+        <rect x="650" y="180" width="360" height="400" rx="14" class="node-bg"/>
+        <text x="830" y="225" text-anchor="middle" class="node-title">CyberCore 赛事引擎层</text>
+
+        <!-- Fushengji -->
+        <g data-tooltip="浮生记 Fushengji|贸易物流商战|已落地：回合制倒卖 + RTS 即时物流。纯规则内核。">
+          <rect x="680" y="260" width="150" height="110" rx="8" class="node-bg" filter="url(#softShadow)"/>
+          <rect x="680" y="260" width="4" height="110" rx="2" fill="#b45309"/>
+          <text x="755" y="320" text-anchor="middle" class="node-title">浮生记</text>
+        </g>
+
+        <!-- TechVenture -->
+        <g data-tooltip="TechVenture|创投策略赛|已落地：玩/控/屏/评四端。v6 引擎 Python 版。纯规则内核。">
+          <rect x="850" y="260" width="150" height="110" rx="8" class="node-bg" filter="url(#softShadow)"/>
+          <rect x="850" y="260" width="4" height="110" rx="2" fill="#1d4ed8"/>
+          <text x="925" y="320" text-anchor="middle" class="node-title">TechVenture</text>
+        </g>
+
+        <!-- Ops-Sim -->
+        <g data-tooltip="Ops-Sim|产销运营模拟|规划中：阿思丹类机制。将走 CyberCore 声明式包。">
+          <rect x="680" y="390" width="150" height="80" rx="8" class="node-bg" filter="url(#softShadow)"/>
+          <rect x="680" y="390" width="4" height="80" rx="2" fill="#047857"/>
+          <text x="755" y="435" text-anchor="middle" class="node-title">Ops-Sim</text>
+        </g>
+
+        <!-- Finance-Lab -->
+        <g data-tooltip="Finance-Lab|金融投研实验室|规划中：投研/交易模拟。将接入 Career Hub。">
+          <rect x="850" y="390" width="150" height="80" rx="8" class="node-bg" filter="url(#softShadow)"/>
+          <rect x="850" y="390" width="4" height="80" rx="2" fill="#7c3aed"/>
+          <text x="925" y="435" text-anchor="middle" class="node-title">Finance-Lab</text>
+        </g>
+
+        <!-- Tech stack note -->
+        <rect x="700" y="490" width="260" height="70" rx="8" class="tech-note"/>
+        <text x="830" y="515" text-anchor="middle" class="tech-note-text">UI 库 + Phaser3 前端运行时</text>
+        <text x="830" y="535" text-anchor="middle" class="tech-note-text">Python 算法内核</text>
+        <text x="830" y="555" text-anchor="middle" class="tech-note-text" style="font-size:10px;fill:#94a3b8;">声明式 YAML · 不复制引擎代码</text>
+      </g>
+
+      <!-- === DATA LAYER === -->
+      <!-- 拟真城市 -->
+      <g class="node" data-connections="flow-engine-world,flow-world-career,flow-world-ai" data-tooltip="拟真城市 World|跨赛制共享世界层|真实中国城市 + POP 人口模拟。长期积累城市数据，AI 挖掘因子，产生涌现式市场效果。">
+        <rect x="1090" y="240" width="180" height="140" rx="10" class="node-bg" filter="url(#softShadow)"/>
+        <rect x="1090" y="240" width="4" height="140" rx="2" fill="#0d9488"/>
+        <text x="1180" y="320" text-anchor="middle" class="node-title">拟真城市</text>
+        <circle cx="1245" cy="265" r="12" class="ai-badge"/>
+        <text x="1245" y="269" text-anchor="middle" class="ai-badge-text">AI</text>
+      </g>
+
+      <!-- NPC角色 -->
+      <g class="node" data-connections="flow-engine-npc,flow-npc-career,flow-npc-ai" data-tooltip="NPC 角色|生涯叙事伙伴|可成长角色网络。AI 异步刷新状态机，根据学生行为推进关系度与剧情章节。">
+        <rect x="1090" y="420" width="180" height="140" rx="10" class="node-bg" filter="url(#softShadow)"/>
+        <rect x="1090" y="420" width="4" height="140" rx="2" fill="#db2777"/>
+        <text x="1180" y="500" text-anchor="middle" class="node-title">NPC 角色</text>
+        <circle cx="1245" cy="445" r="12" class="ai-badge"/>
+        <text x="1245" y="449" text-anchor="middle" class="ai-badge-text">AI</text>
+      </g>
+
+      <!-- === CAREER HUB === -->
+      <g class="node" data-connections="flow-world-career,flow-npc-career,flow-career-ai,flow-ai-career" data-tooltip="Career Hub|生涯中枢|XP 账本 · 五维雷达 · 家园 · NPC。接收赛事结果、城市足迹、NPC 关系，向 AI 输出长期记忆。">
+        <rect x="1350" y="260" width="200" height="200" rx="12" class="node-bg" filter="url(#softShadow)"/>
+        <rect x="1350" y="260" width="200" height="4" rx="2" fill="#dc2626"/>
+        <text x="1450" y="370" text-anchor="middle" class="node-title">Career Hub</text>
+        <circle cx="1525" cy="290" r="12" class="ai-badge"/>
+        <text x="1525" y="294" text-anchor="middle" class="ai-badge-text">AI</text>
+      </g>
+
+      <!-- === AI PEDAGOGY OS === -->
+      <g class="node" data-connections="flow-career-ai,flow-world-ai,flow-npc-ai,flow-ai-teacher,flow-ai-student,flow-ai-career" data-tooltip="AI Pedagogy OS|智能体编排层|LangGraph + 事件路由 + 三层记忆 + 人机检查点。读取 Career、拟真城市、NPC 等数据，输出教练建议与评估。">
+        <rect x="1620" y="180" width="180" height="480" rx="12" class="node-bg" filter="url(#softShadow)"/>
+        <rect x="1620" y="180" width="180" height="4" rx="2" fill="#7c3aed"/>
+        <text x="1710" y="240" text-anchor="middle" class="node-title">AI Pedagogy</text>
+        <text x="1710" y="270" text-anchor="middle" class="node-title">OS</text>
+        <text x="1710" y="630" text-anchor="middle" class="tech-note-text">规则优先 · LLM 渐进</text>
+      </g>
+
+      <!-- === FLOW LINES === -->
+      <!-- Teacher -> Arena -->
+      <path id="flow-teacher-arena" class="flow-line" d="M280 240 L370 300" marker-end="url(#arrowGray)"
+            data-flow="教师 → Arena|输出：赛季配置、game_config_id、match_kind、邀请码"/>
+      <!-- Student -> Arena -->
+      <path id="flow-student-arena" class="flow-line" d="M280 580 L370 420" marker-end="url(#arrowGray)"
+            data-flow="学生 → Arena|输出：加入请求、决策数据、身份信息"/>
+
+      <!-- Arena -> Game Engine Layer -->
+      <path id="flow-arena-engine" class="flow-line" d="M570 360 L650 360" marker-end="url(#arrowGray)"
+            data-flow="Arena → 赛事引擎层|输出：game_config_id + match_kind + 玩家快照"/>
+
+      <!-- Game Engine -> 拟真城市 -->
+      <path id="flow-engine-world" class="flow-line" d="M1010 300 L1090 300" marker-end="url(#arrowGray)"
+            data-flow="赛事引擎层 → 拟真城市|输出：城市行为数据、市场结果、政策响应"/>
+      <!-- Game Engine -> NPC -->
+      <path id="flow-engine-npc" class="flow-line" d="M1010 480 L1090 480" marker-end="url(#arrowGray)"
+            data-flow="赛事引擎层 → NPC 角色|输出：触发事件、关系度变化、剧情推进信号"/>
+
+      <!-- 拟真城市 -> Career Hub -->
+      <path id="flow-world-career" class="flow-line" d="M1270 300 L1350 300" marker-end="url(#arrowGray)"
+            data-flow="拟真城市 → Career Hub|输出：城市足迹、区域成就、产业认知"/>
+      <!-- NPC -> Career Hub -->
+      <path id="flow-npc-career" class="flow-line" d="M1270 480 L1350 480" marker-end="url(#arrowGray)"
+            data-flow="NPC 角色 → Career Hub|输出：关系度、解锁章节、对话历史"/>
+
+      <!-- Career -> AI OS -->
+      <path id="flow-career-ai" class="flow-line ai-flow" d="M1550 360 L1620 360" marker-end="url(#arrowAI)"
+            data-flow="Career Hub → AI OS|输出：五维雷达、XP 历史、Persona 画像、长期记忆"/>
+
+      <!-- 拟真城市 -> AI OS -->
+      <path id="flow-world-ai" class="flow-line ai-flow" d="M1180 240 L1180 80 L1710 80 L1710 180" marker-end="url(#arrowAI)"
+            data-flow="拟真城市 → AI OS|输出：城市因子、涌现模式、长期数据积累"/>
+      <!-- NPC -> AI OS -->
+      <path id="flow-npc-ai" class="flow-line ai-flow" d="M1180 420 L1180 120 L1710 120 L1710 180" marker-end="url(#arrowAI)"
+            data-flow="NPC 角色 → AI OS|输出：状态机快照、关系网络、叙事上下文"/>
+
+      <!-- AI OS -> Teacher -->
+      <path id="flow-ai-teacher" class="flow-line ai-flow" d="M1620 220 L1620 60 L280 60 L280 240" marker-end="url(#arrowAI)"
+            data-flow="AI OS → 教师端|输出：AI 助教建议、班级学情摘要、赛后复盘模板"/>
+      <!-- AI OS -> Student -->
+      <path id="flow-ai-student" class="flow-line ai-flow" d="M1620 580 L1620 760 L280 760 L280 580" marker-end="url(#arrowAI)"
+            data-flow="AI OS → 学生端|输出：Athena 教练反馈、周计划、QA 回答、赛制推荐"/>
+      <!-- AI OS -> Career Hub -->
+      <path id="flow-ai-career" class="flow-line ai-flow" d="M1620 420 L1620 700 L1440 700 L1440 480" marker-end="url(#arrowAI)"
+            data-flow="AI OS → Career Hub|输出：能力评估、Persona 标签、里程碑建议"/>
+    </svg>
+
+    <div class="legend">
+      <div class="legend-item">
+        <div class="legend-line"></div>
+        <span>业务数据流</span>
+      </div>
+      <div class="legend-item">
+        <div class="legend-line ai"></div>
+        <span>AI 上下文流</span>
+      </div>
+      <div class="legend-item">
+        <div class="legend-dot"></div>
+        <span>AI 辅助点</span>
+      </div>
+    </div>
+  </div>
+
+  <div id="tooltip"></div>
+
+  <script>
+    const tooltip = document.getElementById('tooltip');
+    const nodes = document.querySelectorAll('.node');
+    const flowLines = document.querySelectorAll('.flow-line');
+
+    function showTooltip(html, x, y) {
+      tooltip.innerHTML = html;
+      tooltip.style.left = x + 16 + 'px';
+      tooltip.style.top = y + 16 + 'px';
+      tooltip.classList.add('visible');
+
+      const rect = tooltip.getBoundingClientRect();
+      if (rect.right > window.innerWidth - 20) {
+        tooltip.style.left = (x - rect.width - 16) + 'px';
+      }
+      if (rect.bottom > window.innerHeight - 20) {
+        tooltip.style.top = (y - rect.height - 16) + 'px';
+      }
+    }
+
+    function hideTooltip() {
+      tooltip.classList.remove('visible');
+    }
+
+    function highlightLines(ids, highlight) {
+      if (!ids) return;
+      ids.split(',').forEach(id => {
+        const line = document.getElementById(id.trim());
+        if (line) {
+          if (highlight) {
+            line.classList.add('active');
+            line.setAttribute('marker-end', line.classList.contains('ai-flow') ? 'url(#arrowAIHover)' : 'url(#arrowGrayHover)');
+          } else {
+            line.classList.remove('active');
+            line.setAttribute('marker-end', line.classList.contains('ai-flow') ? 'url(#arrowAI)' : 'url(#arrowGray)');
+          }
+        }
+      });
+    }
+
+    nodes.forEach(node => {
+      const rawTooltip = node.dataset.tooltip;
+      const connections = node.dataset.connections;
+
+      node.addEventListener('mouseenter', (e) => {
+        if (rawTooltip) {
+          const [title, subtitle, desc] = rawTooltip.split('|');
+          const html = `<div class="tt-title">${title}</div><div class="tt-desc" style="color:#94a3b8;font-size:11px;margin-bottom:6px;">${subtitle}</div><div class="tt-desc">${desc}</div>`;
+          showTooltip(html, e.clientX, e.clientY);
+        }
+        highlightLines(connections, true);
+      });
+
+      node.addEventListener('mousemove', (e) => {
+        if (!rawTooltip) return;
+        const rect = tooltip.getBoundingClientRect();
+        let x = e.clientX + 16;
+        let y = e.clientY + 16;
+        if (x + rect.width > window.innerWidth - 20) x = e.clientX - rect.width - 16;
+        if (y + rect.height > window.innerHeight - 20) y = e.clientY - rect.height - 16;
+        tooltip.style.left = x + 'px';
+        tooltip.style.top = y + 'px';
+      });
+
+      node.addEventListener('mouseleave', () => {
+        hideTooltip();
+        highlightLines(connections, false);
+      });
+    });
+
+    flowLines.forEach(line => {
+      const raw = line.dataset.flow;
+      if (!raw) return;
+      const [title, content] = raw.split('|');
+
+      line.addEventListener('mouseenter', () => {
+        line.setAttribute('marker-end', line.classList.contains('ai-flow') ? 'url(#arrowAIHover)' : 'url(#arrowGrayHover)');
+        const svg = document.querySelector('svg');
+        const len = line.getTotalLength();
+        const mid = line.getPointAtLength(len / 2);
+        const svgPoint = svg.createSVGPoint();
+        svgPoint.x = mid.x;
+        svgPoint.y = mid.y;
+        const screenPoint = svgPoint.matrixTransform(line.getScreenCTM());
+
+        const html = `<div class="tt-flow">${title}</div><div class="tt-desc" style="margin-top:4px;">${content}</div>`;
+        showTooltip(html, screenPoint.x, screenPoint.y);
+      });
+
+      line.addEventListener('mouseleave', () => {
+        if (!line.classList.contains('active')) {
+          line.setAttribute('marker-end', line.classList.contains('ai-flow') ? 'url(#arrowAI)' : 'url(#arrowGray)');
+        }
+        hideTooltip();
+      });
+    });
+  </script>
+</body>
+</html>

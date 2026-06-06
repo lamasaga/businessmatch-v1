@@ -18,7 +18,7 @@ from app.core.response import (
 from app.core.middleware import RequestLoggingMiddleware
 from app.api import auth, wiki, courses, opc, organizer, competitions, trading, trading_ws, practice, teaching_groups
 from app.api import techventure as techventure_api, techventure_admin, seasons, camp_groups, assignments
-from app.api import camp_summer
+from app.api import camp_summer, engine_callbacks
 from app.domains.sandbox import router as sandbox_router
 from fastapi.exceptions import RequestValidationError, HTTPException as FastAPIHTTPException
 
@@ -38,6 +38,9 @@ async def lifespan(app: FastAPI):
     hub.set_event_loop(loop)
     resume_playing_rts_matches()
     yield
+    # Shutdown: close engine HTTP clients
+    from app.core.engine_client import close_http_client
+    await close_http_client()
 
 
 app = FastAPI(
@@ -87,6 +90,7 @@ app.include_router(camp_groups.router, prefix="/api/v1")
 app.include_router(assignments.router, prefix="/api/v1")
 app.include_router(camp_summer.router, prefix="/api/v1")
 app.include_router(sandbox_router, prefix="/api/v1")
+app.include_router(engine_callbacks.router, prefix="/api/v1")
 
 
 @app.get("/", response_model=ApiResponse[dict])

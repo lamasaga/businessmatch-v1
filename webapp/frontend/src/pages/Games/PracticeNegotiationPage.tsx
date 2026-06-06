@@ -49,13 +49,13 @@ export default function PracticeNegotiationPage() {
               className={`text-sm p-3 rounded-xl max-w-[90%] ${
                 msg.role === 'rival'
                   ? 'bg-orange-500/10 mr-auto border border-orange-500/10'
-                  : msg.role === 'athena'
+                  : msg.role === 'hermes'
                   ? 'bg-primary/10 mx-auto text-center border border-primary/10'
                   : 'bg-background-hover ml-auto'
               }`}
             >
               {msg.role === 'rival' && <span className="text-[10px] text-orange-400 block mb-1 font-medium uppercase tracking-wider">对手</span>}
-              {msg.role === 'athena' && <span className="text-[10px] text-primary block mb-1 font-medium uppercase tracking-wider">导师提示</span>}
+              {msg.role === 'hermes' && <span className="text-[10px] text-primary block mb-1 font-medium uppercase tracking-wider">导师提示</span>}
               <span className="text-foreground-secondary">{msg.text}</span>
             </div>
           ))}

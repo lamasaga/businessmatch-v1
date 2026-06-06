@@ -100,7 +100,7 @@ export default function DailyActivitiesPage() {
                 </div>
                 <p className="mt-3 ml-10 text-sm text-foreground-muted flex gap-2 items-start">
                   <Bot className="w-4 h-4 flex-shrink-0 mt-0.5 text-primary/60" />
-                  <span className="italic">{q.athenaHint}</span>
+                  <span className="italic">{q.hermesHint}</span>
                 </p>
               </li>
             );

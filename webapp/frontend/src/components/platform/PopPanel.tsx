@@ -7,7 +7,7 @@ export default function PopPanel() {
       <header className="flex items-center justify-between">
         <h3 className="font-bold text-foreground flex items-center gap-2">
           <Users className="w-5 h-5 text-cyan-400" />
-          Demia POP
+          Tyche POP
         </h3>
         <span className="text-xs px-2 py-0.5 rounded-full bg-cyan-500/10 text-cyan-300">规则 + 叙事</span>
       </header>

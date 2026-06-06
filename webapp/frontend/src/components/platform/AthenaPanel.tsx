@@ -7,9 +7,9 @@ const quickReplies = [
   '日常活动有什么奖励？',
 ];
 
-const athenaReplies: Record<string, string> = {
+const hermesReplies: Record<string, string> = {
   default:
-    '你好，我是 Athena，你的商业学习 AI 导师。有任何关于生涯规划、赛后复盘或学习建议的问题，都可以问我。',
+    '你好，我是 Hermes，你的商业学习 AI 导师。有任何关于生涯规划、赛后复盘或学习建议的问题，都可以问我。',
   '如何提升战略能力？':
     '建议从三方面入手：1）完成「博弈论基础」课程；2）多参与回合制策略赛；3）每次对局后认真复盘，关注资源分配时机。',
   '本周计划怎么安排？':
@@ -26,14 +26,14 @@ interface AthenaPanelProps {
 export default function AthenaPanel({ floating = true, defaultOpen = false }: AthenaPanelProps) {
   const [open, setOpen] = useState(defaultOpen);
   const [input, setInput] = useState('');
-  const [messages, setMessages] = useState<{ role: 'user' | 'athena'; text: string }[]>([
-    { role: 'athena', text: athenaReplies.default },
+  const [messages, setMessages] = useState<{ role: 'user' | 'hermes'; text: string }[]>([
+    { role: 'hermes', text: hermesReplies.default },
   ]);
 
   const send = (text: string) => {
     if (!text.trim()) return;
-    const reply = athenaReplies[text] ?? athenaReplies.default;
-    setMessages((m) => [...m, { role: 'user', text }, { role: 'athena', text: reply }]);
+    const reply = hermesReplies[text] ?? hermesReplies.default;
+    setMessages((m) => [...m, { role: 'user', text }, { role: 'hermes', text: reply }]);
     setInput('');
   };
 
@@ -47,7 +47,7 @@ export default function AthenaPanel({ floating = true, defaultOpen = false }: At
             <Bot className="w-5 h-5 text-background" />
           </div>
           <div>
-            <p className="font-semibold text-foreground text-sm">Athena</p>
+            <p className="font-semibold text-foreground text-sm">Hermes</p>
             <p className="text-[10px] text-primary/80">AI 生涯导师</p>
           </div>
         </div>
@@ -62,7 +62,7 @@ export default function AthenaPanel({ floating = true, defaultOpen = false }: At
           <div
             key={`${i}-${msg.text.slice(0, 12)}`}
             className={`text-sm leading-relaxed px-3 py-2.5 rounded-lg max-w-[95%] ${
-              msg.role === 'athena'
+              msg.role === 'hermes'
                 ? 'bg-primary/8 text-foreground-secondary mr-auto border border-primary/10'
                 : 'bg-background-hover text-foreground ml-auto'
             }`}
@@ -109,7 +109,7 @@ export default function AthenaPanel({ floating = true, defaultOpen = false }: At
           className="fixed bottom-6 right-6 z-50 flex items-center gap-2 px-4 py-3 rounded-full bg-gradient-to-r from-primary to-amber-600 text-background shadow-lg shadow-primary/25 hover:shadow-primary/40 transition-shadow"
         >
           <Sparkles className="w-5 h-5" />
-          <span className="font-medium text-sm">Athena</span>
+          <span className="font-medium text-sm">Hermes</span>
         </button>
       )}
       {open && <div className="fixed bottom-6 right-6 z-50 animate-fade-in-up">{panel}</div>}

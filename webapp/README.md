@@ -28,7 +28,7 @@
 ### 核心设计理念
 
 - **五域一体**：知识图谱 (Atlas) · 课程学院 (Academy) · 每日任务 (Quest) · 商赛大厅 (Arena) · 成就中心 (Credenti)
-- **三层 AI**：Athena (生涯导师) · Demia (人群模拟) · Rival (谈判对手)
+- **三层 AI**：Hermes (生涯导师) · Tyche (市场叙事) · Rival (谈判对手)
 - **赛季成长**：经验等级、五维雷达、连续打卡、徽章认证
 - **交易商赛**：组织者建场 / 学生房间码加入 / **FStrading RTS**（5s tick + WebSocket）→ 结果反馈生涯
 
@@ -209,8 +209,8 @@ webapp/
 │   │   │   ├── KnowledgeGraph.tsx # Canvas 知识图谱
 │   │   │   └── platform/        # 平台特色组件
 │   │   │       ├── AbilityRadar.tsx   # 五维雷达图
-│   │   │       ├── AthenaPanel.tsx    # AI 导师浮窗
-│   │   │       ├── PopPanel.tsx       # Demia 人群面板
+│   │   │       ├── AthenaPanel.tsx    # Hermes AI 导师浮窗（组件名待重命名为 HermesPanel）
+│   │   │       ├── PopPanel.tsx       # Tyche 人群面板
 │   │   │       └── DemoBanner.tsx     # MVP 演示横幅
 │   │   ├── pages/               # 页面组件
 │   │   │   ├── HomePage.tsx     # 首页
@@ -317,7 +317,7 @@ webapp/
 
 - 赛季体系：等级、经验、连续打卡
 - 五维能力雷达：财务 · 市场 · 战略 · 协作 · 伦理
-- Athena AI 导师浮窗：快速问答式交互
+- Hermes AI 导师浮窗：快速问答式交互
 - 本周计划与叙事化成长档案
 - **比赛结果联动**：参赛获得经验值，排名越高奖励越多
 
@@ -325,7 +325,7 @@ webapp/
 
 - 每日挑战任务列表
 - 完成状态追踪（localStorage 持久化）
-- Athena 导师轻反思提示
+- Hermes 导师轻反思提示
 - 连续打卡统计
 
 ### 4. 商赛大厅 (`/games`) — 交易模拟比赛

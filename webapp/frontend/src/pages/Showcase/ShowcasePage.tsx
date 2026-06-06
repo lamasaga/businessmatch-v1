@@ -78,8 +78,8 @@ export default function ShowcasePage() {
           </h3>
           <ul className="space-y-4">
             {[
-              { title: 'Athena AI 导师', desc: '个性化生涯规划与赛后复盘' },
-              { title: 'Demia 人群模拟', desc: '真实市场舆论与消费者行为' },
+              { title: 'Hermes AI 导师', desc: '个性化生涯规划与赛后复盘' },
+              { title: 'Tyche 市场叙事', desc: '真实市场舆论与消费者行为' },
               { title: 'Rival 谈判对手', desc: '策略型人机对战与多轮谈判' },
               { title: '赛季成长体系', desc: '经验等级、徽章、通行证' },
             ].map((f) => (

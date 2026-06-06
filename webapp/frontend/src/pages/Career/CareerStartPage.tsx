@@ -3,7 +3,7 @@ import { Sparkles, ArrowRight, Bot, Target, BookOpen, Swords } from 'lucide-reac
 import { useCareerStore } from '../../stores/careerStore';
 
 const features = [
-  { icon: Bot, title: 'AI 生涯导师', desc: 'Athena 全程陪伴，定制学习计划与赛后复盘' },
+  { icon: Bot, title: 'AI 生涯导师', desc: 'Hermes 全程陪伴，定制学习计划与赛后复盘' },
   { icon: Target, title: '五维能力雷达', desc: '财务、市场、战略、协作、伦理全面追踪' },
   { icon: BookOpen, title: '知识图谱', desc: '48 个商业概念节点，系统构建思维框架' },
   { icon: Swords, title: '实战商赛', desc: '12 种赛制，从回合制到实时经营全覆盖' },
