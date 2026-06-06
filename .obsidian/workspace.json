@@ -11,14 +11,10 @@
             "id": "45a3761fb4a2aea4",
             "type": "leaf",
             "state": {
-              "type": "markdown",
-              "state": {
-                "file": "00-统一术语表.md",
-                "mode": "source",
-                "source": false
-              },
+              "type": "empty",
+              "state": {},
               "icon": "lucide-file",
-              "title": "00-统一术语表"
+              "title": "新标签页"
             }
           }
         ]
@@ -185,6 +181,12 @@
   },
   "active": "45a3761fb4a2aea4",
   "lastOpenFiles": [
+    "00-PROJECT.md.tmp.16584.0b0fceb37c58",
+    "00-PROJECT.md.tmp.16584.804cf115aa9c",
+    "00-统一术语表.md",
+    "00-TERMINOLOGY.md",
+    "00-PROJECT.md.tmp.16584.d67423cf2747",
+    "00-PROJECT.md.tmp.16584.82a02f8ccb20",
     "webapp/01-分项目开发与集成流程.md.tmp.16584.44de821e2e9d",
     "webapp/00-项目现状与发展设计.md.tmp.16584.dd5472fe589f",
     "00-统一术语表.md.tmp.16584.edc5a80dc331",
@@ -192,10 +194,6 @@
     "00-统一术语表.md.tmp.16584.56775665214f",
     "00-统一术语表.md.tmp.16584.1cf6ef9e436b",
     "00-统一术语表.md.tmp.16584.3f836b933310",
-    "00-统一术语表.md.tmp.16584.2e585d799229",
-    "agent.md.tmp.16584.edd8c401f3de",
-    "agent.md.tmp.16584.3a53c8b2773a",
-    "agent.md.tmp.16584.6228eea49d6a",
     "04-ROADMAP.md",
     "03-ENGINEERING.md",
     "02-ARCHITECTURE.md",
@@ -215,7 +213,6 @@
     "10-赛事引擎匣子协议.md",
     "00-项目全景与目录结构.md",
     "docs/引擎匣子对接测试指南.md",
-    "00-统一术语表.md",
     "CLAUDE.md",
     "10-四赛制匣子开发与集成指导.md",
     "15-性格分类框架-理论综述.md",
@@ -229,7 +226,6 @@
     "web应用商业教育/frontend/node_modules/axios/lib/env/README.md",
     "web应用商业教育/frontend/node_modules/axios/lib/helpers/README.md",
     "web应用商业教育/frontend/node_modules/axios/lib/core/README.md",
-    "web应用商业教育/frontend/node_modules/axios/lib/adapters/README.md",
-    "web应用商业教育/frontend/node_modules/@eslint/config-array/README.md"
+    "web应用商业教育/frontend/node_modules/axios/lib/adapters/README.md"
   ]
 }
