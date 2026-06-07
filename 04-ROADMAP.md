@@ -2,7 +2,7 @@
 
 > **定位**：有序阶段蓝图——无硬性日期，以入口条件与验收标准驱动。
 > **关联**：`03-ENGINEERING.md`（工程详表）· `01-PRODUCT.md`（产品定义）
-> **最后更新**：2026-06-06
+> **最后更新**：2026-06-07
 
 ---
 
@@ -16,7 +16,7 @@
 
 **入口条件**：仓库可运行、基础认证与数据模型就位
 
-**目标**：正式赛 + 练习赛 + XP 入账 + 组织者控场——完成"辅助学校开展商赛"的最小闭环。
+**目标**：正式赛 + 练习赛 + XP 入账 + Career 前端读账本 + 组织者控场——完成"辅助学校开展商赛"的最小闭环。
 
 | 工作项 | 验收标准 | 现状 |
 |--------|----------|------|
@@ -25,50 +25,71 @@
 | 练习赛入口 | 一键开练 + AI 对手 + 自动推进 + 低权重 XP | ✅ |
 | 组织者独立端 | `:5174` 独立控场；学生端无控制台入口 | ✅ |
 | 体验营营团 P1 | 教师建营团（6位码）→ 学生入营 → 营内建赛 → 控场 | ✅ |
-| 赛事工坊 MVP | `/sandbox` 热 YAML、试跑、publish | 🟡 |
 | TechVenture 赛制 | v6 引擎 + 四端 React + 通用队伍模型 + 练习 AI | ✅ |
-| Career 前端读账本 | `/career` 对接 `xp_events`，替代 mock | 🔴 |
+| Career 前端读账本 | `/career` 对接真实后端：XP + 金币 + 钻石 + 等级 + 近期比赛；家园入口加锁占位 | 🟡 |
+| 赛事工坊 MVP | `/sandbox` 热 YAML、试跑、publish | 🟡 不阻塞 A |
 
-### Phase A+（A 闭环后，需 ADR/术语登记）
-
-| 工作项 | 验收标准 | 现状 |
-|--------|----------|------|
-| 营内对抗赛 | `match_kind=group_scrimmage` + 营团上下文；非 official | 🔴 |
-| 在线匹配 | 营团内排队 → 真人匹配 → AI 填位 → 开局 | 🔴 |
-| Game Shell 统一入口 | 所有赛制 `/games/:id/play` 全屏进游戏 | 🟡 部分引擎已接 |
+**Phase A 退出条件**：上述 8 项中，标 🟡 的两项达到可用状态（Career 页能展示真实 XP、金币、钻石与等级；赛事工坊核心流程可跑通）。
 
 ---
 
-## 三、Phase B：智能教练、生涯中枢与日常体验
+## 三、Phase B：Arena 扩展与 Career 数据层
 
 **入口条件**：Phase A 验收通过
 
-**目标**：Career Hub（大循环 + 资源经济 + 家园 MVP）+ Hermes 复盘（规则层）+ Quest 挂钩。
+**目标**：在 A 的闭环之上，扩展 Arena 的「营内对抗」新档位，并建立 Career 的完整数据层。
 
-| 子阶段 | 工作项 | 验收标准 |
-|--------|--------|----------|
-| B1 | `career_profiles` + `GET /career/profile` | 生涯页无 mock XP |
-| B2 | `resource_ledger` + `economy.yaml` | 练习/正式赛结束发放 supplies（幂等） |
-| B3 | 家园 5 槽 + `GET/POST homestead` + UI Tab | 消耗物资升 1 级槽 |
-| B4 | NPC 静态配置 + 关系度 + 2 章主线文案 | 完成 1 章解锁对话 |
-| B5 | Quest 服务 + Hermes 周计划（规则模板） | 每日 Quest 可完成；练习赛挂钩 streak |
-| — | Hermes-Debrief（规则模板） | 正式赛结束后结构化复盘卡片 |
-| — | SQLite → PostgreSQL + Alembic | 单库迁移 |
-| — | 拟真城市母本（静态） | `content/world/cities/` ≥6 城 + `_schema` + `pop_segments` |
-
----
-
-## 四、Phase C：生涯深化与自我认知
-
-**入口条件**：Phase B（B1～B5）验收通过；PG 已迁移
+### B1：Arena 扩展
 
 | 工作项 | 验收标准 |
 |--------|----------|
-| LangGraph 编排上线 | Hermes-Debrief 升级为 RAG + LLM；可回忆上次对话 |
-| Hermes-PathPlanner | 基于五维雷达推荐下周学习路径 |
-| Persona 性格测评 | 量表 + 行为数据 → 推荐赛制与路径 |
-| 五维雷达真实化 | 来自 `xp_events` + 赛制标签 + 练习数据 |
-| World 域 MVP | `domains/world/` 落地；赛制开局注入城市快照 |
+| 营内对抗赛 | `match_kind=group_scrimmage` + 营团上下文；学生或教师发起；非 official |
+| 在线匹配 | 营团内排队 → 真人匹配 → AI 填位 → 开局 |
+| Game Shell 统一入口 | 所有赛制 `/games/:id/play` 全屏进游戏；运行时按 `meta.runtime` 分流 |
+| 教学互动（Guided Demo） | 教师端可开启受控教学演示，学生按步骤体验赛制 |
+
+### B2：Career 数据层
+
+| 工作项 | 验收标准 |
+|--------|----------|
+| `career_profiles` + `GET /career/profile` | 生涯页无 mock：等级、XP、五维占位、资源余额、近期比赛 |
+| `resource_ledger` + `economy.yaml` | 练习/正式赛结束发放 supplies（幂等）；资源类型 ≥3 种 |
+| 家园 5 槽 + `GET/POST homestead` + UI Tab | 消耗物资升 1 级槽；不影响局内数值 |
+| NPC 静态配置 + 关系度 + 2 章主线文案 | 完成 1 章解锁对话；静态 YAML 驱动 |
+
+### B3：日常体验与规则层教练
+
+| 工作项 | 验收标准 |
+|--------|----------|
+| Quest 服务 | 每日 Quest 可完成；练习赛挂钩 streak；后端持久化 |
+| Hermes-Debrief（规则模板） | 正式赛结束后结构化复盘卡片；规则模板驱动，零 LLM Token |
+| 五维雷达占位 | 静态五维展示 + 来自 `xp_events` 的真实数据映射 |
+
+### B4：基础设施
+
+| 工作项 | 验收标准 |
+|--------|----------|
+| SQLite → PostgreSQL + Alembic | 单库迁移；回滚方案；数据兼容性验证 |
+| 拟真城市母本（静态） | `content/world/cities/` ≥6 城 + `_schema` + `pop_segments` |
+| 性能基准 | PG 下 100 并发正式赛控场无阻塞 |
+
+**Phase B 退出条件**：B1~B4 全部验收通过。
+
+---
+
+## 四、Phase C：AI 编排与生涯深化
+
+**入口条件**：Phase B（B1~B4）验收通过；PG 已迁移
+
+**目标**：LangGraph 编排上线，Hermes 从规则模板升级为 LLM 驱动，World 域落地。
+
+| 子阶段 | 工作项 | 验收标准 |
+|--------|--------|----------|
+| C1 | LangGraph 编排上线 | Hermes-Debrief 升级为 RAG + LLM；可回忆上次对话 |
+| C1 | Hermes-PathPlanner | 基于五维雷达推荐下周学习路径 |
+| C2 | Persona 性格测评 | 量表 + 行为数据 → 推荐赛制与路径 |
+| C2 | 五维雷达真实化 | 来自 `xp_events` + 赛制标签 + 练习数据 |
+| C3 | World 域 MVP | `domains/world/` 落地；赛制开局注入城市快照 |
 
 ---
 
@@ -115,9 +136,10 @@
 
 | Phase | 能做 | 不能做 |
 |-------|------|--------|
-| **A（当前）** | Career 前端、正式赛控场、TechVenture 引擎、契约文档 | 建 `domains/world/` 表、OPC LangGraph 生产化 |
-| **A+** | 营内对抗 + 在线匹配 + AI 填位、Game Shell 全引擎 | 抢跑 Hermes LLM、教师教研工作台 |
-| **B** | Hermes-Debrief 规则模板、Plutus 学情、Quest 服务、PG 迁移、家园 MVP | 跳过规则层直接上 LLM Agent |
+| **A（当前）** | Career 前端对接、正式赛控场、TechVenture 引擎、契约文档、赛事工坊 MVP | 建 `domains/world/` 表、OPC LangGraph 生产化 |
+| **B1** | 营内对抗 + 在线匹配 + AI 填位、Game Shell 全引擎统一 | 抢跑 Hermes LLM、教师教研工作台 |
+| **B2~B3** | Hermes-Debrief 规则模板、Quest 服务、家园 MVP、NPC 静态层 | 跳过规则层直接上 LLM Agent |
+| **B4** | PG 迁移、静态城市母本、性能优化 | — |
 | **C** | LangGraph 编排、Persona、World 域 MVP | — |
 | **D** | Tyche/Rival LLM、Atlas API、课程框架 | — |
 | **E** | OPC Worker、MCP Server、Gateway | — |
@@ -129,10 +151,10 @@
 | 阶段 | 配置 | 月成本（RMB） |
 |------|------|--------------|
 | 开发/演示 | 2C4G VPS + SQLite | 50～100 |
-| 试点（~100 用户） | 4C8G + PG + Redis | 200～400 |
-| 小规模（~1,000） | 8C16G + PG 主从 | 600～1,200 |
-| 规模化（~10,000） | 集群/云托管 + CDN | 2,000～5,000 |
+| 试点（~100 用户）| 4C8G + PG + Redis | 200～400 |
+| 小规模（~1,000）| 8C16G + PG 主从 | 600～1,200 |
+| 规模化（~10,000）| 集群/云托管 + CDN | 2,000～5,000 |
 
 ---
 
-*商域 BizSim Edu · 实施路线 v2.0*
+*商域 BizSim Edu · 实施路线 v3.0*

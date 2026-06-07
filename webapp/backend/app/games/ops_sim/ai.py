@@ -1,13 +1,10 @@
-"""产销运营赛 — AI 对手（纯规则，零 Token）"""
-
-from __future__ import annotations
+"""OPS AI 对手 — 占位"""
 
 from typing import Any
 
 
 def generate_ai_decision(team_state: dict[str, Any], cfg: dict[str, Any]) -> dict[str, Any]:
-    """根据当前状态生成 AI 决策。"""
-    # 占位：返回保守策略
+    """零 Token 规则 AI。"""
     return {
         "production": 100,
         "price": 50,

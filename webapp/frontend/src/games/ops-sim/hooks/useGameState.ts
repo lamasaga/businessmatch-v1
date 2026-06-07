@@ -1,4 +1,6 @@
-// TODO: 创建 opsSimStore 后接入
-export function useOpsSimGameState() {
-  return {};
+import { useTradingStore } from '../../../stores/tradingStore';
+
+export default function useGameState() {
+  // TODO: 替换为 ops-sim 专属 store
+  return useTradingStore();
 }

@@ -1,7 +1,7 @@
 import { useEffect, useRef } from 'react';
 import GameHUD from './components/GameHUD';
 
-export default function FinanceLabEntry() {
+export default function FINANCELABEntry() {
   const containerRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {

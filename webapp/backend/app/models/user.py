@@ -24,5 +24,7 @@ class User(Base):
     bio = Column(Text, nullable=True)
     experience = Column(Integer, default=0, nullable=False)
     level = Column(Integer, default=1, nullable=False)
+    gold = Column(Integer, default=0, nullable=False)
+    diamond = Column(Integer, default=0, nullable=False)
     created_at = Column(DateTime(timezone=True), server_default=func.now(), nullable=False)
     updated_at = Column(DateTime(timezone=True), onupdate=func.now(), nullable=True)

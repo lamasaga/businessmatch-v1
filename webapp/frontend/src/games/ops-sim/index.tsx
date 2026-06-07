@@ -1,7 +1,7 @@
 import { useEffect, useRef } from 'react';
 import GameHUD from './components/GameHUD';
 
-export default function OpsSimEntry() {
+export default function OPSSIMEntry() {
   const containerRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {

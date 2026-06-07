@@ -6,8 +6,7 @@
 
 **商域（BizSim Edu）** 是面向 K12 至大学的商业模拟教育平台。本仓库为 monorepo 结构：
 
-- **`webapp/`** — 主应用：FastAPI 后端 + React 双前端（学生端 Student + 组织者端 Organizer）
-- **`TechVenture/`** — 独立的 TechVenture 赛事引擎演示服务器（Express + TypeScript）
+- **`webapp/`** — 主应用：FastAPI 后端 + React 双前端（学生端 Student + 教师端 Teacher）
 - **`art-assets/`** — 美术素材（含浮生记/fushengji、tabler 图标等）
 - **`PPT/`** — 演示文件（HTML/SVG）
 - **`inspire/`** — 构想/研究文档（**非编程契约**，non-authoritative）
@@ -56,17 +55,7 @@ docker compose up -d --build
 
 **测试账号：** `student`/`student123`，`admin`/`admin123`
 
-### TechVenture 服务器
 
-```powershell
-cd TechVenture
-npm install
-npm run dev        # tsx watch src/index.ts
-npm run build      # tsc → dist/
-npm start          # node dist/index.js
-```
-
----
 
 ## 高层架构（High-Level Architecture）
 
@@ -131,12 +120,15 @@ npm start          # node dist/index.js
 
 ### Phase 门控（当前：Phase A）
 
-项目使用阶段门控。用户未指定时，默认仅限 **Phase A** 范围：
+项目使用阶段门控。用户未指定时，默认仅限 **Phase A** 范围。完整门控见 `04-ROADMAP.md` §八。
 
 | Phase | 能做 | 不做 |
 |-------|------|------|
-| **A（当前）** | Career 前端对接、正式赛控场、契约文档、TechVenture 引擎、城市规划文档 | 建 `domains/world/` 表、跨比赛持久城市状态、修改结算接入 World |
-| **B** | Hermes-Debrief 规则、Quest 服务、PG 迁移、城市母本 YAML | 跳过规则层直接上 LLM Agent、过早建 World 域表 |
+| **A（当前）** | Career 前端对接、正式赛控场、契约文档、TechVenture 引擎 | 建 `domains/world/` 表、跨比赛持久城市状态、修改结算接入 World |
+| **B1** | 营内对抗赛、`group_scrimmage`、在线匹配、AI 填位、Game Shell 统一入口 | 抢跑 Hermes LLM、教师教研工作台 |
+| **B2** | `career_profiles`、资源账本、家园 MVP、NPC 静态层 | 跳过规则层直接上 LLM Agent |
+| **B3** | Quest 服务、Hermes-Debrief 规则模板、五维雷达真实化 | 跳过规则层直接上 LLM Agent |
+| **B4** | PG 迁移、Alembic、静态城市母本、性能基准 | — |
 | **C~D** | LangGraph 编排、Persona、知识图谱 | — |
 | **E** | OPC LangGraph + MCP | — |
 
@@ -165,14 +157,6 @@ app.include_router(sandbox_router, prefix="/api/v1")
 ```
 
 **新增路由模块须先更新 `03-ENGINEERING.md` §后端 API 全表 与 `main.py`。**
-
----
-
-## TechVenture 服务器
-
-独立的 Express + TypeScript 服务器，用于 TechVenture 赛事引擎原型开发。**与 FastAPI 后端 `games/techventure/` 引擎不是同一事物** —— 它是独立演示/开发服务器。
-
-关键文件：`src/engine/v6Engine.ts`（结算）、`src/engine/config.ts`（游戏配置）、`src/routes/api.ts`（API 路由）、`src/services/gameService.ts`（游戏生命周期）。
 
 ---
 
@@ -206,6 +190,7 @@ app.include_router(sandbox_router, prefix="/api/v1")
 | 用途 | 文件 |
 |------|------|
 | 会话入口 | `CLAUDE.md`（Claude Code）· `agent.md`（其他 AI 工具） |
+| 代码地图 | `CODE_MAP.md`（功能→文件精确映射） |
 | 工程真相 | `03-ENGINEERING.md`（AI_DEFAULT 快照） |
 | 域边界 | `.cursor/rules/blueprint-coding.mdc` |
 | Arena 架构 | `webapp/backend/app/domains/arena/ARCHITECTURE.md` |

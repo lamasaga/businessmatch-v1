@@ -1,7 +1,2 @@
-/**
- * engine6 游戏场景 — 占位
- * TODO: 引入 Phaser 后继承 Phaser.Scene。
- */
-export default class Engine6Scene {
-  // Placeholder: will become Phaser.Scene after Phaser is installed
-}
+// TODO: Phaser 场景占位（若 runtime=phaser）
+export default class GameScene {}

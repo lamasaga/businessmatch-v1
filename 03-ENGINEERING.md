@@ -24,7 +24,7 @@
 | 模块 | 后端 | 前端 | 成熟度 |
 |------|------|------|--------|
 | 认证 | ✅ | ✅ | 生产雏形 |
-| 生涯中枢 `/career` | 部分 | UI+mock | 演示级 |
+| 生涯中枢 `/career` | `xp_events` ✅ / `users.gold,diamond` 新增 | UI+mock | **Phase A 收尾项** |
 | 商赛大厅 `/games` | ✅ | ✅ | 可用 |
 | 浮生记 RTS | ✅ WS | ✅ 全屏 | **当前主力** |
 | TechVenture | ✅ | ✅ 全屏·无地图 | 四端控场 |
@@ -36,23 +36,23 @@
 
 ### P0 Bug
 
-| # | 问题 |
-|---|------|
-| E1 | 生涯页与登录 XP 脱节 |
-| E2 | 生涯域不完整，缺聚合 API |
-| E3 | 房间码加入后可能无法跳转大厅 |
-| E4 | DB 依赖 lifespan 初始化 |
-| E5 | 正式赛结束与 debrief 未打通 |
+| # | 问题 | 关联 | 状态 |
+|---|------|------|------|
+| E1 | 生涯页与登录 XP 脱节 | Career 读账本 + `GET /career/profile` | ✅ 已修复 |
+| E2 | 生涯域不完整，缺聚合 API | 新建 `api/career.py` | ✅ 已修复 |
+| E3 | 房间码加入后可能无法跳转大厅 | 前端路由 bug | 🟡 待复测 |
+| E4 | DB 依赖 lifespan 初始化 | 架构债 | 🔴 B4 前评估 |
+| E5 | 正式赛结束与 debrief 未打通 | Hermes-Debrief 规则模板 | 🔴 B3 实现 |
 
 ### 对齐度
 
-| 组件 | 对齐度 |
-|------|--------|
-| Arena | 🟢 88% |
-| Career Hub | 🟡 45% |
-| OPC | 🟡 45% |
-| Hermes/Tyche/Rival | 🔴 15～25% |
-| Credenti | 🔴 20% |
+| 组件 | 对齐度 | 说明 |
+|------|--------|------|
+| Arena | 🟢 88% | 正式赛、练习赛、RTS、营团均可用 |
+| Career Hub | 🟢 85% | `xp_events` + `users.gold/diamond` + `career_profiles` + `api/career.py` + 前端对接已完成；家园/成就仍 mock |
+| OPC | 🟡 45% | CRUD + 前端 UI，无 Agent |
+| Hermes/Tyche/Rival | 🔴 15～25% | 规则占位，B3 起规则模板 |
+| Credenti | 🔴 20% | 前端 mock，无后端表 |
 
 ---
 
@@ -79,6 +79,7 @@
 | sandbox | `/sandbox` | sandbox+cybercore | 🟡 |
 | camp_groups | `/camp-groups` | arena | 🟡 |
 | camp_summer | `/camp-summer` | arena | 🟡 |
+| career | `/career` | career | 🟡 Phase A 收尾 |
 
 **新增路由须同步**：`main.py` + 本表 + `02-ARCHITECTURE.md` 域表。
 
@@ -260,7 +261,7 @@ capabilities:
 4. **RTS** — 仅调度器推进 tick；HTTP 只读
 5. **XP** — `grant_xp` / `settle_match_rewards`；幂等
 6. **双前端** — 学生端/教师端分离；新功能接 API，不扩 mock
-7. **Phase A 默认** — 未明确要求时，不建 World 域表、OPC LangGraph
+7. **Phase 门控默认** — 未明确要求时，不建 World 域表、OPC LangGraph；参考 `04-ROADMAP.md` §八
 
 ---
 

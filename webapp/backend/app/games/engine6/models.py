@@ -1,7 +1,13 @@
-"""引擎六 — 运行时数据模型占位"""
+"""ENI6 运行时数据模型 — 占位"""
 
 from pydantic import BaseModel
 
 
-class Engine6TeamState(BaseModel):
+class ENI6TeamState(BaseModel):
+    """队伍运行时状态占位"""
+    pass
+
+
+class ENI6Decision(BaseModel):
+    """决策占位"""
     pass

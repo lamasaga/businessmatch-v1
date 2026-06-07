@@ -1,13 +1,14 @@
-"""引擎五 — 结算内核入口占位"""
+"""ENI5 引擎结算入口 — 占位"""
 
 from __future__ import annotations
-
 from typing import Any
 
 
-def settle_round(match_state: dict[str, Any], decisions: dict[str, Any]) -> dict[str, Any]:
-    raise NotImplementedError("engine5 settle_round 待实现")
+def settle_round(match_state: dict[str, Any], decisions: dict[str, Any], cfg: dict[str, Any]) -> dict[str, Any]:
+    """结算单轮。纯函数、幂等、不读写数据库。"""
+    raise NotImplementedError("ENI5 引擎结算逻辑待实现")
 
 
 def ai_decision(team_state: dict[str, Any], cfg: dict[str, Any]) -> dict[str, Any]:
-    raise NotImplementedError("engine5 ai_decision 待实现")
+    """AI 对手决策。零 Token，纯规则。"""
+    raise NotImplementedError("ENI5 引擎 AI 逻辑待实现")

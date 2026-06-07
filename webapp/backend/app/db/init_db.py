@@ -20,6 +20,7 @@ from app.domains.arena.models.camp_summer import (  # noqa: F401
     CampAward, AwardWinner,
 )
 from app.domains.career.models.xp_event import XpEvent  # noqa: F401
+from app.domains.career.models.career_profile import CareerProfile  # noqa: F401
 from app.games.trading.models import TradingRound, TradingDecision, TradingPrice  # noqa: F401
 from app.games.techventure.models import TvTeamState, TvRound, TvSubmission, TvSnapshot, TvNews  # noqa: F401
 from app.games.trading.bot_users import ensure_bot_traders
@@ -50,6 +51,8 @@ def create_admin_user():
             role=UserRole.admin,
             experience=0,
             level=1,
+            gold=0,
+            diamond=0,
         )
         db.add(admin)
         db.commit()
@@ -75,6 +78,8 @@ def create_demo_student():
             role=UserRole.student,
             experience=100,
             level=2,
+            gold=500,
+            diamond=10,
         )
         db.add(student)
         db.commit()

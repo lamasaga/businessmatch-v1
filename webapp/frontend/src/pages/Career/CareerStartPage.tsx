@@ -1,3 +1,4 @@
+import { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Sparkles, ArrowRight, Bot, Target, BookOpen, Swords } from 'lucide-react';
 import { useCareerStore } from '../../stores/careerStore';
@@ -11,15 +12,16 @@ const features = [
 
 export default function CareerStartPage() {
   const navigate = useNavigate();
-  const { startCareer, careerActive } = useCareerStore();
+  const { careerActive, startCareer } = useCareerStore();
 
-  if (careerActive) {
-    navigate('/career', { replace: true });
-    return null;
-  }
+  useEffect(() => {
+    if (careerActive) {
+      navigate('/career', { replace: true });
+    }
+  }, [careerActive, navigate]);
 
-  const onStart = () => {
-    startCareer();
+  const onStart = async () => {
+    await startCareer();
     navigate('/career');
   };
 
@@ -68,7 +70,7 @@ export default function CareerStartPage() {
           <ArrowRight className="w-5 h-5" />
         </button>
         <p className="text-center text-xs text-foreground-muted">
-          无需登录即可体验，状态自动保存在浏览器中
+          未登录可本地体验，登录后数据将同步到云端
         </p>
       </div>
     </div>

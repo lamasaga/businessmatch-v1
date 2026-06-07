@@ -1,7 +1,7 @@
 import { useEffect, useRef } from 'react';
 import GameHUD from './components/GameHUD';
 
-export default function Engine6Entry() {
+export default function ENGINE6Entry() {
   const containerRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
