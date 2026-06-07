@@ -36,7 +36,7 @@ Set-Location "d:\1XFAwork\businessmatch-v1\webapp"; .\启动.ps1
 | 02 | [技术架构与智能体编排](./02-ARCHITECTURE.md) | 技术栈、域分包、Worker 列表 |
 | 03 | [工程实现与开发规范](./03-ENGINEERING.md) | **AI_DEFAULT**、API/路由全表、开发流程 |
 | 04 | [实施路线与里程碑](./04-ROADMAP.md) | Phase A～F、验收标准 |
-| 11 | [引擎盒开发技术栈与实现规范](./11-引擎盒开发技术栈与实现规范.md) | Phaser/React 运行时、美术管线 |
+| 11 | [引擎技术规范](./docs/engine-spec.md) | Phaser/React 运行时、美术管线 |
 
 　　产品架构可视化：[`docs/bizsim-product-architecture-2026-06.png`](./docs/bizsim-product-architecture-2026-06.png)（详见 `00-PROJECT` §产品架构共识）。
 

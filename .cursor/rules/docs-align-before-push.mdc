@@ -27,7 +27,7 @@ alwaysApply: true
    - 技术摘要：`02-ARCHITECTURE.md`
    - 排期与 P0 进展：`04-ROADMAP.md`（含已落地 / 待办勾选）
    - 工程详表：`03-ENGINEERING.md`（**[AI_DEFAULT](./03-ENGINEERING.md#ai_default)** 快照、§一 API 全表、§五 引擎规范；路由变更时跑 `webapp/scripts/export_openapi.py`）
-   - 引擎全栈：`11-引擎盒开发技术栈与实现规范.md`（触及运行时/美术管线时）
+   - 引擎全栈：`docs/engine-spec.md`（触及运行时/美术管线时）
    - 按需：`inspire/50-` 索引、`inspire/OPC/` 仅当 OPC 规格受影响
 3. **统一元数据**：相关文档文首 `最后更新` 改为当日（`YYYY-MM-DD`）；路径以仓库**当前真身**为准（如 `webapp/backend/content/game-configs/`、`inspire/a商赛主题与真题库/`）。
 4. **自检**：`03-ENGINEERING.md` [AI_DEFAULT](./03-ENGINEERING.md#ai_default) 与 §一 API 全表、§四 引擎矩阵**无矛盾**；API 与 `webapp/contracts/openapi/bundled.yaml` 或 `main.py` 路由一致；无「待建」项已落地仍标 🔴；`00-PROJECT` §产品架构共识与 `01-`/`02-` 无冲突。

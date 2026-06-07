@@ -149,7 +149,7 @@
 
 ## 五、赛事引擎开发规范
 
-> **深读**：[`02-ARCHITECTURE.md`](./02-ARCHITECTURE.md) §三 · [`11-引擎盒开发技术栈与实现规范.md`](./11-引擎盒开发技术栈与实现规范.md)
+> **深读**：[`02-ARCHITECTURE.md`](./02-ARCHITECTURE.md) §三 · [`docs/engine-spec.md`](./docs/engine-spec.md)
 
 ### 5.1 前端技术栈（按运行时选型）
 

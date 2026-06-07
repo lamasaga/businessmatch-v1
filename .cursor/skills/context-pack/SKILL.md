@@ -51,7 +51,7 @@ description: >-
 
 | 任务 | 额外 @ |
 |------|--------|
-| 新赛制 / 引擎 | `02-ARCHITECTURE.md` §三 · `11-引擎盒开发技术栈与实现规范.md` · `arena/ARCHITECTURE.md` |
+| 新赛制 / 引擎 | `02-ARCHITECTURE.md` §三 · `docs/engine-spec.md` · `arena/ARCHITECTURE.md` |
 | 产品/赛制定义 | `00-PROJECT.md` §产品架构共识 · `01-PRODUCT.md` |
 | RTS / 浮生记 | ADR-005 · `games/trading/` |
 | 生涯 / XP | ADR-007 · `domains/career/DESIGN.md` |
