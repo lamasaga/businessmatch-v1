@@ -70,7 +70,7 @@ docker compose up -d --build
 | **cybercore** | `domains/cybercore/` · `content/game-configs/` | YAML 配置 | 规则必须声明在 YAML 中，禁止硬编码 |
 | **games/trading** | `games/trading/*.py` | `trading_rounds`, `trading_decisions`, `trading_prices` | 禁止操作 arena 表 |
 | **games/techventure** | `games/techventure/*.py` | `tv_team_state`, `tv_rounds`, `tv_submissions`, `tv_snapshots`, `tv_news` | 禁止操作 arena 表 |
-| **career** | `domains/career/` | `xp_events` | XP 变更只能通过 `grant_xp` / `settle_match_rewards` |
+| **career** | `domains/career/` · `api/career.py` | `xp_events` | XP 变更只能通过 `grant_xp` / `settle_match_rewards` |
 | **sandbox** | `domains/sandbox/` | — | 隔离实验空间 |
 
 **`models/trading_competition.py` 仅为兼容层（re-export）。** 新逻辑须放入 `domains/arena/models/` 或 `games/<engine>/models.py`。
@@ -154,6 +154,8 @@ app.include_router(camp_groups.router, prefix="/api/v1")
 app.include_router(assignments.router, prefix="/api/v1")
 app.include_router(camp_summer.router, prefix="/api/v1")
 app.include_router(sandbox_router, prefix="/api/v1")
+app.include_router(engine_callbacks.router, prefix="/api/v1")
+app.include_router(career.router, prefix="/api/v1")
 ```
 
 **新增路由模块须先更新 `03-ENGINEERING.md` §后端 API 全表 与 `main.py`。**
@@ -197,6 +199,9 @@ app.include_router(sandbox_router, prefix="/api/v1")
 | 后端入口 | `webapp/backend/app/main.py` |
 | 后端配置 | `webapp/backend/app/core/config.py` |
 | 游戏配置 | `webapp/backend/content/game-configs/*.yaml` |
+| Career 路由 | `webapp/backend/app/api/career.py` |
+| Career 服务 | `webapp/backend/app/domains/career/services/rewards.py` |
+| Career Store | `webapp/frontend/src/stores/careerStore.ts` |
 | 学生端入口 | `webapp/frontend/src/App.tsx` |
 | 组织者端入口 | `webapp/organizer-frontend/src/App.tsx` |
 | ADR 索引 | `docs/decisions/README.md` |
