@@ -5,7 +5,7 @@ alwaysApply: true
 
 # 蓝图编程规范（Blueprint Coding）
 
-本项目主要依赖 AI 辅助编程。根目录 `00～04` + `11-` 是 AI 编程会话的**权威上下文锚点**。所有代码产出须在文档定义的框架内，不得偏离。
+本项目主要依赖 AI 辅助编程。根目录 `00-PROJECT.md` / `00-TERMINOLOGY.md` / `01-PRODUCT.md` / `02-ARCHITECTURE.md` / `03-ENGINEERING.md` / `04-ROADMAP.md` 是 AI 编程会话的**权威上下文锚点**。所有代码产出须在文档定义的框架内，不得偏离。
 
 ---
 

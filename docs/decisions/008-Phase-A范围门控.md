@@ -16,9 +16,9 @@
 
 　　当前处于 **Phase A（商赛引擎闭环）**。默认 AI 编程与人类开发**只做 Phase A 清单内**工作；Phase B+ 能力仅允许**规划文档与占位**（如 `content/world/cities/`），**禁止**提前落地：
 
-| Phase A 可以做 | Phase A 不该做（示例） |
-|----------------|------------------------|
-| Career 前端对接、正式赛控场完善 | 建 `domains/world/` 表与 API |
+| Phase A 已/可以做 | Phase A 不该做（示例） |
+|-------------------|------------------------|
+| ✅ Career 前端对接已完 · 正式赛控场完善 | 建 `domains/world/` 表与 API |
 | `contracts/` 契约、TechVenture 引擎完善 | OPC LangGraph + MCP 生产化 |
 | 拟真城市**阅读合集与 YAML 占位** | 跨局持久化城市状态、赛制结算接 World |
 | `xp_events` / `settle_match_rewards` 深化 | 跳过规则层直接上 LLM Agent |
@@ -27,9 +27,9 @@
 
 **落地位置**：
 
-- `04-实施路线与里程碑.md`
+- `04-ROADMAP.md`
 - `.cursor/rules/blueprint-coding.mdc` §7
-- `07-` 拟真城市合集（终局出口 B）、`05-` OPC（终局出口 A）
+- `inspire/archive/07-拟真城市与区域模拟-阅读合集.md`（终局出口 B）、`inspire/archive/05-OPC一人公司-阅读合集.md`（终局出口 A）
 
 ---
 
@@ -48,7 +48,7 @@
 ### 正面
 
 - 新对话默认不建 World 域、不抢 OPC 进度
-- `08-` 对齐度百分比反映真实缺口（如 Career 🟡）
+- `03-ENGINEERING.md` §对齐度 反映真实缺口（如 Career 🟡）
 
 ### 负面 / 代价
 
@@ -58,7 +58,7 @@
 
 - **可以做的**：开场写「Phase A，做 XXX」；读 `04-` §二当前阶段
 - **不要做的**：未说明 Phase 就让 AI 建 `domains/world/` 或接 LangGraph
-- **相关阅读**：ADR-001、`04-`、`07-`/`05-` 仅当调研终局出口时读
+- **相关阅读**：ADR-001、`04-ROADMAP.md`、`inspire/archive/07-` / `inspire/archive/05-` 仅当调研终局出口时读
 
 ---
 

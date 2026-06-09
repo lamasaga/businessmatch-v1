@@ -2,7 +2,7 @@
 
 > **定位**：编码任务的唯一事实源——AI_DEFAULT、API/路由全表、赛事引擎规范、开发流程。
 > **关联**：`02-ARCHITECTURE.md`（技术架构）· `01-PRODUCT.md`（产品定义）
-> **最后更新**：2026-06-06
+> **最后更新**：2026-06-09
 
 ---
 
@@ -79,6 +79,7 @@
 | sandbox | `/sandbox` | sandbox+cybercore | 🟡 |
 | camp_groups | `/camp-groups` | arena | 🟡 |
 | camp_summer | `/camp-summer` | arena | 🟡 |
+| engine_callbacks | `/engine-callbacks` | arena | ✅ |
 | career | `/career` | career | 🟡 Phase A 收尾 |
 
 **新增路由须同步**：`main.py` + 本表 + `02-ARCHITECTURE.md` 域表。

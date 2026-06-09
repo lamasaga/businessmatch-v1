@@ -2,6 +2,30 @@
 
 本文件为 Claude Code（claude.ai/code）提供本项目的工作指引。
 
+## AI 会话开场必读（每次会话）
+
+> 开始任何编码任务前，**声明 Phase + 域/任务类型**。未声明时，AI 默认按 **Phase A** 处理。
+
+| 必声明项 | 示例 |
+|---------|------|
+| **Phase** | 「Phase A」「Phase B1 营团」「调研 Phase C」 |
+| **域 / 任务类型** | 「arena 正式赛」「career XP 结算」「trading RTS」「TechVenture 引擎」「拟真城市内容包」「新 ADR 编写」 |
+| **禁止（可选）** | 「不要碰 organizer」「不改 frontend 路由」 |
+
+### 上下文加载速查
+
+| 需要 | 引用文件 |
+|------|---------|
+| 当前代码实现状态 | `03-ENGINEERING.md` §AI_DEFAULT |
+| 域边界 / 路由归属 / Phase 门控 | `.cursor/rules/blueprint-coding.mdc` |
+| 架构决策背景（为什么） | `docs/decisions/ADR-00x` |
+| 技术架构 / 赛制扩展 | `02-ARCHITECTURE.md` §高层架构 |
+| Arena 详细设计 | `domains/arena/ARCHITECTURE.md` |
+| 产品定义 / 用户流程 | `01-PRODUCT.md` |
+| 愿景调研（非编程契约） | `inspire/`（实现前须与 `03-ENGINEERING.md` 对齐） |
+
+---
+
 ## 项目概览（Project Overview）
 
 **商域（BizSim Edu）** 是面向 K12 至大学的商业模拟教育平台。本仓库为 monorepo 结构：
@@ -184,6 +208,47 @@ app.include_router(career.router, prefix="/api/v1")
 - **adr-writing.mdc**：发生架构选型（M1-M6）或新赛制（R1-R4）时写 ADR；80-200 行；不粘贴代码
 - **doc-linking.mdc**：仅 `agent.md`、`README.md`、`00~04` 可维护指向 `inspire/` 的链接；`inspire/` 文内禁止互链（用编号指称，索引进 `50-`）
 - **inspire-writing.mdc**：愿景文档须叙述风格；每个 `##` 段落须 ≥1 段说明「为什么」；禁止无叙述的裸列表
+
+---
+
+## 推送前文档对齐流程（强制）
+
+> 本流程与 `.cursor/rules/docs-align-before-push.mdc` 规则对应。任何涉及**架构、域分包、API 路由、目录迁移、赛制引擎**的变更，在 `git push` 前必须完成。
+
+### 触发条件（满足任一即执行）
+
+- 用户明确要求推送到 GitHub
+- 本次会话含架构、域分包、API 路由、目录迁移、赛制引擎等变更
+- 单次提交触及 `≥5 个文件` 或 `webapp/backend/app/domains/`、`games/`、`content/`、根目录 `*.md`
+
+### 检查清单（按顺序执行）
+
+| # | 步骤 | 动作 | 产出 |
+|---|------|------|------|
+| 1 | **盘点变更** | `git status` + `git diff --stat` | 影响模块列表 |
+| 2 | **更新工程快照** | 更新 `03-ENGINEERING.md`：AI_DEFAULT、API 全表、对齐度、P0 Bug | 文档与代码一致 |
+| 3 | **更新 API 契约** | 若新增/变更路由：跑 `webapp/scripts/export_openapi.py` | `bundled.yaml` 同步 |
+| 4 | **更新产品/架构** | 若触及产品定义：更新 `01-PRODUCT.md`、`02-ARCHITECTURE.md` | 产品描述准确 |
+| 5 | **更新路线图** | 若推进 Phase 或完成里程碑：更新 `04-ROADMAP.md` | 进度可追踪 |
+| 6 | **补 ADR** | 若架构选型（M1-M6）或新赛制（R1-R4）：新建/更新 ADR | 决策可追溯 |
+| 7 | **更新元数据** | 所有修改文档的「最后更新」日期改为当日 | 时效性 |
+| 8 | **自检** | AI_DEFAULT 与代码无矛盾；无「已落地」项仍标 🔴 | 一致性 |
+| 9 | **提交** | 代码 + 文档**同一批次** commit | 可回滚 |
+| 10 | **推送** | `git push` | 发布 |
+
+### 禁止事项
+
+- ❌ 只推代码、不更新文档
+- ❌ 用口头摘要代替对 `.md` 文件的实质修改
+- ❌ 在未对齐 `03-ENGINEERING.md` 时声称「已与文档同步」
+- ❌ 文档对齐与代码变更分属不同推送批次
+
+### 完成定义
+
+向用户汇报时须说明：
+1. 已更新的文档清单（编号 + 修改点）
+2. 仍待下一迭代的 🔴 项
+3. 然后再执行 `git push`
 
 ---
 

@@ -1,8 +1,8 @@
 # 架构决策记录（ADR）— 商域 BizSim Edu
 
-> **文档定位**：跨 AI 对话、跨成员的**架构记忆**——记录「为什么这样定」，不重复 `08-` 里的「现在是什么」。  
-> **最后更新**：2026-05-29  
-> **配套**：[蓝图编程方法论](../蓝图编程方法论——AI辅助大型工程实践指南.md) §3.4.2 · [`.cursor/rules/adr-writing.mdc`](../.cursor/rules/adr-writing.mdc)
+> **文档定位**：跨 AI 对话、跨成员的**架构记忆**——记录「为什么这样定」，不重复 `03-ENGINEERING.md` 里的「现在是什么」。  
+> **最后更新**：2026-06-09  
+> **配套**：[蓝图编程方法论](../../inspire/蓝图编程方法论——AI辅助大型工程实践指南.md) §3.4.2 · [`.cursor/rules/adr-writing.mdc`](../.cursor/rules/adr-writing.mdc)
 
 ---
 
@@ -15,7 +15,7 @@
 | 对比 | 记什么 | 例子 |
 |------|--------|------|
 | **Git 提交** | 改了哪些文件 | `fix: 修复 join 房间码` |
-| **`08-` 工程详表** | 现在有哪些 API、实现百分之几 | §2.7 路由表 |
+| **`03-ENGINEERING.md`** | 现在有哪些 API、实现百分之几 | §一 后端 API 全表 |
 | **`.cursor/rules/`** | AI **每次对话都要遵守**的硬规则 | 域边界表 |
 | **ADR** | **为什么**采用这套结构（含未采纳方案） | 为何 RTS 只能调度器推进 tick |
 
@@ -52,9 +52,9 @@
 | 编号 | 情况 | 改做什么 |
 |------|------|----------|
 | **S1** | 修 typo、改文案、调 CSS | 直接提交 |
-| **S2** | 纯实现已有 ADR / 已有规则，无新选择 | 在 PR 或 `08-` §5.1 记一行即可 |
+| **S2** | 纯实现已有 ADR / 已有规则，无新选择 | 在 PR 或 `03-ENGINEERING.md` 对齐度表旁记一行即可 |
 | **S3** | 临时调试、本地试验、未合并的草稿 | 不写；采纳后再补 ADR |
-| **S4** | 仅调 YAML 数值（价格、回合数）且不改架构 | 改 `game-configs` + `08-` 若需 |
+| **S4** | 仅调 YAML 数值（价格、回合数）且不改架构 | 改 `game-configs` + `03-ENGINEERING.md` 若需 |
 
 ---
 
@@ -86,7 +86,7 @@ docs/decisions/
 5. **填「后果」**：正面 + 负面 + **对初学者的操作提示**（见模板）  
 6. **更新本 README 索引表**（§五）  
 7. **若推翻旧 ADR**：把旧文状态改为 `已取代`，新文写 `取代 ADR-00x`  
-8. **大改动**：在 `08-` §5.1 加一行摘要（与推送前文档对齐一致）
+8. **大改动**：在 `03-ENGINEERING.md` §对齐度 旁加一行摘要（与推送前文档对齐一致）
 
 ### 3.3 与 AI 协作怎么说
 
@@ -108,21 +108,21 @@ docs/decisions/
 flowchart LR
   ADR[docs/decisions ADR]
   Rules[.cursor/rules 自动注入]
-  Docs08[08- 工程详表]
-  Docs04[04- Phase 蓝图]
+  Docs03[03-ENGINEERING.md]
+  Docs04[04-ROADMAP.md]
   ADR -->|解释 why| Rules
-  ADR -->|补充背景| Docs08
+  ADR -->|补充背景| Docs03
   Docs04 -->|阶段能做啥| Rules
-  Docs08 -->|当前有什么| AI[AI 会话]
+  Docs03 -->|当前有什么| AI[AI 会话]
   Rules --> AI
 ```
 
 | 问题 | 先查哪里 |
 |------|----------|
 | 能不能改这张表？ | `.cursor/rules/blueprint-coding.mdc` 域表 |
-| 当前 Phase 能做 World 吗？ | `04-` + ADR-008 |
+| 当前 Phase 能做 World 吗？ | `04-ROADMAP.md` + ADR-008 |
 | 为什么 XP 不能直接改 `users`？ | **ADR-007** |
-| 现在有哪些 API？ | `08-` §2.7 |
+| 现在有哪些 API？ | `03-ENGINEERING.md` §一 |
 | 新赛制怎么加？ | **ADR-004** + `arena/ARCHITECTURE.md` |
 
 ---
@@ -152,7 +152,7 @@ flowchart LR
 - [ ] 会话结束前：问 AI「本次要不要写 ADR？」  
 - [ ] 新对话涉及架构：在简报里 `@docs/decisions/00x-….md`  
 - [ ] 推翻旧决定：改旧 ADR 状态，勿悄悄改代码 alone  
-- [ ] 推 GitHub 前：若新增 ADR，在 `08-` §5.1 写一行「新增 ADR-00N」
+- [ ] 推 GitHub 前：若新增 ADR，在 `03-ENGINEERING.md` 对齐度表旁写一行「新增 ADR-00N」
 
 ---
 

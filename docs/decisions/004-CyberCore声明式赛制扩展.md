@@ -27,7 +27,7 @@
 
 - 配置：`content/game-configs/trading-v1.yaml`、`trading-v2-rts.yaml`、`techventure-v1.yaml`
 - 加载：`domains/cybercore/`
-- 说明：`domains/arena/ARCHITECTURE.md`、`02-` §5.0
+- 说明：`domains/arena/ARCHITECTURE.md`、`02-ARCHITECTURE.md` §赛制扩展
 
 ---
 
@@ -56,7 +56,7 @@
 
 - **可以做的**：复制现有 YAML 改 id；在 `games/<engine>/` 加模块；先读 `game-configs/README.md`（若有）
 - **不要做的**：`cp trading.py investor_duel_trading.py` 式克隆 API；不要复制 `v6_engine.py` 整文件改赛制名
-- **相关阅读**：`02-` §5.0、`09-` §6.2、`ADR-005`（RTS 是 trading 引擎的一种运行时模式）
+- **相关阅读**：`02-ARCHITECTURE.md` §赛制扩展、`03-ENGINEERING.md` §功能矩阵 · `ADR-005`（RTS 是 trading 引擎的一种运行时模式）
 
 ---
 

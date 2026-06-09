@@ -62,5 +62,5 @@
 
 - [ADR-008 Phase A 门控](./008-Phase-A范围门控.md)
 - [ADR-004 CyberCore 声明式赛制](./004-CyberCore声明式赛制扩展.md)
-- [07-拟真城市阅读合集](../../07-拟真城市与区域模拟-阅读合集.md)
+- [inspire/archive/07-拟真城市与区域模拟-阅读合集.md](../../inspire/archive/07-拟真城市与区域模拟-阅读合集.md)
 - [content/world/README.md](../../webapp/backend/content/world/README.md)

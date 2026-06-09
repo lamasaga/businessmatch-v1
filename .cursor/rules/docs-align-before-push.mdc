@@ -5,7 +5,7 @@ alwaysApply: true
 
 # 推送前文档对齐（强制）
 
-本仓库以 **根目录 `00～04` + `11-` + `README.md`** 为产品与工程权威；可读性与开发稳定性依赖文档约束。**禁止**在大型更新后、用户要求推送到 GitHub 时，跳过文档对齐直接 `git push`。
+本仓库以 **根目录 `00-PROJECT.md` / `00-TERMINOLOGY.md` / `01-PRODUCT.md` / `02-ARCHITECTURE.md` / `03-ENGINEERING.md` / `04-ROADMAP.md` + `README.md`** 为产品与工程权威；可读性与开发稳定性依赖文档约束。**禁止**在大型更新后、用户要求推送到 GitHub 时，跳过文档对齐直接 `git push`。
 
 ## 何时触发
 
