@@ -13,6 +13,7 @@ import EventControlPage from './pages/EventControlPage';
 import TechVentureControl from './pages/TechVentureControl';
 import TechVentureScreen from './pages/TechVentureScreen';
 import TechVentureJudge from './pages/TechVentureJudge';
+import OpsControlPage from './pages/OpsControlPage';
 
 export default function App() {
   const { initialize, isInitialized } = useAuthStore();
@@ -46,6 +47,7 @@ export default function App() {
           <Route path="events/:id/techventure" element={<TechVentureControl />} />
           <Route path="events/:id/techventure/screen" element={<TechVentureScreen />} />
           <Route path="events/:id/techventure/judge" element={<TechVentureJudge />} />
+          <Route path="events/:id/ops" element={<OpsControlPage />} />
         </Route>
         <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>

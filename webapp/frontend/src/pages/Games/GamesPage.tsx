@@ -9,11 +9,13 @@ import {
 import { isCampPhase1 } from '../../lib/campPhase';
 
 function gameRoute(eventId: number, configId?: string): string {
+  if (configId?.startsWith('ops')) return `/games/${eventId}/ops`;
   if (configId?.startsWith('techventure')) return `/games/${eventId}/techventure`;
   return `/games/${eventId}/play`;
 }
 
 function lobbyRoute(eventId: number, configId?: string): string {
+  if (configId?.startsWith('ops')) return `/games/${eventId}/ops/lobby`;
   if (configId?.startsWith('techventure')) return `/games/${eventId}/techventure/lobby`;
   return `/games/${eventId}/lobby`;
 }

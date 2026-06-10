@@ -1,13 +1,14 @@
 import { useState, type FormEvent, type ReactNode } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
-import { ArrowLeft, Plus, Loader2, Settings, Users, Coins, Clock, Briefcase, Zap } from 'lucide-react';
+import { ArrowLeft, Plus, Loader2, Settings, Users, Coins, Clock, Briefcase, Zap, Factory } from 'lucide-react';
 import { useOrganizerStore } from '../stores/organizerStore';
 
-type GamePreset = 'fstrading' | 'techventure';
+type GamePreset = 'fstrading' | 'techventure' | 'ops';
 
 const PRESET_META: Record<GamePreset, { label: string; subtitle: string; game_config_id: string; game_type: string }> = {
   fstrading: { label: 'FStrading', subtitle: '长三角六城十品即时商战 · 5 秒 tick', game_config_id: 'fstrading', game_type: 'trading' },
   techventure: { label: '创想大赢家', subtitle: '4 轮三城策略 · 队伍制 · BQI 评分', game_config_id: 'techventure-v1', game_type: 'techventure' },
+  ops: { label: '生产经营销售赛', subtitle: '4 轮运营决策 + 资源竞价 · 队伍制 · 净资产排名', game_config_id: 'ops-sim-v1', game_type: 'ops' },
 };
 
 const RTS_DURATION_OPTIONS = [
@@ -30,6 +31,7 @@ export default function CreateEventPage() {
     max_players: 50,
     duration_preset: 'standard' as 'short' | 'standard' | 'long',
     initial_capital: 50000,
+    ops_initial_capital: 100000,
   });
 
   const preset = PRESET_META[gamePreset];
@@ -37,14 +39,21 @@ export default function CreateEventPage() {
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
     try {
-      const config: Record<string, unknown> =
-        gamePreset === 'fstrading'
-          ? {
-              mode: 'rts',
-              duration_preset: formData.duration_preset,
-              initial_capital: formData.initial_capital,
-            }
-          : { rounds: 4 };
+      let config: Record<string, unknown>;
+      if (gamePreset === 'fstrading') {
+        config = {
+          mode: 'rts',
+          duration_preset: formData.duration_preset,
+          initial_capital: formData.initial_capital,
+        };
+      } else if (gamePreset === 'ops') {
+        config = {
+          rounds: 4,
+          initial_capital: formData.ops_initial_capital,
+        };
+      } else {
+        config = { rounds: 4 };
+      }
 
       const event = await createEvent({
         title: formData.title,
@@ -56,17 +65,15 @@ export default function CreateEventPage() {
         teaching_group_id: teachingGroupId,
       });
 
-      if (teachingGroupId) {
-        navigate(
-          gamePreset === 'techventure'
-            ? `/events/${event.id}/techventure`
-            : `/events/${event.id}`
-        );
-      } else if (gamePreset === 'techventure') {
-        navigate(`/events/${event.id}/techventure`);
+      let controlPath: string;
+      if (gamePreset === 'techventure') {
+        controlPath = `/events/${event.id}/techventure`;
+      } else if (gamePreset === 'ops') {
+        controlPath = `/events/${event.id}/ops`;
       } else {
-        navigate(`/events/${event.id}`);
+        controlPath = `/events/${event.id}`;
       }
+      navigate(controlPath);
     } catch {
       /* store handles error */
     }
@@ -103,7 +110,7 @@ export default function CreateEventPage() {
             <Settings className="w-4 h-4 text-primary" />
             选择赛制
           </h3>
-          <div className="grid grid-cols-2 gap-3">
+          <div className="grid grid-cols-3 gap-3">
             <button
               type="button"
               onClick={() => setGamePreset('fstrading')}
@@ -129,6 +136,19 @@ export default function CreateEventPage() {
               <Briefcase className={`w-5 h-5 mb-2 ${gamePreset === 'techventure' ? 'text-purple-400' : 'text-foreground-muted'}`} />
               <p className="font-semibold">创想大赢家</p>
               <p className="text-xs text-foreground-muted mt-1">4 轮三城策略 · 队伍制 · BQI 评分</p>
+            </button>
+            <button
+              type="button"
+              onClick={() => setGamePreset('ops')}
+              className={`p-4 rounded-xl border text-left transition-colors ${
+                gamePreset === 'ops'
+                  ? 'border-blue-500 bg-blue-500/10'
+                  : 'border-border-subtle hover:border-primary/40'
+              }`}
+            >
+              <Factory className={`w-5 h-5 mb-2 ${gamePreset === 'ops' ? 'text-blue-400' : 'text-foreground-muted'}`} />
+              <p className="font-semibold">生产经营销售赛</p>
+              <p className="text-xs text-foreground-muted mt-1">4 轮运营 + 资源竞价 · 队伍制</p>
             </button>
           </div>
         </section>
@@ -224,6 +244,37 @@ export default function CreateEventPage() {
               <li>· 三座城市布局（南京 / 合肥 / 杭州），分配 Tech / Fit / Show 投入</li>
               <li>· BQI 综合评分 + 加权排名 → 最终冠军</li>
               <li>· 创建后在控场页面建队，学生加入后选择队伍</li>
+            </ul>
+          </section>
+        )}
+
+        {/* OPS-specific settings */}
+        {gamePreset === 'ops' && (
+          <section className="glass-card p-6 space-y-4">
+            <h3 className="font-semibold flex items-center gap-2">
+              <Factory className="w-4 h-4 text-blue-400" />
+              OPS 赛制设置
+            </h3>
+            <Field icon={Coins} label="初始资金">
+              <input
+                type="number"
+                step={10000}
+                value={formData.ops_initial_capital}
+                onChange={(e) =>
+                  setFormData({
+                    ...formData,
+                    ops_initial_capital: parseInt(e.target.value, 10) || 100000,
+                  })
+                }
+                className="w-full px-3 py-2 bg-background-secondary border border-border-subtle rounded-lg"
+              />
+            </Field>
+            <ul className="text-sm text-foreground-muted space-y-1.5">
+              <li>· 固定 4 轮运营决策 + 1 轮资源竞价</li>
+              <li>· 队伍制：每队选择产品品类和目标客群</li>
+              <li>· 每轮决策：生产量、定价、营销/研发投入、销售人力、目标城市</li>
+              <li>· 第 2 轮结算后开放资源竞价（生产线/广告位/原材料折扣）</li>
+              <li>· 最终按净资产排名</li>
             </ul>
           </section>
         )}

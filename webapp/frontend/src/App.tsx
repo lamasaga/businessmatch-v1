@@ -17,6 +17,7 @@ import TradingGamePage from './pages/Games/TradingGamePage';
 import TechVenturePlayPage from './pages/Games/TechVenturePlayPage';
 import TechVentureLobbyPage from './pages/Games/TechVentureLobbyPage';
 import OpsPlayPage from './pages/Games/OpsPlayPage';
+import OpsLobbyPage from './pages/Games/OpsLobbyPage';
 import WikiPage from './pages/Wiki/WikiPage';
 import WikiArticlePage from './pages/Wiki/WikiArticlePage';
 import CoursesPage from './pages/Courses/CoursesPage';
@@ -160,6 +161,14 @@ function App() {
               element={
                 <AuthGuard requireAuth>
                   <TechVentureLobbyPage />
+                </AuthGuard>
+              }
+            />
+            <Route
+              path="games/:id/ops/lobby"
+              element={
+                <AuthGuard requireAuth>
+                  <OpsLobbyPage />
                 </AuthGuard>
               }
             />

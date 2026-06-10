@@ -35,15 +35,20 @@ export default function GameLobbyPage() {
   }, [currentEvent?.status, eventId, getMyStatus]);
 
   const isTechVenture = currentEvent?.game_config_id?.startsWith('techventure');
+  const isOps = currentEvent?.game_config_id?.startsWith('ops');
 
   useEffect(() => {
     if (isTechVenture) {
       navigate(`/games/${eventId}/techventure/lobby`, { replace: true });
+    } else if (isOps) {
+      navigate(`/games/${eventId}/ops/lobby`, { replace: true });
     }
-  }, [isTechVenture, eventId, navigate]);
+  }, [isTechVenture, isOps, eventId, navigate]);
 
   const gameRoute = isTechVenture
     ? `/games/${eventId}/techventure`
+    : isOps
+    ? `/games/${eventId}/ops`
     : `/games/${eventId}/play`;
 
   const handleStart = async () => {

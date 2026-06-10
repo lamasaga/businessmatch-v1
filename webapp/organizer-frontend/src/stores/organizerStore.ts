@@ -30,7 +30,7 @@ interface OrganizerState {
     config?: Record<string, unknown>;
     teaching_group_id?: number;
   }) => Promise<CompetitionEvent>;
-  startEvent: (eventId: number) => Promise<void>;
+  startEvent: (eventId: number, gameConfigId?: string) => Promise<void>;
   endEvent: (eventId: number) => Promise<void>;
   clearError: () => void;
 }
@@ -117,9 +117,14 @@ export const useOrganizerStore = create<OrganizerState>((set) => ({
     try {
       const gameType = data.game_type || 'trading';
       const configId = data.game_config_id || 'fstrading';
-      const mergedConfig = configId.startsWith('techventure')
-        ? (data.config || {})
-        : { ...DEFAULT_RTS_CONFIG, ...data.config };
+      let mergedConfig: Record<string, unknown>;
+      if (configId.startsWith('techventure')) {
+        mergedConfig = data.config || {};
+      } else if (configId.startsWith('ops')) {
+        mergedConfig = { initial_capital: 100000, ...data.config };
+      } else {
+        mergedConfig = { ...DEFAULT_RTS_CONFIG, ...data.config };
+      }
       const res = await api.post<ApiResponse<CompetitionEvent>>('/api/v1/competitions', {
         title: data.title,
         description: data.description,
@@ -141,12 +146,14 @@ export const useOrganizerStore = create<OrganizerState>((set) => ({
     }
   },
 
-  startEvent: async (eventId) => {
+  startEvent: async (eventId, gameConfigId?: string) => {
     set({ loading: true, error: null });
     try {
-      const res = await api.post<ApiResponse<CompetitionEvent>>(
-        `/api/v1/competitions/${eventId}/start`
-      );
+      const isOps = gameConfigId?.startsWith('ops');
+      const endpoint = isOps
+        ? `/api/v1/ops/events/${eventId}/start`
+        : `/api/v1/competitions/${eventId}/start`;
+      const res = await api.post<ApiResponse<CompetitionEvent>>(endpoint);
       const event = res.data.data!;
       set((s) => ({
         events: s.events.map((e) => (e.id === eventId ? event : e)),
