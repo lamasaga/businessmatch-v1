@@ -1,20 +1,199 @@
 id: ops-sim-v1
 engine: ops_sim
 meta:
-  name: 产销运营赛
-  description: 供应链产销运营模拟，侧重库存、定价与渠道决策
+  name: 生产经营销售赛
+  description: 多轮商业模拟：产品定位、运营决策、资源竞价
   version: "1.0.0"
   author: BizSim Edu
-  target_age: [15, 22]
-
+  target_age: [14, 18]
+  runtime: react-game
+design_mode: standalone
 defaults:
-  rounds: 6
-  teams: 4
-  initial_cash: 10000
-  initial_inventory: 200
+  rounds: 4
+  teams: 8
+  members_per_team: 4
+  initial_capital: 100000
+  initial_inventory: 0
+  base_capacity: 200
   max_production_per_round: 500
+  max_sales_force: 10
+  decision_time_minutes: 8
+  auction_time_minutes: 8
+  practice_ai_count: 3
+  practice_ai_slots: [balanced, aggressive, conservative]
+  wage_per_head: 1500
+  holding_cost_per_unit: 2
+  fixed_overhead: 3500
+  worker_productivity: 20
+  tech_conversion_rate: 0.001
+  show_conversion_rate: 0.0008
+  beta: 2.0
 
-# TODO: 补充 POP 分群、价格弹性、渠道成本等规则
-pop_segments: []
-costs: {}
-rewards: {}
+product_categories:
+  electronics:
+    name: 3C电子
+    base_material_cost: 80
+    base_labor_cost: 30
+    base_overhead: 5000
+    market_size_multiplier: 1.2
+    base_price: 220
+  fast_moving:
+    name: 快消品
+    base_material_cost: 20
+    base_labor_cost: 10
+    base_overhead: 2000
+    market_size_multiplier: 1.5
+    base_price: 55
+  home:
+    name: 家居用品
+    base_material_cost: 50
+    base_labor_cost: 20
+    base_overhead: 3500
+    market_size_multiplier: 1.0
+    base_price: 140
+
+consumer_segments:
+  geek:
+    name: 技术爱好者
+    tech_weight: 0.55
+    fit_weight: 0.30
+    show_weight: 0.15
+  pragmatic:
+    name: 实用主义者
+    tech_weight: 0.22
+    fit_weight: 0.60
+    show_weight: 0.18
+  show:
+    name: 潮流追随者
+    tech_weight: 0.18
+    fit_weight: 0.22
+    show_weight: 0.60
+
+cities:
+  shanghai:
+    name: 上海
+    tier: 1
+    market_size: 10000
+    opening_cost: 30000
+    geek_ratio: 0.25
+    pragmatic_ratio: 0.45
+    show_ratio: 0.30
+  beijing:
+    name: 北京
+    tier: 1
+    market_size: 9500
+    opening_cost: 30000
+    geek_ratio: 0.30
+    pragmatic_ratio: 0.40
+    show_ratio: 0.30
+  hangzhou:
+    name: 杭州
+    tier: 2
+    market_size: 6000
+    opening_cost: 15000
+    geek_ratio: 0.45
+    pragmatic_ratio: 0.30
+    show_ratio: 0.25
+  nanjing:
+    name: 南京
+    tier: 2
+    market_size: 5500
+    opening_cost: 15000
+    geek_ratio: 0.20
+    pragmatic_ratio: 0.50
+    show_ratio: 0.30
+  chengdu:
+    name: 成都
+    tier: 3
+    market_size: 4500
+    opening_cost: 9000
+    geek_ratio: 0.15
+    pragmatic_ratio: 0.35
+    show_ratio: 0.50
+  hefei:
+    name: 合肥
+    tier: 3
+    market_size: 4000
+    opening_cost: 9000
+    geek_ratio: 0.35
+    pragmatic_ratio: 0.35
+    show_ratio: 0.30
+
+event_types:
+  consumer_downgrade:
+    name: 消费降级
+    desc: 消费者更加注重性价比，品牌溢价下降
+    probability: 0.15
+    effects:
+      show_preference_delta: -0.05
+      price_sensitivity_delta: 0.05
+  raw_material_spike:
+    name: 原材料涨价
+    desc: 上游原材料供应紧张，成本上升
+    probability: 0.15
+    effects:
+      material_cost_multiplier: 1.15
+  policy_subsidy:
+    name: 政策补贴
+    desc: 某城市推出招商引资政策，开城费减半
+    probability: 0.10
+    effects:
+      target_city_random: true
+      opening_cost_multiplier: 0.5
+  competitor_exit:
+    name: 竞品退出
+    desc: 某竞争对手因经营不善退出市场
+    probability: 0.10
+    effects:
+      remove_random_ai: true
+
+auction_items:
+  line_a:
+    name: 标准生产线
+    type: production
+    base_price: 20000
+    effect:
+      capacity_bonus: 150
+  line_b:
+    name: 高端生产线
+    type: production
+    base_price: 35000
+    effect:
+      capacity_bonus: 80
+      quality_bonus: 0.10
+  ad_shanghai:
+    name: 上海广告位
+    type: advertising
+    base_price: 12000
+    effect:
+      city: shanghai
+      show_multiplier: 1.20
+  ad_hangzhou:
+    name: 杭州广告位
+    type: advertising
+    base_price: 8000
+    effect:
+      city: hangzhou
+      show_multiplier: 1.20
+  raw_discount:
+    name: 原材料供应合同
+    type: discount
+    base_price: 15000
+    effect:
+      material_cost_discount: 0.15
+
+scoring_weights:
+  net_assets: 0.70
+  cumulative_profit: 0.30
+
+rewards:
+  official:
+    participate: 150
+    top50_bonus: 100
+    top20_bonus: 200
+    first_place_bonus: 600
+  practice:
+    participate: 50
+    top50_bonus: 30
+    top20_bonus: 60
+    first_place_bonus: 120

@@ -1,0 +1,103 @@
+import { create } from 'zustand';
+import { api } from '../lib/api';
+import type {
+  OpsGameState,
+  OpsPositioningPayload,
+  OpsDecisionPayload,
+  OpsRankingEntry,
+  OpsAuctionItemState,
+} from '../types/ops';
+
+interface OpsState {
+  gameState: OpsGameState | null;
+  ranking: OpsRankingEntry[];
+  loading: boolean;
+  error: string | null;
+
+  fetchState: (eventId: number) => Promise<void>;
+  submitPositioning: (eventId: number, payload: OpsPositioningPayload) => Promise<void>;
+  submitDecision: (eventId: number, payload: OpsDecisionPayload) => Promise<void>;
+  placeBid: (eventId: number, itemId: number, amount: number) => Promise<void>;
+  fetchRanking: (eventId: number) => Promise<void>;
+  fetchAuctionState: (eventId: number) => Promise<OpsAuctionItemState[]>;
+  clearError: () => void;
+}
+
+export const useOpsStore = create<OpsState>((set) => ({
+  gameState: null,
+  ranking: [],
+  loading: false,
+  error: null,
+
+  fetchState: async (eventId) => {
+    set({ loading: true, error: null });
+    try {
+      const res = await api.get(`/api/v1/ops/events/${eventId}/state`);
+      set({ gameState: res.data.data, loading: false });
+    } catch (err: any) {
+      set({ error: err?.response?.data?.message || err.message || '获取状态失败', loading: false });
+      throw err;
+    }
+  },
+
+  submitPositioning: async (eventId, payload) => {
+    set({ loading: true, error: null });
+    try {
+      await api.post(`/api/v1/ops/events/${eventId}/product-positioning`, payload);
+      const res = await api.get(`/api/v1/ops/events/${eventId}/state`);
+      set({ gameState: res.data.data, loading: false });
+    } catch (err: any) {
+      set({ error: err?.response?.data?.message || err.message || '提交定位失败', loading: false });
+      throw err;
+    }
+  },
+
+  submitDecision: async (eventId, payload) => {
+    set({ loading: true, error: null });
+    try {
+      await api.post(`/api/v1/ops/events/${eventId}/decisions`, payload);
+      const res = await api.get(`/api/v1/ops/events/${eventId}/state`);
+      set({ gameState: res.data.data, loading: false });
+    } catch (err: any) {
+      set({ error: err?.response?.data?.message || err.message || '提交决策失败', loading: false });
+      throw err;
+    }
+  },
+
+  placeBid: async (eventId, itemId, amount) => {
+    set({ loading: true, error: null });
+    try {
+      await api.post(`/api/v1/ops/events/${eventId}/auction/bid?item_id=${itemId}`, { amount });
+      const res = await api.get(`/api/v1/ops/events/${eventId}/state`);
+      set({ gameState: res.data.data, loading: false });
+    } catch (err: any) {
+      set({ error: err?.response?.data?.message || err.message || '出价失败', loading: false });
+      throw err;
+    }
+  },
+
+  fetchRanking: async (eventId) => {
+    try {
+      const res = await api.get(`/api/v1/ops/events/${eventId}/ranking`);
+      set({ ranking: res.data.data });
+    } catch {
+      /* silent */
+    }
+  },
+
+  fetchAuctionState: async (eventId) => {
+    try {
+      const res = await api.get(`/api/v1/ops/events/${eventId}/auction/state`);
+      const items = res.data.data as OpsAuctionItemState[];
+      set((s) => {
+        if (!s.gameState) return {};
+        return { gameState: { ...s.gameState, auction_items: items } };
+      });
+      return items;
+    } catch {
+      return [];
+    }
+  },
+
+  clearError: () => set({ error: null }),
+}));

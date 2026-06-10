@@ -30,6 +30,7 @@ class GameEngineId(str, enum.Enum):
 
     trading = "trading"
     techventure = "techventure"
+    ops_sim = "ops_sim"
     negotiation = "negotiation"
     strategy = "strategy"
 
