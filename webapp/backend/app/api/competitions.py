@@ -8,7 +8,7 @@ from typing import List, Optional
 from app.db.database import get_db
 from app.models.user import User, UserRole
 from app.domains.arena.enums import DesignMode, GameEngineId, MatchKind, MatchStatus, ParticipantStatus
-from app.domains.arena.models import OrganizerProfile, ArenaMatch, ArenaParticipant, TeachingGroup
+from app.domains.arena.models import OrganizerProfile, ArenaMatch, ArenaParticipant, ArenaTeam, TeachingGroup
 from app.domains.arena.services.teaching_group_service import (
     assert_group_teacher,
     ensure_organizer_profile,
@@ -144,6 +144,17 @@ def join_competition(
         total_assets=initial_capital,
     )
     db.add(participant)
+
+    # OPS 队伍制：加入时自动创建独立队伍
+    if event.game_type == GameEngineId.ops_sim:
+        team = ArenaTeam(
+            event_id=event.id,
+            team_name=f"{current_user.username}的队伍",
+            is_ai=0,
+        )
+        db.add(team)
+        db.flush()
+        participant.team_id = team.id
 
     # 如果是第一个参与者，将比赛状态改为报名中
     if event.status == EventStatus.draft:

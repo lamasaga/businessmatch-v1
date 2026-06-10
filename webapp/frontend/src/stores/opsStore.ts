@@ -14,6 +14,7 @@ interface OpsState {
   loading: boolean;
   error: string | null;
 
+  startPractice: (configId?: string) => Promise<{ event_id: number; team_id: number }>;
   fetchState: (eventId: number) => Promise<void>;
   submitPositioning: (eventId: number, payload: OpsPositioningPayload) => Promise<void>;
   submitDecision: (eventId: number, payload: OpsDecisionPayload) => Promise<void>;
@@ -28,6 +29,20 @@ export const useOpsStore = create<OpsState>((set) => ({
   ranking: [],
   loading: false,
   error: null,
+
+  startPractice: async (configId = 'ops-sim-v1') => {
+    set({ loading: true, error: null });
+    try {
+      const res = await api.post('/api/v1/practice/ops/start', {
+        game_config_id: configId,
+      });
+      set({ loading: false });
+      return res.data.data;
+    } catch (err: any) {
+      set({ error: err?.response?.data?.message || err.message || '创建练习失败', loading: false });
+      throw err;
+    }
+  },
 
   fetchState: async (eventId) => {
     set({ loading: true, error: null });

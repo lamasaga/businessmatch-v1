@@ -188,6 +188,106 @@ def start_techventure_practice(
     return ApiResponse.ok(data={"event_id": match.id, "team_id": player_team.id, "round_no": 1})
 
 
+@router.post("/ops/start", response_model=ApiResponse[dict], status_code=status.HTTP_201_CREATED)
+def start_ops_practice(
+    data: PracticeStartRequest,
+    current_user: User = Depends(get_current_active_user),
+    db: Session = Depends(get_db),
+):
+    """创建并自动开始一场 OPS 日常练习（单人 + AI 队伍）"""
+    config_id = data.game_config_id or "ops-sim-v1"
+    doc = get_game_config(config_id)
+    if doc.engine != GameEngineId.ops_sim.value:
+        raise BusinessException(
+            message="该配置非 OPS 引擎",
+            code=ErrorCode.BAD_REQUEST,
+            status_code=status.HTTP_400_BAD_REQUEST,
+        )
+
+    from app.domains.arena.models.team import ArenaTeam
+    from app.domains.arena.models.participant import ArenaParticipant
+    from app.domains.arena.utils import generate_room_code
+    from app.games.ops_sim.config import get_cfg, V
+    from app.games.ops_sim.enums import OpsAiStrategy, OpsMatchPhase
+    from app.games.ops_sim.models import OpsTeamState
+    from app.games.trading.bot_users import ensure_bot_traders
+
+    cfg = get_cfg(config_id)
+    platform = _platform_organizer(db)
+    config = doc.merged_match_config(data.config.model_dump() if data.config else {})
+    initial_cash = float(config.get("initial_capital", V("initial_capital", cfg, 100000)))
+    ai_count = int(config.get("practice_ai_count", V("practice_ai_count", cfg, 3)))
+    ai_slots = config.get("practice_ai_slots") or V("practice_ai_slots", cfg, ["balanced", "aggressive", "conservative"])
+
+    match = ArenaMatch(
+        organizer_id=platform.id,
+        room_code="",
+        title=data.title or f"日常练习 · {doc.meta.get('name', config_id)}",
+        description="OPS 练习：AI 队伍与你共同竞技",
+        match_kind=MatchKind.practice,
+        design_mode=DesignMode.standalone,
+        game_config_id=config_id,
+        game_type=GameEngineId.ops_sim,
+        status=MatchStatus.playing,
+        config={**config, "ops_phase": OpsMatchPhase.positioning.value},
+        max_players=1 + ai_count,
+        current_round=0,
+    )
+    db.add(match)
+    db.flush()
+    match.room_code = generate_room_code()
+
+    player_team = ArenaTeam(
+        event_id=match.id,
+        team_name=f"{current_user.username}的队伍",
+        is_ai=0,
+    )
+    db.add(player_team)
+    db.flush()
+    db.add(OpsTeamState(
+        event_id=match.id,
+        team_id=player_team.id,
+        cash=initial_cash,
+        net_assets=initial_cash,
+    ))
+    db.add(ArenaParticipant(
+        event_id=match.id,
+        user_id=current_user.id,
+        is_ai=0,
+        team_id=player_team.id,
+    ))
+
+    ai_names = ["星辰制造", "云端品牌", "数智零售", "破晓实业", "信达家居"]
+    bots = ensure_bot_traders(db)
+    for i in range(min(ai_count, len(bots))):
+        ai_team = ArenaTeam(
+            event_id=match.id,
+            team_name=ai_names[i % len(ai_names)],
+            is_ai=1,
+            metadata_={"product_name": f"AI产品{i + 1}号"},
+        )
+        db.add(ai_team)
+        db.flush()
+        strategy = OpsAiStrategy(ai_slots[i % len(ai_slots)])
+        db.add(OpsTeamState(
+            event_id=match.id,
+            team_id=ai_team.id,
+            cash=initial_cash,
+            net_assets=initial_cash,
+            ai_strategy=strategy,
+        ))
+        db.add(ArenaParticipant(
+            event_id=match.id,
+            user_id=bots[i].id,
+            is_ai=1,
+            team_id=ai_team.id,
+        ))
+
+    db.commit()
+    db.refresh(match)
+    return ApiResponse.ok(data={"event_id": match.id, "team_id": player_team.id})
+
+
 @router.get("/my", response_model=ApiResponse[list])
 def my_practice_matches(
     current_user: User = Depends(get_current_active_user),

@@ -2,7 +2,8 @@ import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useCompetitionStore } from '../../stores/competitionStore';
 import { useTechVentureStore } from '../../stores/techventureStore';
-import { Bot, Briefcase, Play, Sparkles, Loader2 } from 'lucide-react';
+import { useOpsStore } from '../../stores/opsStore';
+import { Bot, Briefcase, Factory, Play, Sparkles, Loader2 } from 'lucide-react';
 
 type Props = {
   onError?: (message: string) => void;
@@ -12,7 +13,9 @@ export default function SoloPracticeSection({ onError }: Props) {
   const navigate = useNavigate();
   const { startPractice, loading } = useCompetitionStore();
   const tvStore = useTechVentureStore();
+  const opsStore = useOpsStore();
   const [tvLoading, setTvLoading] = useState(false);
+  const [opsLoading, setOpsLoading] = useState(false);
 
   const reportError = (msg: string) => {
     onError?.(msg);
@@ -39,6 +42,20 @@ export default function SoloPracticeSection({ onError }: Props) {
       reportError(message);
     } finally {
       setTvLoading(false);
+    }
+  };
+
+  const handleStartOps = async () => {
+    setOpsLoading(true);
+    try {
+      const result = await opsStore.startPractice();
+      sessionStorage.setItem('bizsim_practice_return', '/activities');
+      navigate(`/games/${result.event_id}/ops`);
+    } catch (err: unknown) {
+      const message = err instanceof Error ? err.message : 'OPS 练习创建失败';
+      reportError(message);
+    } finally {
+      setOpsLoading(false);
     }
   };
 
@@ -91,6 +108,32 @@ export default function SoloPracticeSection({ onError }: Props) {
             className="px-6 py-2.5 bg-purple-500 text-white rounded-xl font-semibold hover:bg-purple-500/90 transition-colors disabled:opacity-50 flex items-center justify-center gap-2 shrink-0"
           >
             {tvLoading ? <Loader2 className="w-4 h-4 animate-spin" /> : <Play className="w-4 h-4" />}
+            开始练习
+          </button>
+        </div>
+      </div>
+
+      <div className="glass-card p-6 border border-blue-500/20 bg-blue-500/5">
+        <div className="flex flex-col md:flex-row md:items-center gap-4">
+          <div className="w-12 h-12 rounded-xl bg-blue-500/20 flex items-center justify-center shrink-0">
+            <Factory className="w-6 h-6 text-blue-400" />
+          </div>
+          <div className="flex-1">
+            <h3 className="font-semibold text-foreground flex items-center gap-2">
+              生产经营销售赛 · 单人练习
+              <Sparkles className="w-4 h-4 text-blue-400" />
+            </h3>
+            <p className="text-sm text-foreground-muted mt-1">
+              4 轮运营决策 + 资源竞价：产品定位、定价投产、营销研发，与 3 支 AI 队伍比拼净资产
+            </p>
+          </div>
+          <button
+            type="button"
+            onClick={handleStartOps}
+            disabled={opsLoading}
+            className="px-6 py-2.5 bg-blue-500 text-white rounded-xl font-semibold hover:bg-blue-500/90 transition-colors disabled:opacity-50 flex items-center justify-center gap-2 shrink-0"
+          >
+            {opsLoading ? <Loader2 className="w-4 h-4 animate-spin" /> : <Play className="w-4 h-4" />}
             开始练习
           </button>
         </div>

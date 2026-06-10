@@ -1,7 +1,7 @@
 """CyberCore 配置类型"""
 
-from typing import Any, Dict, List, Optional
-from pydantic import BaseModel, Field
+from typing import Any, Dict, List, Optional, Union
+from pydantic import BaseModel, ConfigDict, Field
 
 
 class RewardTier(BaseModel):
@@ -12,6 +12,8 @@ class RewardTier(BaseModel):
 
 
 class GameConfigDocument(BaseModel):
+    model_config = ConfigDict(extra="allow")
+
     id: str
     engine: str
     design_mode: str = "standalone"
@@ -22,7 +24,12 @@ class GameConfigDocument(BaseModel):
     cities: Dict[str, Dict[str, Any]] = Field(default_factory=dict)
     vehicles: Dict[str, Dict[str, Any]] = Field(default_factory=dict)
     routes: Dict[str, Dict[str, Any]] = Field(default_factory=dict)
-    event_types: List[Dict[str, Any]] = Field(default_factory=list)
+    # trading/techventure 为列表；ops_sim 为 id -> 定义 的字典
+    event_types: Union[List[Dict[str, Any]], Dict[str, Dict[str, Any]]] = Field(default_factory=list)
+    product_categories: Dict[str, Dict[str, Any]] = Field(default_factory=dict)
+    consumer_segments: Dict[str, Dict[str, Any]] = Field(default_factory=dict)
+    auction_items: Dict[str, Dict[str, Any]] = Field(default_factory=dict)
+    scoring_weights: Dict[str, float] = Field(default_factory=dict)
     rewards: Dict[str, RewardTier] = Field(default_factory=dict)
 
     def merged_match_config(self, overrides: Optional[Dict[str, Any]] = None) -> Dict[str, Any]:
