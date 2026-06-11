@@ -139,7 +139,7 @@ export default function OpsPlayPage() {
               team={team}
               cities={cfg.cities}
               category={cfg.product_categories[team.category || 'home']}
-              currentRound={currentRound}
+              currentRound={currentRound ?? null}
               hasSubmitted={!!gameState?.has_submitted}
               onSubmit={handleDecision}
               submitting={submitting || loading}

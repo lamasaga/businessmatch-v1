@@ -70,6 +70,7 @@ export interface OpsAuctionItemState {
   item_type: 'production' | 'advertising' | 'discount';
   base_price: number;
   current_price: number;
+  final_price?: number;
   leading_team_id: number | null;
   leading_team_name: string | null;
   status: string;
