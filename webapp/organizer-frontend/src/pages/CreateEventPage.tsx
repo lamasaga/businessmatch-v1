@@ -8,7 +8,7 @@ type GamePreset = 'fstrading' | 'techventure' | 'ops';
 const PRESET_META: Record<GamePreset, { label: string; subtitle: string; game_config_id: string; game_type: string }> = {
   fstrading: { label: 'FStrading', subtitle: '长三角六城十品即时商战 · 5 秒 tick', game_config_id: 'fstrading', game_type: 'trading' },
   techventure: { label: '创想大赢家', subtitle: '4 轮三城策略 · 队伍制 · BQI 评分', game_config_id: 'techventure-v1', game_type: 'techventure' },
-  ops: { label: '生产经营销售赛', subtitle: '4 轮运营决策 + 资源竞价 · 队伍制 · 净资产排名', game_config_id: 'ops-sim-v1', game_type: 'ops' },
+  ops: { label: '生产经营销售赛', subtitle: '4 轮运营决策 + 资源竞价 · 队伍制 · 净资产排名', game_config_id: 'ops-sim-v1', game_type: 'ops_sim' },
 };
 
 const RTS_DURATION_OPTIONS = [

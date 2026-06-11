@@ -35,7 +35,7 @@ export default function LoginPage() {
             <Compass className="w-7 h-7 text-background" />
           </div>
           <h1 className="text-2xl font-bold text-foreground tracking-tight">欢迎回来</h1>
-          <p className="text-foreground-muted mt-2 text-sm">登录你的商域账户</p>
+          <p className="text-foreground-muted mt-2 text-sm">登录你的商识唯智账户</p>
         </div>
 
         <div className="glass-card p-8">

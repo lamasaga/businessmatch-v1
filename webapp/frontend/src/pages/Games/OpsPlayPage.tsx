@@ -113,13 +113,23 @@ export default function OpsPlayPage() {
           </div>
         )}
 
-        {phase === 'positioning' && cfg && (
+        {phase === 'positioning' && cfg && !team?.category && (
           <ProductPositioningPanel
             categories={cfg.product_categories}
             segments={cfg.consumer_segments}
             onSubmit={handlePositioning}
-            submitting={submitting}
+            submitting={submitting || loading}
           />
+        )}
+
+        {phase === 'positioning' && team?.category && (
+          <div className="rounded-2xl border border-border-subtle bg-background-secondary p-6 text-center space-y-2">
+            <p className="font-semibold">产品定位已提交</p>
+            <p className="text-sm text-foreground-muted">
+              {team.product_name} · 等待进入运营决策…
+            </p>
+            <Loader2 className="w-6 h-6 animate-spin text-primary mx-auto mt-2" />
+          </div>
         )}
 
         {(phase?.startsWith('operation_round_') || phase === 'paused') && cfg && team && (

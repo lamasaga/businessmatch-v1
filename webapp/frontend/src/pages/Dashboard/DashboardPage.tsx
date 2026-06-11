@@ -40,7 +40,7 @@ export default function DashboardPage() {
   const { user } = useAuthStore();
 
   useEffect(() => {
-    document.title = '个人中心 - 商域';
+    document.title = '个人中心 - 商识唯智';
   }, []);
 
   if (!user) {

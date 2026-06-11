@@ -1,6 +1,6 @@
 # businessmatch-v1 · 商业模拟教育平台
 
-> **商域 (BizSim Edu)**：K12～大学商业素养教育基础设施。
+> **商识唯智**：K12～大学商业素养教育基础设施。
 
 ---
 
@@ -44,6 +44,7 @@ Set-Location "d:\1XFAwork\businessmatch-v1\webapp"; .\启动.ps1
 
 ## 其它入口
 
+- **对外项目说明**（同行 / 合作方概览）：[docs/商识唯智-对外项目说明.md](./docs/商识唯智-对外项目说明.md)
 - **架构决策（ADR）**：[docs/decisions/](./docs/decisions/README.md)
 - **构想库（inspire）**：仅通过 [00-PROJECT §inspire 专题索引](./00-PROJECT.md#inspire-专题索引) 进入；库内目录 [inspire/50-](./inspire/50-目录导航.md)
 - **协作规则**：[.cursor/rules/](./.cursor/rules/)（蓝图编程、文档对齐、inspire 文风、**链接纪律**）

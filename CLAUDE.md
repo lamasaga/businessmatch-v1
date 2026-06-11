@@ -28,7 +28,7 @@
 
 ## 项目概览（Project Overview）
 
-**商域（BizSim Edu）** 是面向 K12 至大学的商业模拟教育平台。本仓库为 monorepo 结构：
+**商识唯智（商识唯智）** 是面向 K12 至大学的商业模拟教育平台。本仓库为 monorepo 结构：
 
 - **`webapp/`** — 主应用：FastAPI 后端 + React 双前端（学生端 Student + 教师端 Teacher）
 - **`art-assets/`** — 美术素材（含浮生记/fushengji、tabler 图标等）

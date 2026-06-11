@@ -937,7 +937,7 @@ CyberCore (L1)        +       Formula VM (L2)           →    可配置结算
 game-configs YAML     +       赛事本体 Schema            →    结构化配置
 art-assets/           +       Asset Pipeline (L2)       →    主题化资产
 AI 对手 PRD (90-91)   +       AI Runtime (L2)           →    可配置 AI
-商域 AI 框架 (81-)     +       AI Design Assistant (L4)  →    智能设计助手
+商识唯智 AI 框架 (81-)     +       AI Design Assistant (L4)  →    智能设计助手
 ```
 
 ### 11.3 关键决策点（待讨论）
@@ -973,5 +973,5 @@ AI 对手 PRD (90-91)   +       AI Runtime (L2)           →    可配置 AI
 | [89-赛事工坊实现说明与使用指南](./89-赛事工坊实现说明与使用指南.md) | 现有沙盒实现，CDE 的编排器将替代/扩展 |
 | [87-商赛机制设计沙盒蓝图](./87-商赛机制设计沙盒蓝图.md) | 产品蓝图，CDE 是实现该蓝图的引擎层 |
 | [90-AI对手NPC化与成长演化系统PRD](./90-AI对手NPC化与成长演化系统PRD.md) | AI 对手设计，CDE AI Runtime 的消费方 |
-| [81-商域AI赋能六支柱全景](./81-商域AI赋能六支柱全景.md) | AI 战略框架，CDE L4 是支柱之一的具体实现 |
+| [81-商识唯智AI赋能六支柱全景](./81-商识唯智AI赋能六支柱全景.md) | AI 战略框架，CDE L4 是支柱之一的具体实现 |
 | [docs/archive/b/00-解耦声明式商业模拟框架总览](../docs/archive/b商赛界面展示/00-解耦声明式商业模拟框架总览.md) | CyberCore 框架总览，CDE 的上层抽象 |

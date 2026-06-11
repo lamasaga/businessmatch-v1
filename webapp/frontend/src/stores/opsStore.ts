@@ -58,11 +58,16 @@ export const useOpsStore = create<OpsState>((set) => ({
   submitPositioning: async (eventId, payload) => {
     set({ loading: true, error: null });
     try {
-      await api.post(`/api/v1/ops/events/${eventId}/product-positioning`, payload);
+      const posRes = await api.post(`/api/v1/ops/events/${eventId}/product-positioning`, payload);
       const res = await api.get(`/api/v1/ops/events/${eventId}/state`);
-      set({ gameState: res.data.data, loading: false });
+      const nextState = res.data.data;
+      const advancedPhase = posRes.data.data?.phase;
+      if (advancedPhase && nextState) {
+        nextState.phase = advancedPhase;
+      }
+      set({ gameState: nextState, loading: false });
     } catch (err: any) {
-      set({ error: err?.response?.data?.message || err.message || '提交定位失败', loading: false });
+      set({ error: err?.message || err?.response?.data?.message || '提交定位失败', loading: false });
       throw err;
     }
   },

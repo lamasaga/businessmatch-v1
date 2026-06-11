@@ -16,7 +16,7 @@ from app.games.ops_sim.models import (
 from app.games.ops_sim.enums import OpsRoundStatus, OpsMatchPhase
 from app.games.ops_sim.config import get_cfg
 from app.games.ops_sim.engine import settle_round, build_financial_statements
-from app.games.ops_sim.ai import generate_ai_decision
+from app.games.ops_sim.ai import generate_ai_decision, generate_ai_positioning
 
 
 def _team_state_dict(state: OpsTeamState) -> dict[str, Any]:
@@ -46,6 +46,43 @@ def _decision_dict(sub: OpsSubmission) -> dict[str, Any]:
 
 def _event_state(match: ArenaMatch) -> dict[str, Any]:
     return (match.config or {}).get("ops_event_state", {})
+
+
+def ensure_ai_positioning(db: Session, match: ArenaMatch, cfg: dict[str, Any] | None = None) -> int:
+    """为尚未提交定位的 AI 队伍自动生产品卡。返回新增数量。"""
+    if cfg is None:
+        cfg = get_cfg(match.game_config_id or "ops-sim-v1")
+    ai_teams = db.query(ArenaTeam).filter(
+        ArenaTeam.event_id == match.id,
+        ArenaTeam.is_ai == 1,
+    ).all()
+    created = 0
+    for team in ai_teams:
+        if db.query(OpsProductCard).filter(OpsProductCard.team_id == team.id).first():
+            continue
+        state = db.query(OpsTeamState).filter(OpsTeamState.team_id == team.id).first()
+        if not state:
+            continue
+        pos = generate_ai_positioning(
+            team.id,
+            team.team_name,
+            team.metadata_ if isinstance(team.metadata_, dict) else {},
+            cfg,
+        )
+        db.add(OpsProductCard(
+            event_id=match.id,
+            team_id=team.id,
+            product_name=pos["product_name"],
+            category=pos["category"],
+            target_segment=pos["target_segment"],
+        ))
+        state.product_name = pos["product_name"]
+        state.category = pos["category"]
+        state.target_segment = pos["target_segment"]
+        created += 1
+    if created:
+        db.flush()
+    return created
 
 
 def ensure_ai_submissions(db: Session, match: ArenaMatch, ops_round: OpsRound) -> None:

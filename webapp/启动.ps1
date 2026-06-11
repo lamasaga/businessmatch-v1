@@ -1,4 +1,4 @@
-# 商域 BizSim Edu — 一键启动（后端 + 学生端 + 组织者端）
+# 商识唯智 — 一键启动（后端 + 学生端 + 组织者端）
 # 用法: 在 webapp 目录执行  .\启动.ps1  或双击 启动.bat
 # 勿用: py 启动.ps1
 
@@ -46,7 +46,7 @@ function Wait-BackendReady {
 }
 
 Write-Host "========================================" -ForegroundColor Cyan
-Write-Host "  商域 BizSim Edu 项目启动器" -ForegroundColor Cyan
+Write-Host "  商识唯智 项目启动器" -ForegroundColor Cyan
 Write-Host "========================================" -ForegroundColor Cyan
 Write-Host ""
 

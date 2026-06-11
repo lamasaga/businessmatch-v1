@@ -733,5 +733,5 @@ And 三个页面上当前轮次均显示 "R3 运营决策"
 
 ---
 
-*商域 BizSim Edu · OPS 引擎 BDD v1.0*
+*商识唯智 · OPS 引擎 BDD v1.0*
 *基于 `docs/prd/PRD-OPS.md` 与 `docs/prd/bdd-writing-guide.md` 生成*

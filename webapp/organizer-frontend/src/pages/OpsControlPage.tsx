@@ -150,6 +150,10 @@ export default function OpsControlPage() {
 
   if (!state) return <p className="text-center text-gray-400 py-20">无法加载场次数据</p>;
 
+  const teams = state.teams ?? [];
+  const rounds = state.rounds ?? [];
+  const ranking = state.ranking ?? [];
+
   const isWaiting = state.match_status === 'registration' || state.match_status === 'draft';
   const isPlaying = state.match_status === 'playing';
   const isFinished = state.phase === 'finished';
@@ -244,7 +248,7 @@ export default function OpsControlPage() {
       {/* Stats */}
       <div className="grid grid-cols-4 gap-4">
         <MiniStat label="已加入选手" value={state.participant_count ?? 0} />
-        <MiniStat label="队伍数" value={state.teams.length} />
+        <MiniStat label="队伍数" value={teams.length} />
         <MiniStat label="当前阶段" value={PHASE_LABEL[state.phase] || state.phase} />
         <MiniStat label="上限人数" value={state.max_players ?? '—'} />
       </div>
@@ -254,7 +258,7 @@ export default function OpsControlPage() {
         <h2 className="font-medium flex items-center gap-2">
           <Users className="w-5 h-5" /> 队伍一览
         </h2>
-        {state.teams.length === 0 ? (
+        {teams.length === 0 ? (
           <p className="text-sm text-gray-400">暂无队伍 — 学生输入房间码加入后将自动分配。</p>
         ) : (
           <div className="overflow-x-auto">
@@ -270,7 +274,7 @@ export default function OpsControlPage() {
                 </tr>
               </thead>
               <tbody>
-                {state.teams.map((t) => (
+                {teams.map((t) => (
                   <tr key={t.id} className="border-b border-gray-700/50">
                     <td className="py-2 px-3 font-medium">
                       {t.team_name}
@@ -294,13 +298,13 @@ export default function OpsControlPage() {
       </div>
 
       {/* Ranking */}
-      {(isPlaying || isFinished) && state.ranking.length > 0 && (
+      {(isPlaying || isFinished) && ranking.length > 0 && (
         <div className="bg-gray-800 rounded-lg p-4 space-y-4">
           <h2 className="font-medium flex items-center gap-2">
             <TrendingUp className="w-5 h-5" /> 实时排行榜
           </h2>
           <div className="space-y-2">
-            {state.ranking.map((row) => (
+            {ranking.map((row) => (
               <div
                 key={row.team_id}
                 className="flex items-center gap-4 p-3 bg-gray-900/50 rounded-lg"
@@ -324,7 +328,7 @@ export default function OpsControlPage() {
             <Calculator className="w-5 h-5" /> 轮次状态
           </h2>
           <div className="flex flex-wrap gap-2">
-            {state.rounds.map((r) => (
+            {rounds.map((r) => (
               <span
                 key={r.id}
                 className={`px-3 py-1 rounded text-xs font-medium ${

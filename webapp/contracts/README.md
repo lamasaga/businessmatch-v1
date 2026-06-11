@@ -65,4 +65,4 @@ Set-Location "d:\1XFAwork\businessmatch-v1\webapp\backend"
 
 ---
 
-*商域 BizSim Edu · contracts*
+*商识唯智 · contracts*

@@ -1,4 +1,4 @@
-# BizSim Edu — 三端编排：后端 + 学生端 + 组织者端
+# 商识唯智 — 三端编排：后端 + 学生端 + 组织者端
 # 启动：docker compose up -d --build
 # 停止：docker compose down
 

@@ -61,7 +61,7 @@
     <circle cx="70" cy="58" r="22" fill="url(#platformGrad)" filter="url(#softShadow)"/>
     <text x="70" y="66" text-anchor="middle" fill="#fff" font-size="18" font-weight="700">商</text>
     <!-- Title -->
-    <text x="105" y="52" fill="#f8fafc" font-size="32" font-weight="700" letter-spacing="1">商域 BizSim Edu</text>
+    <text x="105" y="52" fill="#f8fafc" font-size="32" font-weight="700" letter-spacing="1">商识唯智</text>
     <text x="105" y="82" fill="#94a3b8" font-size="16" font-weight="400">普惠式商业素养教育基础设施 · 产品技术蓝图</text>
 
     <!-- Vision pill -->
@@ -509,5 +509,5 @@
   </g>
 
   <!-- Subtle brand watermark -->
-  <text x="1860" y="1290" text-anchor="end" fill="rgba(255,255,255,0.04)" font-size="48" font-weight="700">BizSim Edu</text>
+  <text x="1860" y="1290" text-anchor="end" fill="rgba(255,255,255,0.04)" font-size="48" font-weight="700">商识唯智</text>
 </svg>

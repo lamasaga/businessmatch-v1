@@ -728,5 +728,5 @@ rewards:
 
 ---
 
-*商域 BizSim Edu · FST 引擎 PRD v1.0*
+*商识唯智 · FST 引擎 PRD v1.0*
 *规范来源：`docs/engine-spec.md`、`02-ARCHITECTURE.md`、`03-ENGINEERING.md`*

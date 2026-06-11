@@ -4,7 +4,7 @@ meta:
   name: 金融投研实验室
   description: 投研、交易模拟与估值训练
   version: "1.0.0"
-  author: BizSim Edu
+  author: 商识唯智
   target_age: [16, 24]
 
 defaults:

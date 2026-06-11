@@ -27,7 +27,7 @@ export default function LoginPage() {
             <Radio className="w-7 h-7 text-primary" />
           </div>
           <h1 className="text-2xl font-bold">组织者登录</h1>
-          <p className="text-foreground-muted text-sm mt-2">商域 BizSim · 正式赛控场端</p>
+          <p className="text-foreground-muted text-sm mt-2">商识唯智 · 教师控场端</p>
           <p className="text-xs text-foreground-muted mt-3">
             演示账号：用户名 <strong>admin</strong> / 密码 <strong>admin123</strong>
           </p>

@@ -1,7 +1,7 @@
 openapi: 3.1.0
 info:
-  title: BizSim Edu API
-  description: 商域 - 商业模拟教育平台后端 API
+  title: 商识唯智 API
+  description: 商识唯智 - 商业模拟教育平台后端 API
   version: 1.0.0
 paths:
   /api/v1/auth/register:

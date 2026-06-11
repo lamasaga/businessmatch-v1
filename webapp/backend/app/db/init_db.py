@@ -109,7 +109,7 @@ def create_demo_organizer():
 
         organizer = OrganizerProfile(
             user_id=admin.id,
-            organization_name="商域教育平台",
+            organization_name="商识唯智教育平台",
             contact_phone="13800138000",
             verified=True,
         )

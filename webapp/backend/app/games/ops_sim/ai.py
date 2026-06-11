@@ -6,6 +6,7 @@ import random
 from typing import Any
 
 from app.games.ops_sim.config import V, get_cfg
+from app.games.ops_sim.enums import OpsCategory, OpsSegment
 
 
 def generate_ai_decision(
@@ -126,3 +127,23 @@ def generate_ai_bid(
     if bid <= current_price:
         return None
     return round(bid, 2)
+
+
+def generate_ai_positioning(
+    team_id: int,
+    team_name: str,
+    metadata: dict[str, Any] | None = None,
+    cfg: dict[str, Any] | None = None,
+) -> dict[str, Any]:
+    """为 AI 队伍生成产品定位（品类 + 客群 + 名称）。"""
+    if cfg is None:
+        cfg = get_cfg()
+    rng = random.Random(team_id)
+    categories = list(OpsCategory)
+    segments = list(OpsSegment)
+    meta = metadata or {}
+    return {
+        "product_name": meta.get("product_name") or f"{team_name}旗舰款",
+        "category": rng.choice(categories),
+        "target_segment": rng.choice(segments),
+    }

@@ -669,7 +669,7 @@ meta:
   name: 生产经营销售赛
   description: 多轮商业模拟：产品定位、运营决策、资源竞价
   version: "1.0.0"
-  author: BizSim Edu
+  author: 商识唯智
   target_age: [14, 18]
   runtime: react-game
 design_mode: standalone
@@ -998,5 +998,5 @@ rewards:
 
 ---
 
-*商域 BizSim Edu · OPS 引擎 PRD v1.1*
+*商识唯智 · OPS 引擎 PRD v1.1*
 *规范来源：`docs/engine-spec.md`、`docs/engine-design-intent.md`、`02-ARCHITECTURE.md`、`03-ENGINEERING.md`*

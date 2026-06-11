@@ -266,4 +266,4 @@ capabilities:
 
 ---
 
-*商域 BizSim Edu · 工程实现 v2.0*
+*商识唯智 · 工程实现 v2.0*

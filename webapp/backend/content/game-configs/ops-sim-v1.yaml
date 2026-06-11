@@ -4,7 +4,7 @@ meta:
   name: 生产经营销售赛
   description: 多轮商业模拟：产品定位、运营决策、资源竞价
   version: "1.0.0"
-  author: BizSim Edu
+  author: 商识唯智
   target_age: [14, 18]
   runtime: react-game
 design_mode: standalone

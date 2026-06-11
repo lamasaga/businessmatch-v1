@@ -62,15 +62,22 @@ export default function OpsLobbyPage() {
       const screenRes = await api.get(`/api/v1/ops/events/${eventId}/screen`);
       const screenData = screenRes.data.data;
       if (screenData) {
+        const teamRows = screenData.teams?.length
+          ? screenData.teams
+          : (screenData.ranking || []);
         setLobby((prev) =>
           prev
             ? {
                 ...prev,
                 room_code: screenData.room_code || '',
-                teams: (screenData.ranking || []).map((r: any) => ({
-                  team_id: r.team_id,
+                title: screenData.title || prev.title,
+                teams: teamRows.map((r: { id?: number; team_id?: number; team_name: string; product_name?: string; category?: string; target_segment?: string }) => ({
+                  team_id: r.team_id ?? r.id ?? 0,
                   team_name: r.team_name,
-                  has_positioned: false,
+                  product_name: r.product_name,
+                  category: r.category,
+                  target_segment: r.target_segment,
+                  has_positioned: Boolean(r.product_name),
                 })),
               }
             : null

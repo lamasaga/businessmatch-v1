@@ -2,7 +2,7 @@
 chcp 65001 >nul
 cd /d "%~dp0"
 echo.
-echo   商域 BizSim Edu — 正在用 PowerShell 启动（请勿使用 py 运行 .ps1）
+echo   商识唯智 — 正在用 PowerShell 启动（请勿使用 py 运行 .ps1）
 echo.
 
 where pwsh >nul 2>&1

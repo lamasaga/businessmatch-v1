@@ -53,9 +53,9 @@ export default function Layout() {
               <Compass className="w-5 h-5 text-background" />
             </div>
             <div>
-              <h1 className="font-bold text-lg text-foreground tracking-tight">商域</h1>
+              <h1 className="font-bold text-lg text-foreground tracking-tight">商识唯智</h1>
               <p className="text-[11px] text-foreground-muted tracking-wide uppercase">
-                {isCampPhase1 ? 'BizSim Camp' : 'BizSim Edu'}
+                {isCampPhase1 ? '商识唯智 · 体验营' : '商识唯智'}
               </p>
             </div>
           </Link>
@@ -137,7 +137,7 @@ export default function Layout() {
           <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-primary to-amber-600 flex items-center justify-center">
             <Compass className="w-4 h-4 text-background" />
           </div>
-          <span className="font-bold text-foreground text-sm tracking-tight">商域</span>
+          <span className="font-bold text-foreground text-sm tracking-tight">商识唯智</span>
         </Link>
         <button
           type="button"

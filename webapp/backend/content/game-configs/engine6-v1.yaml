@@ -4,7 +4,7 @@ meta:
   name: 引擎六
   description: 待确定产品定位
   version: "0.1.0"
-  author: BizSim Edu
+  author: 商识唯智
 
 defaults:
   rounds: 1

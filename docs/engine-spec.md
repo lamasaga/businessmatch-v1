@@ -410,7 +410,7 @@ this.tweens.add({
 如果需要骨骼动画：
 - **Spine**：行业标准，Phaser 有官方运行时 `phaser-spine`
 - **DragonBones**：免费，Phaser 社区插件
-- **建议**：BizSim 以经营模拟为主，Spine 仅用于重点 NPC/吉祥物
+- **建议**：商识唯智以经营模拟为主，Spine 仅用于重点 NPC/吉祥物
 
 ### 5.3 React 动画
 
@@ -717,4 +717,4 @@ emit("match.finished", {
 
 ---
 
-*商域 BizSim Edu · 引擎技术规范 v1.0*
+*商识唯智 · 引擎技术规范 v1.0*

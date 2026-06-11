@@ -1,4 +1,4 @@
-# BizSim 商业模拟组件库
+# 商识唯智 · 商业模拟组件库
 
 > **定位**：商业模拟教育游戏/赛事的通用设计元素命名与分类体系。
 > **用途**：
@@ -456,6 +456,6 @@ FST-Turn（新增）：TurnBasedAdvancement, 每轮3~5分钟, 8~12轮, 30~40分�
 
 ---
 
-*商域 BizSim Edu · 商业模拟组件库 v1.0*
+*商识唯智 · 商业模拟组件库 v1.0*
 *评审引擎：FST v3.0.0、TECH v1.0.0*
 *规范来源：`docs/engine-spec.md`、`02-ARCHITECTURE.md`、`03-ENGINEERING.md`*

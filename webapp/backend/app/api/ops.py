@@ -16,6 +16,7 @@ from app.domains.arena.enums import MatchStatus, MatchKind, GameEngineId
 from app.domains.arena.models.match import ArenaMatch
 from app.domains.arena.models.participant import ArenaParticipant
 from app.domains.arena.models.team import ArenaTeam
+from app.domains.arena.config_json import persist_match_config
 from app.domains.arena.services.match_lifecycle import begin_match
 from app.models.user import User
 from app.games.ops_sim.models import (
@@ -26,7 +27,7 @@ from app.games.ops_sim.enums import (
     OpsRoundStatus, OpsMatchPhase, OpsCategory, OpsSegment, OpsAiStrategy, OpsAuctionStatus,
 )
 from app.games.ops_sim.config import get_cfg, V
-from app.games.ops_sim.settle import settle_ops_round, final_ranking
+from app.games.ops_sim.settle import settle_ops_round, final_ranking, ensure_ai_positioning
 from app.games.ops_sim.auction import create_auction_items, place_bid, settle_auction, auction_state_for_event
 from app.games.ops_sim.ai import generate_ai_decision
 
@@ -112,6 +113,35 @@ def _match_phase(match: ArenaMatch) -> OpsMatchPhase:
     if val:
         return OpsMatchPhase(val)
     return OpsMatchPhase(match.status.value)
+
+
+def _set_match_ops_phase(match: ArenaMatch, phase: OpsMatchPhase, **extra: Any) -> None:
+    persist_match_config(match, {**(match.config or {}), "ops_phase": phase.value, **extra})
+
+
+def _try_advance_from_positioning(db: Session, match: ArenaMatch, cfg: dict[str, Any]) -> OpsMatchPhase:
+    """定位阶段收齐后进入 R1；练习赛自动为 AI 填位。"""
+    current = _match_phase(match)
+    if current != OpsMatchPhase.positioning:
+        return current
+
+    if match.match_kind == MatchKind.practice:
+        ensure_ai_positioning(db, match, cfg)
+
+    event_id = match.id
+    total_teams = db.query(ArenaTeam).filter(ArenaTeam.event_id == event_id).count()
+    submitted = db.query(OpsProductCard).filter(OpsProductCard.event_id == event_id).count()
+    if submitted < total_teams:
+        return OpsMatchPhase.positioning
+
+    has_round = db.query(OpsRound).filter(
+        OpsRound.event_id == event_id,
+        OpsRound.round_number == 1,
+    ).first()
+    if not has_round:
+        _open_round(db, match, 1)
+    _set_match_ops_phase(match, OpsMatchPhase.operation_round_1)
+    return OpsMatchPhase.operation_round_1
 
 
 def _validate_spending(decision: SubmitDecisionRequest, state: OpsTeamState, cfg: dict[str, Any]) -> tuple[float, list[str]]:
@@ -270,18 +300,17 @@ def submit_positioning(
     state.category = body.category
     state.target_segment = body.target_segment
 
-    # 检查是否所有队伍都已定位
-    total_teams = db.query(ArenaTeam).filter(ArenaTeam.event_id == event_id).count()
-    submitted = db.query(OpsProductCard).filter(OpsProductCard.event_id == event_id).count()
-    if submitted >= total_teams:
-        _open_round(db, match, 1)
-        match.config = {**(match.config or {}), "ops_phase": OpsMatchPhase.operation_round_1.value}
+    cfg = get_cfg(match.game_config_id or "ops-sim-v1")
+    db.flush()
+    new_phase = _try_advance_from_positioning(db, match, cfg)
 
     db.commit()
+    db.refresh(match)
     return ApiResponse.ok(data={
         "product_name": body.product_name,
         "category": body.category.value,
         "target_segment": body.target_segment.value,
+        "phase": new_phase.value,
     })
 
 
@@ -435,7 +464,7 @@ def start_match(
         )
         db.add(state)
 
-    match.config = {**(match.config or {}), "ops_phase": OpsMatchPhase.positioning.value}
+    _set_match_ops_phase(match, OpsMatchPhase.positioning)
     db.commit()
     return ApiResponse.ok(data={"status": match.status.value, "phase": OpsMatchPhase.positioning.value})
 
@@ -486,7 +515,7 @@ def advance(
         # 如果是 R2 结算后，自动创建拍卖品
         if phase == OpsMatchPhase.operation_round_2:
             create_auction_items(db, match)
-            match.config = {**(match.config or {}), "ops_phase": OpsMatchPhase.auction.value}
+            _set_match_ops_phase(match, OpsMatchPhase.auction)
             db.commit()
             return ApiResponse.ok(data={
                 "phase": OpsMatchPhase.auction.value,
@@ -510,7 +539,7 @@ def advance(
             3: OpsMatchPhase.operation_round_3,
             4: OpsMatchPhase.operation_round_4,
         }.get(next_round_no, OpsMatchPhase.operation_round_4)
-        match.config = {**(match.config or {}), "ops_phase": next_phase.value}
+        _set_match_ops_phase(match, next_phase)
         db.commit()
         return ApiResponse.ok(data={"phase": next_phase.value, "news": output.get("news", [])})
 
@@ -518,9 +547,22 @@ def advance(
         results = settle_auction(db, match)
         # 进入 R3
         _open_round(db, match, 3)
-        match.config = {**(match.config or {}), "ops_phase": OpsMatchPhase.operation_round_3.value}
+        _set_match_ops_phase(match, OpsMatchPhase.operation_round_3)
         db.commit()
         return ApiResponse.ok(data={"phase": OpsMatchPhase.operation_round_3.value, "auction_results": results})
+
+    if phase == OpsMatchPhase.positioning:
+        new_phase = _try_advance_from_positioning(db, match, cfg)
+        if new_phase == OpsMatchPhase.positioning:
+            total_teams = db.query(ArenaTeam).filter(ArenaTeam.event_id == event_id).count()
+            submitted = db.query(OpsProductCard).filter(OpsProductCard.event_id == event_id).count()
+            raise BusinessException(
+                f"尚有 {total_teams - submitted} 支队伍未完成产品定位",
+                code=ErrorCode.BAD_REQUEST,
+                status_code=400,
+            )
+        db.commit()
+        return ApiResponse.ok(data={"phase": new_phase.value})
 
     raise BusinessException(f"当前阶段 {phase.value} 不可推进", code=ErrorCode.BAD_REQUEST, status_code=400)
 
@@ -532,8 +574,7 @@ def pause_match(
     _user: User = Depends(require_teacher),
 ):
     match = _get_match(event_id, db)
-    match.config = {**(match.config or {}), "ops_phase_before_pause": _match_phase(match).value}
-    match.config = {**(match.config or {}), "ops_phase": OpsMatchPhase.paused.value}
+    _set_match_ops_phase(match, OpsMatchPhase.paused, ops_phase_before_pause=_match_phase(match).value)
     db.commit()
     return ApiResponse.ok(data={"phase": OpsMatchPhase.paused.value})
 
@@ -546,9 +587,56 @@ def resume_match(
 ):
     match = _get_match(event_id, db)
     prev = (match.config or {}).get("ops_phase_before_pause", OpsMatchPhase.operation_round_2.value)
-    match.config = {**(match.config or {}), "ops_phase": prev}
+    _set_match_ops_phase(match, OpsMatchPhase(prev))
     db.commit()
     return ApiResponse.ok(data={"phase": prev})
+
+
+def _screen_payload(match: ArenaMatch, db: Session) -> dict[str, Any]:
+    """组织端大屏 / 控场页完整状态。"""
+    event_id = match.id
+    cfg = get_cfg(match.game_config_id or "ops-sim-v1")
+    teams_db = db.query(ArenaTeam).filter(ArenaTeam.event_id == event_id).order_by(ArenaTeam.id).all()
+    states = {
+        s.team_id: s
+        for s in db.query(OpsTeamState).filter(OpsTeamState.event_id == event_id).all()
+    }
+    member_counts: dict[int, int] = {}
+    for p in db.query(ArenaParticipant).filter(ArenaParticipant.event_id == event_id).all():
+        if p.team_id:
+            member_counts[p.team_id] = member_counts.get(p.team_id, 0) + 1
+
+    teams = []
+    for t in teams_db:
+        s = states.get(t.id)
+        teams.append({
+            "id": t.id,
+            "team_name": t.team_name,
+            "product_name": s.product_name if s else None,
+            "category": s.category.value if s and s.category else None,
+            "target_segment": s.target_segment.value if s and s.target_segment else None,
+            "member_count": member_counts.get(t.id, 0),
+            "cash": s.cash if s else 0,
+            "net_assets": s.net_assets if s else 0,
+            "is_ai": bool(t.is_ai),
+        })
+
+    rounds = db.query(OpsRound).filter(OpsRound.event_id == event_id).order_by(OpsRound.round_number).all()
+    participant_count = db.query(ArenaParticipant).filter(ArenaParticipant.event_id == event_id).count()
+
+    return {
+        "match_id": match.id,
+        "match_status": match.status.value,
+        "phase": _match_phase(match).value,
+        "title": match.title,
+        "room_code": match.room_code,
+        "max_players": match.max_players,
+        "participant_count": participant_count,
+        "teams": teams,
+        "rounds": [_round_dict(r) for r in rounds],
+        "current_round": _round_dict(_current_round(event_id, db)),
+        "ranking": final_ranking(db, match),
+    }
 
 
 @router.get("/events/{event_id}/screen", response_model=ApiResponse[dict])
@@ -558,12 +646,7 @@ def screen(
     _user: User = Depends(require_teacher),
 ):
     match = _get_match(event_id, db)
-    ranking = final_ranking(db, match)
-    return ApiResponse.ok(data={
-        "match_status": match.status.value,
-        "phase": _match_phase(match).value,
-        "ranking": ranking,
-    })
+    return ApiResponse.ok(data=_screen_payload(match, db))
 
 
 # ── Internal helpers ──

@@ -3,7 +3,7 @@ from functools import lru_cache
 
 
 class Settings(BaseSettings):
-    APP_NAME: str = "BizSim Edu API"
+    APP_NAME: str = "商识唯智 API"
     APP_VERSION: str = "1.0.0"
     DEBUG: bool = True
 

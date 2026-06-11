@@ -1,7 +1,7 @@
 ---
 name: context-pack
 description: >-
-  Output T0/T1/T2 document attach list for BizSim AI coding sessions. Use when
+  Output T0/T1/T2 document attach list for 商识唯智 (BizSim) AI coding sessions. Use when
   the user starts a task, asks what to @, wants context budget help, says
   "任务包" / "attach 什么" / "开场" / "Phase" / "该加载什么".
 ---
