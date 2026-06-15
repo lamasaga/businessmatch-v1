@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from datetime import datetime, timezone
+from datetime import datetime, timezone, timedelta
 from typing import Any
 
 from fastapi import APIRouter, Depends
@@ -112,15 +112,71 @@ def _match_phase(match: ArenaMatch) -> OpsMatchPhase:
     val = (match.config or {}).get("ops_phase")
     if val:
         return OpsMatchPhase(val)
-    return OpsMatchPhase(match.status.value)
+    if match.status == MatchStatus.registration:
+        return OpsMatchPhase.registration
+    if match.status == MatchStatus.finished:
+        return OpsMatchPhase.finished
+    return OpsMatchPhase.positioning
 
 
 def _set_match_ops_phase(match: ArenaMatch, phase: OpsMatchPhase, **extra: Any) -> None:
     persist_match_config(match, {**(match.config or {}), "ops_phase": phase.value, **extra})
 
 
+def _operation_phase(round_number: int) -> OpsMatchPhase:
+    return OpsMatchPhase(f"operation_round_{round_number}")
+
+
+def _is_operation_phase(phase: OpsMatchPhase) -> bool:
+    return phase.value.startswith("operation_round_")
+
+
+def _round_no_from_phase(phase: OpsMatchPhase) -> int | None:
+    if not _is_operation_phase(phase):
+        return None
+    try:
+        return int(phase.value.rsplit("_", 1)[1])
+    except (IndexError, ValueError):
+        return None
+
+
+def _is_auction_phase(phase: OpsMatchPhase) -> bool:
+    return phase in (OpsMatchPhase.auction_a, OpsMatchPhase.auction_b, OpsMatchPhase.auction)
+
+
+def _auction_stage(phase: OpsMatchPhase) -> str:
+    if phase == OpsMatchPhase.auction_b:
+        return "auction_b"
+    return "auction_a"
+
+
+def _next_phase_after_round(round_number: int) -> OpsMatchPhase:
+    if round_number == 3:
+        return OpsMatchPhase.auction_b
+    if round_number >= 6:
+        return OpsMatchPhase.finished
+    return _operation_phase(round_number + 1)
+
+
+def _ensure_round_open(db: Session, match: ArenaMatch, round_number: int) -> OpsRound:
+    existing = db.query(OpsRound).filter(
+        OpsRound.event_id == match.id,
+        OpsRound.round_number == round_number,
+    ).first()
+    if existing:
+        if existing.status != OpsRoundStatus.settled:
+            existing.status = OpsRoundStatus.open
+            if not existing.opened_at:
+                existing.opened_at = datetime.now(timezone.utc)
+            if not existing.ended_at and match.match_kind == MatchKind.official:
+                cfg = get_cfg(match.game_config_id or "ops-sim-v1")
+                existing.ended_at = existing.opened_at + timedelta(minutes=V("decision_time_minutes", cfg, 20))
+        return existing
+    return _open_round(db, match, round_number)
+
+
 def _try_advance_from_positioning(db: Session, match: ArenaMatch, cfg: dict[str, Any]) -> OpsMatchPhase:
-    """定位阶段收齐后进入 R1；练习赛自动为 AI 填位。"""
+    """定位阶段收齐后进入拍卖 A；练习赛自动为 AI 填位。"""
     current = _match_phase(match)
     if current != OpsMatchPhase.positioning:
         return current
@@ -134,14 +190,9 @@ def _try_advance_from_positioning(db: Session, match: ArenaMatch, cfg: dict[str,
     if submitted < total_teams:
         return OpsMatchPhase.positioning
 
-    has_round = db.query(OpsRound).filter(
-        OpsRound.event_id == event_id,
-        OpsRound.round_number == 1,
-    ).first()
-    if not has_round:
-        _open_round(db, match, 1)
-    _set_match_ops_phase(match, OpsMatchPhase.operation_round_1)
-    return OpsMatchPhase.operation_round_1
+    create_auction_items(db, match, "auction_a")
+    _set_match_ops_phase(match, OpsMatchPhase.auction_a)
+    return OpsMatchPhase.auction_a
 
 
 def _validate_spending(decision: SubmitDecisionRequest, state: OpsTeamState, cfg: dict[str, Any]) -> tuple[float, list[str]]:
@@ -211,8 +262,27 @@ def _round_dict(r: OpsRound | None) -> dict[str, Any] | None:
         "round_number": r.round_number,
         "status": r.status.value if hasattr(r.status, "value") else r.status,
         "opened_at": r.opened_at.isoformat() if r.opened_at else None,
+        "ended_at": r.ended_at.isoformat() if r.ended_at else None,
         "settled_at": r.settled_at.isoformat() if r.settled_at else None,
     }
+
+
+def _all_teams_submitted(db: Session, event_id: int, ops_round: OpsRound) -> bool:
+    subs = db.query(OpsSubmission).filter(OpsSubmission.round_id == ops_round.id).count()
+    teams = db.query(ArenaTeam).filter(ArenaTeam.event_id == event_id).count()
+    return teams > 0 and subs >= teams
+
+
+def _can_practice_advance(db: Session, match: ArenaMatch, team: ArenaTeam | None = None) -> bool:
+    if match.match_kind != MatchKind.practice:
+        return False
+    phase = _match_phase(match)
+    if _is_auction_phase(phase):
+        return True
+    if _is_operation_phase(phase):
+        current_rd = _current_round(match.id, db)
+        return bool(current_rd and _all_teams_submitted(db, match.id, current_rd))
+    return False
 
 
 # ── 参赛端 ──
@@ -253,7 +323,7 @@ def get_state(
             }
 
     auction_items = []
-    if phase == OpsMatchPhase.auction:
+    if _is_auction_phase(phase):
         auction_items = auction_state_for_event(db, event_id)
 
     return ApiResponse.ok(data={
@@ -263,6 +333,7 @@ def get_state(
         "rounds": [_round_dict(r) for r in rounds],
         "current_round": _round_dict(current_rd),
         "has_submitted": has_submitted,
+        "can_advance": _can_practice_advance(db, match, team),
         "last_snapshot": last_snapshot,
         "auction_items": auction_items,
         "config": {
@@ -299,8 +370,12 @@ def submit_positioning(
     state.product_name = body.product_name
     state.category = body.category
     state.target_segment = body.target_segment
-
     cfg = get_cfg(match.game_config_id or "ops-sim-v1")
+    cat_cfg = cfg.get("product_categories", {}).get(body.category.value, {})
+    state.tech = float(cat_cfg.get("tech_base", state.tech or 20.0))
+    state.fit = float(cat_cfg.get("fit_base", state.fit or 20.0))
+    state.show = float(cat_cfg.get("show_base", state.show or 20.0))
+
     db.flush()
     new_phase = _try_advance_from_positioning(db, match, cfg)
 
@@ -325,22 +400,24 @@ def submit_decision(
     cfg = get_cfg(match.game_config_id or "ops-sim-v1")
 
     phase = _match_phase(match)
-    if phase not in (
-        OpsMatchPhase.operation_round_1,
-        OpsMatchPhase.operation_round_2,
-        OpsMatchPhase.operation_round_3,
-        OpsMatchPhase.operation_round_4,
-    ):
+    if not _is_operation_phase(phase):
         raise BusinessException("当前不可提交运营决策", code=ErrorCode.BAD_REQUEST, status_code=400)
 
     current_rd = _current_round(event_id, db)
     if not current_rd:
         raise BusinessException("当前无开放轮次", code=ErrorCode.BAD_REQUEST, status_code=400)
+    if match.match_kind == MatchKind.official and current_rd.ended_at and datetime.now(timezone.utc) > current_rd.ended_at:
+        raise BusinessException("当前轮次已截止", code=ErrorCode.BAD_REQUEST, status_code=400)
 
     key = f"ops_decision:{match.id}:{current_rd.id}:{team.id}"
     existing = db.query(OpsSubmission).filter(OpsSubmission.idempotency_key == key).first()
     if existing:
-        return ApiResponse.ok(data={"submitted": True, "round_number": current_rd.round_number})
+        return ApiResponse.ok(data={
+            "submitted": True,
+            "round_number": current_rd.round_number,
+            "phase": phase.value,
+            "can_advance": _can_practice_advance(db, match, team),
+        })
 
     # 支出校验
     _validate_spending(body, state, cfg)
@@ -355,14 +432,14 @@ def submit_decision(
     if match.match_kind == MatchKind.practice:
         from app.games.ops_sim.settle import ensure_ai_submissions
         ensure_ai_submissions(db, match, current_rd)
-        # 练习赛：如果所有队伍都已提交，自动结算
-        subs = db.query(OpsSubmission).filter(OpsSubmission.round_id == current_rd.id).count()
-        teams = db.query(ArenaTeam).filter(ArenaTeam.event_id == event_id).count()
-        if subs >= teams:
-            settle_ops_round(db, match, current_rd)
 
     db.commit()
-    return ApiResponse.ok(data={"submitted": True, "round_number": current_rd.round_number})
+    return ApiResponse.ok(data={
+        "submitted": True,
+        "round_number": current_rd.round_number,
+        "phase": phase.value,
+        "can_advance": _can_practice_advance(db, match, team),
+    })
 
 
 @router.post("/events/{event_id}/auction/bid", response_model=ApiResponse[dict])
@@ -375,7 +452,7 @@ def auction_bid(
 ):
     match, team, state = _get_team_and_state(event_id, current_user, db)
     phase = _match_phase(match)
-    if phase != OpsMatchPhase.auction:
+    if not _is_auction_phase(phase):
         raise BusinessException("当前不是竞价阶段", code=ErrorCode.BAD_REQUEST, status_code=400)
 
     result = place_bid(db, item_id, team.id, body.amount)
@@ -460,6 +537,9 @@ def start_match(
             team_id=team.id,
             cash=initial_cash,
             net_assets=initial_cash,
+            tech=20.0,
+            fit=20.0,
+            show=20.0,
             ai_strategy=ai_strategy,
         )
         db.add(state)
@@ -480,12 +560,10 @@ def advance(
     phase = _match_phase(match)
     cfg = get_cfg(match.game_config_id or "ops-sim-v1")
 
-    if phase in (
-        OpsMatchPhase.operation_round_1,
-        OpsMatchPhase.operation_round_2,
-        OpsMatchPhase.operation_round_3,
-        OpsMatchPhase.operation_round_4,
-    ):
+    if _is_operation_phase(phase):
+        round_no = _round_no_from_phase(phase)
+        if round_no is None:
+            raise BusinessException("运营阶段异常", code=ErrorCode.BAD_REQUEST, status_code=400)
         current_rd = _current_round(event_id, db)
         if not current_rd:
             raise BusinessException("当前无开放轮次", code=ErrorCode.BAD_REQUEST, status_code=400)
@@ -511,45 +589,37 @@ def advance(
             ))
 
         output = settle_ops_round(db, match, current_rd)
-
-        # 如果是 R2 结算后，自动创建拍卖品
-        if phase == OpsMatchPhase.operation_round_2:
-            create_auction_items(db, match)
-            _set_match_ops_phase(match, OpsMatchPhase.auction)
+        next_phase = _next_phase_after_round(round_no)
+        if next_phase == OpsMatchPhase.auction_b:
+            create_auction_items(db, match, "auction_b")
+            _set_match_ops_phase(match, next_phase)
             db.commit()
-            return ApiResponse.ok(data={
-                "phase": OpsMatchPhase.auction.value,
-                "news": output.get("news", []),
-            })
+            return ApiResponse.ok(data={"phase": next_phase.value, "news": output.get("news", [])})
 
-        # R4 结算后 → finished
-        if phase == OpsMatchPhase.operation_round_4:
+        if next_phase == OpsMatchPhase.finished:
+            _set_match_ops_phase(match, OpsMatchPhase.finished)
+            match.status = MatchStatus.finished
             ranking = final_ranking(db, match)
-            # 奖励结算
             participants = db.query(ArenaParticipant).filter(ArenaParticipant.event_id == event_id).all()
             from app.domains.career.services.rewards import settle_match_rewards
             settle_match_rewards(db, match, participants)
+            db.commit()
             return ApiResponse.ok(data={"phase": OpsMatchPhase.finished.value, "ranking": ranking})
 
-        # 其他轮次 → 下一运营轮
-        next_round_no = current_rd.round_number + 1
-        _open_round(db, match, next_round_no)
-        next_phase = {
-            2: OpsMatchPhase.operation_round_2,
-            3: OpsMatchPhase.operation_round_3,
-            4: OpsMatchPhase.operation_round_4,
-        }.get(next_round_no, OpsMatchPhase.operation_round_4)
+        _ensure_round_open(db, match, round_no + 1)
         _set_match_ops_phase(match, next_phase)
         db.commit()
         return ApiResponse.ok(data={"phase": next_phase.value, "news": output.get("news", [])})
 
-    if phase == OpsMatchPhase.auction:
+    if _is_auction_phase(phase):
         results = settle_auction(db, match)
-        # 进入 R3
-        _open_round(db, match, 3)
-        _set_match_ops_phase(match, OpsMatchPhase.operation_round_3)
+        stage = _auction_stage(phase)
+        next_round = 1 if stage == "auction_a" else 4
+        next_phase = _operation_phase(next_round)
+        _ensure_round_open(db, match, next_round)
+        _set_match_ops_phase(match, next_phase)
         db.commit()
-        return ApiResponse.ok(data={"phase": OpsMatchPhase.operation_round_3.value, "auction_results": results})
+        return ApiResponse.ok(data={"phase": next_phase.value, "auction_results": results})
 
     if phase == OpsMatchPhase.positioning:
         new_phase = _try_advance_from_positioning(db, match, cfg)
@@ -565,6 +635,59 @@ def advance(
         return ApiResponse.ok(data={"phase": new_phase.value})
 
     raise BusinessException(f"当前阶段 {phase.value} 不可推进", code=ErrorCode.BAD_REQUEST, status_code=400)
+
+
+@router.post("/events/{event_id}/practice/advance", response_model=ApiResponse[dict])
+def practice_advance(
+    event_id: int,
+    current_user: User = Depends(get_current_active_user),
+    db: Session = Depends(get_db),
+):
+    match, team, _state = _get_team_and_state(event_id, current_user, db)
+    if match.match_kind != MatchKind.practice:
+        raise BusinessException("仅练习赛支持参赛端推进", code=ErrorCode.FORBIDDEN, status_code=403)
+    phase = _match_phase(match)
+
+    if _is_auction_phase(phase):
+        results = settle_auction(db, match)
+        stage = _auction_stage(phase)
+        next_round = 1 if stage == "auction_a" else 4
+        next_phase = _operation_phase(next_round)
+        _ensure_round_open(db, match, next_round)
+        _set_match_ops_phase(match, next_phase)
+        db.commit()
+        return ApiResponse.ok(data={"phase": next_phase.value, "auction_results": results})
+
+    if _is_operation_phase(phase):
+        round_no = _round_no_from_phase(phase)
+        current_rd = _current_round(event_id, db)
+        if not round_no or not current_rd:
+            raise BusinessException("当前无可推进轮次", code=ErrorCode.BAD_REQUEST, status_code=400)
+        if not _all_teams_submitted(db, event_id, current_rd):
+            raise BusinessException("仍有队伍未提交决策", code=ErrorCode.BAD_REQUEST, status_code=400)
+        output = settle_ops_round(db, match, current_rd)
+        next_phase = _next_phase_after_round(round_no)
+        if next_phase == OpsMatchPhase.auction_b:
+            create_auction_items(db, match, "auction_b")
+        elif next_phase == OpsMatchPhase.finished:
+            _set_match_ops_phase(match, OpsMatchPhase.finished)
+            match.status = MatchStatus.finished
+            participants = db.query(ArenaParticipant).filter(ArenaParticipant.event_id == event_id).all()
+            from app.domains.career.services.rewards import settle_match_rewards
+            settle_match_rewards(db, match, participants)
+            db.commit()
+            return ApiResponse.ok(data={
+                "phase": OpsMatchPhase.finished.value,
+                "news": output.get("news", []),
+                "ranking": final_ranking(db, match),
+            })
+        else:
+            _ensure_round_open(db, match, round_no + 1)
+        _set_match_ops_phase(match, next_phase)
+        db.commit()
+        return ApiResponse.ok(data={"phase": next_phase.value, "news": output.get("news", [])})
+
+    raise BusinessException(f"当前阶段 {phase.value} 不可由参赛端推进", code=ErrorCode.BAD_REQUEST, status_code=400)
 
 
 @router.post("/events/{event_id}/pause", response_model=ApiResponse[dict])
@@ -653,11 +776,17 @@ def screen(
 
 
 def _open_round(db: Session, match: ArenaMatch, round_number: int) -> OpsRound:
+    now = datetime.now(timezone.utc)
+    cfg = get_cfg(match.game_config_id or "ops-sim-v1")
+    ended_at = None
+    if match.match_kind == MatchKind.official:
+        ended_at = now + timedelta(minutes=V("decision_time_minutes", cfg, 20))
     rd = OpsRound(
         event_id=match.id,
         round_number=round_number,
         status=OpsRoundStatus.open,
-        opened_at=datetime.now(timezone.utc),
+        opened_at=now,
+        ended_at=ended_at,
     )
     db.add(rd)
     db.flush()

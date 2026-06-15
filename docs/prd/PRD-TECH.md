@@ -6,7 +6,7 @@
 > **版本**：`1.0.0`
 > **运行时**：`react-game`
 > **设计模式**：`standalone`
-> **最后更新**：2026-06-07
+> **最后更新**：2026-06-15
 
 ---
 
@@ -844,6 +844,6 @@ rewards:
 
 ---
 
-*商识唯智 · TECH 引擎 PRD v1.0*
+*商识唯智 · TECH 引擎 PRD v1.1*
 *规范来源：`docs/engine-spec.md`、`02-ARCHITECTURE.md`、`03-ENGINEERING.md`*
 *引擎实现：`backend/app/games/techventure/v6_engine.py`*

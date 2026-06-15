@@ -27,10 +27,14 @@ interface OpsLobbyData {
 const PHASE_LABEL: Record<string, string> = {
   registration: '报名中',
   positioning: '产品定位',
+  auction_a: '拍卖A · 基础资源',
   operation_round_1: '运营第1轮',
   operation_round_2: '运营第2轮',
   operation_round_3: '运营第3轮',
+  auction_b: '拍卖B · 战略资源',
   operation_round_4: '运营第4轮',
+  operation_round_5: '运营第5轮',
+  operation_round_6: '运营第6轮',
   auction: '资源竞价',
   finished: '已结束',
   paused: '已暂停',
@@ -136,7 +140,7 @@ export default function OpsLobbyPage() {
         </div>
         <h1 className="text-2xl font-bold">{lobby.title || '生产经营销售赛'}</h1>
         <p className="text-foreground-muted mt-2">
-          OPS · 4 轮运营决策 + 资源竞价
+          OPS · 6 轮运营决策 + 双拍卖
         </p>
         {lobby.room_code && (
           <div className="mt-3 inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-primary/10 text-primary text-sm font-mono">

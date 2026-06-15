@@ -22,11 +22,23 @@ export default function AuctionHall({ items, teamId, cash, onBid }: Props) {
     setAmounts((prev) => ({ ...prev, [item.id]: '' }));
   };
 
+  const effectText = (item: OpsAuctionItemState) => {
+    const effect = item.effect || {};
+    if (item.item_type === 'production') return `产能 +${effect.capacity_bonus || 0}`;
+    if (item.item_type === 'advertising') return `${effect.city || '指定城市'} Show ×${effect.show_multiplier || 1}`;
+    if (item.item_type === 'discount') return `原材料成本 -${Math.round((effect.material_cost_discount || 0) * 100)}%`;
+    if (item.item_type === 'exclusive_channel') return `渠道效用 +${effect.utility_bonus || 0}，需求 ×${effect.demand_multiplier || 1}`;
+    if (item.item_type === 'strategic_resource') return `成本/研发资源加成`;
+    if (item.item_type === 'brand_endorsement') return `品牌 +${effect.show_bonus || 0}，效用 +${effect.utility_bonus || 0}`;
+    if (item.item_type === 'legal_protection') return `风险保护 ${Math.round((effect.protection_rate || 0) * 100)}%`;
+    return '战略资源';
+  };
+
   return (
     <div className="rounded-2xl border border-border-subtle bg-background-secondary p-6 space-y-4">
       <div className="flex items-center gap-2">
         <Gavel className="w-5 h-5 text-warning" />
-        <h2 className="text-lg font-bold">资源竞价</h2>
+        <h2 className="text-lg font-bold">资源拍卖</h2>
         <span className="text-xs text-foreground-muted ml-2">可用现金 ¥{cash.toLocaleString()}</span>
       </div>
 
@@ -46,9 +58,7 @@ export default function AuctionHall({ items, teamId, cash, onBid }: Props) {
                 <div>
                   <div className="font-semibold">{item.name}</div>
                   <div className="text-xs text-foreground-muted mt-1">
-                    {item.item_type === 'production' && `产能 +${item.effect.capacity_bonus || 0}`}
-                    {item.item_type === 'advertising' && `${item.effect.city} Show ×${item.effect.show_multiplier || 1}`}
-                    {item.item_type === 'discount' && `原材料成本 -${Math.round((item.effect.material_cost_discount || 0) * 100)}%`}
+                    {effectText(item)}
                   </div>
                 </div>
                 <div className="text-right">

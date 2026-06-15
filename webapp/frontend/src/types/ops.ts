@@ -2,10 +2,14 @@ export type OpsCategory = 'electronics' | 'fast_moving' | 'home';
 export type OpsSegment = 'geek' | 'pragmatic' | 'show';
 export type OpsPhase =
   | 'positioning'
+  | 'auction_a'
   | 'operation_round_1'
   | 'operation_round_2'
   | 'operation_round_3'
+  | 'auction_b'
   | 'operation_round_4'
+  | 'operation_round_5'
+  | 'operation_round_6'
   | 'auction'
   | 'finished'
   | 'paused';
@@ -60,6 +64,7 @@ export interface OpsRound {
   round_number: number;
   status: 'pending' | 'open' | 'settled';
   opened_at: string | null;
+  ended_at?: string | null;
   settled_at: string | null;
 }
 
@@ -67,7 +72,14 @@ export interface OpsAuctionItemState {
   id: number;
   item_key: string;
   name: string;
-  item_type: 'production' | 'advertising' | 'discount';
+  item_type:
+    | 'production'
+    | 'advertising'
+    | 'discount'
+    | 'exclusive_channel'
+    | 'strategic_resource'
+    | 'brand_endorsement'
+    | 'legal_protection';
   base_price: number;
   current_price: number;
   final_price?: number;
@@ -92,6 +104,7 @@ export interface OpsGameState {
   rounds: OpsRound[];
   current_round: OpsRound | null;
   has_submitted: boolean;
+  can_advance?: boolean;
   last_snapshot: OpsSnapshot | null;
   auction_items: OpsAuctionItemState[];
   config: {

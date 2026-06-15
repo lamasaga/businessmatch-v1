@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>POP 拟真城市模拟器 · 商识唯智</title>
+  <link rel="stylesheet" href="style.css" />
+  <!-- Chart.js via CDN -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.3/dist/chart.umd.min.js"></script>
+</head>
+<body>
+  <div id="app">
+    <!-- 左侧参数面板 -->
+    <aside id="sidebar">
+      <div id="sidebar-header">
+        <h1>POP 拟真城市模拟器</h1>
+        <div class="subtitle">微观社会涌现设计验证工具</div>
+      </div>
+      <div id="parameter-panel">
+        <!-- 由 ui.js 动态生成 -->
+      </div>
+    </aside>
+
+    <!-- 主内容区 -->
+    <main id="main">
+      <div id="top-bar">
+        <label for="preset-select">预设</label>
+        <select id="preset-select">
+          <option value="balanced">均衡城市</option>
+          <option value="industrial_decline">工业衰退</option>
+          <option value="housing_bubble">房地产泡沫</option>
+          <option value="tech_replacement">技术替代</option>
+          <option value="high_welfare">高福利社会</option>
+          <option value="immigration_wave">移民潮冲击</option>
+          <option value="custom">自定义</option>
+        </select>
+
+        <button id="btn-reset" class="secondary">重置</button>
+        <button id="btn-step">单步推进</button>
+        <button id="btn-run">运行</button>
+
+        <label for="speed-select">速度</label>
+        <select id="speed-select">
+          <option value="1000">1 tick/秒</option>
+          <option value="500" selected>2 ticks/秒</option>
+          <option value="200">5 ticks/秒</option>
+          <option value="50">20 ticks/秒</option>
+        </select>
+
+        <label for="seed-input">随机种子</label>
+        <input id="seed-input" type="number" placeholder="随机" style="width: 90px;" />
+
+        <button id="btn-export-config" class="secondary">导出配置</button>
+        <button id="btn-export-state" class="secondary">导出状态</button>
+        <button id="btn-import-config" class="secondary">导入配置</button>
+        <button id="btn-import-state" class="secondary">导入状态</button>
+        <input type="file" id="import-config-file" accept=".json" style="display: none;" />
+        <input type="file" id="import-state-file" accept=".json" style="display: none;" />
+
+        <div id="errors"></div>
+
+        <div id="status-bar">
+          <div class="status-item"><span class="value" id="status-status">editing</span><span class="label">状态</span></div>
+          <div class="status-item"><span class="value" id="status-tick">-</span><span class="label">Tick</span></div>
+          <div class="status-item"><span class="value" id="status-pop">-</span><span class="label">人口</span></div>
+          <div class="status-item"><span class="value" id="status-gdp">-</span><span class="label">GDP</span></div>
+          <div class="status-item"><span class="value" id="status-unemployment">-</span><span class="label">失业率</span></div>
+          <div class="status-item"><span class="value" id="status-satisfaction">-</span><span class="label">满意度</span></div>
+        </div>
+      </div>
+
+      <div id="content">
+        <div id="dashboard">
+          <!-- 时间序列图 -->
+          <div class="card full-width">
+            <h3>宏观指标时间序列</h3>
+            <div class="chart-controls" id="chart-toggles"></div>
+            <div id="chart-container">
+              <canvas id="main-chart"></canvas>
+              <div class="empty-state" id="chart-empty" style="display: none;">暂无数据，请先重置初始状态</div>
+            </div>
+          </div>
+
+          <!-- 区域地图 -->
+          <div class="card">
+            <h3>
+              区域地图
+              <select id="map-metric">
+                <option value="population">人口密度</option>
+                <option value="avgWage">人均收入</option>
+                <option value="housingCost">住房成本</option>
+                <option value="vacancyRate">岗位空缺率</option>
+                <option value="satisfaction">满意度</option>
+              </select>
+            </h3>
+            <canvas id="district-map"></canvas>
+            <div class="map-legend">
+              <span id="map-min">低</span>
+              <div class="map-legend-bar"></div>
+              <span id="map-max">高</span>
+            </div>
+          </div>
+
+          <!-- 分布图 -->
+          <div class="card">
+            <h3>
+              分布图
+              <button id="dist-toggle" class="secondary" style="padding: 2px 8px; font-size: 11px;">切换：职业结构</button>
+            </h3>
+            <div id="dist-chart">
+              <canvas id="distribution-chart"></canvas>
+            </div>
+          </div>
+
+          <!-- 事件日志 -->
+          <div class="card">
+            <h3>
+              事件日志
+              <select id="event-filter">
+                <option value="all">全部</option>
+                <option value="init">初始化</option>
+                <option value="immigration">移民</option>
+                <option value="firm_closure">企业倒闭</option>
+                <option value="material_spike">原材料涨价</option>
+                <option value="consumer_downgrade">消费降级</option>
+                <option value="tech_breakthrough">技术突破</option>
+                <option value="natural_disaster">自然灾害</option>
+                <option value="migration_wave">迁移潮</option>
+              </select>
+            </h3>
+            <div id="event-log">
+              <div class="empty-state">暂无事件</div>
+            </div>
+          </div>
+
+          <!-- POP 表格 -->
+          <div class="card full-width">
+            <h3>POP 组明细（前 30）</h3>
+            <div class="table-scroll">
+              <table>
+                <thead>
+                  <tr>
+                    <th>职业</th>
+                    <th>规模</th>
+                    <th>区域</th>
+                    <th>人均收入</th>
+                    <th>财富</th>
+                    <th>满意度</th>
+                    <th>失业率</th>
+                  </tr>
+                </thead>
+                <tbody id="pop-table-body"></tbody>
+              </table>
+            </div>
+          </div>
+
+          <!-- 企业表格 -->
+          <div class="card full-width">
+            <h3>企业明细（前 30）</h3>
+            <div class="table-scroll">
+              <table>
+                <thead>
+                  <tr>
+                    <th>企业</th>
+                    <th>区域</th>
+                    <th>产出商品</th>
+                    <th>雇员/目标</th>
+                    <th>工资</th>
+                    <th>产出</th>
+                    <th>利润</th>
+                  </tr>
+                </thead>
+                <tbody id="firm-table-body"></tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <script src="simulator.js"></script>
+  <script src="ui.js"></script>
+</body>
+</html>

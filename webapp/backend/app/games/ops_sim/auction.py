@@ -14,13 +14,29 @@ from app.games.ops_sim.enums import OpsAuctionStatus
 from app.games.ops_sim.config import get_cfg
 
 
-def create_auction_items(db: Session, match: ArenaMatch) -> list[OpsAuctionItem]:
-    """R2 结算后创建拍卖品。"""
+def create_auction_items(db: Session, match: ArenaMatch, stage: str = "auction_a") -> list[OpsAuctionItem]:
+    """Create auction items for a stage."""
     cfg = get_cfg(match.game_config_id or "ops-sim-v1")
     items_cfg = cfg.get("auction_items", {})
+    pools = cfg.get("auction_item_pools", {})
+    stages = cfg.get("auction_stages", {})
+    stage_cfg = stages.get(stage, {})
+    item_pool = stage_cfg.get("item_pool")
+    allowed_keys = set(pools.get(item_pool, [])) if item_pool else set()
     items = []
 
     for key, icfg in items_cfg.items():
+        item_stage = icfg.get("stage")
+        if allowed_keys and key not in allowed_keys:
+            continue
+        if not allowed_keys and item_stage and item_stage != stage:
+            continue
+        exists = db.query(OpsAuctionItem).filter(
+            OpsAuctionItem.event_id == match.id,
+            OpsAuctionItem.item_key == key,
+        ).first()
+        if exists:
+            continue
         item = OpsAuctionItem(
             event_id=match.id,
             item_key=key,
@@ -54,6 +70,14 @@ def place_bid(
 
     if amount <= item.current_price:
         return {"ok": False, "error": "出价必须高于当前最高价"}
+
+    cfg = get_cfg()
+    min_increment = max(
+        item.base_price * cfg.get("defaults", {}).get("min_bid_increment_rate", 0.05),
+        cfg.get("defaults", {}).get("min_bid_increment_abs", 500),
+    )
+    if amount < item.current_price + min_increment:
+        return {"ok": False, "error": f"最低加价幅度为 {min_increment:.0f}"}
 
     team_state = db.query(OpsTeamState).filter(OpsTeamState.team_id == team_id).first()
     if not team_state:
@@ -115,6 +139,7 @@ def settle_auction(db: Session, match: ArenaMatch) -> list[dict[str, Any]]:
                     factories = list(team_state.factories or [])
                     factories.append({
                         "item_key": item.item_key,
+                        "effect": effect,
                         "capacity_bonus": effect.get("capacity_bonus", 0),
                         "quality_bonus": effect.get("quality_bonus", 0),
                     })
@@ -123,12 +148,45 @@ def settle_auction(db: Session, match: ArenaMatch) -> list[dict[str, Any]]:
                     ads = list(team_state.ads or [])
                     ads.append({
                         "item_key": item.item_key,
+                        "effect": effect,
                         "city": effect.get("city"),
                         "show_multiplier": effect.get("show_multiplier", 1.2),
                     })
                     team_state.ads = ads
                 elif item_type == "discount":
-                    team_state.discount_rate = effect.get("material_cost_discount", 0.0)
+                    team_state.discount_rate = max(
+                        float(team_state.discount_rate or 0.0),
+                        float(effect.get("material_cost_discount", 0.0)),
+                    )
+                elif item_type == "exclusive_channel":
+                    entered = dict(team_state.__dict__)
+                    channels = list((entered.get("channels") if isinstance(entered.get("channels"), list) else []) or [])
+                    channels.append({"item_key": item.item_key, "effect": effect, **effect})
+                    setattr(team_state, "channels", channels) if hasattr(team_state, "channels") else None
+                    team_state.entered_cities = team_state.entered_cities or []
+                    # Persist in ads JSON for backward-compatible storage until a dedicated column exists.
+                    ads = list(team_state.ads or [])
+                    ads.append({"item_key": item.item_key, "resource_kind": "exclusive_channel", "effect": effect, **effect})
+                    team_state.ads = ads
+                elif item_type == "strategic_resource":
+                    if effect.get("material_cost_discount"):
+                        team_state.discount_rate = max(
+                            float(team_state.discount_rate or 0.0),
+                            float(effect.get("material_cost_discount", 0.0)),
+                        )
+                    team_state.tech = float(team_state.tech or 20.0) + float(effect.get("tech_bonus", 0.0))
+                    factories = list(team_state.factories or [])
+                    factories.append({"item_key": item.item_key, "resource_kind": "strategic_resource", "effect": effect, **effect})
+                    team_state.factories = factories
+                elif item_type == "brand_endorsement":
+                    team_state.show = float(team_state.show or 20.0) + float(effect.get("show_bonus", 0.0))
+                    ads = list(team_state.ads or [])
+                    ads.append({"item_key": item.item_key, "resource_kind": "brand_endorsement", "effect": effect, **effect})
+                    team_state.ads = ads
+                elif item_type == "legal_protection":
+                    protections = list(team_state.factories or [])
+                    protections.append({"item_key": item.item_key, "resource_kind": "legal_protection", "effect": effect, **effect})
+                    team_state.factories = protections
 
         result = OpsAuctionResult(
             item_id=item.id,

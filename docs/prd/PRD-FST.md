@@ -6,7 +6,7 @@
 > **版本**：3.0.0
 > **运行时**：`phaser`（当前前端 React 实现，Phaser 场景预留接入）
 > **设计模式**：`standalone`
-> **最后更新**：2026-06-07
+> **最后更新**：2026-06-15
 
 ---
 
@@ -17,7 +17,7 @@
 | **引擎中文名** | 浮生记 / FStrading |
 | **引擎英文名** | FST / FSTRADING |
 | **引擎 ID** | `trading` |
-| **配置包 ID** | `fstrading` |
+| **配置包 ID** | `fstrading`（`trading-v1`、`trading-v2-rts` 已废弃为历史别名） |
 | **版本** | `3.0.0` |
 | **设计模式** | `standalone` |
 | **主题** | `fstrading` |
@@ -728,5 +728,5 @@ rewards:
 
 ---
 
-*商识唯智 · FST 引擎 PRD v1.0*
+*商识唯智 · FST 引擎 PRD v1.1*
 *规范来源：`docs/engine-spec.md`、`02-ARCHITECTURE.md`、`03-ENGINEERING.md`*

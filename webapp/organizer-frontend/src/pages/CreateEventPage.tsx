@@ -8,7 +8,7 @@ type GamePreset = 'fstrading' | 'techventure' | 'ops';
 const PRESET_META: Record<GamePreset, { label: string; subtitle: string; game_config_id: string; game_type: string }> = {
   fstrading: { label: 'FStrading', subtitle: '长三角六城十品即时商战 · 5 秒 tick', game_config_id: 'fstrading', game_type: 'trading' },
   techventure: { label: '创想大赢家', subtitle: '4 轮三城策略 · 队伍制 · BQI 评分', game_config_id: 'techventure-v1', game_type: 'techventure' },
-  ops: { label: '生产经营销售赛', subtitle: '4 轮运营决策 + 资源竞价 · 队伍制 · 净资产排名', game_config_id: 'ops-sim-v1', game_type: 'ops_sim' },
+  ops: { label: '生产经营销售赛', subtitle: '6 轮运营 + 双拍卖 · 队伍制 · 净资产排名', game_config_id: 'ops-sim-v1', game_type: 'ops_sim' },
 };
 
 const RTS_DURATION_OPTIONS = [
@@ -48,7 +48,7 @@ export default function CreateEventPage() {
         };
       } else if (gamePreset === 'ops') {
         config = {
-          rounds: 4,
+          rounds: 6,
           initial_capital: formData.ops_initial_capital,
         };
       } else {
@@ -148,7 +148,7 @@ export default function CreateEventPage() {
             >
               <Factory className={`w-5 h-5 mb-2 ${gamePreset === 'ops' ? 'text-blue-400' : 'text-foreground-muted'}`} />
               <p className="font-semibold">生产经营销售赛</p>
-              <p className="text-xs text-foreground-muted mt-1">4 轮运营 + 资源竞价 · 队伍制</p>
+              <p className="text-xs text-foreground-muted mt-1">6 轮运营 + 双拍卖 · 队伍制</p>
             </button>
           </div>
         </section>
@@ -270,10 +270,10 @@ export default function CreateEventPage() {
               />
             </Field>
             <ul className="text-sm text-foreground-muted space-y-1.5">
-              <li>· 固定 4 轮运营决策 + 1 轮资源竞价</li>
+              <li>· 固定 6 轮运营决策 + 2 轮资源拍卖</li>
               <li>· 队伍制：每队选择产品品类和目标客群</li>
               <li>· 每轮决策：生产量、定价、营销/研发投入、销售人力、目标城市</li>
-              <li>· 第 2 轮结算后开放资源竞价（生产线/广告位/原材料折扣）</li>
+              <li>· R1 前拍卖基础资源，R4 前拍卖战略资源</li>
               <li>· 最终按净资产排名</li>
             </ul>
           </section>

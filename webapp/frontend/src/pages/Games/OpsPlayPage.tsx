@@ -7,7 +7,7 @@ import DecisionForm from '../../components/ops/DecisionForm';
 import AuctionHall from '../../components/ops/AuctionHall';
 import FinancialStatements from '../../components/ops/FinancialStatements';
 import RankingPanel from '../../components/ops/RankingPanel';
-import { ArrowLeft, Loader2 } from 'lucide-react';
+import { ArrowLeft, Loader2, ArrowRight } from 'lucide-react';
 
 export default function OpsPlayPage() {
   const { id } = useParams<{ id: string }>();
@@ -16,7 +16,7 @@ export default function OpsPlayPage() {
 
   const {
     gameState, ranking, loading, error,
-    fetchState, submitPositioning, submitDecision, placeBid, fetchRanking, clearError,
+    fetchState, submitPositioning, submitDecision, placeBid, advancePractice, fetchRanking, clearError,
   } = useOpsStore();
 
   const [submitting, setSubmitting] = useState(false);
@@ -63,6 +63,17 @@ export default function OpsPlayPage() {
     }
   };
 
+  const handleAdvance = async () => {
+    setSubmitting(true);
+    clearError();
+    try {
+      await advancePractice(eventId);
+      await fetchRanking(eventId);
+    } finally {
+      setSubmitting(false);
+    }
+  };
+
   const phase = gameState?.phase;
   const team = gameState?.team;
   const cfg = gameState?.config;
@@ -91,7 +102,8 @@ export default function OpsPlayPage() {
           <div className="text-sm font-semibold">
             {phase === 'positioning' && '产品定位'}
             {phase?.startsWith('operation_round_') && `R${currentRound?.round_number || ''} 运营决策`}
-            {phase === 'auction' && '资源竞价'}
+            {(phase === 'auction' || phase === 'auction_a') && '拍卖A · 基础资源'}
+            {phase === 'auction_b' && '拍卖B · 战略资源'}
             {phase === 'finished' && '比赛结束'}
           </div>
           <div className="text-xs text-foreground-muted">
@@ -144,16 +156,44 @@ export default function OpsPlayPage() {
               onSubmit={handleDecision}
               submitting={submitting || loading}
             />
+            {gameState?.can_advance && (
+              <div className="flex justify-end">
+                <button
+                  type="button"
+                  onClick={handleAdvance}
+                  disabled={submitting || loading}
+                  className="inline-flex items-center gap-2 rounded-lg bg-primary px-4 py-2 text-sm font-semibold text-primary-foreground disabled:opacity-50"
+                >
+                  {submitting || loading ? <Loader2 className="h-4 w-4 animate-spin" /> : <ArrowRight className="h-4 w-4" />}
+                  {phase === 'operation_round_6' ? '完成比赛' : '进入下一回合'}
+                </button>
+              </div>
+            )}
           </>
         )}
 
-        {phase === 'auction' && (
-          <AuctionHall
-            items={gameState?.auction_items || []}
-            teamId={team?.team_id}
-            cash={team?.cash || 0}
-            onBid={handleBid}
-          />
+        {(phase === 'auction' || phase === 'auction_a' || phase === 'auction_b') && (
+          <div className="space-y-4">
+            <AuctionHall
+              items={gameState?.auction_items || []}
+              teamId={team?.team_id}
+              cash={team?.cash || 0}
+              onBid={handleBid}
+            />
+            {gameState?.can_advance && (
+              <div className="flex justify-end">
+                <button
+                  type="button"
+                  onClick={handleAdvance}
+                  disabled={submitting || loading}
+                  className="inline-flex items-center gap-2 rounded-lg bg-primary px-4 py-2 text-sm font-semibold text-primary-foreground disabled:opacity-50"
+                >
+                  {submitting || loading ? <Loader2 className="h-4 w-4 animate-spin" /> : <ArrowRight className="h-4 w-4" />}
+                  {phase === 'auction_b' ? '进入 R4' : '进入 R1'}
+                </button>
+              </div>
+            )}
+          </div>
         )}
 
         {phase === 'finished' && (

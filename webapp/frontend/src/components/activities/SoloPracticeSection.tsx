@@ -124,7 +124,7 @@ export default function SoloPracticeSection({ onError }: Props) {
               <Sparkles className="w-4 h-4 text-blue-400" />
             </h3>
             <p className="text-sm text-foreground-muted mt-1">
-              4 轮运营决策 + 资源竞价：产品定位、定价投产、营销研发，与 3 支 AI 队伍比拼净资产
+              6 轮运营决策 + 双拍卖：产品定位、定价投产、营销研发，与 3 支 AI 队伍比拼净资产
             </p>
           </div>
           <button

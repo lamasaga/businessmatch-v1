@@ -1058,9 +1058,9 @@ paths:
   /api/v1/teaching-groups/{group_id}/dashboard:
     get:
       tags:
-      - 体验营
-      summary: Get Camp Dashboard
-      operationId: get_camp_dashboard_api_v1_teaching_groups__group_id__dashboard_get
+      - camp-summer
+      summary: Get Dashboard
+      operationId: get_dashboard_api_v1_teaching_groups__group_id__dashboard_get
       security:
       - OAuth2PasswordBearer: []
       parameters:
@@ -1076,7 +1076,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ApiResponse_CampDashboardOut_'
+                $ref: '#/components/schemas/app__core__response__ApiResponse_CampDashboardOut___2'
         '422':
           description: Validation Error
           content:
@@ -1383,7 +1383,7 @@ paths:
       tags:
       - 交易游戏
       summary: Get Game State
-      description: 获取当前游戏状态
+      description: 获取当前 RTS 对局状态（只读，不推进 tick）
       operationId: get_game_state_api_v1_trading_events__event_id__state_get
       security:
       - OAuth2PasswordBearer: []
@@ -1447,7 +1447,7 @@ paths:
       tags:
       - 交易游戏
       summary: Get Price History
-      description: 获取价格历史
+      description: 获取 tick 价格历史（TradingRound 快照）
       operationId: get_price_history_api_v1_trading_events__event_id__history_get
       security:
       - OAuth2PasswordBearer: []
@@ -1476,7 +1476,7 @@ paths:
       tags:
       - 交易游戏
       summary: Get Region Geo Pack
-      description: 获取区域地理包（锚点、bbox、路网、示意底图路径）
+      description: 获取区域地理包（锚点、路网边、美术资源路径）— 开赛前预加载
       operationId: get_region_geo_pack_api_v1_trading_regions__region_id__geo_pack_get
       security:
       - OAuth2PasswordBearer: []
@@ -1505,7 +1505,7 @@ paths:
       tags:
       - 交易游戏
       summary: Get Game Config Geo Pack
-      description: 按赛制包 world_region_id 解析地理包
+      description: 按赛制包 id 解析默认 world 区域并返回地理包
       operationId: get_game_config_geo_pack_api_v1_trading_game_configs__config_id__geo_pack_get
       security:
       - OAuth2PasswordBearer: []
@@ -1577,6 +1577,34 @@ paths:
       summary: Start Techventure Practice
       description: 创建并自动开始一场 TechVenture 日常练习（单人 + AI 队伍）
       operationId: start_techventure_practice_api_v1_practice_techventure_start_post
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PracticeStartRequest'
+        required: true
+      responses:
+        '201':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponse_dict_'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+      security:
+      - OAuth2PasswordBearer: []
+  /api/v1/practice/ops/start:
+    post:
+      tags:
+      - 日常练习
+      summary: Start Ops Practice
+      description: 创建并自动开始一场 OPS 日常练习（单人 + AI 队伍）
+      operationId: start_ops_practice_api_v1_practice_ops_start_post
       requestBody:
         content:
           application/json:
@@ -1791,7 +1819,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/SubmitDecisionRequest'
+              $ref: '#/components/schemas/app__api__techventure__SubmitDecisionRequest'
       responses:
         '200':
           description: Successful Response
@@ -3035,6 +3063,1286 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/HTTPValidationError'
+  /api/v1/teaching-groups/{group_id}/agenda:
+    get:
+      tags:
+      - camp-summer
+      summary: List Agenda
+      operationId: list_agenda_api_v1_teaching_groups__group_id__agenda_get
+      security:
+      - OAuth2PasswordBearer: []
+      parameters:
+      - name: group_id
+        in: path
+        required: true
+        schema:
+          type: integer
+          title: Group Id
+      - name: day
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          title: Day
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponse_List_CampAgendaItemOut__'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+    post:
+      tags:
+      - camp-summer
+      summary: Create Agenda
+      operationId: create_agenda_api_v1_teaching_groups__group_id__agenda_post
+      security:
+      - OAuth2PasswordBearer: []
+      parameters:
+      - name: group_id
+        in: path
+        required: true
+        schema:
+          type: integer
+          title: Group Id
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CampAgendaItemCreate'
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponse_CampAgendaItemOut_'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /api/v1/teaching-groups/{group_id}/agenda/{item_id}:
+    put:
+      tags:
+      - camp-summer
+      summary: Update Agenda
+      operationId: update_agenda_api_v1_teaching_groups__group_id__agenda__item_id__put
+      security:
+      - OAuth2PasswordBearer: []
+      parameters:
+      - name: group_id
+        in: path
+        required: true
+        schema:
+          type: integer
+          title: Group Id
+      - name: item_id
+        in: path
+        required: true
+        schema:
+          type: integer
+          title: Item Id
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CampAgendaItemUpdate'
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponse_CampAgendaItemOut_'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+    delete:
+      tags:
+      - camp-summer
+      summary: Delete Agenda
+      operationId: delete_agenda_api_v1_teaching_groups__group_id__agenda__item_id__delete
+      security:
+      - OAuth2PasswordBearer: []
+      parameters:
+      - name: group_id
+        in: path
+        required: true
+        schema:
+          type: integer
+          title: Group Id
+      - name: item_id
+        in: path
+        required: true
+        schema:
+          type: integer
+          title: Item Id
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponse_dict_'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /api/v1/teaching-groups/{group_id}/agenda/reorder:
+    patch:
+      tags:
+      - camp-summer
+      summary: Reorder Agenda
+      operationId: reorder_agenda_api_v1_teaching_groups__group_id__agenda_reorder_patch
+      security:
+      - OAuth2PasswordBearer: []
+      parameters:
+      - name: group_id
+        in: path
+        required: true
+        schema:
+          type: integer
+          title: Group Id
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                type: object
+                additionalProperties: true
+              title: Items
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponse_List_CampAgendaItemOut__'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /api/v1/teaching-groups/{group_id}/tasks:
+    get:
+      tags:
+      - camp-summer
+      summary: List Tasks
+      operationId: list_tasks_api_v1_teaching_groups__group_id__tasks_get
+      security:
+      - OAuth2PasswordBearer: []
+      parameters:
+      - name: group_id
+        in: path
+        required: true
+        schema:
+          type: integer
+          title: Group Id
+      - name: status
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Status
+      - name: day
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          title: Day
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponse_List_CampTaskOut__'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+    post:
+      tags:
+      - camp-summer
+      summary: Create Task
+      operationId: create_task_api_v1_teaching_groups__group_id__tasks_post
+      security:
+      - OAuth2PasswordBearer: []
+      parameters:
+      - name: group_id
+        in: path
+        required: true
+        schema:
+          type: integer
+          title: Group Id
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CampTaskCreate'
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponse_CampTaskOut_'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /api/v1/teaching-groups/{group_id}/tasks/{task_id}:
+    get:
+      tags:
+      - camp-summer
+      summary: Get Task
+      operationId: get_task_api_v1_teaching_groups__group_id__tasks__task_id__get
+      security:
+      - OAuth2PasswordBearer: []
+      parameters:
+      - name: group_id
+        in: path
+        required: true
+        schema:
+          type: integer
+          title: Group Id
+      - name: task_id
+        in: path
+        required: true
+        schema:
+          type: integer
+          title: Task Id
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponse_CampTaskOut_'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+    put:
+      tags:
+      - camp-summer
+      summary: Update Task
+      operationId: update_task_api_v1_teaching_groups__group_id__tasks__task_id__put
+      security:
+      - OAuth2PasswordBearer: []
+      parameters:
+      - name: group_id
+        in: path
+        required: true
+        schema:
+          type: integer
+          title: Group Id
+      - name: task_id
+        in: path
+        required: true
+        schema:
+          type: integer
+          title: Task Id
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CampTaskUpdate'
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponse_CampTaskOut_'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+    delete:
+      tags:
+      - camp-summer
+      summary: Delete Task
+      operationId: delete_task_api_v1_teaching_groups__group_id__tasks__task_id__delete
+      security:
+      - OAuth2PasswordBearer: []
+      parameters:
+      - name: group_id
+        in: path
+        required: true
+        schema:
+          type: integer
+          title: Group Id
+      - name: task_id
+        in: path
+        required: true
+        schema:
+          type: integer
+          title: Task Id
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponse_dict_'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /api/v1/teaching-groups/{group_id}/tasks/{task_id}/publish:
+    post:
+      tags:
+      - camp-summer
+      summary: Publish Task
+      operationId: publish_task_api_v1_teaching_groups__group_id__tasks__task_id__publish_post
+      security:
+      - OAuth2PasswordBearer: []
+      parameters:
+      - name: group_id
+        in: path
+        required: true
+        schema:
+          type: integer
+          title: Group Id
+      - name: task_id
+        in: path
+        required: true
+        schema:
+          type: integer
+          title: Task Id
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponse_CampTaskOut_'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /api/v1/teaching-groups/{group_id}/tasks/{task_id}/close:
+    post:
+      tags:
+      - camp-summer
+      summary: Close Task
+      operationId: close_task_api_v1_teaching_groups__group_id__tasks__task_id__close_post
+      security:
+      - OAuth2PasswordBearer: []
+      parameters:
+      - name: group_id
+        in: path
+        required: true
+        schema:
+          type: integer
+          title: Group Id
+      - name: task_id
+        in: path
+        required: true
+        schema:
+          type: integer
+          title: Task Id
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponse_CampTaskOut_'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /api/v1/teaching-groups/{group_id}/tasks/{task_id}/remind:
+    post:
+      tags:
+      - camp-summer
+      summary: Remind Task
+      operationId: remind_task_api_v1_teaching_groups__group_id__tasks__task_id__remind_post
+      security:
+      - OAuth2PasswordBearer: []
+      parameters:
+      - name: group_id
+        in: path
+        required: true
+        schema:
+          type: integer
+          title: Group Id
+      - name: task_id
+        in: path
+        required: true
+        schema:
+          type: integer
+          title: Task Id
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponse_dict_'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /api/v1/teaching-groups/{group_id}/tasks/{task_id}/dimensions:
+    get:
+      tags:
+      - camp-summer
+      summary: List Dimensions
+      operationId: list_dimensions_api_v1_teaching_groups__group_id__tasks__task_id__dimensions_get
+      security:
+      - OAuth2PasswordBearer: []
+      parameters:
+      - name: group_id
+        in: path
+        required: true
+        schema:
+          type: integer
+          title: Group Id
+      - name: task_id
+        in: path
+        required: true
+        schema:
+          type: integer
+          title: Task Id
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponse_List_ScoringDimensionOut__'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+    post:
+      tags:
+      - camp-summer
+      summary: Create Dimensions
+      operationId: create_dimensions_api_v1_teaching_groups__group_id__tasks__task_id__dimensions_post
+      security:
+      - OAuth2PasswordBearer: []
+      parameters:
+      - name: group_id
+        in: path
+        required: true
+        schema:
+          type: integer
+          title: Group Id
+      - name: task_id
+        in: path
+        required: true
+        schema:
+          type: integer
+          title: Task Id
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                $ref: '#/components/schemas/ScoringDimensionCreate'
+              title: Data
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponse_List_ScoringDimensionOut__'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /api/v1/teaching-groups/{group_id}/submissions:
+    get:
+      tags:
+      - camp-summer
+      summary: List Submissions
+      operationId: list_submissions_api_v1_teaching_groups__group_id__submissions_get
+      security:
+      - OAuth2PasswordBearer: []
+      parameters:
+      - name: group_id
+        in: path
+        required: true
+        schema:
+          type: integer
+          title: Group Id
+      - name: task_id
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          title: Task Id
+      - name: day
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          title: Day
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponse_List_TaskSubmissionOut__'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /api/v1/teaching-groups/{group_id}/submissions/{sub_id}:
+    get:
+      tags:
+      - camp-summer
+      summary: Get Submission
+      operationId: get_submission_api_v1_teaching_groups__group_id__submissions__sub_id__get
+      security:
+      - OAuth2PasswordBearer: []
+      parameters:
+      - name: group_id
+        in: path
+        required: true
+        schema:
+          type: integer
+          title: Group Id
+      - name: sub_id
+        in: path
+        required: true
+        schema:
+          type: integer
+          title: Sub Id
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponse_TaskSubmissionOut_'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /api/v1/teaching-groups/{group_id}/submissions/{sub_id}/review:
+    post:
+      tags:
+      - camp-summer
+      summary: Review Submission
+      operationId: review_submission_api_v1_teaching_groups__group_id__submissions__sub_id__review_post
+      security:
+      - OAuth2PasswordBearer: []
+      parameters:
+      - name: group_id
+        in: path
+        required: true
+        schema:
+          type: integer
+          title: Group Id
+      - name: sub_id
+        in: path
+        required: true
+        schema:
+          type: integer
+          title: Sub Id
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SubmissionReviewCreate'
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponse_TaskSubmissionOut_'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /api/v1/teaching-groups/{group_id}/submissions/{sub_id}/feature:
+    put:
+      tags:
+      - camp-summer
+      summary: Feature Submission
+      operationId: feature_submission_api_v1_teaching_groups__group_id__submissions__sub_id__feature_put
+      security:
+      - OAuth2PasswordBearer: []
+      parameters:
+      - name: group_id
+        in: path
+        required: true
+        schema:
+          type: integer
+          title: Group Id
+      - name: sub_id
+        in: path
+        required: true
+        schema:
+          type: integer
+          title: Sub Id
+      - name: featured
+        in: query
+        required: true
+        schema:
+          type: boolean
+          title: Featured
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponse_TaskSubmissionOut_'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /api/v1/teaching-groups/{group_id}/submissions/pending-count:
+    get:
+      tags:
+      - camp-summer
+      summary: Pending Review Count
+      operationId: pending_review_count_api_v1_teaching_groups__group_id__submissions_pending_count_get
+      security:
+      - OAuth2PasswordBearer: []
+      parameters:
+      - name: group_id
+        in: path
+        required: true
+        schema:
+          type: integer
+          title: Group Id
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponse_int_'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /api/v1/teaching-groups/{group_id}/coins/grant:
+    post:
+      tags:
+      - camp-summer
+      summary: Grant Coins
+      operationId: grant_coins_api_v1_teaching_groups__group_id__coins_grant_post
+      security:
+      - OAuth2PasswordBearer: []
+      parameters:
+      - name: group_id
+        in: path
+        required: true
+        schema:
+          type: integer
+          title: Group Id
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CoinGrantRequest'
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponse_dict_'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /api/v1/teaching-groups/{group_id}/coins/deduct:
+    post:
+      tags:
+      - camp-summer
+      summary: Deduct Coins
+      operationId: deduct_coins_api_v1_teaching_groups__group_id__coins_deduct_post
+      security:
+      - OAuth2PasswordBearer: []
+      parameters:
+      - name: group_id
+        in: path
+        required: true
+        schema:
+          type: integer
+          title: Group Id
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CoinGrantRequest'
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponse_dict_'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /api/v1/teaching-groups/{group_id}/coins/transactions:
+    get:
+      tags:
+      - camp-summer
+      summary: List Transactions
+      operationId: list_transactions_api_v1_teaching_groups__group_id__coins_transactions_get
+      security:
+      - OAuth2PasswordBearer: []
+      parameters:
+      - name: group_id
+        in: path
+        required: true
+        schema:
+          type: integer
+          title: Group Id
+      - name: entity_type
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Entity Type
+      - name: entity_id
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          title: Entity Id
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponse_List_CoinTransactionOut__'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /api/v1/teaching-groups/{group_id}/coin-rules:
+    get:
+      tags:
+      - camp-summer
+      summary: List Coin Rules
+      operationId: list_coin_rules_api_v1_teaching_groups__group_id__coin_rules_get
+      security:
+      - OAuth2PasswordBearer: []
+      parameters:
+      - name: group_id
+        in: path
+        required: true
+        schema:
+          type: integer
+          title: Group Id
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponse_List_CampCoinRuleOut__'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /api/v1/teaching-groups/{group_id}/coin-rules/{rule_id}:
+    put:
+      tags:
+      - camp-summer
+      summary: Update Coin Rule
+      operationId: update_coin_rule_api_v1_teaching_groups__group_id__coin_rules__rule_id__put
+      security:
+      - OAuth2PasswordBearer: []
+      parameters:
+      - name: group_id
+        in: path
+        required: true
+        schema:
+          type: integer
+          title: Group Id
+      - name: rule_id
+        in: path
+        required: true
+        schema:
+          type: integer
+          title: Rule Id
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CampCoinRuleUpdate'
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponse_CampCoinRuleOut_'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /api/v1/teaching-groups/{group_id}/shop-items:
+    get:
+      tags:
+      - camp-summer
+      summary: List Shop Items
+      operationId: list_shop_items_api_v1_teaching_groups__group_id__shop_items_get
+      security:
+      - OAuth2PasswordBearer: []
+      parameters:
+      - name: group_id
+        in: path
+        required: true
+        schema:
+          type: integer
+          title: Group Id
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponse_List_CampShopItemOut__'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+    post:
+      tags:
+      - camp-summer
+      summary: Create Shop Item
+      operationId: create_shop_item_api_v1_teaching_groups__group_id__shop_items_post
+      security:
+      - OAuth2PasswordBearer: []
+      parameters:
+      - name: group_id
+        in: path
+        required: true
+        schema:
+          type: integer
+          title: Group Id
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CampShopItemCreate'
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponse_CampShopItemOut_'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /api/v1/teaching-groups/{group_id}/shop-items/{item_id}:
+    put:
+      tags:
+      - camp-summer
+      summary: Update Shop Item
+      operationId: update_shop_item_api_v1_teaching_groups__group_id__shop_items__item_id__put
+      security:
+      - OAuth2PasswordBearer: []
+      parameters:
+      - name: group_id
+        in: path
+        required: true
+        schema:
+          type: integer
+          title: Group Id
+      - name: item_id
+        in: path
+        required: true
+        schema:
+          type: integer
+          title: Item Id
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CampShopItemCreate'
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponse_CampShopItemOut_'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+    delete:
+      tags:
+      - camp-summer
+      summary: Delete Shop Item
+      operationId: delete_shop_item_api_v1_teaching_groups__group_id__shop_items__item_id__delete
+      security:
+      - OAuth2PasswordBearer: []
+      parameters:
+      - name: group_id
+        in: path
+        required: true
+        schema:
+          type: integer
+          title: Group Id
+      - name: item_id
+        in: path
+        required: true
+        schema:
+          type: integer
+          title: Item Id
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponse_dict_'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /api/v1/teaching-groups/{group_id}/coins/leaderboard:
+    get:
+      tags:
+      - camp-summer
+      summary: Coin Leaderboard
+      operationId: coin_leaderboard_api_v1_teaching_groups__group_id__coins_leaderboard_get
+      security:
+      - OAuth2PasswordBearer: []
+      parameters:
+      - name: group_id
+        in: path
+        required: true
+        schema:
+          type: integer
+          title: Group Id
+      - name: type
+        in: query
+        required: false
+        schema:
+          type: string
+          default: company
+          title: Type
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponse_List_CoinLeaderboardEntry__'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /api/v1/teaching-groups/{group_id}/awards:
+    get:
+      tags:
+      - camp-summer
+      summary: List Awards
+      operationId: list_awards_api_v1_teaching_groups__group_id__awards_get
+      security:
+      - OAuth2PasswordBearer: []
+      parameters:
+      - name: group_id
+        in: path
+        required: true
+        schema:
+          type: integer
+          title: Group Id
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponse_List_CampAwardOut__'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+    post:
+      tags:
+      - camp-summer
+      summary: Create Award
+      operationId: create_award_api_v1_teaching_groups__group_id__awards_post
+      security:
+      - OAuth2PasswordBearer: []
+      parameters:
+      - name: group_id
+        in: path
+        required: true
+        schema:
+          type: integer
+          title: Group Id
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CampAwardCreate'
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponse_CampAwardOut_'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /api/v1/teaching-groups/{group_id}/awards/{award_id}:
+    put:
+      tags:
+      - camp-summer
+      summary: Update Award
+      operationId: update_award_api_v1_teaching_groups__group_id__awards__award_id__put
+      security:
+      - OAuth2PasswordBearer: []
+      parameters:
+      - name: group_id
+        in: path
+        required: true
+        schema:
+          type: integer
+          title: Group Id
+      - name: award_id
+        in: path
+        required: true
+        schema:
+          type: integer
+          title: Award Id
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CampAwardCreate'
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponse_CampAwardOut_'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+    delete:
+      tags:
+      - camp-summer
+      summary: Delete Award
+      operationId: delete_award_api_v1_teaching_groups__group_id__awards__award_id__delete
+      security:
+      - OAuth2PasswordBearer: []
+      parameters:
+      - name: group_id
+        in: path
+        required: true
+        schema:
+          type: integer
+          title: Group Id
+      - name: award_id
+        in: path
+        required: true
+        schema:
+          type: integer
+          title: Award Id
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponse_dict_'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /api/v1/teaching-groups/{group_id}/awards/calculate:
+    post:
+      tags:
+      - camp-summer
+      summary: Calculate Winners
+      operationId: calculate_winners_api_v1_teaching_groups__group_id__awards_calculate_post
+      security:
+      - OAuth2PasswordBearer: []
+      parameters:
+      - name: group_id
+        in: path
+        required: true
+        schema:
+          type: integer
+          title: Group Id
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponse_List_AwardWinnerOut__'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /api/v1/teaching-groups/{group_id}/awards/{award_id}/announce:
+    post:
+      tags:
+      - camp-summer
+      summary: Announce Winner
+      operationId: announce_winner_api_v1_teaching_groups__group_id__awards__award_id__announce_post
+      security:
+      - OAuth2PasswordBearer: []
+      parameters:
+      - name: group_id
+        in: path
+        required: true
+        schema:
+          type: integer
+          title: Group Id
+      - name: award_id
+        in: path
+        required: true
+        schema:
+          type: integer
+          title: Award Id
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              additionalProperties: true
+              title: Data
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponse_AwardWinnerOut_'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
   /api/v1/sandbox/templates:
     get:
       tags:
@@ -3377,6 +4685,567 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/HTTPValidationError'
+  /api/v1/engine/callbacks/match/state:
+    post:
+      tags:
+      - 引擎回调
+      summary: On Match State Changed
+      description: '接收引擎的 match.state_changed 回调。
+
+        引擎每回合/tick 结算后推送最新状态。'
+      operationId: on_match_state_changed_api_v1_engine_callbacks_match_state_post
+      parameters:
+      - name: x-event-type
+        in: header
+        required: false
+        schema:
+          type: string
+          default: ''
+          title: X-Event-Type
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponse_dict_'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /api/v1/engine/callbacks/match/finished:
+    post:
+      tags:
+      - 引擎回调
+      summary: On Match Finished
+      description: '接收引擎的 match.finished 回调。
+
+        引擎比赛结束时推送最终结果，平台负责 XP 入账。'
+      operationId: on_match_finished_api_v1_engine_callbacks_match_finished_post
+      parameters:
+      - name: x-event-type
+        in: header
+        required: false
+        schema:
+          type: string
+          default: ''
+          title: X-Event-Type
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponse_dict_'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /api/v1/engine/callbacks/match/joined:
+    post:
+      tags:
+      - 引擎回调
+      summary: On Player Joined
+      description: 接收引擎的 match.player_joined 回调。
+      operationId: on_player_joined_api_v1_engine_callbacks_match_joined_post
+      parameters:
+      - name: x-event-type
+        in: header
+        required: false
+        schema:
+          type: string
+          default: ''
+          title: X-Event-Type
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponse_dict_'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /api/v1/engine/callbacks/health:
+    get:
+      tags:
+      - 引擎回调
+      summary: Callback Health
+      description: 供引擎检查回调端点可用性。
+      operationId: callback_health_api_v1_engine_callbacks_health_get
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+  /api/v1/ops/events/{event_id}/state:
+    get:
+      tags:
+      - OPS 生产经营销售赛
+      summary: Get State
+      operationId: get_state_api_v1_ops_events__event_id__state_get
+      security:
+      - OAuth2PasswordBearer: []
+      parameters:
+      - name: event_id
+        in: path
+        required: true
+        schema:
+          type: integer
+          title: Event Id
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponse_dict_'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /api/v1/ops/events/{event_id}/product-positioning:
+    post:
+      tags:
+      - OPS 生产经营销售赛
+      summary: Submit Positioning
+      operationId: submit_positioning_api_v1_ops_events__event_id__product_positioning_post
+      security:
+      - OAuth2PasswordBearer: []
+      parameters:
+      - name: event_id
+        in: path
+        required: true
+        schema:
+          type: integer
+          title: Event Id
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ProductPositioningRequest'
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponse_dict_'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /api/v1/ops/events/{event_id}/decisions:
+    post:
+      tags:
+      - OPS 生产经营销售赛
+      summary: Submit Decision
+      operationId: submit_decision_api_v1_ops_events__event_id__decisions_post
+      security:
+      - OAuth2PasswordBearer: []
+      parameters:
+      - name: event_id
+        in: path
+        required: true
+        schema:
+          type: integer
+          title: Event Id
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/app__api__ops__SubmitDecisionRequest'
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponse_dict_'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /api/v1/ops/events/{event_id}/auction/bid:
+    post:
+      tags:
+      - OPS 生产经营销售赛
+      summary: Auction Bid
+      operationId: auction_bid_api_v1_ops_events__event_id__auction_bid_post
+      security:
+      - OAuth2PasswordBearer: []
+      parameters:
+      - name: event_id
+        in: path
+        required: true
+        schema:
+          type: integer
+          title: Event Id
+      - name: item_id
+        in: query
+        required: true
+        schema:
+          type: integer
+          title: Item Id
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/BidRequest'
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponse_dict_'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /api/v1/ops/events/{event_id}/auction/state:
+    get:
+      tags:
+      - OPS 生产经营销售赛
+      summary: Get Auction State
+      operationId: get_auction_state_api_v1_ops_events__event_id__auction_state_get
+      security:
+      - OAuth2PasswordBearer: []
+      parameters:
+      - name: event_id
+        in: path
+        required: true
+        schema:
+          type: integer
+          title: Event Id
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponse_list_'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /api/v1/ops/events/{event_id}/financials:
+    get:
+      tags:
+      - OPS 生产经营销售赛
+      summary: Get Financials
+      operationId: get_financials_api_v1_ops_events__event_id__financials_get
+      security:
+      - OAuth2PasswordBearer: []
+      parameters:
+      - name: event_id
+        in: path
+        required: true
+        schema:
+          type: integer
+          title: Event Id
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponse_list_'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /api/v1/ops/events/{event_id}/ranking:
+    get:
+      tags:
+      - OPS 生产经营销售赛
+      summary: Get Ranking
+      operationId: get_ranking_api_v1_ops_events__event_id__ranking_get
+      security:
+      - OAuth2PasswordBearer: []
+      parameters:
+      - name: event_id
+        in: path
+        required: true
+        schema:
+          type: integer
+          title: Event Id
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponse_list_'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /api/v1/ops/events/{event_id}/start:
+    post:
+      tags:
+      - OPS 生产经营销售赛
+      summary: Start Match
+      operationId: start_match_api_v1_ops_events__event_id__start_post
+      security:
+      - OAuth2PasswordBearer: []
+      parameters:
+      - name: event_id
+        in: path
+        required: true
+        schema:
+          type: integer
+          title: Event Id
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponse_dict_'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /api/v1/ops/events/{event_id}/advance:
+    post:
+      tags:
+      - OPS 生产经营销售赛
+      summary: Advance
+      operationId: advance_api_v1_ops_events__event_id__advance_post
+      security:
+      - OAuth2PasswordBearer: []
+      parameters:
+      - name: event_id
+        in: path
+        required: true
+        schema:
+          type: integer
+          title: Event Id
+      requestBody:
+        content:
+          application/json:
+            schema:
+              anyOf:
+              - $ref: '#/components/schemas/AdvanceRequest'
+              - type: 'null'
+              title: Body
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponse_dict_'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /api/v1/ops/events/{event_id}/practice/advance:
+    post:
+      tags:
+      - OPS 生产经营销售赛
+      summary: Practice Advance
+      operationId: practice_advance_api_v1_ops_events__event_id__practice_advance_post
+      security:
+      - OAuth2PasswordBearer: []
+      parameters:
+      - name: event_id
+        in: path
+        required: true
+        schema:
+          type: integer
+          title: Event Id
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponse_dict_'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /api/v1/ops/events/{event_id}/pause:
+    post:
+      tags:
+      - OPS 生产经营销售赛
+      summary: Pause Match
+      operationId: pause_match_api_v1_ops_events__event_id__pause_post
+      security:
+      - OAuth2PasswordBearer: []
+      parameters:
+      - name: event_id
+        in: path
+        required: true
+        schema:
+          type: integer
+          title: Event Id
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponse_dict_'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /api/v1/ops/events/{event_id}/resume:
+    post:
+      tags:
+      - OPS 生产经营销售赛
+      summary: Resume Match
+      operationId: resume_match_api_v1_ops_events__event_id__resume_post
+      security:
+      - OAuth2PasswordBearer: []
+      parameters:
+      - name: event_id
+        in: path
+        required: true
+        schema:
+          type: integer
+          title: Event Id
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponse_dict_'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /api/v1/ops/events/{event_id}/screen:
+    get:
+      tags:
+      - OPS 生产经营销售赛
+      summary: Screen
+      operationId: screen_api_v1_ops_events__event_id__screen_get
+      security:
+      - OAuth2PasswordBearer: []
+      parameters:
+      - name: event_id
+        in: path
+        required: true
+        schema:
+          type: integer
+          title: Event Id
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponse_dict_'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /api/v1/career/start:
+    post:
+      tags:
+      - 生涯模式
+      summary: Start Career
+      description: 首次开启生涯模式；幂等
+      operationId: start_career_api_v1_career_start_post
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponse_dict_'
+      security:
+      - OAuth2PasswordBearer: []
+  /api/v1/career/profile:
+    get:
+      tags:
+      - 生涯模式
+      summary: Get Career Profile
+      description: 读取生涯聚合数据
+      operationId: get_career_profile_api_v1_career_profile_get
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponse_dict_'
+      security:
+      - OAuth2PasswordBearer: []
+  /api/v1/career/recent-matches:
+    get:
+      tags:
+      - 生涯模式
+      summary: Get Recent Matches
+      description: 近期比赛列表（含获得 XP/金币/钻石）
+      operationId: get_recent_matches_api_v1_career_recent_matches_get
+      security:
+      - OAuth2PasswordBearer: []
+      parameters:
+      - name: limit
+        in: query
+        required: false
+        schema:
+          type: integer
+          maximum: 20
+          minimum: 1
+          default: 5
+          title: Limit
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponse_List_dict__'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
   /:
     get:
       summary: Root
@@ -3624,6 +5493,14 @@ components:
           title: Student Rating
       type: object
       title: AITaskUpdate
+    AdvanceRequest:
+      properties:
+        phase:
+          anyOf:
+          - $ref: '#/components/schemas/OpsMatchPhase'
+          - type: 'null'
+      type: object
+      title: AdvanceRequest
     AnnouncementCreate:
       properties:
         title:
@@ -3774,7 +5651,7 @@ components:
           - type: 'null'
       type: object
       title: ApiResponse[AuthResponse]
-    ApiResponse_CampDashboardOut_:
+    ApiResponse_AwardWinnerOut_:
       properties:
         success:
           type: boolean
@@ -3790,10 +5667,70 @@ components:
           default: success
         data:
           anyOf:
-          - $ref: '#/components/schemas/CampDashboardOut'
+          - $ref: '#/components/schemas/AwardWinnerOut'
           - type: 'null'
       type: object
-      title: ApiResponse[CampDashboardOut]
+      title: ApiResponse[AwardWinnerOut]
+    ApiResponse_CampAgendaItemOut_:
+      properties:
+        success:
+          type: boolean
+          title: Success
+          default: true
+        code:
+          type: integer
+          title: Code
+          default: 0
+        message:
+          type: string
+          title: Message
+          default: success
+        data:
+          anyOf:
+          - $ref: '#/components/schemas/CampAgendaItemOut'
+          - type: 'null'
+      type: object
+      title: ApiResponse[CampAgendaItemOut]
+    ApiResponse_CampAwardOut_:
+      properties:
+        success:
+          type: boolean
+          title: Success
+          default: true
+        code:
+          type: integer
+          title: Code
+          default: 0
+        message:
+          type: string
+          title: Message
+          default: success
+        data:
+          anyOf:
+          - $ref: '#/components/schemas/CampAwardOut'
+          - type: 'null'
+      type: object
+      title: ApiResponse[CampAwardOut]
+    ApiResponse_CampCoinRuleOut_:
+      properties:
+        success:
+          type: boolean
+          title: Success
+          default: true
+        code:
+          type: integer
+          title: Code
+          default: 0
+        message:
+          type: string
+          title: Message
+          default: success
+        data:
+          anyOf:
+          - $ref: '#/components/schemas/CampCoinRuleOut'
+          - type: 'null'
+      type: object
+      title: ApiResponse[CampCoinRuleOut]
     ApiResponse_CampGroupOut_:
       properties:
         success:
@@ -3814,6 +5751,46 @@ components:
           - type: 'null'
       type: object
       title: ApiResponse[CampGroupOut]
+    ApiResponse_CampShopItemOut_:
+      properties:
+        success:
+          type: boolean
+          title: Success
+          default: true
+        code:
+          type: integer
+          title: Code
+          default: 0
+        message:
+          type: string
+          title: Message
+          default: success
+        data:
+          anyOf:
+          - $ref: '#/components/schemas/CampShopItemOut'
+          - type: 'null'
+      type: object
+      title: ApiResponse[CampShopItemOut]
+    ApiResponse_CampTaskOut_:
+      properties:
+        success:
+          type: boolean
+          title: Success
+          default: true
+        code:
+          type: integer
+          title: Code
+          default: 0
+        message:
+          type: string
+          title: Message
+          default: success
+        data:
+          anyOf:
+          - $ref: '#/components/schemas/CampTaskOut'
+          - type: 'null'
+      type: object
+      title: ApiResponse[CampTaskOut]
     ApiResponse_CompanyDetailOut_:
       properties:
         success:
@@ -3966,6 +5943,98 @@ components:
           title: Data
       type: object
       title: ApiResponse[List[AssignmentOut]]
+    ApiResponse_List_AwardWinnerOut__:
+      properties:
+        success:
+          type: boolean
+          title: Success
+          default: true
+        code:
+          type: integer
+          title: Code
+          default: 0
+        message:
+          type: string
+          title: Message
+          default: success
+        data:
+          anyOf:
+          - items:
+              $ref: '#/components/schemas/AwardWinnerOut'
+            type: array
+          - type: 'null'
+          title: Data
+      type: object
+      title: ApiResponse[List[AwardWinnerOut]]
+    ApiResponse_List_CampAgendaItemOut__:
+      properties:
+        success:
+          type: boolean
+          title: Success
+          default: true
+        code:
+          type: integer
+          title: Code
+          default: 0
+        message:
+          type: string
+          title: Message
+          default: success
+        data:
+          anyOf:
+          - items:
+              $ref: '#/components/schemas/CampAgendaItemOut'
+            type: array
+          - type: 'null'
+          title: Data
+      type: object
+      title: ApiResponse[List[CampAgendaItemOut]]
+    ApiResponse_List_CampAwardOut__:
+      properties:
+        success:
+          type: boolean
+          title: Success
+          default: true
+        code:
+          type: integer
+          title: Code
+          default: 0
+        message:
+          type: string
+          title: Message
+          default: success
+        data:
+          anyOf:
+          - items:
+              $ref: '#/components/schemas/CampAwardOut'
+            type: array
+          - type: 'null'
+          title: Data
+      type: object
+      title: ApiResponse[List[CampAwardOut]]
+    ApiResponse_List_CampCoinRuleOut__:
+      properties:
+        success:
+          type: boolean
+          title: Success
+          default: true
+        code:
+          type: integer
+          title: Code
+          default: 0
+        message:
+          type: string
+          title: Message
+          default: success
+        data:
+          anyOf:
+          - items:
+              $ref: '#/components/schemas/CampCoinRuleOut'
+            type: array
+          - type: 'null'
+          title: Data
+      type: object
+      title: ApiResponse[List[CampCoinRuleOut]]
     ApiResponse_List_CampGroupDetail__:
       properties:
         success:
@@ -3989,6 +6058,98 @@ components:
           title: Data
       type: object
       title: ApiResponse[List[CampGroupDetail]]
+    ApiResponse_List_CampShopItemOut__:
+      properties:
+        success:
+          type: boolean
+          title: Success
+          default: true
+        code:
+          type: integer
+          title: Code
+          default: 0
+        message:
+          type: string
+          title: Message
+          default: success
+        data:
+          anyOf:
+          - items:
+              $ref: '#/components/schemas/CampShopItemOut'
+            type: array
+          - type: 'null'
+          title: Data
+      type: object
+      title: ApiResponse[List[CampShopItemOut]]
+    ApiResponse_List_CampTaskOut__:
+      properties:
+        success:
+          type: boolean
+          title: Success
+          default: true
+        code:
+          type: integer
+          title: Code
+          default: 0
+        message:
+          type: string
+          title: Message
+          default: success
+        data:
+          anyOf:
+          - items:
+              $ref: '#/components/schemas/CampTaskOut'
+            type: array
+          - type: 'null'
+          title: Data
+      type: object
+      title: ApiResponse[List[CampTaskOut]]
+    ApiResponse_List_CoinLeaderboardEntry__:
+      properties:
+        success:
+          type: boolean
+          title: Success
+          default: true
+        code:
+          type: integer
+          title: Code
+          default: 0
+        message:
+          type: string
+          title: Message
+          default: success
+        data:
+          anyOf:
+          - items:
+              $ref: '#/components/schemas/CoinLeaderboardEntry'
+            type: array
+          - type: 'null'
+          title: Data
+      type: object
+      title: ApiResponse[List[CoinLeaderboardEntry]]
+    ApiResponse_List_CoinTransactionOut__:
+      properties:
+        success:
+          type: boolean
+          title: Success
+          default: true
+        code:
+          type: integer
+          title: Code
+          default: 0
+        message:
+          type: string
+          title: Message
+          default: success
+        data:
+          anyOf:
+          - items:
+              $ref: '#/components/schemas/CoinTransactionOut'
+            type: array
+          - type: 'null'
+          title: Data
+      type: object
+      title: ApiResponse[List[CoinTransactionOut]]
     ApiResponse_List_CompetitionEventOut__:
       properties:
         success:
@@ -4036,27 +6197,6 @@ components:
           title: Data
       type: object
       title: ApiResponse[List[Dict[str, Any]]]
-    ApiResponse_WorldGeoPackOut_:
-      properties:
-        success:
-          type: boolean
-          title: Success
-          default: true
-        code:
-          type: integer
-          title: Code
-          default: 0
-        message:
-          type: string
-          title: Message
-          default: success
-        data:
-          anyOf:
-          - $ref: '#/components/schemas/WorldGeoPackOut'
-          - type: 'null'
-          title: Data
-      type: object
-      title: ApiResponse[WorldGeoPackOut]
     ApiResponse_List_OneCompanyOut__:
       properties:
         success:
@@ -4080,6 +6220,29 @@ components:
           title: Data
       type: object
       title: ApiResponse[List[OneCompanyOut]]
+    ApiResponse_List_ScoringDimensionOut__:
+      properties:
+        success:
+          type: boolean
+          title: Success
+          default: true
+        code:
+          type: integer
+          title: Code
+          default: 0
+        message:
+          type: string
+          title: Message
+          default: success
+        data:
+          anyOf:
+          - items:
+              $ref: '#/components/schemas/ScoringDimensionOut'
+            type: array
+          - type: 'null'
+          title: Data
+      type: object
+      title: ApiResponse[List[ScoringDimensionOut]]
     ApiResponse_List_SeasonOut__:
       properties:
         success:
@@ -4126,6 +6289,29 @@ components:
           title: Data
       type: object
       title: ApiResponse[List[SubmissionOut]]
+    ApiResponse_List_TaskSubmissionOut__:
+      properties:
+        success:
+          type: boolean
+          title: Success
+          default: true
+        code:
+          type: integer
+          title: Code
+          default: 0
+        message:
+          type: string
+          title: Message
+          default: success
+        data:
+          anyOf:
+          - items:
+              $ref: '#/components/schemas/TaskSubmissionOut'
+            type: array
+          - type: 'null'
+          title: Data
+      type: object
+      title: ApiResponse[List[TaskSubmissionOut]]
     ApiResponse_List_TeachingGroupOut__:
       properties:
         success:
@@ -4413,7 +6599,7 @@ components:
           - type: 'null'
       type: object
       title: ApiResponse[SubmissionOut]
-    ApiResponse_SubmitDecisionResult_:
+    ApiResponse_TaskSubmissionOut_:
       properties:
         success:
           type: boolean
@@ -4429,10 +6615,10 @@ components:
           default: success
         data:
           anyOf:
-          - $ref: '#/components/schemas/SubmitDecisionResult'
+          - $ref: '#/components/schemas/TaskSubmissionOut'
           - type: 'null'
       type: object
-      title: ApiResponse[SubmitDecisionResult]
+      title: ApiResponse[TaskSubmissionOut]
     ApiResponse_TeachingGroupDetail_:
       properties:
         success:
@@ -4473,46 +6659,6 @@ components:
           - type: 'null'
       type: object
       title: ApiResponse[TeachingGroupOut]
-    ApiResponse_TradingRoundOut_:
-      properties:
-        success:
-          type: boolean
-          title: Success
-          default: true
-        code:
-          type: integer
-          title: Code
-          default: 0
-        message:
-          type: string
-          title: Message
-          default: success
-        data:
-          anyOf:
-          - $ref: '#/components/schemas/TradingRoundOut'
-          - type: 'null'
-      type: object
-      title: ApiResponse[TradingRoundOut]
-    ApiResponse_TradingRoundResult_:
-      properties:
-        success:
-          type: boolean
-          title: Success
-          default: true
-        code:
-          type: integer
-          title: Code
-          default: 0
-        message:
-          type: string
-          title: Message
-          default: success
-        data:
-          anyOf:
-          - $ref: '#/components/schemas/TradingRoundResult'
-          - type: 'null'
-      type: object
-      title: ApiResponse[TradingRoundResult]
     ApiResponse_UserResponse_:
       properties:
         success:
@@ -4533,6 +6679,26 @@ components:
           - type: 'null'
       type: object
       title: ApiResponse[UserResponse]
+    ApiResponse_WorldGeoPackOut_:
+      properties:
+        success:
+          type: boolean
+          title: Success
+          default: true
+        code:
+          type: integer
+          title: Code
+          default: 0
+        message:
+          type: string
+          title: Message
+          default: success
+        data:
+          anyOf:
+          - $ref: '#/components/schemas/WorldGeoPackOut'
+          - type: 'null'
+      type: object
+      title: ApiResponse[WorldGeoPackOut]
     ApiResponse_dict_:
       properties:
         success:
@@ -4555,6 +6721,27 @@ components:
           title: Data
       type: object
       title: ApiResponse[dict]
+    ApiResponse_int_:
+      properties:
+        success:
+          type: boolean
+          title: Success
+          default: true
+        code:
+          type: integer
+          title: Code
+          default: 0
+        message:
+          type: string
+          title: Message
+          default: success
+        data:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          title: Data
+      type: object
+      title: ApiResponse[int]
     ApiResponse_list_:
       properties:
         success:
@@ -4723,34 +6910,317 @@ components:
       required:
       - group_size
       title: AutoGroupRequest
-    CampDashboardOut:
+    AwardWinnerOut:
       properties:
-        member_count:
+        id:
           type: integer
-          title: Member Count
-          default: 0
-        active_event_count:
+          title: Id
+        award_id:
           type: integer
-          title: Active Event Count
-          default: 0
-        weekly_active_count:
+          title: Award Id
+        winner_type:
+          type: string
+          title: Winner Type
+        winner_id:
           type: integer
-          title: Weekly Active Count
-          default: 0
-        recent_announcements:
-          items:
-            $ref: '#/components/schemas/AnnouncementOut'
-          type: array
-          title: Recent Announcements
-          default: []
-        recent_events:
-          items:
-            $ref: '#/components/schemas/RecentEventOut'
-          type: array
-          title: Recent Events
-          default: []
+          title: Winner Id
+        score_value:
+          anyOf:
+          - type: number
+          - type: 'null'
+          title: Score Value
+        announced_at:
+          anyOf:
+          - type: string
+            format: date-time
+          - type: 'null'
+          title: Announced At
       type: object
-      title: CampDashboardOut
+      required:
+      - id
+      - award_id
+      - winner_type
+      - winner_id
+      title: AwardWinnerOut
+    BidRequest:
+      properties:
+        amount:
+          type: number
+          exclusiveMinimum: 0.0
+          title: Amount
+      type: object
+      required:
+      - amount
+      title: BidRequest
+    CampAgendaItemCreate:
+      properties:
+        day_number:
+          type: integer
+          maximum: 7.0
+          minimum: 1.0
+          title: Day Number
+        start_time:
+          type: string
+          maxLength: 8
+          minLength: 5
+          title: Start Time
+        end_time:
+          type: string
+          maxLength: 8
+          minLength: 5
+          title: End Time
+        title:
+          type: string
+          maxLength: 128
+          minLength: 1
+          title: Title
+        location:
+          anyOf:
+          - type: string
+            maxLength: 64
+          - type: 'null'
+          title: Location
+        description:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Description
+        task_id:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          title: Task Id
+        sort_order:
+          type: integer
+          title: Sort Order
+          default: 0
+      type: object
+      required:
+      - day_number
+      - start_time
+      - end_time
+      - title
+      title: CampAgendaItemCreate
+    CampAgendaItemOut:
+      properties:
+        id:
+          type: integer
+          title: Id
+        group_id:
+          type: integer
+          title: Group Id
+        day_number:
+          type: integer
+          title: Day Number
+        start_time:
+          type: string
+          title: Start Time
+        end_time:
+          type: string
+          title: End Time
+        title:
+          type: string
+          title: Title
+        location:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Location
+        description:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Description
+        task_id:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          title: Task Id
+        sort_order:
+          type: integer
+          title: Sort Order
+      type: object
+      required:
+      - id
+      - group_id
+      - day_number
+      - start_time
+      - end_time
+      - title
+      - sort_order
+      title: CampAgendaItemOut
+    CampAgendaItemUpdate:
+      properties:
+        day_number:
+          anyOf:
+          - type: integer
+            maximum: 7.0
+            minimum: 1.0
+          - type: 'null'
+          title: Day Number
+        start_time:
+          anyOf:
+          - type: string
+            maxLength: 8
+            minLength: 5
+          - type: 'null'
+          title: Start Time
+        end_time:
+          anyOf:
+          - type: string
+            maxLength: 8
+            minLength: 5
+          - type: 'null'
+          title: End Time
+        title:
+          anyOf:
+          - type: string
+            maxLength: 128
+            minLength: 1
+          - type: 'null'
+          title: Title
+        location:
+          anyOf:
+          - type: string
+            maxLength: 64
+          - type: 'null'
+          title: Location
+        description:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Description
+        task_id:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          title: Task Id
+        sort_order:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          title: Sort Order
+      type: object
+      title: CampAgendaItemUpdate
+    CampAwardCreate:
+      properties:
+        name:
+          type: string
+          maxLength: 64
+          minLength: 1
+          title: Name
+        description:
+          anyOf:
+          - type: string
+            maxLength: 256
+          - type: 'null'
+          title: Description
+        icon:
+          type: string
+          title: Icon
+          default: Trophy
+        criteria:
+          anyOf:
+          - type: string
+            maxLength: 256
+          - type: 'null'
+          title: Criteria
+        sort_order:
+          type: integer
+          title: Sort Order
+          default: 0
+      type: object
+      required:
+      - name
+      title: CampAwardCreate
+    CampAwardOut:
+      properties:
+        id:
+          type: integer
+          title: Id
+        group_id:
+          type: integer
+          title: Group Id
+        name:
+          type: string
+          title: Name
+        description:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Description
+        icon:
+          type: string
+          title: Icon
+        criteria:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Criteria
+        sort_order:
+          type: integer
+          title: Sort Order
+      type: object
+      required:
+      - id
+      - group_id
+      - name
+      - icon
+      - sort_order
+      title: CampAwardOut
+    CampCoinRuleOut:
+      properties:
+        id:
+          type: integer
+          title: Id
+        group_id:
+          type: integer
+          title: Group Id
+        name:
+          type: string
+          title: Name
+        trigger_type:
+          type: string
+          title: Trigger Type
+        amount:
+          type: integer
+          title: Amount
+        is_active:
+          type: boolean
+          title: Is Active
+      type: object
+      required:
+      - id
+      - group_id
+      - name
+      - trigger_type
+      - amount
+      - is_active
+      title: CampCoinRuleOut
+    CampCoinRuleUpdate:
+      properties:
+        name:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Name
+        trigger_type:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Trigger Type
+        amount:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          title: Amount
+        is_active:
+          anyOf:
+          - type: boolean
+          - type: 'null'
+          title: Is Active
+      type: object
+      title: CampCoinRuleUpdate
     CampGroupCreate:
       properties:
         name:
@@ -4873,6 +7343,263 @@ components:
           title: Color
       type: object
       title: CampGroupUpdate
+    CampShopItemCreate:
+      properties:
+        name:
+          type: string
+          maxLength: 64
+          minLength: 1
+          title: Name
+        description:
+          anyOf:
+          - type: string
+            maxLength: 256
+          - type: 'null'
+          title: Description
+        price:
+          type: integer
+          minimum: 0.0
+          title: Price
+        stock:
+          type: integer
+          title: Stock
+          default: -1
+        effect_type:
+          type: string
+          minLength: 1
+          title: Effect Type
+        effect_config:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Effect Config
+        is_active:
+          type: boolean
+          title: Is Active
+          default: true
+      type: object
+      required:
+      - name
+      - price
+      - effect_type
+      title: CampShopItemCreate
+    CampShopItemOut:
+      properties:
+        id:
+          type: integer
+          title: Id
+        group_id:
+          type: integer
+          title: Group Id
+        name:
+          type: string
+          title: Name
+        description:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Description
+        price:
+          type: integer
+          title: Price
+        stock:
+          type: integer
+          title: Stock
+        effect_type:
+          type: string
+          title: Effect Type
+        effect_config:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Effect Config
+        is_active:
+          type: boolean
+          title: Is Active
+      type: object
+      required:
+      - id
+      - group_id
+      - name
+      - price
+      - stock
+      - effect_type
+      - is_active
+      title: CampShopItemOut
+    CampTaskCreate:
+      properties:
+        day_number:
+          type: integer
+          maximum: 7.0
+          minimum: 1.0
+          title: Day Number
+        title:
+          type: string
+          maxLength: 128
+          minLength: 1
+          title: Title
+        description:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Description
+        task_type:
+          type: string
+          title: Task Type
+          default: image
+        submit_type:
+          type: string
+          title: Submit Type
+          default: group
+        due_at:
+          anyOf:
+          - type: string
+            format: date-time
+          - type: 'null'
+          title: Due At
+        config_json:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Config Json
+        dimensions:
+          anyOf:
+          - items:
+              $ref: '#/components/schemas/ScoringDimensionCreate'
+            type: array
+          - type: 'null'
+          title: Dimensions
+      type: object
+      required:
+      - day_number
+      - title
+      title: CampTaskCreate
+    CampTaskOut:
+      properties:
+        id:
+          type: integer
+          title: Id
+        group_id:
+          type: integer
+          title: Group Id
+        day_number:
+          type: integer
+          title: Day Number
+        title:
+          type: string
+          title: Title
+        description:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Description
+        task_type:
+          type: string
+          title: Task Type
+        submit_type:
+          type: string
+          title: Submit Type
+        due_at:
+          anyOf:
+          - type: string
+            format: date-time
+          - type: 'null'
+          title: Due At
+        config_json:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Config Json
+        status:
+          type: string
+          title: Status
+        created_by:
+          type: integer
+          title: Created By
+        created_at:
+          type: string
+          format: date-time
+          title: Created At
+        updated_at:
+          anyOf:
+          - type: string
+            format: date-time
+          - type: 'null'
+          title: Updated At
+        dimensions:
+          items:
+            $ref: '#/components/schemas/ScoringDimensionOut'
+          type: array
+          title: Dimensions
+          default: []
+      type: object
+      required:
+      - id
+      - group_id
+      - day_number
+      - title
+      - task_type
+      - submit_type
+      - status
+      - created_by
+      - created_at
+      title: CampTaskOut
+    CampTaskUpdate:
+      properties:
+        day_number:
+          anyOf:
+          - type: integer
+            maximum: 7.0
+            minimum: 1.0
+          - type: 'null'
+          title: Day Number
+        title:
+          anyOf:
+          - type: string
+            maxLength: 128
+            minLength: 1
+          - type: 'null'
+          title: Title
+        description:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Description
+        task_type:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Task Type
+        submit_type:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Submit Type
+        due_at:
+          anyOf:
+          - type: string
+            format: date-time
+          - type: 'null'
+          title: Due At
+        config_json:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Config Json
+        status:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Status
+        dimensions:
+          anyOf:
+          - items:
+              $ref: '#/components/schemas/ScoringDimensionCreate'
+            type: array
+          - type: 'null'
+          title: Dimensions
+      type: object
+      title: CampTaskUpdate
     CityMarket:
       properties:
         city:
@@ -4881,6 +7608,15 @@ components:
         city_name:
           type: string
           title: City Name
+        city_type:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: City Type
+        hub:
+          type: boolean
+          title: Hub
+          default: false
         products:
           items:
             $ref: '#/components/schemas/ProductPrice'
@@ -4892,6 +7628,113 @@ components:
       - city_name
       - products
       title: CityMarket
+    CoinGrantRequest:
+      properties:
+        targets:
+          items:
+            $ref: '#/components/schemas/CoinTarget'
+          type: array
+          title: Targets
+        amount:
+          type: integer
+          exclusiveMinimum: 0.0
+          title: Amount
+        reason:
+          type: string
+          maxLength: 256
+          minLength: 1
+          title: Reason
+      type: object
+      required:
+      - targets
+      - amount
+      - reason
+      title: CoinGrantRequest
+    CoinLeaderboardEntry:
+      properties:
+        rank:
+          type: integer
+          title: Rank
+        entity_type:
+          type: string
+          title: Entity Type
+        entity_id:
+          type: integer
+          title: Entity Id
+        entity_name:
+          type: string
+          title: Entity Name
+        balance:
+          type: integer
+          title: Balance
+      type: object
+      required:
+      - rank
+      - entity_type
+      - entity_id
+      - entity_name
+      - balance
+      title: CoinLeaderboardEntry
+    CoinTarget:
+      properties:
+        entity_type:
+          type: string
+          title: Entity Type
+        entity_id:
+          type: integer
+          title: Entity Id
+      type: object
+      required:
+      - entity_type
+      - entity_id
+      title: CoinTarget
+    CoinTransactionOut:
+      properties:
+        id:
+          type: integer
+          title: Id
+        group_id:
+          type: integer
+          title: Group Id
+        entity_type:
+          type: string
+          title: Entity Type
+        entity_id:
+          type: integer
+          title: Entity Id
+        amount:
+          type: integer
+          title: Amount
+        balance_after:
+          type: integer
+          title: Balance After
+        tx_type:
+          type: string
+          title: Tx Type
+        source_type:
+          type: string
+          title: Source Type
+        description:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Description
+        created_at:
+          type: string
+          format: date-time
+          title: Created At
+      type: object
+      required:
+      - id
+      - group_id
+      - entity_type
+      - entity_id
+      - amount
+      - balance_after
+      - tx_type
+      - source_type
+      - created_at
+      title: CoinTransactionOut
     CompanyDetailOut:
       properties:
         name:
@@ -5169,61 +8012,6 @@ components:
       required:
       - team_names
       title: CreateTeamsRequest
-    DecisionOut:
-      properties:
-        id:
-          type: integer
-          title: Id
-        round_id:
-          type: integer
-          title: Round Id
-        participant_id:
-          type: integer
-          title: Participant Id
-        action_type:
-          type: string
-          title: Action Type
-        action_data:
-          additionalProperties: true
-          type: object
-          title: Action Data
-        cash_after:
-          type: number
-          title: Cash After
-        inventory_after:
-          additionalProperties:
-            type: integer
-          type: object
-          title: Inventory After
-        submitted_at:
-          type: string
-          format: date-time
-          title: Submitted At
-      type: object
-      required:
-      - id
-      - round_id
-      - participant_id
-      - action_type
-      - action_data
-      - cash_after
-      - inventory_after
-      - submitted_at
-      title: DecisionOut
-    DecisionRequest:
-      properties:
-        action_type:
-          type: string
-          title: Action Type
-        action_data:
-          additionalProperties: true
-          type: object
-          title: Action Data
-          default: {}
-      type: object
-      required:
-      - action_type
-      title: DecisionRequest
     GameConfig:
       properties:
         rounds:
@@ -5307,59 +8095,6 @@ components:
       additionalProperties: true
       type: object
       title: GameConfig
-    WorldGeoPackOut:
-      properties:
-        region_id:
-          type: string
-          title: Region Id
-        geo_pack_version:
-          type: string
-          title: Geo Pack Version
-          default: '0.1.0'
-        world_pack_version:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: World Pack Version
-        bbox:
-          items:
-            type: number
-          type: array
-          title: Bbox
-        projection:
-          type: string
-          title: Projection
-          default: equirectangular
-        stage_aspect:
-          type: string
-          title: Stage Aspect
-          default: '16:9'
-        assets:
-          additionalProperties:
-            type: string
-          type: object
-          title: Assets
-        attribution:
-          items:
-            type: string
-          type: array
-          title: Attribution
-        cities:
-          items:
-            additionalProperties: true
-            type: object
-          type: array
-          title: Cities
-        routes:
-          items:
-            additionalProperties: true
-            type: object
-          type: array
-          title: Routes
-      type: object
-      required:
-      - region_id
-      title: WorldGeoPackOut
     GameState:
       properties:
         event:
@@ -5398,7 +8133,7 @@ components:
         game_mode:
           type: string
           title: Game Mode
-          default: round
+          default: rts
         pricing_mode:
           type: string
           title: Pricing Mode
@@ -5794,6 +8529,44 @@ components:
           default: none
       type: object
       title: OpenRoundRequest
+    OpsCategory:
+      type: string
+      enum:
+      - electronics
+      - fast_moving
+      - home
+      title: OpsCategory
+    OpsMatchPhase:
+      type: string
+      enum:
+      - draft
+      - registration
+      - positioning
+      - auction_a
+      - operation_round_1
+      - settlement_1
+      - operation_round_2
+      - settlement_2
+      - auction
+      - operation_round_3
+      - settlement_3
+      - auction_b
+      - operation_round_4
+      - settlement_4
+      - operation_round_5
+      - settlement_5
+      - operation_round_6
+      - settlement_6
+      - finished
+      - paused
+      title: OpsMatchPhase
+    OpsSegment:
+      type: string
+      enum:
+      - geek
+      - pragmatic
+      - show
+      title: OpsSegment
     OrganizerControlOut:
       properties:
         event:
@@ -6048,6 +8821,23 @@ components:
           title: Practice Ai Slots
       type: object
       title: PracticeStartRequest
+    ProductPositioningRequest:
+      properties:
+        product_name:
+          type: string
+          maxLength: 100
+          minLength: 1
+          title: Product Name
+        category:
+          $ref: '#/components/schemas/OpsCategory'
+        target_segment:
+          $ref: '#/components/schemas/OpsSegment'
+      type: object
+      required:
+      - product_name
+      - category
+      - target_segment
+      title: ProductPositioningRequest
     ProductPrice:
       properties:
         product_id:
@@ -6128,6 +8918,23 @@ components:
       required:
       - config_id
       title: PublishRequest
+    QuickActionsOut:
+      properties:
+        has_ongoing_match:
+          type: boolean
+          title: Has Ongoing Match
+        has_pending_reviews:
+          type: integer
+          title: Has Pending Reviews
+        unscored_tasks:
+          type: integer
+          title: Unscored Tasks
+      type: object
+      required:
+      - has_ongoing_match
+      - has_pending_reviews
+      - unscored_tasks
+      title: QuickActionsOut
     RecentEventOut:
       properties:
         id:
@@ -6159,6 +8966,25 @@ components:
       required:
       - refresh_token
       title: RefreshTokenRequest
+    ReviewDimension:
+      properties:
+        dimension_id:
+          type: integer
+          title: Dimension Id
+        score:
+          type: number
+          minimum: 0.0
+          title: Score
+        comment:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Comment
+      type: object
+      required:
+      - dimension_id
+      - score
+      title: ReviewDimension
     RtsActionRequest:
       properties:
         action_type:
@@ -6189,6 +9015,61 @@ components:
       required:
       - accepted
       title: RtsActionResult
+    ScoringDimensionCreate:
+      properties:
+        name:
+          type: string
+          maxLength: 64
+          minLength: 1
+          title: Name
+        weight:
+          type: number
+          maximum: 1.0
+          minimum: 0.0
+          title: Weight
+        max_score:
+          type: integer
+          minimum: 1.0
+          title: Max Score
+          default: 5
+        sort_order:
+          type: integer
+          title: Sort Order
+          default: 0
+      type: object
+      required:
+      - name
+      - weight
+      title: ScoringDimensionCreate
+    ScoringDimensionOut:
+      properties:
+        id:
+          type: integer
+          title: Id
+        task_id:
+          type: integer
+          title: Task Id
+        name:
+          type: string
+          title: Name
+        weight:
+          type: number
+          title: Weight
+        max_score:
+          type: integer
+          title: Max Score
+        sort_order:
+          type: integer
+          title: Sort Order
+      type: object
+      required:
+      - id
+      - task_id
+      - name
+      - weight
+      - max_score
+      - sort_order
+      title: ScoringDimensionOut
     SeasonCreate:
       properties:
         title:
@@ -6600,67 +9481,67 @@ components:
       - content
       - submitted_at
       title: SubmissionOut
-    SubmitDecisionRequest:
+    SubmissionReviewCreate:
       properties:
-        route:
-          type: string
-          title: Route
-        opened_cities:
+        dimensions:
           items:
-            type: string
+            $ref: '#/components/schemas/ReviewDimension'
           type: array
-          title: Opened Cities
-        invest_tech:
-          type: number
-          title: Invest Tech
-          default: 0
-        invest_fit_by_city:
-          additionalProperties:
-            type: number
-          type: object
-          title: Invest Fit By City
-        invest_show_by_city:
-          additionalProperties:
-            type: number
-          type: object
-          title: Invest Show By City
-        declaration:
-          type: string
-          title: Declaration
-          default: ''
+          title: Dimensions
       type: object
       required:
-      - route
-      - opened_cities
-      title: SubmitDecisionRequest
-    SubmitDecisionResult:
+      - dimensions
+      title: SubmissionReviewCreate
+    TaskSubmissionOut:
       properties:
-        decision:
-          $ref: '#/components/schemas/DecisionOut'
-        practice_advanced:
-          type: boolean
-          title: Practice Advanced
-          default: false
-        event_finished:
-          type: boolean
-          title: Event Finished
-          default: false
-        current_round:
+        id:
+          type: integer
+          title: Id
+        task_id:
+          type: integer
+          title: Task Id
+        submitter_type:
+          type: string
+          title: Submitter Type
+        submitter_id:
+          type: integer
+          title: Submitter Id
+        content:
           anyOf:
-          - $ref: '#/components/schemas/TradingRoundOut'
+          - type: string
           - type: 'null'
-        has_submitted_this_round:
-          type: boolean
-          title: Has Submitted This Round
-          default: true
-        can_submit_decision:
-          type: boolean
-          title: Can Submit Decision
-          default: false
+          title: Content
+        attachments:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Attachments
+        submitted_at:
+          type: string
+          format: date-time
+          title: Submitted At
+        status:
+          type: string
+          title: Status
+        score:
+          anyOf:
+          - type: number
+          - type: 'null'
+          title: Score
+        feedback:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Feedback
       type: object
       required:
-      - decision
-      title: SubmitDecisionResult
+      - id
+      - task_id
+      - submitter_type
+      - submitter_id
+      - submitted_at
+      - status
+      title: TaskSubmissionOut
     TeachingGroupCreate:
       properties:
         name:
@@ -6918,28 +9799,6 @@ components:
       - started_at
       - ended_at
       title: TradingRoundOut
-    TradingRoundResult:
-      properties:
-        round:
-          $ref: '#/components/schemas/TradingRoundOut'
-        standings:
-          items:
-            additionalProperties: true
-            type: object
-          type: array
-          title: Standings
-        my_decision:
-          anyOf:
-          - additionalProperties: true
-            type: object
-          - type: 'null'
-          title: My Decision
-      type: object
-      required:
-      - round
-      - standings
-      - my_decision
-      title: TradingRoundResult
     UpdateConfigRequest:
       properties:
         config_yaml:
@@ -7081,6 +9940,248 @@ components:
       - msg
       - type
       title: ValidationError
+    WorldGeoPackOut:
+      properties:
+        region_id:
+          type: string
+          title: Region Id
+        geo_pack_version:
+          type: string
+          title: Geo Pack Version
+          default: 0.1.0
+        world_pack_version:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: World Pack Version
+        bbox:
+          items:
+            type: number
+          type: array
+          title: Bbox
+        projection:
+          type: string
+          title: Projection
+          default: equirectangular
+        stage_aspect:
+          type: string
+          title: Stage Aspect
+          default: '16:9'
+        assets:
+          additionalProperties:
+            type: string
+          type: object
+          title: Assets
+        attribution:
+          items:
+            type: string
+          type: array
+          title: Attribution
+        cities:
+          items:
+            additionalProperties: true
+            type: object
+          type: array
+          title: Cities
+        routes:
+          items:
+            additionalProperties: true
+            type: object
+          type: array
+          title: Routes
+      type: object
+      required:
+      - region_id
+      title: WorldGeoPackOut
+      description: ??????? ? ????? / BDD ???
+    app__api__ops__SubmitDecisionRequest:
+      properties:
+        production_quantity:
+          type: integer
+          minimum: 0.0
+          title: Production Quantity
+        unit_price:
+          type: number
+          exclusiveMinimum: 0.0
+          title: Unit Price
+        marketing_spend:
+          type: number
+          minimum: 0.0
+          title: Marketing Spend
+          default: 0
+        rnd_spend:
+          type: number
+          minimum: 0.0
+          title: Rnd Spend
+          default: 0
+        sales_force:
+          type: integer
+          minimum: 0.0
+          title: Sales Force
+          default: 0
+        target_cities:
+          items:
+            type: string
+          type: array
+          title: Target Cities
+      type: object
+      required:
+      - production_quantity
+      - unit_price
+      title: SubmitDecisionRequest
+    app__api__techventure__SubmitDecisionRequest:
+      properties:
+        route:
+          type: string
+          title: Route
+        opened_cities:
+          items:
+            type: string
+          type: array
+          title: Opened Cities
+        invest_tech:
+          type: number
+          title: Invest Tech
+          default: 0
+        invest_fit_by_city:
+          additionalProperties:
+            type: number
+          type: object
+          title: Invest Fit By City
+        invest_show_by_city:
+          additionalProperties:
+            type: number
+          type: object
+          title: Invest Show By City
+        declaration:
+          type: string
+          title: Declaration
+          default: ''
+      type: object
+      required:
+      - route
+      - opened_cities
+      title: SubmitDecisionRequest
+    app__core__response__ApiResponse_CampDashboardOut___1:
+      properties:
+        success:
+          type: boolean
+          title: Success
+          default: true
+        code:
+          type: integer
+          title: Code
+          default: 0
+        message:
+          type: string
+          title: Message
+          default: success
+        data:
+          anyOf:
+          - $ref: '#/components/schemas/app__schemas__teaching_groups__CampDashboardOut'
+          - type: 'null'
+      type: object
+      title: ApiResponse[CampDashboardOut]
+    app__core__response__ApiResponse_CampDashboardOut___2:
+      properties:
+        success:
+          type: boolean
+          title: Success
+          default: true
+        code:
+          type: integer
+          title: Code
+          default: 0
+        message:
+          type: string
+          title: Message
+          default: success
+        data:
+          anyOf:
+          - $ref: '#/components/schemas/app__schemas__camp_summer__CampDashboardOut'
+          - type: 'null'
+      type: object
+      title: ApiResponse[CampDashboardOut]
+    app__schemas__camp_summer__CampDashboardOut:
+      properties:
+        member_count:
+          type: integer
+          title: Member Count
+        active_event_count:
+          type: integer
+          title: Active Event Count
+        weekly_active_count:
+          type: integer
+          title: Weekly Active Count
+        company_count:
+          type: integer
+          title: Company Count
+        current_day:
+          type: integer
+          title: Current Day
+        active_task_count:
+          type: integer
+          title: Active Task Count
+        today_agenda:
+          items:
+            $ref: '#/components/schemas/CampAgendaItemOut'
+          type: array
+          title: Today Agenda
+          default: []
+        quick_actions:
+          $ref: '#/components/schemas/QuickActionsOut'
+        recent_announcements:
+          items:
+            additionalProperties: true
+            type: object
+          type: array
+          title: Recent Announcements
+          default: []
+        recent_events:
+          items:
+            additionalProperties: true
+            type: object
+          type: array
+          title: Recent Events
+          default: []
+      type: object
+      required:
+      - member_count
+      - active_event_count
+      - weekly_active_count
+      - company_count
+      - current_day
+      - active_task_count
+      - quick_actions
+      title: CampDashboardOut
+    app__schemas__teaching_groups__CampDashboardOut:
+      properties:
+        member_count:
+          type: integer
+          title: Member Count
+          default: 0
+        active_event_count:
+          type: integer
+          title: Active Event Count
+          default: 0
+        weekly_active_count:
+          type: integer
+          title: Weekly Active Count
+          default: 0
+        recent_announcements:
+          items:
+            $ref: '#/components/schemas/AnnouncementOut'
+          type: array
+          title: Recent Announcements
+          default: []
+        recent_events:
+          items:
+            $ref: '#/components/schemas/RecentEventOut'
+          type: array
+          title: Recent Events
+          default: []
+      type: object
+      title: CampDashboardOut
   securitySchemes:
     OAuth2PasswordBearer:
       type: oauth2

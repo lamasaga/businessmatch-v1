@@ -2,7 +2,7 @@
 
 > **定位**：编码任务的唯一事实源——AI_DEFAULT、API/路由全表、赛事引擎规范、开发流程。
 > **关联**：`02-ARCHITECTURE.md`（技术架构）· `01-PRODUCT.md`（产品定义）
-> **最后更新**：2026-06-09
+> **最后更新**：2026-06-16
 
 ---
 
@@ -15,7 +15,7 @@
 | 代码根 | `webapp/backend`、`webapp/frontend`、`organizer-frontend` (:5174) |
 | 演示账号 | `student/student123`、`admin/admin123` |
 | 体验营手测 | :5174 建营团(6位码) → :5173 入营 → 营内建赛(4位房间码) → 控场 |
-| 最强闭环 | 教师端建赛 → 房间码 → 交易/TechVenture → XP |
+| 最强闭环 | 教师端建赛 → 房间码 → 交易/TechVenture/OPS 首期 → XP |
 | API 字段级 | `webapp/contracts/openapi/bundled.yaml` 或 DEBUG `/openapi.json` |
 | 默认 Phase | **Phase A**（商赛引擎闭环）；未指定时不抢跑 World/OPC |
 
@@ -28,6 +28,7 @@
 | 商赛大厅 `/games` | ✅ | ✅ | 可用 |
 | 浮生记 RTS | ✅ WS | ✅ 全屏 | **当前主力** |
 | TechVenture | ✅ | ✅ 全屏·无地图 | 四端控场 |
+| OPS 产销运营 | ✅ 6+2 基础 | ✅ 6+2 基础 | 经济模型、双拍卖、无教师练习推进已落地；正式赛倒计时需端到端深测 |
 | 教师端 :5174 | ✅ | ✅ | 独立端（目录 `organizer-frontend`） |
 | 体验营营团 P1 | ✅ | 🟡 | 营团+赛季编排 |
 | 赛事工坊 `/sandbox` | ✅ | ✅ | 内存会话·热 YAML |
@@ -43,12 +44,13 @@
 | E3 | 房间码加入后可能无法跳转大厅 | 前端路由 bug | 🟡 待复测 |
 | E4 | DB 依赖 lifespan 初始化 | 架构债 | 🔴 B4 前评估 |
 | E5 | 正式赛结束与 debrief 未打通 | Hermes-Debrief 规则模板 | 🔴 B3 实现 |
+| E6 | OPS 6+2 重写后端到端复测不足 | 正式赛倒计时、教师控场、练习赛全流程浏览器验证 | 🟡 P0 复测 |
 
 ### 对齐度
 
 | 组件 | 对齐度 | 说明 |
 |------|--------|------|
-| Arena | 🟢 88% | 正式赛、练习赛、RTS、营团均可用 |
+| Arena | 🟢 88% | 正式赛、练习赛、RTS、营团均可用；OPS 首期已接入 |
 | Career Hub | 🟢 85% | `xp_events` + `users.gold/diamond` + `career_profiles` + `api/career.py` + 前端对接已完成；家园/成就仍 mock |
 | OPC | 🟡 45% | CRUD + 前端 UI，无 Agent |
 | Hermes/Tyche/Rival | 🔴 15～25% | 规则占位，B3 起规则模板 |
@@ -76,6 +78,7 @@
 | practice | `/practice` | arena+cybercore | ✅ |
 | techventure | `/techventure` | games/techventure | ✅ |
 | techventure_admin | `/techventure` | arena | ✅ |
+| ops | `/ops` | games/ops_sim | 🟡 6+2 基础落地 |
 | sandbox | `/sandbox` | sandbox+cybercore | 🟡 |
 | camp_groups | `/camp-groups` | arena | 🟡 |
 | camp_summer | `/camp-summer` | arena | 🟡 |
@@ -99,6 +102,7 @@
 | `/games` | 商赛大厅 | ✅ |
 | `/games/:id/play` | FStrading 局内（Phaser3） | ✅ |
 | `/games/:id/techventure` | TechVenture 局内 | ✅ |
+| `/games/:id/ops` | OPS 局内 | 🟡 6+2 基础 |
 | `/wiki` | 知识图谱 | ✅ |
 | `/courses` | 课程学院 | ✅ |
 | `/activities` | 日常活动（Quest） | ✅ |
@@ -118,6 +122,7 @@
 | `/seasons` | 赛季编排 |
 | `/competitions` | 比赛控场 |
 | `/techventure/admin/:id` | TechVenture 控场 |
+| `/ops/:id/control` | OPS 控场 / screen payload |
 
 ---
 
@@ -130,6 +135,7 @@
 | `competitionStore` | 当前比赛状态 | — |
 | `tradingStore` | FStrading 局内状态 | — |
 | `techventureStore` | TechVenture 局内状态 | — |
+| `opsStore` | OPS 局内状态 | — |
 | `campStore` | 营团、赛季 | — |
 | `sandboxStore` | 赛事工坊 | — |
 | `opcStore` | 一人公司 | — |
@@ -140,9 +146,9 @@
 
 | # | 引擎 ID | 产品名 | 状态 | `game_config_id` |
 |---|---------|--------|------|------------------|
-| 1 | **trading** | 浮生记（贸易） | ✅ 已搭建：回合制 + RTS | `trading-v1` · `trading-v2-rts` |
+| 1 | **trading** | 浮生记（贸易） | ✅ 已搭建：RTS 即时制 | `fstrading` |
 | 2 | **techventure** | TechVenture（创投） | ✅ 已搭建：队伍策略四端 | `techventure-v1` |
-| 3 | **ops-sim** | 产销运营赛 | 🟡 方向已定：供应链产销 | `ops-sim-v1` |
+| 3 | **ops_sim** | OPS 产销运营赛 | 🟡 6+2 基础落地：经济模型、双拍卖、练习推进已实现，正式赛需深测 | `ops-sim-v1` |
 | 4 | **finance-lab** | 金融投研实验室 | 🟡 方向已定：投研/交易模拟 | `finance-lab-v1` |
 | 5 | **engine5** | 引擎五 | ⚪ 占位 | `engine5-v1` |
 | 6 | **engine6** | 引擎六 | ⚪ 占位 | `engine6-v1` |
@@ -159,8 +165,8 @@
 
 | 运行时 | 适用引擎 | 技术 |
 |--------|----------|------|
-| `phaser` | trading（浮生记 RTS）、ops-sim 等 | **Phaser 3** Canvas + React HUD overlay |
-| `react-game` | techventure、finance-lab 等 | **React 全屏** + `game-ui` 组件库 |
+| `phaser` | trading（浮生记 RTS）等地图/空间/实时移动引擎 | **Phaser 3** Canvas + React HUD overlay |
+| `react-game` | techventure、ops_sim、finance-lab 等策略/面板引擎 | **React 全屏** + `game-ui` 组件库 |
 
 **目录**：`webapp/frontend/src/games/<engine-id>/`
 ```
@@ -184,22 +190,17 @@ games/<engine-id>/
 场次（match）           → 运行时状态，每局隔离
 ```
 
-### 5.3 引擎匣子协议（平台 ↔ 引擎）
+### 5.3 引擎调用模式（平台 ↔ 引擎）
 
-引擎作为独立进程通过 HTTP REST 与平台通信：
+当前 Phase A/B 默认采用同仓同进程调用：平台 API 读取 `game_config_id`，直接调用 `app/games/<engine>/` 内核与 DB 编排。独立引擎匣子 HTTP 协议已归档为远期预研，不作为默认开发契约。
 
-| 接口 | 说明 |
+| 模式 | 说明 |
 |------|------|
-| `POST /engine/register` | 引擎向平台注册能力 |
-| `POST /match/create` | 创建场次 |
-| `POST /match/{id}/start` | 开始比赛 |
-| `GET  /match/{id}/state` | 查询状态（只读） |
-| `POST /match/{id}/decision` | 提交决策 |
-| `POST /match/{id}/advance` | 推进回合 |
-| `POST /match/{id}/finish` | 结束比赛 |
-| `GET  /match/{id}/result` | 获取结算结果 |
+| 同进程调用 | `api/practice.py`、`api/*_admin.py`、`api/ops.py` 直接导入 `games/<engine>/` |
+| 域事件/服务调用 | 比赛结束后通过 Career 服务结算奖励 |
+| 远期独立服务 | 仅保留在 `docs/archive/引擎匣子对接测试指南.md`，Phase C+ 再评估 |
 
-**回调**：引擎通过 HTTP 回调通知平台 `match.state_changed` / `match.finished`。
+**回调**：默认不走 HTTP 回调；如需跨域通知，优先使用域事件或服务函数。
 
 ### 5.4 引擎元数据（config.yaml）
 

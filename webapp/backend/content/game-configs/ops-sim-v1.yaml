@@ -2,14 +2,14 @@ id: ops-sim-v1
 engine: ops_sim
 meta:
   name: 生产经营销售赛
-  description: 多轮商业模拟：产品定位、运营决策、资源竞价
-  version: "1.0.0"
+  description: 6轮产销运营模拟：产品定位、双拍卖、运营决策、财务排名
+  version: "2.0.0"
   author: 商识唯智
   target_age: [14, 18]
   runtime: react-game
 design_mode: standalone
 defaults:
-  rounds: 4
+  rounds: 6
   teams: 8
   members_per_team: 4
   initial_capital: 100000
@@ -17,7 +17,7 @@ defaults:
   base_capacity: 200
   max_production_per_round: 500
   max_sales_force: 10
-  decision_time_minutes: 8
+  decision_time_minutes: 20
   auction_time_minutes: 8
   practice_ai_count: 3
   practice_ai_slots: [balanced, aggressive, conservative]
@@ -25,9 +25,28 @@ defaults:
   holding_cost_per_unit: 2
   fixed_overhead: 3500
   worker_productivity: 20
-  tech_conversion_rate: 0.001
-  show_conversion_rate: 0.0008
-  beta: 2.0
+  tech_response_alpha: 2.0
+  tech_response_scale: 5000
+  tech_decay: 0.0
+  show_response_alpha: 1.6
+  show_response_scale: 5000
+  show_decay: 0.05
+  fit_response_alpha: 0.25
+  fit_response_scale: 8000
+  fit_max: 80
+  logit_beta: 0.25
+  price_sensitivity: 1.5
+  price_reference_base_weight: 0.65
+  min_price_multiplier: 0.5
+  max_price_multiplier: 2.5
+  stockout_penalty: 0.0
+  min_bid_increment_abs: 500
+  min_bid_increment_rate: 0.05
+  city_tier_opening_multiplier:
+    1: 2.0
+    2: 1.5
+    3: 1.0
+    4: 0.6
 
 product_categories:
   electronics:
@@ -37,6 +56,9 @@ product_categories:
     base_overhead: 5000
     market_size_multiplier: 1.2
     base_price: 220
+    tech_base: 24
+    fit_base: 20
+    show_base: 18
   fast_moving:
     name: 快消品
     base_material_cost: 20
@@ -44,6 +66,9 @@ product_categories:
     base_overhead: 2000
     market_size_multiplier: 1.5
     base_price: 55
+    tech_base: 16
+    fit_base: 21
+    show_base: 24
   home:
     name: 家居用品
     base_material_cost: 50
@@ -51,6 +76,9 @@ product_categories:
     base_overhead: 3500
     market_size_multiplier: 1.0
     base_price: 140
+    tech_base: 20
+    fit_base: 24
+    show_base: 18
 
 consumer_segments:
   geek:
@@ -150,12 +178,14 @@ event_types:
 auction_items:
   line_a:
     name: 标准生产线
+    stage: auction_a
     type: production
     base_price: 20000
     effect:
       capacity_bonus: 150
   line_b:
     name: 高端生产线
+    stage: auction_a
     type: production
     base_price: 35000
     effect:
@@ -163,6 +193,7 @@ auction_items:
       quality_bonus: 0.10
   ad_shanghai:
     name: 上海广告位
+    stage: auction_a
     type: advertising
     base_price: 12000
     effect:
@@ -170,6 +201,7 @@ auction_items:
       show_multiplier: 1.20
   ad_hangzhou:
     name: 杭州广告位
+    stage: auction_a
     type: advertising
     base_price: 8000
     effect:
@@ -177,10 +209,73 @@ auction_items:
       show_multiplier: 1.20
   raw_discount:
     name: 原材料供应合同
+    stage: auction_a
     type: discount
     base_price: 15000
     effect:
       material_cost_discount: 0.15
+  exclusive_campus_channel:
+    name: 校园渠道独家代理
+    stage: auction_b
+    type: exclusive_channel
+    base_price: 26000
+    effect:
+      utility_bonus: 0.35
+      demand_multiplier: 1.10
+  supply_data_pack:
+    name: 供应链数据资源包
+    stage: auction_b
+    type: strategic_resource
+    base_price: 24000
+    effect:
+      material_cost_discount: 0.08
+      tech_bonus: 2.0
+  campus_brand_endorsement:
+    name: 校园明星代言
+    stage: auction_b
+    type: brand_endorsement
+    base_price: 22000
+    effect:
+      show_bonus: 5.0
+      utility_bonus: 0.20
+  patent_protection:
+    name: 专利与合规保护
+    stage: auction_b
+    type: legal_protection
+    base_price: 18000
+    effect:
+      protection_rate: 0.5
+      utility_bonus: 0.10
+
+auction_stages:
+  auction_a:
+    before_round: 1
+    item_pool: basic_operations
+  auction_b:
+    before_round: 4
+    item_pool: strategic_resources
+
+auction_item_pools:
+  basic_operations:
+    - line_a
+    - line_b
+    - ad_shanghai
+    - ad_hangzhou
+    - raw_discount
+  strategic_resources:
+    - exclusive_campus_channel
+    - supply_data_pack
+    - campus_brand_endorsement
+    - patent_protection
+
+theme_pack:
+  id: campus-consumer-2026
+  name: 校园消费品创业赛
+  auction_b_labels:
+    exclusive_channel: 校园渠道独家代理
+    strategic_resource: 供应链数据资源包
+    brand_endorsement: 校园明星代言
+    legal_protection: 专利与合规保护
 
 scoring_weights:
   net_assets: 0.70

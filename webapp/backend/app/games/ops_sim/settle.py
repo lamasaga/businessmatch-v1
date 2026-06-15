@@ -9,7 +9,7 @@ from sqlalchemy.orm import Session
 
 from app.domains.arena.models.match import ArenaMatch
 from app.domains.arena.models.team import ArenaTeam
-from app.domains.arena.enums import MatchStatus
+from app.domains.arena.config_json import persist_match_config
 from app.games.ops_sim.models import (
     OpsTeamState, OpsRound, OpsSubmission, OpsSnapshot, OpsProductCard,
 )
@@ -31,6 +31,10 @@ def _team_state_dict(state: OpsTeamState) -> dict[str, Any]:
         "show": state.show,
         "factories": state.factories or [],
         "ads": state.ads or [],
+        "channels": [],
+        "protections": [],
+        "strategic_resources": [],
+        "endorsements": [],
         "discount_rate": state.discount_rate,
         "entered_cities": state.entered_cities or [],
         "category": state.category.value if state.category else "home",
@@ -113,7 +117,7 @@ def ensure_ai_submissions(db: Session, match: ArenaMatch, ops_round: OpsRound) -
             idempotency_key=key,
         ))
 
-    db.commit()
+    db.flush()
 
 
 def settle_ops_round(db: Session, match: ArenaMatch, ops_round: OpsRound) -> dict[str, Any]:
@@ -172,29 +176,19 @@ def settle_ops_round(db: Session, match: ArenaMatch, ops_round: OpsRound) -> dic
             import random
             cities = list(cfg.get("cities", {}).keys())
             ops_event_state["policy_subsidy_city"] = random.choice(cities) if cities else None
-        match.config = {**(match.config or {}), "ops_event_state": ops_event_state}
+        if event["id"] == "competitor_exit":
+            cities = list(cfg.get("cities", {}).keys())
+            if cities:
+                import random
+                rng = random.Random(hash(f"{match.id}:{ops_round.round_number}:competitor_exit") % (2**32))
+                ops_event_state["market_boost_city"] = rng.choice(cities)
+                ops_event_state["market_boost_multiplier"] = 1.05
+        persist_match_config(match, {**(match.config or {}), "ops_event_state": ops_event_state})
 
     ops_round.status = OpsRoundStatus.settled
     ops_round.settled_at = datetime.now(timezone.utc)
 
-    # 更新比赛阶段
-    next_phases = {
-        OpsMatchPhase.operation_round_1: OpsMatchPhase.operation_round_2,
-        OpsMatchPhase.operation_round_2: OpsMatchPhase.auction,
-        OpsMatchPhase.operation_round_3: OpsMatchPhase.operation_round_4,
-        OpsMatchPhase.operation_round_4: OpsMatchPhase.finished,
-    }
-    current_phase = OpsMatchPhase(match.status.value)
-    if current_phase in next_phases:
-        if current_phase == OpsMatchPhase.operation_round_2:
-            match.status = MatchStatus.playing  # 进入拍卖，保持 playing
-            match.config = {**(match.config or {}), "ops_phase": OpsMatchPhase.auction.value}
-        elif current_phase == OpsMatchPhase.operation_round_4:
-            match.status = MatchStatus.finished
-        else:
-            match.status = MatchStatus.playing
-
-    db.commit()
+    db.flush()
     return output
 
 
@@ -208,7 +202,12 @@ def final_ranking(db: Session, match: ArenaMatch) -> list[dict[str, Any]]:
     for s in states:
         team = teams.get(s.team_id)
         card = cards.get(s.team_id)
-        score = s.net_assets * 0.7 + s.cumulative_profit * 0.3
+        cfg = get_cfg(match.game_config_id or "ops-sim-v1")
+        weights = cfg.get("scoring_weights", {})
+        score = (
+            s.net_assets * float(weights.get("net_assets", 0.7))
+            + s.cumulative_profit * float(weights.get("cumulative_profit", 0.3))
+        )
         rows.append({
             "team_id": s.team_id,
             "team_name": team.team_name if team else f"Team {s.team_id}",
@@ -219,7 +218,7 @@ def final_ranking(db: Session, match: ArenaMatch) -> list[dict[str, Any]]:
             "target_segment": card.target_segment.value if card and card.target_segment else None,
         })
 
-    rows.sort(key=lambda x: x["score"], reverse=True)
+    rows.sort(key=lambda x: (x["score"], x["net_assets"], x["cumulative_profit"], -x["team_id"]), reverse=True)
     for i, r in enumerate(rows):
         r["rank"] = i + 1
 

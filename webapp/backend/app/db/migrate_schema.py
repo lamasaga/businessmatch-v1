@@ -21,6 +21,8 @@ def run_migrations(engine: Engine) -> None:
             ("competition_participants", "team_id", "INTEGER"),
             ("competition_participants", "team_role", "VARCHAR(32)"),
             ("competition_events", "teaching_group_id", "INTEGER"),
+            ("users", "gold", "INTEGER DEFAULT 0 NOT NULL"),
+            ("users", "diamond", "INTEGER DEFAULT 0 NOT NULL"),
         ]
         for table, col, ddl in alters:
             if not _has_column(engine, table, col):

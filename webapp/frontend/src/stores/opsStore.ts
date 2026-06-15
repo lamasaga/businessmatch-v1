@@ -19,6 +19,7 @@ interface OpsState {
   submitPositioning: (eventId: number, payload: OpsPositioningPayload) => Promise<void>;
   submitDecision: (eventId: number, payload: OpsDecisionPayload) => Promise<void>;
   placeBid: (eventId: number, itemId: number, amount: number) => Promise<void>;
+  advancePractice: (eventId: number) => Promise<void>;
   fetchRanking: (eventId: number) => Promise<void>;
   fetchAuctionState: (eventId: number) => Promise<OpsAuctionItemState[]>;
   clearError: () => void;
@@ -92,6 +93,18 @@ export const useOpsStore = create<OpsState>((set) => ({
       set({ gameState: res.data.data, loading: false });
     } catch (err: any) {
       set({ error: err?.response?.data?.message || err.message || '出价失败', loading: false });
+      throw err;
+    }
+  },
+
+  advancePractice: async (eventId) => {
+    set({ loading: true, error: null });
+    try {
+      await api.post(`/api/v1/ops/events/${eventId}/practice/advance`);
+      const res = await api.get(`/api/v1/ops/events/${eventId}/state`);
+      set({ gameState: res.data.data, loading: false });
+    } catch (err: any) {
+      set({ error: err?.response?.data?.message || err.message || '推进失败', loading: false });
       throw err;
     }
   },
