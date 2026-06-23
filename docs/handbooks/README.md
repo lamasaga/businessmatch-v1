@@ -6,7 +6,8 @@
 
  | 文件 | 任务 |
  |------|------|
- | [`engine-polish-playbook.md`](./engine-polish-playbook.md) | 商业模拟赛前端体验打磨 |
+ | [ngine-polish-playbook.md](./engine-polish-playbook.md) | 商业模拟赛前端体验打磨 |
+| [rontend-visual-authoring-guide.md](./frontend-visual-authoring-guide.md) | 前端视觉编排与动画调试 |
 
  ## 何时把手册放在这里
 
