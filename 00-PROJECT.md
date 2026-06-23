@@ -178,7 +178,7 @@ flowchart TB
 | **02** | [技术架构与智能体编排](./02-ARCHITECTURE.md) | 技术栈、域分包、Worker 列表 |
 | **03** | [工程实现与开发规范](./03-ENGINEERING.md) | AI_DEFAULT、API/路由全表、引擎规范 |
 | **04** | [实施路线与里程碑](./04-ROADMAP.md) | Phase A～F、验收标准 |
-| **11** | [引擎技术规范](./docs/engine-spec.md) | Phaser/React 运行时、美术管线、引擎全栈手册 |
+| **11** | [引擎技术规范](./docs/ENGINE.md) | Phaser/React 运行时、美术管线、引擎全栈手册 |
 
 > **ADR**：[docs/decisions/](./docs/decisions/README.md) · **代码**：[webapp/](./webapp/)
 
@@ -210,7 +210,7 @@ businessmatch-v1/
 ├── 02-ARCHITECTURE.md         ★ 技术架构
 ├── 03-ENGINEERING.md          ★ 工程详表
 ├── 04-ROADMAP.md              ★ 路线图
-├── docs/engine-spec.md        ★ 引擎全栈手册
+├── docs/ENGINE.md        ★ 引擎全栈手册
 ├── docs/
 │   └── bizsim-product-architecture-2026-06.png  产品架构静态图
 ├── CLAUDE.md                  ★ Claude Code 上下文（AI 编程入口）
@@ -238,7 +238,7 @@ businessmatch-v1/
 | **排期、Phase 门控** | `04-ROADMAP.md` |
 | **查术语** | `00-TERMINOLOGY.md` |
 | **启动本地环境** | `webapp/README.md` |
-| **对外项目说明** | `docs/商识唯智-对外项目说明.md` |
+| **对外项目说明** | `docs/PROJECT.md` |
 
 ---
 

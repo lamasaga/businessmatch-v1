@@ -27,7 +27,7 @@
 | `3fff9f0` | 对齐对局前端技术路线 | 引入双运行时策略：`phaser`（地图/实时类）与 `react-game`（策略/面板类），统一 Game Shell |
 | `c124cc5` | 新增引擎盒开发技术栈与实现规范 | 覆盖 2D/3D 页游技术选型、UI 分层、资产管线、声效/动画/粒子系统、后端结算幂等设计 |
 | `f4e8526` | 四赛制匣子指导与云部署对齐 | 为每个引擎匣子提供独立部署、配置化运行的标准化指导 |
-| `6f90643` | 引擎规范文档迁移至 `docs/engine-spec.md` | 将技术规范纳入权威文档体系，与 `00-PROJECT.md` 等并列 |
+| `6f90643` | 引擎规范文档迁移至 `docs/ENGINE.md` | 将技术规范纳入权威文档体系，与 `00-PROJECT.md` 等并列 |
 
 **目的**：为未来"同一容器、不同配置"的多赛事复用架构奠定工程基础。  
 **作用**：每个新引擎只需按标准骨架填空，开发周期从"从零设计"压缩为"配置+实现核心算法"。  
@@ -83,7 +83,7 @@
 | `042edc4` | 新增 POP 学术支撑(95) + 商业质感 UI(100) | 新增 `95-POP行为涌现学术研究支撑` 与 `100-商业质感UI组件库调研与选型指南`；归档教师端文档至 `docs/prd/` |
 
 **目的**：让文档从"堆叠的 Markdown 文件"升级为"可导航、可引用、可维护的知识体系"。  
-**作用**：新成员可以通过 `50-目录导航` 快速定位；AI 助手（Claude/Cursor）可以通过 `CLAUDE.md` 准确理解项目上下文；合作伙伴可以通过 `bizsim-introduction-for-partners.md` 了解项目。  
+**作用**：新成员可以通过 `50-目录导航` 快速定位；AI 助手（Claude/Cursor）可以通过 `CLAUDE.md` 准确理解项目上下文；合作伙伴可以通过 `docs/archive/partner-introduction.md` 了解项目。  
 **未来影响**：当项目规模继续扩大（更多引擎、更多赛事类型），文档体系不会崩塌，而是可以持续增量更新。
 
 ---
@@ -93,7 +93,7 @@
 | 提交 | 内容 | 影响 |
 |------|------|------|
 | `0e37f25` | 产品架构可视化图与 Mermaid 总览 | `00-PROJECT.md` 增补 Mermaid 架构图；新增 `docs/bizsim-product-architecture-2026-06.png` |
-| `b09df15` | 新增 `CODE_MAP.md` 与 `docs/bizsim-component-library.md` | 提供代码导航与组件库速查 |
+| `b09df15` | 新增 `CODE_MAP.md` 与 `docs/UI-LIBRARY.md` | 提供代码导航与组件库速查 |
 | `b09df15` | 新增 `docs/prd/PRD-FST.md`、`PRD-OPS.md`、`PRD-TECH.md` | 四引擎（FST/OPS/TECH + 占位）的完整产品需求文档 |
 
 **目的**：让"架构"不再只是口头共识，而是可以指着图讨论的具象表达。  
@@ -126,7 +126,7 @@
 
 ### 4.1 短期（1-2 周）
 
-- **开发者可以**：按 `engine-spec.md` 的标准骨架，开始填充 `ops_sim` 或 `finance_lab` 的核心算法
+- **开发者可以**：按 `docs/ENGINE.md` 的标准骨架，开始填充 `ops_sim` 或 `finance_lab` 的核心算法
 - **教师可以**：通过组织端 Camp Tab 创建营团、发布赛季、布置作业（API 已就绪，前端对接中）
 - **学生可以**：在 TradingRTS 中看到长三角六城的真实路网与商路地图
 
@@ -164,11 +164,11 @@
 如果你想快速了解这次更新的精髓，建议按以下顺序阅读：
 
 1. **`00-PROJECT.md`** — 产品架构总览（含 Mermaid 图）
-2. **`docs/engine-spec.md`** — 引擎开发技术规范（想写新引擎必读）
+2. **`docs/ENGINE.md`** — 引擎开发技术规范（想写新引擎必读）
 3. **`inspire/95-POP行为涌现学术研究支撑与开源实现指南.md`** — 学术支撑与工具选型
 4. **`inspire/100-商业质感UI组件库调研与选型指南.md`** — 前端 UI 双轨策略
 5. **`docs/prd/PRD-FST.md`** / **`PRD-OPS.md`** / **`PRD-TECH.md`** — 三引擎产品需求（了解未来赛事形态）
-6. **`docs/bdd-career-ledger-phase-a.md`** — 生涯账本 Phase A 行为驱动设计
+6. **`docs/prd/bdd-career-ledger-phase-a.md`** — 生涯账本 Phase A 行为驱动设计
 
 ---
 

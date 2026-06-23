@@ -845,5 +845,5 @@ rewards:
 ---
 
 *商识唯智 · TECH 引擎 PRD v1.1*
-*规范来源：`docs/engine-spec.md`、`02-ARCHITECTURE.md`、`03-ENGINEERING.md`*
+*规范来源：`docs/ENGINE.md`、`02-ARCHITECTURE.md`、`03-ENGINEERING.md`*
 *引擎实现：`backend/app/games/techventure/v6_engine.py`*

@@ -1,1 +1,1 @@
-- [引擎技术规范](docs/engine-spec.md) — 去除3D部分后的引擎全栈开发手册，vibecoding 参考
+- [引擎技术规范](docs/ENGINE.md) — 去除3D部分后的引擎全栈开发手册，vibecoding 参考

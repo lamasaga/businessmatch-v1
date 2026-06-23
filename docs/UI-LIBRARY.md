@@ -458,4 +458,4 @@ FST-Turn（新增）：TurnBasedAdvancement, 每轮3~5分钟, 8~12轮, 30~40分�
 
 *商识唯智 · 商业模拟组件库 v1.0*
 *评审引擎：FST v3.0.0、TECH v1.0.0*
-*规范来源：`docs/engine-spec.md`、`02-ARCHITECTURE.md`、`03-ENGINEERING.md`*
+*规范来源：`docs/ENGINE.md`、`02-ARCHITECTURE.md`、`03-ENGINEERING.md`*

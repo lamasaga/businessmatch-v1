@@ -12,7 +12,7 @@
 | 1 | `PRD-<ENGINE>.md` | 定义玩法、用户流程、阶段边界、胜负条件 | 产品需求以 PRD 为准 |
 | 2 | `BDD-<ENGINE>.md` | 定义可验收行为场景 | 测试与联调以 BDD 为准 |
 | 3 | `SPEC-<ENGINE>.md` | 定义 API、状态机、数据结构、工程 Gap | 开发落地以 SPEC 为准 |
-| 4 | `../engine-spec.md` | 通用引擎技术规范 | 所有引擎共享约束 |
+| 4 | `../ENGINE.md` | 通用引擎技术规范 | 所有引擎共享约束 |
 
 　　`docs/engineering-academy/` 是教学解释材料，`docs/archive/` 是历史与远期预研，均不作为默认开发契约。`inspire/` 是构想与复盘库，只有被本目录或 `03-ENGINEERING.md` 吸收后，才进入实现依据。
 
@@ -66,7 +66,7 @@
 
 ## 六、关键参考
 
-- [../engine-spec.md](../engine-spec.md) — 通用引擎全栈开发手册
+- [../ENGINE.md](../ENGINE.md) — 通用引擎全栈开发手册
 - [../../02-ARCHITECTURE.md](../../02-ARCHITECTURE.md) — 技术架构与运行时选型
 - [../../03-ENGINEERING.md](../../03-ENGINEERING.md) — 工程实现真相、API 表、Phase 门控
 - [../../webapp/backend/app/domains/arena/ARCHITECTURE.md](../../webapp/backend/app/domains/arena/ARCHITECTURE.md) — Arena 与引擎分层

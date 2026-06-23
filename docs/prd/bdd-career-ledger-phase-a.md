@@ -1,6 +1,6 @@
 # 生涯模式读账本 · Phase A BDD 文档
 
-> **文档定位**：基于 `docs/prd-career-ledger-phase-a.md` 生成的行为驱动开发场景，用于指导开发、测试和验收。
+> **文档定位**：基于 `docs/prd/prd-career-ledger-phase-a.md` 生成的行为驱动开发场景，用于指导开发、测试和验收。
 > **语法**：Gherkin（Given-When-Then）
 > **语言**：中文业务语言，避免技术实现细节
 > **最后更新**：2026-06-07

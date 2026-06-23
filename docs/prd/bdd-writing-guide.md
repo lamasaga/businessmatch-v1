@@ -778,8 +778,8 @@ Phase 5：维护
 | 文档 | 用途 |
 |------|------|
 | `docs/prd/prd-writing-guide.md` | PRD 写作指南 |
-| `docs/bdd-career-ledger-phase-a.md` | BDD 文档范例 |
-| `docs/prd-career-ledger-phase-a.md` | PRD 范例（BDD 的来源） |
+| `docs/prd/bdd-career-ledger-phase-a.md` | BDD 文档范例 |
+| `docs/prd/prd-career-ledger-phase-a.md` | PRD 范例（BDD 的来源） |
 | `00-TERMINOLOGY.md` | 统一术语表 |
 | `03-ENGINEERING.md` | 开发规范 |
 

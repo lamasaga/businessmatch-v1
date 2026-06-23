@@ -352,7 +352,7 @@ theme_pack:
 |------|------|
 | [SPEC-OPS.md](./SPEC-OPS.md) | OPS 技术契约、API、P0 Gap |
 | [BDD-OPS.md](./BDD-OPS.md) | OPS 验收场景 |
-| [../engine-spec.md](../engine-spec.md) | 通用引擎技术规范 |
+| [../ENGINE.md](../ENGINE.md) | 通用引擎技术规范 |
 | [../../03-ENGINEERING.md](../../03-ENGINEERING.md) | 工程实现真相 |
 | [../../inspire/102-OPS赛制首期联调复盘与防复发清单.md](../../inspire/102-OPS赛制首期联调复盘与防复发清单.md) | 首期联调事故与防复发来源 |
 | 阿思丹/ABS 商业模拟公开资料 | 仅作赛程形态参考：多轮经营、资源竞拍、主题化活动与路演外围 |

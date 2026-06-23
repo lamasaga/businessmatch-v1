@@ -1,7 +1,7 @@
 # 架构决策记录（ADR）— 商识唯智
 
 > **文档定位**：跨 AI 对话、跨成员的**架构记忆**——记录「为什么这样定」，不重复 `03-ENGINEERING.md` 里的「现在是什么」。  
-> **最后更新**：2026-06-09  
+> **最后更新**：2026-06-23  
 > **配套**：[蓝图编程方法论](../../inspire/蓝图编程方法论——AI辅助大型工程实践指南.md) §3.4.2 · [`.cursor/rules/adr-writing.mdc`](../.cursor/rules/adr-writing.mdc)
 
 ---
@@ -141,6 +141,9 @@ flowchart LR
 | [008](./008-Phase-A范围门控.md) | Phase A 范围门控 | 已采纳 | 2026-05-21 | 先做商赛闭环，World/OPC/LLM 编排延后 |
 | [009](./009-赛季模式与教师端双端演进.md) | 赛季模式与教师端双端演进 | **部分采纳** | 2026-05-29 | P1：`teaching_groups` 营团已落地；赛季/AOTU 仍规划；Phase A 仍 `official` |
 | [010](./010-拟真城市内容包与CyberCore合并加载.md) | 拟真城市内容包与 CyberCore 合并加载 | 已采纳 | 2026-06-01 | `content/world/yangtze_6`；无 World 域表；浮生记 v2.2 真实六城 |
+| [011](./011-npc-role-ip-and-multi-facet.md) | NPC 角色 IP 与多能力面架构 | 已采纳 | 2026-06-22 | 角色卡 + opponent/teammate/story facet；对局内零 LLM；Career 域管关系 |
+| [012](./012-engine-frontend-polish-stack.md) | 商业模拟赛前端体验增强技术栈 | 已采纳 | 2026-06-22 | 不替换运行时，叠加 framer-motion/howler/gsap/Phaser 粒子与共享组件 |
+| [013](./013-per-engine-identity.md) | 引擎独立视觉与交互身份 | 已采纳 | 2026-06-23 | 每个引擎独立 design tokens、配色、UI、交互；共享只到基础组件 |
 
 ---
 

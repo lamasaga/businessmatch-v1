@@ -410,7 +410,7 @@
 | **FST PRD** | `docs/prd/PRD-FST.md` | 浮生记引擎规范 | ✅ |
 | **TECH PRD** | `docs/prd/PRD-TECH.md` | 创想大赢家引擎规范 | ✅ |
 | **OPS PRD** | `docs/prd/PRD-OPS.md` | 生产经营销售引擎规范 | ✅ |
-| **引擎开发手册** | `docs/engine-spec.md` | 全栈引擎开发规范 | ✅ |
+| **引擎开发手册** | `docs/ENGINE.md` | 全栈引擎开发规范 | ✅ |
 | **Arena 架构** | `webapp/backend/app/domains/arena/ARCHITECTURE.md` | Arena 域架构 | ✅ |
 | **Career 设计** | `webapp/backend/app/domains/career/DESIGN.md` | Career 域设计 | ✅ |
 | **ADR 索引** | `docs/decisions/README.md` | 架构决策记录 | ✅ |

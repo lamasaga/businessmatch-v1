@@ -2,8 +2,8 @@
 
 > **定位**：赛事引擎的全栈开发手册。覆盖 2D 页游运行时、美术资产、音效、粒子、后端结算、数据库与 API 对接。
 > **读者**：AI 编程助手（vibecoding）、引擎前端开发、引擎后端开发
-> **关联**：`02-ARCHITECTURE.md` §三（对局前端技术路线）· `03-ENGINEERING.md` §五（赛事引擎开发规范）· `webapp/backend/app/games/`
-> **最后更新**：2026-06-15
+> **关联**：`02-ARCHITECTURE.md` §三（对局前端技术路线）· `03-ENGINEERING.md` §五（赛事引擎开发规范）· `docs/decisions/012-engine-frontend-polish-stack.md` · `webapp/backend/app/games/`
+> **最后更新**：2026-06-22
 
 ---
 

@@ -2,7 +2,8 @@
 
 > **定位**：编码任务的唯一事实源——AI_DEFAULT、API/路由全表、赛事引擎规范、开发流程。
 > **关联**：`02-ARCHITECTURE.md`（技术架构）· `01-PRODUCT.md`（产品定义）
-> **最后更新**：2026-06-16
+> **最后更新**：2026-06-23
+> **关联决策**：`docs/decisions/011-npc-role-ip-and-multi-facet.md` · `docs/decisions/013-per-engine-identity.md`
 
 ---
 
@@ -157,7 +158,7 @@
 
 ## 五、赛事引擎开发规范
 
-> **深读**：[`02-ARCHITECTURE.md`](./02-ARCHITECTURE.md) §三 · [`docs/engine-spec.md`](./docs/engine-spec.md)
+> **深读**：[`02-ARCHITECTURE.md`](./02-ARCHITECTURE.md) §三 · [`docs/ENGINE.md`](./docs/ENGINE.md)
 
 ### 5.1 前端技术栈（按运行时选型）
 
@@ -169,6 +170,10 @@
 | `react-game` | techventure、ops_sim、finance-lab 等策略/面板引擎 | **React 全屏** + `game-ui` 组件库 |
 
 **目录**：`webapp/frontend/src/games/<engine-id>/`
+
+#### 5.1.1 引擎独立视觉与交互身份
+
+每个赛事引擎被视为独立的「游戏」，拥有独立的 design tokens、配色、UI 布局、音效与动效。除非 PRD 或代码注释中显式声明「参考 XXX 引擎」，否则禁止默认复用其他引擎的视觉资产。平台级共享组件（Toast、Loading、AnimatedNumber 等）必须保持中性，不夹带特定引擎的主题假设。详见 **ADR-013**。
 ```
 games/<engine-id>/
 ├── scenes/                 # Phaser 场景（phaser）或占位（react-game）

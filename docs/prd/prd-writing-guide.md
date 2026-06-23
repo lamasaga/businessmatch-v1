@@ -677,7 +677,7 @@ defaults:
 
 **输入**：
 - Step 2 的机制设计
-- 引擎规范（`docs/engine-spec.md`）
+- 引擎规范（`docs/ENGINE.md`）
 
 **输出**：
 - 结算函数签名（Chapter 5.1）
@@ -719,7 +719,7 @@ defaults:
 **输入**：
 - Step 2 的机制设计
 - `02-ARCHITECTURE.md` 中的运行时选型指南
-- 已有的前端组件库（`bizsim-component-library.md`）
+- 已有的前端组件库（`docs/UI-LIBRARY.md`）
 
 **输出**：
 - 运行时选型说明（Chapter 8.1）
@@ -1003,7 +1003,7 @@ defaults:
 | `02-ARCHITECTURE.md` | 技术架构、运行时选型 |
 | `03-ENGINEERING.md` | 开发规范、API 全表、数据表索引 |
 | `04-ROADMAP.md` | Phase 门控、开发节奏 |
-| `docs/engine-spec.md` | 引擎全栈开发手册 |
+| `docs/ENGINE.md` | 引擎全栈开发手册 |
 | `docs/prd/PRD-FST.md` | 即时制引擎 PRD 范例 |
 | `docs/prd/PRD-TECH.md` | 回合制引擎 PRD 范例 |
 | `docs/prd/PRD-OPS.md` | 复杂回合制引擎 PRD 范例 |
