@@ -21,6 +21,17 @@
     --border-subtle: rgba(255,255,255,0.055);
     --accent-teal: #2dd4a0;
     --accent-rose: #f43f5e;
+    --ops-primary: #3b82f6;
+    --ops-primary-soft: rgba(59,130,246,0.12);
+    --ops-primary-glow: rgba(59,130,246,0.35);
+    --ops-auction: #f59e0b;
+    --tv-primary: #a855f7;
+    --tv-primary-soft: rgba(168,85,247,0.12);
+    --tv-primary-glow: rgba(168,85,247,0.35);
+    --tv-tech: #3b82f6;
+    --tv-user: #22c55e;
+    --tv-brand: #ec4899;
+    --tv-pathfinder: #eab308;
   }
 
   * {

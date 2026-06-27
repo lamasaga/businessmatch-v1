@@ -1,4 +1,7 @@
+import secrets
+
 from pydantic_settings import BaseSettings
+from pydantic import Field
 from functools import lru_cache
 
 
@@ -11,7 +14,9 @@ class Settings(BaseSettings):
     DATABASE_URL: str = "sqlite:///./bizsim.db"
 
     # Security
-    SECRET_KEY: str = "your-secret-key-change-in-production"
+    # 生产环境必须通过环境变量 / .env 文件设置强随机密钥。
+    # DEBUG 模式下若未设置，应用启动时会自动生成一个临时密钥（每次重启会失效旧 token）。
+    SECRET_KEY: str = Field(default="")
     ALGORITHM: str = "HS256"
     ACCESS_TOKEN_EXPIRE_MINUTES: int = 60 * 24 * 7  # 7 days
 

@@ -1,4 +1,4 @@
-import { Trophy } from 'lucide-react';
+import { Trophy, Medal } from 'lucide-react';
 import type { OpsRankingEntry } from '../../types/ops';
 
 interface Props {
@@ -16,10 +16,15 @@ export default function RankingPanel({ ranking, myTeamId }: Props) {
   }
 
   return (
-    <div className="rounded-2xl border border-border-subtle bg-background-secondary p-6 space-y-3">
-      <div className="flex items-center gap-2">
-        <Trophy className="w-5 h-5 text-warning" />
-        <h2 className="text-lg font-bold">最终排名</h2>
+    <div className="rounded-2xl border border-ops-primary/20 bg-background-secondary/60 p-6 space-y-3">
+      <div className="flex items-center gap-3">
+        <div className="w-10 h-10 rounded-xl bg-ops-primary/15 border border-ops-primary/30 flex items-center justify-center">
+          <Trophy className="w-5 h-5 text-ops-primary" />
+        </div>
+        <div>
+          <h2 className="text-lg font-bold">最终排名</h2>
+          <p className="text-xs text-foreground-muted">按净资产、累计利润与综合得分排序</p>
+        </div>
       </div>
 
       <div className="overflow-x-auto">
@@ -37,17 +42,22 @@ export default function RankingPanel({ ranking, myTeamId }: Props) {
             {ranking.map((entry) => (
               <tr
                 key={entry.team_id}
-                className={`border-b border-border-subtle last:border-0 ${
-                  entry.team_id === myTeamId ? 'bg-primary/10' : ''
+                className={`border-b border-border-subtle last:border-0 transition-colors ${
+                  entry.team_id === myTeamId ? 'bg-ops-primary/10' : 'hover:bg-white/5'
                 }`}
               >
-                <td className="py-2 pl-2 font-bold">{entry.rank}</td>
-                <td className="py-2">{entry.team_name}</td>
+                <td className="py-2 pl-2">
+                  <div className="flex items-center gap-1.5">
+                    {entry.rank <= 3 && <Medal className={`w-4 h-4 ${entry.rank === 1 ? 'text-ops-auction' : entry.rank === 2 ? 'text-foreground-secondary' : 'text-amber-600'}`} />}
+                    <span className="font-bold">{entry.rank}</span>
+                  </div>
+                </td>
+                <td className={`py-2 ${entry.team_id === myTeamId ? 'font-semibold text-ops-primary' : ''}`}>{entry.team_name}</td>
                 <td className="py-2 text-right tabular-nums">¥{entry.net_assets.toLocaleString()}</td>
-                <td className={`py-2 text-right tabular-nums ${entry.cumulative_profit >= 0 ? 'text-success' : 'text-destructive'}`}>
+                <td className={`py-2 text-right tabular-nums ${entry.cumulative_profit >= 0 ? 'text-success' : 'text-danger'}`}>
                   ¥{entry.cumulative_profit.toLocaleString()}
                 </td>
-                <td className="py-2 text-right tabular-nums font-semibold">{entry.score.toLocaleString()}</td>
+                <td className="py-2 text-right tabular-nums font-bold text-ops-primary">{entry.score.toLocaleString()}</td>
               </tr>
             ))}
           </tbody>

@@ -18,13 +18,15 @@
 | 体验营手测 | :5174 建营团(6位码) → :5173 入营 → 营内建赛(4位房间码) → 控场 |
 | 最强闭环 | 教师端建赛 → 房间码 → 交易/TechVenture/OPS 首期 → XP |
 | API 字段级 | `webapp/contracts/openapi/bundled.yaml` 或 DEBUG `/openapi.json` |
+| 安全配置 | `SECRET_KEY` 必须从环境变量 / `.env` 读取；参考 `webapp/backend/.env.example` |
+| 测试命令 | 后端：`cd webapp/backend && ./venv/Scripts/python -m pytest tests/test_auth.py -v` |
 | 默认 Phase | **Phase A**（商赛引擎闭环）；未指定时不抢跑 World/OPC |
 
 ### 功能矩阵
 
 | 模块 | 后端 | 前端 | 成熟度 |
 |------|------|------|--------|
-| 认证 | ✅ | ✅ | 生产雏形 |
+| 认证 | ✅ | ✅ | 生产雏形；`SECRET_KEY` 改为环境变量读取；已补 `tests/test_auth.py` 覆盖注册/登录/刷新/角色权限 |
 | 生涯中枢 `/career` | `xp_events` ✅ / `users.gold,diamond` 新增 | UI+mock | **Phase A 收尾项** |
 | 商赛大厅 `/games` | ✅ | ✅ | 可用 |
 | 浮生记 RTS | ✅ WS | ✅ 全屏 | **当前主力** |

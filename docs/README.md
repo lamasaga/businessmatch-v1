@@ -15,10 +15,11 @@
  ## 子目录
 
  - [`decisions/`](./decisions/README.md) — 架构决策记录（ADR）
- - [`prd/`](./prd/README.md) — 产品需求文档（PRD）与 BDD
- - [`handbooks/`](./handbooks/README.md) — 具体任务的实现手册
- - [`engineering-academy/`](./engineering-academy/00-README.md) — 教程与学习材料
- - [`archive/`](./archive/README.md) — 归档资料
+- [`prd/`](./prd/README.md) — 产品需求文档（PRD）与 BDD
+- [`handbooks/`](./handbooks/README.md) — 具体任务的实现手册
+- [`角色背景/`](./角色背景/README.md) — NPC 角色 IP、故事背景与视觉形象
+- [`engineering-academy/`](./engineering-academy/00-README.md) — 教程与学习材料
+- [`archive/`](./archive/README.md) — 归档资料
 
  ## 新增文档指引
 

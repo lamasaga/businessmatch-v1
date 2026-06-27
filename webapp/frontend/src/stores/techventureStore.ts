@@ -12,6 +12,7 @@ interface TechVentureState {
   gameState: TvGameState | null;
   leaderboard: TvLeaderboardEntry[];
   news: TvNewsItem[];
+  snapshots: Record<string, unknown>[];
   loading: boolean;
   error: string | null;
 
@@ -25,10 +26,20 @@ interface TechVentureState {
   clearError: () => void;
 }
 
+function extractErrorMessage(err: unknown, fallback: string): string {
+  if (err && typeof err === 'object') {
+    const axiosErr = err as { response?: { data?: { message?: string } }; message?: string };
+    return axiosErr.response?.data?.message || axiosErr.message || fallback;
+  }
+  if (err instanceof Error) return err.message;
+  return fallback;
+}
+
 export const useTechVentureStore = create<TechVentureState>((set) => ({
   gameState: null,
   leaderboard: [],
   news: [],
+  snapshots: [],
   loading: false,
   error: null,
 
@@ -36,9 +47,22 @@ export const useTechVentureStore = create<TechVentureState>((set) => ({
     set({ loading: true, error: null });
     try {
       const res = await api.get(`/api/v1/techventure/events/${eventId}/state`);
-      set({ gameState: res.data.data, loading: false });
-    } catch (err: any) {
-      set({ error: err.message || '获取状态失败', loading: false });
+      const gameState = res.data.data as TvGameState;
+      set((state) => {
+        const nextSnapshots = [...state.snapshots];
+        const snap = gameState.last_snapshot;
+        if (snap) {
+          const roundNo = snap.round_no ?? gameState.current_round?.round_no;
+          const exists = nextSnapshots.some((s) => (s.round_no ?? s.round_number) === (snap.round_no ?? snap.round_number));
+          if (!exists) {
+            nextSnapshots.push({ ...snap, round_no: snap.round_no ?? snap.round_number ?? roundNo });
+            nextSnapshots.sort((a, b) => ((a.round_no as number) || 0) - ((b.round_no as number) || 0));
+          }
+        }
+        return { gameState, snapshots: nextSnapshots, loading: false };
+      });
+    } catch (err) {
+      set({ error: extractErrorMessage(err, '获取状态失败'), loading: false });
     }
   },
 
@@ -69,8 +93,8 @@ export const useTechVentureStore = create<TechVentureState>((set) => ({
     try {
       await api.post(`/api/v1/techventure/events/${eventId}/submit`, payload);
       set({ loading: false });
-    } catch (err: any) {
-      set({ error: err.message || '提交失败', loading: false });
+    } catch (err) {
+      set({ error: extractErrorMessage(err, '提交失败'), loading: false });
       throw err;
     }
   },
@@ -87,8 +111,8 @@ export const useTechVentureStore = create<TechVentureState>((set) => ({
           },
         };
       });
-    } catch (err: any) {
-      set({ error: err.message || '设置产品名失败' });
+    } catch (err) {
+      set({ error: extractErrorMessage(err, '设置产品名失败') });
     }
   },
 
@@ -114,8 +138,8 @@ export const useTechVentureStore = create<TechVentureState>((set) => ({
       });
       set({ loading: false });
       return res.data.data;
-    } catch (err: any) {
-      set({ error: err.message || '创建练习失败', loading: false });
+    } catch (err) {
+      set({ error: extractErrorMessage(err, '创建练习失败'), loading: false });
       throw err;
     }
   },

@@ -31,7 +31,26 @@ export default {
           teal: '#2dd4a0',
           rose: '#f43f5e',
           gold: '#d4a853',
-        }
+        },
+        // Engine-specific themes
+        'ops-primary': {
+          DEFAULT: '#3b82f6',
+          soft: 'rgba(59,130,246,0.12)',
+          glow: 'rgba(59,130,246,0.35)',
+        },
+        'ops-auction': '#f59e0b',
+        'tv-primary': {
+          DEFAULT: '#a855f7',
+          soft: 'rgba(168,85,247,0.12)',
+          glow: 'rgba(168,85,247,0.35)',
+        },
+        'tv-tech': '#3b82f6',
+        'tv-user': '#22c55e',
+        'tv-brand': '#ec4899',
+        'tv-pathfinder': '#eab308',
+        'trading-bg': '#0d181f',
+        'trading-primary': '#d4a853',
+        'trading-teal': '#5a9aa8',
       },
       fontFamily: {
         sans: ['Inter', 'SF Pro Display', 'system-ui', '-apple-system', 'sans-serif'],

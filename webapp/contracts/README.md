@@ -10,7 +10,7 @@
 | 文件 | 说明 |
 |------|------|
 | [`openapi/bundled.yaml`](./openapi/bundled.yaml) | 从 FastAPI 导出的完整 Schema（提交前可 diff） |
-| 运行时 | 后端 `DEBUG=true` 时 `GET http://localhost:8000/openapi.json` |
+| 运行时 | 后端 `DEBUG=true` 时 `GET http://localhost:8010/openapi.json` |
 
 **重新生成**（在 `webapp/backend` 下，已安装依赖时；体验营分支合并前须含 `/teaching-groups`）：
 

@@ -30,8 +30,20 @@ settings = get_settings()
 async def lifespan(app: FastAPI):
     """启动时初始化 SQLite 表与默认账号（admin / student）。"""
     import asyncio
+    import secrets
     from app.games.trading.rts_scheduler import resume_playing_rts_matches, set_app_event_loop
     from app.games.trading.rts_ws import hub
+
+    # 安全密钥校验：生产环境必须显式设置 SECRET_KEY
+    if not settings.SECRET_KEY:
+        if settings.DEBUG:
+            settings.SECRET_KEY = secrets.token_urlsafe(32)
+            print("[warn] SECRET_KEY not set; auto-generated for DEBUG only (old tokens will be invalidated after restart)")
+        else:
+            raise RuntimeError(
+                "SECRET_KEY environment variable must be set in production. "
+                "Generate one with: python -c 'import secrets; print(secrets.token_urlsafe(32))'"
+            )
 
     init_all()
     loop = asyncio.get_running_loop()

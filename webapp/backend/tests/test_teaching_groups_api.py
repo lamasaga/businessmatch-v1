@@ -21,9 +21,10 @@ def client():
 
 
 def _token_for(client: TestClient, username: str, password: str) -> str:
+    # 后端 /login 支持邮箱或用户名作为 email 字段的值
     res = client.post(
         "/api/v1/auth/login",
-        json={"username": username, "password": password},
+        json={"email": username, "password": password},
     )
     assert res.status_code == 200, res.text
     return res.json()["data"]["tokens"]["access_token"]
@@ -69,6 +70,6 @@ def test_teaching_group_create_join_flow(client: TestClient):
             "config": {"mode": "rts", "duration_preset": "short"},
         },
     )
-    assert event.status_code == 200, event.text
+    assert event.status_code == 201, event.text
     assert event.json()["data"]["teaching_group_id"] == group_id
     assert len(event.json()["data"]["room_code"]) == 4

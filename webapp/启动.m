@@ -43,8 +43,8 @@ python -m venv venv
 .\venv\Scripts\python run.py
 ```
 
-- 后端地址：**http://localhost:8000**
-- API 文档：**http://localhost:8000/docs**
+- 后端地址：**http://localhost:8010**
+- API 文档：**http://localhost:8010/docs**
 
 ### 2. 启动前端
 
@@ -86,7 +86,7 @@ cd "D:\1XFAwork\businessmatch-v1\webapp"
 
 或双击 **`启动.bat`**（自动调用 PowerShell / pwsh）。
 
-将依次打开三个窗口：后端 `:8000`、学生端 `:5173`、组织者端 `:5174`。
+将依次打开三个窗口：后端 `:8010`、学生端 `:5173`、组织者端 `:5174`。
 
 ---
 

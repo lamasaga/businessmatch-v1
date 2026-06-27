@@ -17,7 +17,7 @@ function resolveWsBaseUrl(): string {
   if (typeof fromEnv === 'string' && fromEnv.length > 0) {
     httpBase = fromEnv;
   } else if (!import.meta.env.PROD) {
-    httpBase = 'http://localhost:8000';
+    httpBase = 'http://localhost:8010';
   } else {
     const { protocol, host } = window.location;
     httpBase = `${protocol}//${host}`;

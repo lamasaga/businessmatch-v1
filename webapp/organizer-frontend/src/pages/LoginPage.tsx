@@ -32,7 +32,7 @@ export default function LoginPage() {
             演示账号：用户名 <strong>admin</strong> / 密码 <strong>admin123</strong>
           </p>
           <p className="text-xs text-foreground-muted mt-1">
-            若提示无法连接，请先确认后端窗口已启动（http://localhost:8000）
+            若提示无法连接，请先确认后端窗口已启动（http://localhost:8010）
           </p>
         </div>
 

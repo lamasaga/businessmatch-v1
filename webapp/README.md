@@ -3,7 +3,7 @@
 > 一个现代化的、模块化的前后端分离 Web 应用，提供**完整的商业模拟教育体验**：课程学习、实战商赛、AI 辅助训练、交易模拟比赛。
 >
 > **仓库文档**：[`../README.md`](../README.md) · 工程详表 [`../03-ENGINEERING.md`](../03-ENGINEERING.md) · 产品架构 [`../00-PROJECT.md`](../00-PROJECT.md)  
-> **最后更新**：2026-06-06
+> **最后更新**：2026-06-23
 
 ---
 
@@ -142,9 +142,9 @@ source venv/bin/pip install -r requirements.txt
 source venv/bin/python run.py
 ```
 
-后端服务将运行在 http://localhost:8000
+后端服务将运行在 http://localhost:8010
 
-API 文档: http://localhost:8000/docs
+API 文档: http://localhost:8010/docs
 
 ### 数据库初始化
 

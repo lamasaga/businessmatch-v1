@@ -6,11 +6,13 @@ import type {
   OpsDecisionPayload,
   OpsRankingEntry,
   OpsAuctionItemState,
+  OpsSnapshot,
 } from '../types/ops';
 
 interface OpsState {
   gameState: OpsGameState | null;
   ranking: OpsRankingEntry[];
+  snapshots: OpsSnapshot[];
   loading: boolean;
   error: string | null;
 
@@ -25,9 +27,19 @@ interface OpsState {
   clearError: () => void;
 }
 
+function extractErrorMessage(err: unknown, fallback: string): string {
+  if (err && typeof err === 'object') {
+    const axiosErr = err as { response?: { data?: { message?: string } }; message?: string };
+    return axiosErr.response?.data?.message || axiosErr.message || fallback;
+  }
+  if (err instanceof Error) return err.message;
+  return fallback;
+}
+
 export const useOpsStore = create<OpsState>((set) => ({
   gameState: null,
   ranking: [],
+  snapshots: [],
   loading: false,
   error: null,
 
@@ -39,8 +51,8 @@ export const useOpsStore = create<OpsState>((set) => ({
       });
       set({ loading: false });
       return res.data.data;
-    } catch (err: any) {
-      set({ error: err?.response?.data?.message || err.message || '创建练习失败', loading: false });
+    } catch (err) {
+      set({ error: extractErrorMessage(err, '创建练习失败'), loading: false });
       throw err;
     }
   },
@@ -49,9 +61,24 @@ export const useOpsStore = create<OpsState>((set) => ({
     set({ loading: true, error: null });
     try {
       const res = await api.get(`/api/v1/ops/events/${eventId}/state`);
-      set({ gameState: res.data.data, loading: false });
-    } catch (err: any) {
-      set({ error: err?.response?.data?.message || err.message || '获取状态失败', loading: false });
+      const gameState = res.data.data as OpsGameState;
+      set((state) => {
+        const nextSnapshots = [...state.snapshots];
+        const snap = gameState.last_snapshot;
+        if (snap) {
+          const round = snap.result?.round_number;
+          const exists = nextSnapshots.some(
+            (s) => s.result?.round_number === round && round != null
+          );
+          if (!exists) {
+            nextSnapshots.push(snap);
+            nextSnapshots.sort((a, b) => (a.result?.round_number || 0) - (b.result?.round_number || 0));
+          }
+        }
+        return { gameState, snapshots: nextSnapshots, loading: false };
+      });
+    } catch (err) {
+      set({ error: extractErrorMessage(err, '获取状态失败'), loading: false });
       throw err;
     }
   },
@@ -67,8 +94,8 @@ export const useOpsStore = create<OpsState>((set) => ({
         nextState.phase = advancedPhase;
       }
       set({ gameState: nextState, loading: false });
-    } catch (err: any) {
-      set({ error: err?.message || err?.response?.data?.message || '提交定位失败', loading: false });
+    } catch (err) {
+      set({ error: extractErrorMessage(err, '提交定位失败'), loading: false });
       throw err;
     }
   },
@@ -79,8 +106,8 @@ export const useOpsStore = create<OpsState>((set) => ({
       await api.post(`/api/v1/ops/events/${eventId}/decisions`, payload);
       const res = await api.get(`/api/v1/ops/events/${eventId}/state`);
       set({ gameState: res.data.data, loading: false });
-    } catch (err: any) {
-      set({ error: err?.response?.data?.message || err.message || '提交决策失败', loading: false });
+    } catch (err) {
+      set({ error: extractErrorMessage(err, '提交决策失败'), loading: false });
       throw err;
     }
   },
@@ -91,8 +118,8 @@ export const useOpsStore = create<OpsState>((set) => ({
       await api.post(`/api/v1/ops/events/${eventId}/auction/bid?item_id=${itemId}`, { amount });
       const res = await api.get(`/api/v1/ops/events/${eventId}/state`);
       set({ gameState: res.data.data, loading: false });
-    } catch (err: any) {
-      set({ error: err?.response?.data?.message || err.message || '出价失败', loading: false });
+    } catch (err) {
+      set({ error: extractErrorMessage(err, '出价失败'), loading: false });
       throw err;
     }
   },
@@ -103,8 +130,8 @@ export const useOpsStore = create<OpsState>((set) => ({
       await api.post(`/api/v1/ops/events/${eventId}/practice/advance`);
       const res = await api.get(`/api/v1/ops/events/${eventId}/state`);
       set({ gameState: res.data.data, loading: false });
-    } catch (err: any) {
-      set({ error: err?.response?.data?.message || err.message || '推进失败', loading: false });
+    } catch (err) {
+      set({ error: extractErrorMessage(err, '推进失败'), loading: false });
       throw err;
     }
   },

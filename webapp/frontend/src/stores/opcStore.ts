@@ -57,7 +57,7 @@ interface OPCState {
   createCompany: (name: string, description?: string) => Promise<number>;
 }
 
-const API_BASE = 'http://localhost:8000/api/v1';
+const API_BASE = 'http://localhost:8010/api/v1';
 
 export const useOPCStore = create<OPCState>((set) => ({
   company: null,

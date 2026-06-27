@@ -9,14 +9,14 @@ export default function TvNewsPanel({
   onReload?: () => void;
 }) {
   return (
-    <section className="glass-card overflow-hidden min-h-0 flex flex-col">
+    <section className="glass-card overflow-hidden min-h-0 flex flex-col border-t-2 border-t-tv-primary/50">
       <div className="shrink-0 px-3 py-2 border-b border-border-subtle flex items-center justify-between">
         <h2 className="text-sm font-semibold flex items-center gap-2">
-          <Newspaper className="w-4 h-4 text-blue-400" />
+          <Newspaper className="w-4 h-4 text-tv-primary" />
           赛场快讯
         </h2>
         {onReload && (
-          <button type="button" onClick={onReload} className="text-xs text-primary hover:underline">
+          <button type="button" onClick={onReload} className="text-xs text-tv-primary hover:underline">
             刷新
           </button>
         )}

@@ -1,0 +1,71 @@
+version: "0.2.0"
+theme: fstrading-light-logistics
+status: concept
+generated_at: "2026-06-25"
+
+style_tokens:
+  background: "#F6F8FA"
+  surface: "#FFFFFF"
+  primary_cyan: "#2EC3E5"
+  trade_gold: "#F6C344"
+  warning_orange: "#FF8A4C"
+  text_dark: "#1F2937"
+
+sheets:
+  products:
+    file: items/product-icon-sheet.png
+    layout: "5x2"
+    ids:
+      - grain
+      - produce
+      - raw_materials
+      - energy
+      - furniture
+      - textile
+      - daily_goods
+      - appliances
+      - passenger_car
+      - luxury
+  vehicles:
+    file: vehicles/fleet-vehicle-marker-sheet.png
+    contents:
+      - van
+      - truck
+      - convoy_marker
+      - route_trail
+      - warehouse_marker
+      - arrival_ring
+  cities:
+    file: cities/yangtze-six-city-marker-sheet.png
+    layout: "3x2"
+    ids:
+      - shanghai
+      - suzhou
+      - hangzhou
+      - nanjing
+      - nantong
+      - changzhou
+  events:
+    file: events/event-card-sheet.png
+    layout: "4x2"
+    ids:
+      - harvest_bumper
+      - factory_rush
+      - energy_supply
+      - auto_fair
+      - tech_launch
+      - luxury_fair
+      - logistics_jam
+      - cold_chain_break
+  ui_direction:
+    file: ui/fst-light-hud-art-direction.png
+    usage: visual_direction_only
+  map_direction:
+    file: maps/yangtze-delta-light-map-concept.png
+    usage: visual_direction_only
+
+integration_notes:
+  frontend_current_entry: webapp/frontend/src/pages/Games/TradingRTSView.tsx
+  map_component: webapp/frontend/src/components/fushengji/FushengjiMapStage.tsx
+  fleet_component: webapp/frontend/src/components/fushengji/FushengjiFleetMarker.tsx
+  config_source: webapp/backend/content/game-configs/fstrading.yaml

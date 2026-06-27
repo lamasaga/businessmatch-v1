@@ -21,6 +21,7 @@
 | `ui/` | 图表、时钟、包裹、路线 | 4 |
 | `animations/` | .tick 加载、车队、告警（静态 SVG，用 CSS 动画） | 3 |
 | `sources/` | 原始 ZIP、出处说明 | 见 ATTRIBUTION |
+| `v2/` | FST 浅色现代商旅风格概念资产（PNG sheet / moodboard） | 6 张母版 |
 
 ---
 
@@ -47,3 +48,7 @@ import mapUrl from '/assets/fushengji/v1/maps/yangtze_6-schematic.svg';
 - [ ] 统一描边/配色（设计 token）  
 - [ ] 导出 PNG @2x 供 Pixi（见 inspire/76-）  
 - [ ] 补充 Kenney CC0 像素包（手动下载至 `sources/`）  
+
+## v2 概念资产
+
+　　`v2/` 是根据 `docs/prd/PRD-FST.md` 补充的高质感视觉母版，覆盖商品图标、车辆商队、六城节点、事件卡、浅色地图和 HUD 氛围。它不替换当前 v1 运行时资源，适合作为下一轮 UI 重做与美术裁切的基准。

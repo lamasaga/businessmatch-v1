@@ -11,6 +11,7 @@ import {
   Info,
   X,
   Trophy,
+  Activity,
 } from 'lucide-react';
 import TvHud from '../../components/techventure/TvHud';
 import TvStrategySelector from '../../components/techventure/TvStrategySelector';
@@ -26,7 +27,7 @@ export default function TechVenturePlayPage() {
   const exitLabel = exitPath === '/activities' ? '返回日常活动' : '返回商赛大厅';
 
   const {
-    gameState, leaderboard, news, loading, error,
+    gameState, leaderboard, news, snapshots, loading, error,
     fetchState, poll, submitDecision, setProductName,
     fetchLeaderboard, fetchNews, clearError,
   } = useTechVentureStore();
@@ -47,12 +48,18 @@ export default function TechVenturePlayPage() {
     }
   }, [eventId, fetchState, fetchLeaderboard]);
 
+  const teamRoute = gameState?.team.route;
+  const teamOpenedCities = gameState?.team.opened_cities;
+  const teamProductName = gameState?.team.product_name;
+
+  /* eslint-disable react-hooks/set-state-in-effect */
   useEffect(() => {
     if (!gameState) return;
     setRoute(gameState.team.route);
     setOpenedCities([...gameState.team.opened_cities]);
     setProductNameLocal(gameState.team.product_name || '');
-  }, [gameState?.team.route, gameState?.team.opened_cities.join(','), gameState?.team.product_name]);
+  }, [gameState, teamRoute, teamOpenedCities, teamProductName]);
+  /* eslint-enable react-hooks/set-state-in-effect */
 
   useEffect(() => {
     if (!eventId || gameState?.match_status === 'finished') return;
@@ -121,7 +128,7 @@ export default function TechVenturePlayPage() {
   if (loading && !gameState) {
     return (
       <div className="flex flex-1 items-center justify-center min-h-0">
-        <Loader2 className="w-10 h-10 animate-spin text-primary" />
+        <Loader2 className="w-10 h-10 animate-spin text-tv-primary" />
       </div>
     );
   }
@@ -130,7 +137,7 @@ export default function TechVenturePlayPage() {
     return (
       <div className="flex flex-1 flex-col items-center justify-center gap-4 text-foreground-muted">
         <p>无法加载游戏数据</p>
-        <button type="button" onClick={() => navigate(exitPath)} className="text-primary hover:underline">
+        <button type="button" onClick={() => navigate(exitPath)} className="text-tv-primary hover:underline">
           {exitLabel}
         </button>
       </div>
@@ -153,11 +160,14 @@ export default function TechVenturePlayPage() {
         ].filter(Boolean).join(' · ')}
         onExit={() => navigate(exitPath)}
         exitLabel={exitLabel}
+        statusLabel={isFinished ? '比赛结束' : gameState.current_round ? `第 ${gameState.current_round.round_no} 轮` : '等待开始'}
+        statusProgress={gameState.current_round ? ((gameState.current_round.round_no / (gameState.rounds.length || 6)) * 100) : 0}
+        isSubmitted={gameState.has_submitted}
         right={(
           <>
             <div className="text-center">
               <p className="text-[10px] text-foreground-muted">预算</p>
-              <p className="font-bold text-warning tabular-nums flex items-center gap-0.5">
+              <p className="font-bold text-tv-primary tabular-nums flex items-center gap-0.5">
                 <DollarSign className="w-3.5 h-3.5" />
                 {budget.toFixed(1)} 万
               </p>
@@ -165,18 +175,15 @@ export default function TechVenturePlayPage() {
             {gameState.team.last_rank != null && (
               <div className="text-center">
                 <p className="text-[10px] text-foreground-muted">上轮排名</p>
-                <p className="font-bold text-primary">#{gameState.team.last_rank}</p>
+                <p className="font-bold text-tv-primary">#{gameState.team.last_rank}</p>
               </div>
             )}
             <div className="text-center">
               <p className="text-[10px] text-foreground-muted">本轮剩余</p>
-              <p className={`font-bold tabular-nums ${remaining < -0.01 ? 'text-danger' : ''}`}>
+              <p className={`font-bold tabular-nums ${remaining < -0.01 ? 'text-danger' : 'text-foreground'}`}>
                 {remaining.toFixed(1)} 万
               </p>
             </div>
-            {gameState.has_submitted && (
-              <span className="text-xs px-2 py-1 rounded-full bg-success/15 text-success">已提交</span>
-            )}
           </>
         )}
       />
@@ -203,9 +210,11 @@ export default function TechVenturePlayPage() {
             onToggleCity={handleToggleCity}
           />
 
-          <section className="glass-card overflow-hidden flex-1 min-h-0 flex flex-col">
+          <section className="glass-card overflow-hidden flex-1 min-h-0 flex flex-col border-t-2 border-t-tv-primary/50">
             <div className="shrink-0 px-3 py-2 border-b border-border-subtle flex items-center justify-between">
-              <h2 className="text-sm font-semibold">资金分配</h2>
+              <h2 className="text-sm font-semibold flex items-center gap-2">
+                <DollarSign className="w-4 h-4 text-tv-primary" /> 资金分配
+              </h2>
               <span className="text-[10px] text-foreground-muted">本轮支出：{totalCost.toFixed(1)} 万</span>
             </div>
             <div className="flex-1 min-h-0 overflow-auto p-3 space-y-3">
@@ -215,20 +224,20 @@ export default function TechVenturePlayPage() {
                     value={productName}
                     onChange={(e) => setProductNameLocal(e.target.value)}
                     maxLength={40}
-                    className="flex-1 px-3 py-2 text-sm bg-background-secondary border border-border-subtle rounded-lg"
+                    className="flex-1 px-3 py-2 text-sm bg-background-secondary border border-tv-primary/20 rounded-lg focus:outline-none focus:border-tv-primary/60 focus:ring-1 focus:ring-tv-primary/30"
                     placeholder="为产品起名（例如：星辰智学）"
                   />
                   <button
                     type="button"
                     onClick={handleSaveProductName}
-                    className="px-4 py-2 bg-primary text-background rounded-lg text-sm font-medium"
+                    className="px-4 py-2 bg-tv-primary text-white rounded-lg text-sm font-medium hover:bg-tv-primary/90 shadow-[0_0_12px_rgba(168,85,247,0.25)]"
                   >
                     确定
                   </button>
                 </div>
               )}
 
-              <div className="rounded-xl border border-border-subtle bg-background-secondary p-3 space-y-3">
+              <div className="rounded-xl border border-tv-primary/20 bg-background-secondary p-3 space-y-3">
                 <div>
                   <label className="flex justify-between text-xs text-foreground-muted mb-1">
                     <span>Tech 研发</span>
@@ -242,7 +251,7 @@ export default function TechVenturePlayPage() {
                     value={investTech}
                     onChange={(e) => setInvestTech(Number(e.target.value))}
                     disabled={!canSubmit}
-                    className="w-full"
+                    className="w-full accent-tv-primary"
                   />
                 </div>
 
@@ -265,7 +274,7 @@ export default function TechVenturePlayPage() {
                             setInvestFit((prev) => ({ ...prev, [city]: Number(e.target.value) }))
                           }
                           disabled={!canSubmit}
-                          className="w-full"
+                          className="w-full accent-tv-user"
                         />
                       </div>
                       <div>
@@ -283,7 +292,7 @@ export default function TechVenturePlayPage() {
                             setInvestShow((prev) => ({ ...prev, [city]: Number(e.target.value) }))
                           }
                           disabled={!canSubmit}
-                          className="w-full"
+                          className="w-full accent-tv-brand"
                         />
                       </div>
                     </div>
@@ -298,7 +307,7 @@ export default function TechVenturePlayPage() {
                   onChange={(e) => setDeclaration(e.target.value.slice(0, 60))}
                   disabled={!canSubmit}
                   rows={2}
-                  className="w-full mt-1 px-3 py-2 text-sm bg-background-secondary border border-border-subtle rounded-lg resize-none"
+                  className="w-full mt-1 px-3 py-2 text-sm bg-background-secondary border border-tv-primary/20 rounded-lg resize-none focus:outline-none focus:border-tv-primary/60 focus:ring-1 focus:ring-tv-primary/30"
                   placeholder="本轮核心策略与愿景…"
                 />
                 <p className="text-[10px] text-foreground-muted mt-0.5">{declaration.length}/60</p>
@@ -332,7 +341,7 @@ export default function TechVenturePlayPage() {
                 type="button"
                 onClick={handleSubmit}
                 disabled={!canSubmit || remaining < -0.01 || submitting}
-                className="w-full flex items-center justify-center gap-2 py-2.5 rounded-xl bg-purple-600 hover:bg-purple-500 disabled:opacity-50 text-white font-semibold text-sm"
+                className="w-full flex items-center justify-center gap-2 py-2.5 rounded-xl bg-tv-primary hover:bg-tv-primary/90 disabled:opacity-50 text-white font-semibold text-sm shadow-[0_0_24px_rgba(168,85,247,0.25)] transition-all"
               >
                 {submitting ? <Loader2 className="w-4 h-4 animate-spin" /> : <Send className="w-4 h-4" />}
                 {gameState.has_submitted ? '已提交' : isFinished ? '比赛已结束' : '提交本轮决策'}
@@ -342,15 +351,17 @@ export default function TechVenturePlayPage() {
         </div>
 
         <div className="min-h-0 flex flex-col gap-3 overflow-hidden">
-          <section className="glass-card overflow-hidden">
+          <section className="glass-card overflow-hidden border-t-2 border-t-tv-primary/50">
             <div className="shrink-0 px-3 py-2 border-b border-border-subtle flex items-center justify-between">
-              <h2 className="text-sm font-semibold">概览与反馈</h2>
+              <h2 className="text-sm font-semibold flex items-center gap-2">
+                <Activity className="w-4 h-4 text-tv-primary" /> 数据仪表盘
+              </h2>
               {snap?.rank != null && (
-                <span className="text-xs text-warning font-semibold">上轮 #{snap.rank}</span>
+                <span className="text-xs text-tv-pathfinder font-semibold">上轮 #{snap.rank}</span>
               )}
             </div>
             <div className="p-3 space-y-3">
-              <TvKpiCards snap={snap} />
+              <TvKpiCards snap={snap} history={snapshots} />
               <div className="rounded-xl border border-border-subtle bg-background-secondary p-3 text-xs">
                 <p className="text-foreground-muted font-semibold mb-2">本轮变化预览</p>
                 <ul className="space-y-1 text-foreground-muted">
@@ -393,7 +404,7 @@ export default function TechVenturePlayPage() {
 
       {isFinished && (
         <div className="absolute inset-0 z-[60] flex items-center justify-center bg-background/85 backdrop-blur-sm p-6">
-          <div className="glass-card p-8 max-w-md w-full text-center border border-purple-500/30 relative">
+          <div className="glass-card p-8 max-w-md w-full text-center border border-tv-primary/40 relative shadow-[0_0_40px_rgba(168,85,247,0.2)]">
             <button
               type="button"
               onClick={() => navigate(exitPath)}
@@ -408,7 +419,7 @@ export default function TechVenturePlayPage() {
             <button
               type="button"
               onClick={() => navigate(exitPath)}
-              className="mt-6 px-8 py-2.5 bg-purple-600 text-white rounded-xl font-medium"
+              className="mt-6 px-8 py-2.5 bg-tv-primary text-white rounded-xl font-medium hover:bg-tv-primary/90 shadow-[0_0_20px_rgba(168,85,247,0.3)]"
             >
               {exitLabel}
             </button>

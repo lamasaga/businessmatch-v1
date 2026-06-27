@@ -1,12 +1,12 @@
 import axios, { AxiosError, type AxiosResponse, type InternalAxiosRequestConfig } from 'axios';
 import type { ApiResponse } from '../types';
 
-/** Docker/Nginx 生产构建走同源 /api 代理；本地 dev 默认直连 8001（8000 被旧进程占用时临时使用） */
+/** Docker/Nginx 生产构建走同源 /api 代理；本地 dev 默认直连 8010 */
 function resolveApiBaseUrl(): string {
   const fromEnv = import.meta.env.VITE_API_URL;
   if (typeof fromEnv === 'string' && fromEnv.length > 0) return fromEnv;
   if (import.meta.env.PROD) return '';
-  return 'http://localhost:8000';
+  return 'http://localhost:8010';
 }
 
 const API_BASE_URL = resolveApiBaseUrl();
