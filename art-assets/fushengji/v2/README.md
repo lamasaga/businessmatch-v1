@@ -1,6 +1,6 @@
 # 浮生记 FST · v2 美术资产概念包
 
-> **用途**：根据 `docs/prd/PRD-FST.md` 与当前 `TradingRTSView` / `FushengjiMapStage` 实现，建立一套更统一、更轻盈、更有质感的 FST 赛事游戏视觉母版。
+> **用途**：根据 `docs/engines/fst/PRD.md` 与当前 `TradingRTSView` / `FushengjiMapStage` 实现，建立一套更统一、更轻盈、更有质感的 FST 赛事游戏视觉母版。
 >
 > **状态**：概念资产。当前为 PNG sheet / moodboard，适合美术定调、UI 重做、后续裁切与二次导出；尚未直接接入前端运行时。
 >

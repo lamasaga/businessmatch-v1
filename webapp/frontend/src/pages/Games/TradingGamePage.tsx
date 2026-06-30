@@ -11,8 +11,8 @@ export default function TradingGamePage() {
 
   const eventId = Number(id);
 
-  const refresh = useCallback(async () => {
-    return fetchGameState(eventId);
+  const refresh = useCallback(async (options?: { silent?: boolean }) => {
+    return fetchGameState(eventId, options);
   }, [eventId, fetchGameState]);
 
   useEffect(() => {
@@ -23,10 +23,10 @@ export default function TradingGamePage() {
     if (!eventId) return;
     const disconnect = connectRtsWebSocket(eventId, {
       onTick: () => {
-        void refresh();
+        void refresh({ silent: true });
       },
     });
-    const fallback = setInterval(() => void refresh(), 30000);
+    const fallback = setInterval(() => void refresh({ silent: true }), 30000);
     return () => {
       disconnect();
       clearInterval(fallback);
@@ -45,7 +45,6 @@ export default function TradingGamePage() {
     <TradingRTSView
       gameState={gameState}
       eventId={eventId}
-      onRefresh={refresh}
     />
   );
 }

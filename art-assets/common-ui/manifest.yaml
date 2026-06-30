@@ -1,0 +1,98 @@
+version: "0.1.0"
+status: concept
+generated_at: "2026-06-28"
+
+kits:
+  academy_dashboard:
+    file: academy-dashboard/academy-dashboard-kit-sheet.png
+    tone: "bright, restrained, teacher-friendly, premium dashboard"
+    recommended_for:
+      - organizer
+      - official_match
+      - techventure
+      - ops_finance
+      - settlement
+    asset_groups:
+      resources:
+        - cash
+        - gold
+        - inventory
+        - warehouse
+        - capacity
+        - vehicle
+        - production_line
+      business_dimensions:
+        - technology
+        - user_fit
+        - marketing_show
+        - brand
+        - customer_insight
+      state_feedback:
+        - trend_up
+        - trend_down
+        - risk
+        - warning
+        - success
+        - failure
+        - reward
+      ui_components:
+        - progress_bar
+        - segmented_control
+        - metric_card
+        - event_tag
+        - rank_badge
+        - alert_pill
+  neon_arena:
+    file: neon-arena/neon-arena-hud-kit-sheet.png
+    tone: "energetic, student-facing, competitive HUD"
+    recommended_for:
+      - student_in_match
+      - fst_rts
+      - action_bar
+      - event_feedback
+      - reward_burst
+    asset_groups:
+      actions:
+        - buy
+        - sell
+        - move
+        - invest
+        - produce
+        - bid
+        - scout
+        - promote
+        - upgrade
+        - hold
+        - submit
+        - confirm
+        - cancel
+      status:
+        - cash
+        - inventory
+        - capacity
+        - technology
+        - user_fit
+        - show
+        - market_share
+        - route
+        - event
+        - opportunity
+        - contract
+        - countdown
+        - leaderboard
+      hud_components:
+        - command_slot
+        - countdown_chip
+        - event_banner
+        - reward_burst
+        - route_arrow
+        - risk_meter
+        - phase_stepper
+
+integration_notes:
+  crop_before_runtime_use: true
+  preferred_runtime_formats:
+    - webp
+    - png
+    - svg_redraw
+  do_not_reference_whole_sheet_in_frontend: true

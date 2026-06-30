@@ -51,4 +51,4 @@ import mapUrl from '/assets/fushengji/v1/maps/yangtze_6-schematic.svg';
 
 ## v2 概念资产
 
-　　`v2/` 是根据 `docs/prd/PRD-FST.md` 补充的高质感视觉母版，覆盖商品图标、车辆商队、六城节点、事件卡、浅色地图和 HUD 氛围。它不替换当前 v1 运行时资源，适合作为下一轮 UI 重做与美术裁切的基准。
+　　`v2/` 是根据 `docs/engines/fst/PRD.md` 补充的高质感视觉母版，覆盖商品图标、车辆商队、六城节点、事件卡、浅色地图和 HUD 氛围。它不替换当前 v1 运行时资源，适合作为下一轮 UI 重做与美术裁切的基准。

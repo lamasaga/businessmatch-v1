@@ -34,14 +34,23 @@ export default function ProductPositioningPanel({ categories, segments, onSubmit
 
   return (
     <form onSubmit={handleSubmit} className="rounded-2xl border border-ops-primary/20 bg-background-secondary/60 p-6 space-y-6">
-      <div className="flex items-center gap-3">
-        <div className="w-10 h-10 rounded-xl bg-ops-primary/15 border border-ops-primary/30 flex items-center justify-center">
-          <Lightbulb className="w-5 h-5 text-ops-primary" />
+      <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+        <div className="flex items-center gap-3">
+          <div className="w-10 h-10 rounded-xl bg-ops-primary/15 border border-ops-primary/30 flex items-center justify-center">
+            <Lightbulb className="w-5 h-5 text-ops-primary" />
+          </div>
+          <div>
+            <h2 className="text-xl font-bold">产品定位</h2>
+            <p className="text-sm text-foreground-muted">选择品类与目标客群，决定你的成本结构和市场偏好。</p>
+          </div>
         </div>
-        <div>
-          <h2 className="text-xl font-bold">产品定位</h2>
-          <p className="text-sm text-foreground-muted">选择品类与目标客群，决定你的成本结构和市场偏好。</p>
-        </div>
+        <button
+          type="submit"
+          disabled={submitting || !productName.trim()}
+          className="inline-flex items-center justify-center gap-2 rounded-xl bg-ops-primary px-4 py-2.5 text-sm font-bold text-white hover:bg-ops-primary/90 disabled:opacity-50 shadow-[0_0_20px_rgba(59,130,246,0.18)] transition-all"
+        >
+          {submitting ? '提交中...' : <><PlayIcon /> <span>开始经营</span></>}
+        </button>
       </div>
 
       <div className="space-y-2">
@@ -137,10 +146,14 @@ export default function ProductPositioningPanel({ categories, segments, onSubmit
         disabled={submitting || !productName.trim()}
         className="w-full rounded-xl bg-ops-primary px-4 py-3 text-sm font-bold text-white hover:bg-ops-primary/90 disabled:opacity-50 flex items-center justify-center gap-2 shadow-[0_0_20px_rgba(59,130,246,0.25)] transition-all"
       >
-        {submitting ? '提交中...' : <><span>确认定位</span><ArrowRight className="w-4 h-4" /></>}
+        {submitting ? '提交中...' : <><span>开始经营</span><ArrowRight className="w-4 h-4" /></>}
       </button>
     </form>
   );
+}
+
+function PlayIcon() {
+  return <ArrowRight className="w-4 h-4" />;
 }
 
 function WeightBar({ label, value, color }: { label: string; value: number; color: string }) {

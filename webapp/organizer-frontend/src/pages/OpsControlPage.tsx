@@ -1,9 +1,10 @@
 import { useState, useEffect, useCallback } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
+import { useParams } from 'react-router-dom';
 import { api } from '../lib/api';
+import OpsPhaseStepper from '../components/ops/OpsPhaseStepper';
 import {
   Factory, Play, Loader2, AlertCircle, Copy, Check,
-  Users, TrendingUp, Pause, ArrowRight, Calculator,
+  Users, TrendingUp, Pause, ArrowRight, Calculator, Clock, Building2,
 } from 'lucide-react';
 
 interface OpsTeam {
@@ -22,6 +23,8 @@ interface OpsRound {
   id: number;
   round_number: number;
   status: string;
+  opened_at?: string | null;
+  ended_at?: string | null;
 }
 
 interface OpsControlState {
@@ -49,21 +52,29 @@ const PHASE_LABEL: Record<string, string> = {
   registration: '报名中',
   positioning: '产品定位',
   auction_a: '拍卖A · 基础资源',
-  operation_round_1: '运营第1轮',
-  operation_round_2: '运营第2轮',
-  operation_round_3: '运营第3轮',
+  operation_round_1: '运营 R1',
+  operation_round_2: '运营 R2',
+  operation_round_3: '运营 R3',
   auction_b: '拍卖B · 战略资源',
-  operation_round_4: '运营第4轮',
-  operation_round_5: '运营第5轮',
-  operation_round_6: '运营第6轮',
+  operation_round_4: '运营 R4',
+  operation_round_5: '运营 R5',
+  operation_round_6: '运营 R6',
   auction: '资源竞价',
   finished: '已结束',
   paused: '已暂停',
 };
 
+function formatCountdown(endedAt: string | null | undefined): string | null {
+  if (!endedAt) return null;
+  const ms = new Date(endedAt).getTime() - Date.now();
+  if (ms <= 0) return '已截止';
+  const min = Math.floor(ms / 60000);
+  const sec = Math.floor((ms % 60000) / 1000);
+  return `${String(min).padStart(2, '0')}:${String(sec).padStart(2, '0')}`;
+}
+
 export default function OpsControlPage() {
   const { id } = useParams<{ id: string }>();
-  const navigate = useNavigate();
   const eventId = Number(id);
 
   const [state, setState] = useState<OpsControlState | null>(null);
@@ -71,13 +82,18 @@ export default function OpsControlPage() {
   const [actionLoading, setActionLoading] = useState(false);
   const [error, setError] = useState('');
   const [copied, setCopied] = useState(false);
+  const [tick, setTick] = useState(0);
 
   const fetchState = useCallback(async () => {
     try {
       const res = await api.get(`/api/v1/ops/events/${eventId}/screen`);
       setState(res.data.data);
-    } catch (err: any) {
-      setError(err?.response?.data?.message || err.message || '获取状态失败');
+      setError('');
+    } catch (err: unknown) {
+      const msg = err && typeof err === 'object' && 'response' in err
+        ? (err as { response?: { data?: { message?: string } } }).response?.data?.message
+        : null;
+      setError(msg || (err instanceof Error ? err.message : '获取状态失败'));
     }
     setLoading(false);
   }, [eventId]);
@@ -88,6 +104,11 @@ export default function OpsControlPage() {
     return () => clearInterval(timer);
   }, [fetchState]);
 
+  useEffect(() => {
+    const t = setInterval(() => setTick((n) => n + 1), 1000);
+    return () => clearInterval(t);
+  }, []);
+
   const copyCode = async () => {
     if (!state?.room_code) return;
     await navigator.clipboard.writeText(state.room_code);
@@ -95,183 +116,168 @@ export default function OpsControlPage() {
     setTimeout(() => setCopied(false), 2000);
   };
 
-  const handleStart = async () => {
-    if (!window.confirm('确定开始比赛？将初始化所有队伍状态并进入产品定位阶段。')) return;
+  const runAction = async (path: string, confirmMsg?: string) => {
+    if (confirmMsg && !window.confirm(confirmMsg)) return;
     setActionLoading(true);
     setError('');
     try {
-      await api.post(`/api/v1/ops/events/${eventId}/start`);
+      await api.post(`/api/v1/ops/events/${eventId}/${path}`);
       await fetchState();
-    } catch (err: any) {
-      setError(err?.response?.data?.message || err.message || '开始失败');
-    }
-    setActionLoading(false);
-  };
-
-  const handleAdvance = async () => {
-    setActionLoading(true);
-    setError('');
-    try {
-      await api.post(`/api/v1/ops/events/${eventId}/advance`);
-      await fetchState();
-    } catch (err: any) {
-      setError(err?.response?.data?.message || err.message || '推进失败');
-    }
-    setActionLoading(false);
-  };
-
-  const handlePause = async () => {
-    setActionLoading(true);
-    setError('');
-    try {
-      await api.post(`/api/v1/ops/events/${eventId}/pause`);
-      await fetchState();
-    } catch (err: any) {
-      setError(err?.response?.data?.message || err.message || '暂停失败');
-    }
-    setActionLoading(false);
-  };
-
-  const handleResume = async () => {
-    setActionLoading(true);
-    setError('');
-    try {
-      await api.post(`/api/v1/ops/events/${eventId}/resume`);
-      await fetchState();
-    } catch (err: any) {
-      setError(err?.response?.data?.message || err.message || '恢复失败');
+    } catch (err: unknown) {
+      const msg = err && typeof err === 'object' && 'response' in err
+        ? (err as { response?: { data?: { message?: string } } }).response?.data?.message
+        : null;
+      setError(msg || (err instanceof Error ? err.message : '操作失败'));
     }
     setActionLoading(false);
   };
 
   if (loading) {
     return (
-      <div className="flex items-center justify-center min-h-[60vh]">
-        <Loader2 className="w-8 h-8 animate-spin text-blue-400" />
+      <div className="flex items-center justify-center min-h-[60vh] bg-[#0a1628]">
+        <Loader2 className="w-8 h-8 animate-spin text-ops-primary" />
       </div>
     );
   }
 
-  if (!state) return <p className="text-center text-gray-400 py-20">无法加载场次数据</p>;
+  if (!state) {
+    return <p className="text-center text-foreground-muted py-20">无法加载场次数据</p>;
+  }
 
   const teams = state.teams ?? [];
   const rounds = state.rounds ?? [];
   const ranking = state.ranking ?? [];
-
   const isWaiting = state.match_status === 'registration' || state.match_status === 'draft';
   const isPlaying = state.match_status === 'playing';
   const isFinished = state.phase === 'finished';
   const isPaused = state.phase === 'paused';
   const canStart = isWaiting && (state.participant_count ?? 0) >= 1;
+  const countdown = formatCountdown(state.current_round?.ended_at);
+  void tick;
+
+  const advanceLabel = (() => {
+    if (state.phase.startsWith('operation_round_')) return '截止并结算';
+    if (state.phase === 'auction_a' || state.phase === 'auction_b' || state.phase === 'auction') return '结算拍卖';
+    if (state.phase === 'positioning') return '进入拍卖 A';
+    return '推进阶段';
+  })();
 
   return (
-    <div className="min-h-[calc(100vh-56px)] p-4 space-y-4">
-      {/* Sticky action bar */}
-      <div className="sticky top-2 z-20 bg-gray-950/70 backdrop-blur rounded-2xl border border-gray-800 px-4 py-3">
+    <div className="min-h-[calc(100vh-56px)] bg-[#0a1628] text-foreground p-4 space-y-4">
+      <div className="sticky top-2 z-20 rounded-2xl border border-ops-primary/20 bg-[#0a1628]/90 backdrop-blur px-4 py-3 space-y-3">
         <div className="flex flex-wrap items-center justify-between gap-3">
-          <div className="min-w-[240px]">
-            <h1 className="text-xl font-bold">生产经营销售赛 · 控场</h1>
-            <p className="text-gray-400 text-xs mt-0.5">
-              {state.title} · 场次 #{state.match_id} · {PHASE_LABEL[state.phase] || state.phase}
-            </p>
+          <div className="flex items-center gap-3 min-w-0">
+            <div className="w-10 h-10 rounded-xl bg-ops-primary/15 border border-ops-primary/30 flex items-center justify-center shrink-0">
+              <Factory className="w-5 h-5 text-ops-primary" />
+            </div>
+            <div className="min-w-0">
+              <h1 className="text-xl font-bold truncate">OPS 教师控场</h1>
+              <p className="text-foreground-muted text-xs truncate">
+                {state.title} · #{state.match_id} · {PHASE_LABEL[state.phase] || state.phase}
+              </p>
+            </div>
           </div>
 
-          <div className="flex items-center gap-3 text-sm">
+          <div className="flex flex-wrap items-center gap-2">
+            {countdown && isPlaying && !isFinished && !isPaused && (
+              <div className={`inline-flex items-center gap-1.5 rounded-lg border px-3 py-1.5 text-xs font-semibold ${
+                countdown === '已截止' ? 'border-danger/40 bg-danger/10 text-danger' : 'border-ops-primary/30 bg-ops-primary/10 text-ops-primary'
+              }`}>
+                <Clock className="w-3.5 h-3.5" />
+                R{state.current_round?.round_number} {countdown}
+              </div>
+            )}
+
             {isWaiting && state.room_code && (
               <button
                 type="button"
                 onClick={copyCode}
-                className="bg-gray-900 border border-gray-700 rounded-xl px-4 py-2 flex items-center gap-3 hover:border-blue-500/50"
+                className="rounded-xl border border-ops-primary/30 bg-ops-primary/10 px-4 py-2 flex items-center gap-3 hover:border-ops-primary/50"
               >
-                <span className="text-[10px] text-gray-400">房间码</span>
-                <span className="text-2xl font-mono font-bold text-blue-400 tracking-widest">
-                  {state.room_code}
-                </span>
-                {copied ? <Check className="w-4 h-4 text-green-400" /> : <Copy className="w-4 h-4 text-gray-400" />}
+                <span className="text-[10px] text-foreground-muted">房间码</span>
+                <span className="text-xl font-mono font-bold text-ops-primary tracking-widest">{state.room_code}</span>
+                {copied ? <Check className="w-4 h-4 text-success" /> : <Copy className="w-4 h-4 text-foreground-muted" />}
               </button>
             )}
 
-            <div className="flex items-center gap-2">
-              {canStart && (
+            {canStart && (
+              <button
+                type="button"
+                onClick={() => runAction('start', '确定开始比赛？将初始化队伍并进入产品定位。')}
+                disabled={actionLoading}
+                className="px-4 py-2 rounded-xl bg-success hover:bg-success/90 text-background text-sm font-semibold flex items-center gap-2 disabled:opacity-40"
+              >
+                {actionLoading ? <Loader2 className="w-4 h-4 animate-spin" /> : <Play className="w-4 h-4" />}
+                开始比赛
+              </button>
+            )}
+
+            {isPlaying && !isFinished && !isPaused && (
+              <>
                 <button
                   type="button"
-                  onClick={handleStart}
+                  onClick={() => runAction('advance')}
                   disabled={actionLoading}
-                  className="px-4 py-2 rounded-xl bg-green-600 hover:bg-green-700 text-white text-sm font-semibold flex items-center gap-2 disabled:opacity-40"
+                  className="px-4 py-2 rounded-xl bg-ops-primary hover:bg-ops-primary/90 text-white text-sm font-semibold flex items-center gap-2 disabled:opacity-40"
                 >
-                  {actionLoading ? <Loader2 className="w-4 h-4 animate-spin" /> : <Play className="w-4 h-4" />}
-                  开始比赛
+                  {actionLoading ? <Loader2 className="w-4 h-4 animate-spin" /> : <ArrowRight className="w-4 h-4" />}
+                  {advanceLabel}
                 </button>
-              )}
-
-              {isPlaying && !isFinished && !isPaused && (
-                <>
-                  <button
-                    type="button"
-                    onClick={handleAdvance}
-                    disabled={actionLoading}
-                    className="px-4 py-2 rounded-xl bg-blue-600 hover:bg-blue-700 text-white text-sm font-semibold flex items-center gap-2 disabled:opacity-40"
-                  >
-                    {actionLoading ? <Loader2 className="w-4 h-4 animate-spin" /> : <ArrowRight className="w-4 h-4" />}
-                    推进阶段
-                  </button>
-                  <button
-                    type="button"
-                    onClick={handlePause}
-                    disabled={actionLoading}
-                    className="px-4 py-2 rounded-xl bg-yellow-600 hover:bg-yellow-700 text-white text-sm font-semibold flex items-center gap-2 disabled:opacity-40"
-                  >
-                    <Pause className="w-4 h-4" />
-                    暂停
-                  </button>
-                </>
-              )}
-
-              {isPaused && (
                 <button
                   type="button"
-                  onClick={handleResume}
+                  onClick={() => runAction('pause')}
                   disabled={actionLoading}
-                  className="px-4 py-2 rounded-xl bg-green-600 hover:bg-green-700 text-white text-sm font-semibold flex items-center gap-2 disabled:opacity-40"
+                  className="px-4 py-2 rounded-xl bg-ops-auction/90 hover:bg-ops-auction text-background text-sm font-semibold flex items-center gap-2 disabled:opacity-40"
                 >
-                  <Play className="w-4 h-4" />
-                  恢复比赛
+                  <Pause className="w-4 h-4" />
+                  暂停
                 </button>
-              )}
-            </div>
+              </>
+            )}
+
+            {isPaused && (
+              <button
+                type="button"
+                onClick={() => runAction('resume')}
+                disabled={actionLoading}
+                className="px-4 py-2 rounded-xl bg-success hover:bg-success/90 text-background text-sm font-semibold flex items-center gap-2 disabled:opacity-40"
+              >
+                <Play className="w-4 h-4" />
+                恢复比赛
+              </button>
+            )}
           </div>
         </div>
+
+        {!isWaiting && <OpsPhaseStepper phase={state.phase} />}
       </div>
 
       {error && (
-        <div className="bg-red-900/30 border border-red-700 rounded-lg p-3 flex items-center gap-2 text-red-300 text-sm">
-          <AlertCircle className="w-4 h-4" /> {error}
+        <div className="rounded-lg border border-danger/30 bg-danger/10 p-3 flex items-center gap-2 text-danger text-sm">
+          <AlertCircle className="w-4 h-4 shrink-0" /> {error}
         </div>
       )}
 
-      {/* Stats */}
-      <div className="grid grid-cols-4 gap-4">
-        <MiniStat label="已加入选手" value={state.participant_count ?? 0} />
-        <MiniStat label="队伍数" value={teams.length} />
-        <MiniStat label="当前阶段" value={PHASE_LABEL[state.phase] || state.phase} />
-        <MiniStat label="上限人数" value={state.max_players ?? '—'} />
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
+        <StatCard label="已加入选手" value={state.participant_count ?? 0} />
+        <StatCard label="队伍数" value={teams.length} />
+        <StatCard label="当前阶段" value={PHASE_LABEL[state.phase] || state.phase} small />
+        <StatCard label="上限人数" value={state.max_players ?? '—'} />
       </div>
 
-      {/* Teams */}
-      <div className="bg-gray-800 rounded-lg p-4 space-y-4">
-        <h2 className="font-medium flex items-center gap-2">
-          <Users className="w-5 h-5" /> 队伍一览
+      <div className="rounded-2xl border border-ops-primary/20 bg-background-secondary/60 p-4 space-y-4">
+        <h2 className="font-semibold flex items-center gap-2">
+          <Users className="w-5 h-5 text-ops-primary" /> 队伍一览
         </h2>
         {teams.length === 0 ? (
-          <p className="text-sm text-gray-400">暂无队伍 — 学生输入房间码加入后将自动分配。</p>
+          <p className="text-sm text-foreground-muted">暂无队伍 — 学生输入房间码加入后将自动分配。</p>
         ) : (
           <div className="overflow-x-auto">
             <table className="w-full text-sm">
               <thead>
-                <tr className="border-b border-gray-700 text-gray-400">
+                <tr className="border-b border-border-subtle text-foreground-muted text-xs">
                   <th className="py-2 px-3 text-left">队名</th>
                   <th className="py-2 px-3 text-left">产品</th>
-                  <th className="py-2 px-3 text-left">品类/客群</th>
                   <th className="py-2 px-3 text-center">人数</th>
                   <th className="py-2 px-3 text-right">现金</th>
                   <th className="py-2 px-3 text-right">净资产</th>
@@ -279,20 +285,18 @@ export default function OpsControlPage() {
               </thead>
               <tbody>
                 {teams.map((t) => (
-                  <tr key={t.id} className="border-b border-gray-700/50">
-                    <td className="py-2 px-3 font-medium">
-                      {t.team_name}
-                      {t.is_ai && <span className="ml-1 text-xs text-yellow-500">(AI)</span>}
+                  <tr key={t.id} className="border-b border-border-subtle/50">
+                    <td className="py-2.5 px-3 font-medium">
+                      <span className="inline-flex items-center gap-1.5">
+                        <Building2 className="w-3.5 h-3.5 text-ops-primary/70" />
+                        {t.team_name}
+                        {t.is_ai && <span className="text-[10px] text-ops-auction">AI</span>}
+                      </span>
                     </td>
-                    <td className="py-2 px-3 text-gray-400">{t.product_name || '—'}</td>
-                    <td className="py-2 px-3 text-gray-400">
-                      {t.category && t.target_segment
-                        ? `${t.category} · ${t.target_segment}`
-                        : '—'}
-                    </td>
-                    <td className="py-2 px-3 text-center">{t.member_count}</td>
-                    <td className="py-2 px-3 text-right font-mono">¥{Math.round(t.cash).toLocaleString()}</td>
-                    <td className="py-2 px-3 text-right font-mono">¥{Math.round(t.net_assets).toLocaleString()}</td>
+                    <td className="py-2.5 px-3 text-foreground-muted">{t.product_name || '—'}</td>
+                    <td className="py-2.5 px-3 text-center">{t.member_count}</td>
+                    <td className="py-2.5 px-3 text-right font-mono tabular-nums">¥{Math.round(t.cash).toLocaleString()}</td>
+                    <td className="py-2.5 px-3 text-right font-mono tabular-nums text-ops-primary">¥{Math.round(t.net_assets).toLocaleString()}</td>
                   </tr>
                 ))}
               </tbody>
@@ -301,46 +305,43 @@ export default function OpsControlPage() {
         )}
       </div>
 
-      {/* Ranking */}
       {(isPlaying || isFinished) && ranking.length > 0 && (
-        <div className="bg-gray-800 rounded-lg p-4 space-y-4">
-          <h2 className="font-medium flex items-center gap-2">
-            <TrendingUp className="w-5 h-5" /> 实时排行榜
+        <div className="rounded-2xl border border-ops-primary/20 bg-background-secondary/60 p-4 space-y-3">
+          <h2 className="font-semibold flex items-center gap-2">
+            <TrendingUp className="w-5 h-5 text-ops-primary" /> 实时排行榜
           </h2>
           <div className="space-y-2">
             {ranking.map((row) => (
-              <div
-                key={row.team_id}
-                className="flex items-center gap-4 p-3 bg-gray-900/50 rounded-lg"
-              >
-                <span className={`w-8 text-center font-bold ${row.rank === 1 ? 'text-blue-400' : 'text-gray-400'}`}>
+              <div key={row.team_id} className="flex items-center gap-4 p-3 rounded-xl bg-background/50 border border-border-subtle">
+                <span className={`w-8 text-center font-bold ${row.rank === 1 ? 'text-ops-auction' : 'text-foreground-muted'}`}>
                   {row.rank}
                 </span>
-                <span className="flex-1 font-medium">{row.team_name}</span>
-                <span className="text-sm text-gray-400">利润 ¥{Math.round(row.cumulative_profit).toLocaleString()}</span>
-                <span className="font-mono text-sm font-bold">¥{Math.round(row.net_assets).toLocaleString()}</span>
+                <span className="flex-1 font-medium truncate">{row.team_name}</span>
+                <span className="text-xs text-foreground-muted hidden sm:inline">
+                  利润 ¥{Math.round(row.cumulative_profit).toLocaleString()}
+                </span>
+                <span className="font-mono text-sm font-bold text-ops-primary">¥{Math.round(row.net_assets).toLocaleString()}</span>
               </div>
             ))}
           </div>
         </div>
       )}
 
-      {/* Rounds */}
-      {isPlaying && (
-        <div className="bg-gray-800 rounded-lg p-4 space-y-4">
-          <h2 className="font-medium flex items-center gap-2">
-            <Calculator className="w-5 h-5" /> 轮次状态
+      {isPlaying && rounds.length > 0 && (
+        <div className="rounded-2xl border border-ops-primary/20 bg-background-secondary/60 p-4 space-y-3">
+          <h2 className="font-semibold flex items-center gap-2">
+            <Calculator className="w-5 h-5 text-ops-primary" /> 轮次状态
           </h2>
           <div className="flex flex-wrap gap-2">
             {rounds.map((r) => (
               <span
                 key={r.id}
-                className={`px-3 py-1 rounded text-xs font-medium ${
+                className={`px-3 py-1 rounded-lg text-xs font-medium border ${
                   r.status === 'settled'
-                    ? 'bg-green-900/50 text-green-400'
+                    ? 'border-success/30 bg-success/10 text-success'
                     : r.status === 'open'
-                    ? 'bg-blue-900/50 text-blue-400'
-                    : 'bg-gray-700 text-gray-400'
+                      ? 'border-ops-primary/30 bg-ops-primary/10 text-ops-primary'
+                      : 'border-border-subtle bg-background/40 text-foreground-muted'
                 }`}
               >
                 R{r.round_number}: {r.status === 'settled' ? '已结算' : r.status === 'open' ? '进行中' : '待定'}
@@ -351,36 +352,27 @@ export default function OpsControlPage() {
       )}
 
       {isFinished && (
-        <div className="bg-green-900/20 border border-green-700 rounded-lg p-6 text-center">
-          <TrendingUp className="w-10 h-10 text-green-400 mx-auto mb-2" />
-          <h2 className="text-xl font-bold text-green-400">比赛已结束</h2>
-          <p className="text-gray-400 mt-1">所有轮次已完成，排名已锁定。</p>
+        <div className="rounded-2xl border border-success/30 bg-success/10 p-6 text-center">
+          <TrendingUp className="w-10 h-10 text-success mx-auto mb-2" />
+          <h2 className="text-xl font-bold text-success">比赛已结束</h2>
+          <p className="text-foreground-muted mt-1 text-sm">6 轮运营与双拍卖已完成，排名已锁定。</p>
         </div>
       )}
 
       {isWaiting && (
-        <p className="text-xs text-gray-400 mt-6 text-center">
-          请让学生打开{' '}
-          <a
-            href={import.meta.env.VITE_STUDENT_URL || 'http://localhost:5173/games'}
-            target="_blank"
-            rel="noreferrer"
-            className="text-blue-400 underline"
-          >
-            学生端商赛大厅
-          </a>{' '}
-          输入房间码 {state.room_code} 加入
+        <p className="text-xs text-foreground-muted text-center">
+          请让学生打开学生端商赛大厅，输入房间码 <span className="text-ops-primary font-mono">{state.room_code}</span> 加入
         </p>
       )}
     </div>
   );
 }
 
-function MiniStat({ label, value }: { label: string; value: string | number }) {
+function StatCard({ label, value, small }: { label: string; value: string | number; small?: boolean }) {
   return (
-    <div className="bg-gray-800 rounded-lg p-4 text-center">
-      <p className="text-xs text-gray-400">{label}</p>
-      <p className="text-2xl font-bold mt-1">{value}</p>
+    <div className="rounded-xl border border-ops-primary/15 bg-background-secondary/60 p-4 text-center">
+      <p className="text-xs text-foreground-muted">{label}</p>
+      <p className={`font-bold mt-1 ${small ? 'text-sm' : 'text-2xl'} text-ops-primary`}>{value}</p>
     </div>
   );
 }

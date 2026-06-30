@@ -22,10 +22,14 @@ export const FSTRADING_CITY_ICONS: Record<string, string> = {
   changzhou: `${ICON_BASE}/changzhou.svg`,
 };
 
-/** 枢纽城强调色（Tailwind 近似） */
+/** 城市强调色：对齐 FST 青蓝 / 金色 / 橙色赛事资产 */
 export const FSTRADING_CITY_ACCENT: Record<string, string> = {
-  shanghai: 'rgb(212, 168, 83)',
-  suzhou: 'rgb(45, 212, 191)',
+  shanghai: 'rgb(246, 195, 68)',
+  suzhou: 'rgb(46, 195, 229)',
+  nanjing: 'rgb(20, 184, 166)',
+  hangzhou: 'rgb(59, 130, 246)',
+  nantong: 'rgb(34, 197, 94)',
+  changzhou: 'rgb(255, 138, 76)',
 };
 
 export function resolveCityZhLabel(cityId: string, apiName?: string): string {

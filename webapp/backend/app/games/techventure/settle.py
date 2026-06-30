@@ -54,7 +54,7 @@ def settle_tv_round(db: Session, match: ArenaMatch, tv_round: TvRound,
     config_id = match.game_config_id or "techventure-v1"
     cfg = get_cfg(config_id)
     defaults = cfg.get("defaults", {})
-    total_rounds = defaults.get("rounds", 4)
+    total_rounds = defaults.get("rounds", 6)
     round_allowance = defaults.get("round_allowance", 20)
     interest_rate = defaults.get("interest_rate", 0.15)
 

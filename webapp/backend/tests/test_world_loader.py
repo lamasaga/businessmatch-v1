@@ -48,14 +48,15 @@ def test_trade_slice_geo_pack():
     assert sh["hub"] is True
     assert any(e["edge_id"] == "shanghai-suzhou" for e in slice_doc["routes"])
     nt = next(c for c in slice_doc["cities"] if c["city_id"] == "nantong")
-    assert nt["geo"].get("stage_offset_px") == [0.0, -150.0]
+    assert nt["geo"].get("stage_pct") == [0.675, 0.252]
+    assert nt["geo"].get("stage_offset_px") == [0.0, 0.0]
 
 
 def test_load_geo_pack_assets():
     pack = load_geo_pack("yangtze_6")
     assert pack["projection"] == "equirectangular"
     assert "basemap_schematic" in pack["assets"]
-    assert pack["assets"]["basemap_geo_webp"].endswith("basemap.webp")
+    assert pack["assets"]["basemap_geo_webp"].endswith("trade-map-premium.png")
 
 
 def test_route_exists_and_edge_cost():

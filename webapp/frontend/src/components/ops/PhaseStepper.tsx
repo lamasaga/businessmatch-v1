@@ -24,14 +24,21 @@ function phaseToStepIndex(phase: OpsPhase | undefined): number {
 
 interface Props {
   phase: OpsPhase | undefined;
+  currentRound?: number;
 }
 
-export default function PhaseStepper({ phase }: Props) {
+export default function PhaseStepper({ phase, currentRound }: Props) {
   const currentIndex = phaseToStepIndex(phase);
+
+  const subLabel = (() => {
+    if (!phase?.startsWith('operation_round_') || !currentRound) return null;
+    if (currentRound <= 3) return `当前 R${currentRound}`;
+    return `当前 R${currentRound}`;
+  })();
 
   return (
     <div className="w-full overflow-x-auto">
-      <div className="flex items-center min-w-[600px] px-2 py-3">
+      <div className="flex items-center min-w-[600px] px-2 py-1.5">
         {STEPS.map((step, index) => {
           const isCompleted = index < currentIndex;
           const isCurrent = index === currentIndex;
@@ -40,7 +47,7 @@ export default function PhaseStepper({ phase }: Props) {
             <div key={step.id} className="flex items-center flex-1 last:flex-none">
               <div className="flex flex-col items-center gap-1.5">
                 <div
-                  className={`w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold border-2 transition-colors ${
+                  className={`w-6 h-6 rounded-full flex items-center justify-center text-[10px] font-bold border-2 transition-colors ${
                     isCurrent
                       ? 'bg-ops-primary border-ops-primary text-white shadow-[0_0_12px_rgba(59,130,246,0.5)]'
                       : isCompleted
@@ -48,11 +55,11 @@ export default function PhaseStepper({ phase }: Props) {
                         : 'bg-background-secondary border-border-subtle text-foreground-muted'
                   }`}
                 >
-                  {isCompleted ? <Check className="w-4 h-4" /> : index + 1}
+                  {isCompleted ? <Check className="w-3 h-3" /> : index + 1}
                 </div>
                 <div className="text-center">
                   <p
-                    className={`text-xs font-medium whitespace-nowrap ${
+                    className={`text-[10px] font-medium whitespace-nowrap ${
                       isCurrent ? 'text-ops-primary' : isCompleted ? 'text-foreground' : 'text-foreground-muted'
                     }`}
                   >
@@ -71,6 +78,9 @@ export default function PhaseStepper({ phase }: Props) {
           );
         })}
       </div>
+      {subLabel && (
+        <p className="text-center text-[9px] text-ops-primary pb-1 -mt-1">{subLabel} · 6 轮运营 + 双拍卖</p>
+      )}
     </div>
   );
 }

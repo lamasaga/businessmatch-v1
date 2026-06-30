@@ -1,6 +1,15 @@
  # 文档中心
 
- 本目录按工作类别组织，`docs/` 根目录只放与当前开发最直接相关的核心文档。
+ 本目录按工作类别组织。开发 **FST / TECH / OPS** 三赛事引擎时，**优先读 [`engines/`](./engines/README.md)**，不必在全仓 `docs/` 里翻找。
+
+ ## 开发三引擎？从这里开始
+
+ | 入口 | 说明 |
+ |------|------|
+ | [**engines/README.md**](./engines/README.md) | 三引擎 P0 必读清单、代码落点、美术索引 |
+ | [engines/fst/](./engines/fst/README.md) | 浮生记 PRD + 实现指南 |
+ | [engines/tech/](./engines/tech/README.md) | 创想大赢家 |
+ | [engines/ops/](./engines/ops/README.md) | 生产经营销售赛（含 BDD/SPEC） |
 
  ## 根目录核心文档
 
@@ -14,17 +23,21 @@
 
  ## 子目录
 
- - [`decisions/`](./decisions/README.md) — 架构决策记录（ADR）
-- [`prd/`](./prd/README.md) — 产品需求文档（PRD）与 BDD
-- [`handbooks/`](./handbooks/README.md) — 具体任务的实现手册
-- [`角色背景/`](./角色背景/README.md) — NPC 角色 IP、故事背景与视觉形象
-- [`engineering-academy/`](./engineering-academy/00-README.md) — 教程与学习材料
-- [`archive/`](./archive/README.md) — 归档资料
+ | 目录 | 重要性 | 说明 |
+ |------|--------|------|
+ | [**engines/**](./engines/README.md) | **P0** | 三赛事引擎产品+实现契约 |
+ | [decisions/](./decisions/README.md) | P0（架构变更时） | ADR |
+ | [prd/](./prd/README.md) | P1 | Career、POP、教师端、写作指南 |
+ | [handbooks/](./handbooks/README.md) | P1（落地任务时） | 抛光、前端视觉手册 |
+ | [engineering-academy/](./engineering-academy/00-README.md) | P2 | 教程与背景（引擎指南已迁到 engines/） |
+ | [archive/](./archive/README.md) | P3 | 历史与预研 |
+ | [角色背景/](./角色背景/README.md) | P2（NPC 工作时） | 角色 IP 与视觉 |
 
  ## 新增文档指引
 
+ - **三引擎 PRD/BDD/SPEC/指南** → `engines/<fst|tech|ops>/`
  - 架构选型 → `decisions/`
- - 产品需求 → `prd/`
- - 实现教程/操作步骤 → `handbooks/` 或根目录（若为核心类别）
+ - Career / POP / 教师端等产品需求 → `prd/`
+ - 实现教程/操作步骤 → `handbooks/`
  - 学习材料 → `engineering-academy/`
  - 历史/不再活跃 → `archive/`

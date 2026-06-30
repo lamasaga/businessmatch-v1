@@ -258,9 +258,9 @@ def settle_round(ctx: SettlementContext,
     a_hard = defaults.get("a_hard", 12.0)
     beta = defaults.get("beta", 0.5)
     sigma = defaults.get("sigma", 0.05)
-    total_rounds = defaults.get("rounds", 4)
+    total_rounds = defaults.get("rounds", 6)
 
-    round_weights_list = defaults.get("round_weights", [0.15, 0.20, 0.25, 0.40])
+    round_weights_list = defaults.get("round_weights", [0.08, 0.10, 0.14, 0.18, 0.22, 0.28])
     round_weights = {i + 1: w for i, w in enumerate(round_weights_list)}
 
     routes_cfg = cfg.get("routes", {})

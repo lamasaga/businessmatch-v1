@@ -3,8 +3,9 @@ import { useParams } from 'react-router-dom';
 import { api } from '../lib/api';
 import {
   Users, Play, Calculator, Clock, Plus,
-  CheckCircle, Loader2, AlertCircle, Copy, Check, UserCheck,
+  CheckCircle, Loader2, AlertCircle, Copy, Check, UserCheck, Rocket,
 } from 'lucide-react';
+import TvRoundStepper from '../components/techventure/TvRoundStepper';
 
 interface Participant {
   user_id: number;
@@ -182,13 +183,13 @@ export default function TechVentureControl() {
 
   if (loading) {
     return (
-      <div className="flex items-center justify-center min-h-[60vh]">
-        <Loader2 className="w-8 h-8 animate-spin text-blue-400" />
+      <div className="flex items-center justify-center min-h-[60vh] bg-[#1a0a2e]">
+        <Loader2 className="w-8 h-8 animate-spin text-tv-primary" />
       </div>
     );
   }
 
-  if (!state) return <p className="text-center text-gray-400 py-20">无法加载场次数据</p>;
+  if (!state) return <p className="text-center text-foreground-muted py-20">无法加载场次数据</p>;
 
   const waiting = isWaitingStatus(state.match_status);
   const submittedSet = new Set(state.current_round?.submitted_teams || []);
@@ -205,37 +206,39 @@ export default function TechVentureControl() {
     editing[t.id] ?? { team_name: t.team_name, product_name: t.product_name || '' };
 
   return (
-    <div className="min-h-[calc(100vh-56px)] p-4 space-y-4">
-      {/* Sticky action bar */}
-      <div className="sticky top-2 z-20 bg-gray-950/70 backdrop-blur rounded-2xl border border-gray-800 px-4 py-3">
+    <div className="min-h-[calc(100vh-56px)] bg-gradient-to-b from-[#1a0a2e] to-[#0a0a0b] text-foreground p-4 space-y-4">
+      <div className="sticky top-2 z-20 rounded-2xl border border-tv-primary/20 bg-[#1a0a2e]/90 backdrop-blur px-4 py-3 space-y-3">
         <div className="flex flex-wrap items-center justify-between gap-3">
-          <div className="min-w-[240px]">
-            <h1 className="text-xl font-bold">创想大赢家 · 控场</h1>
-            <p className="text-gray-400 text-xs mt-0.5">
-              {state.title} · 场次 #{state.match_id} · {waiting ? '报名等待中' : state.match_status}
-              {state.current_round ? ` · 第${state.current_round.round_no}轮` : ''}
-            </p>
+          <div className="flex items-center gap-3 min-w-0">
+            <div className="w-10 h-10 rounded-xl bg-tv-primary/15 border border-tv-primary/30 flex items-center justify-center shrink-0">
+              <Rocket className="w-5 h-5 text-tv-primary" />
+            </div>
+            <div className="min-w-0">
+              <h1 className="text-xl font-bold truncate">TECH 教师控场</h1>
+              <p className="text-foreground-muted text-xs truncate">
+                {state.title} · #{state.match_id}
+                {state.current_round ? ` · 第${state.current_round.round_no}轮` : ''}
+              </p>
+            </div>
           </div>
 
-          <div className="flex items-center gap-3 text-sm">
+          <div className="flex flex-wrap items-center gap-2 text-sm">
             {waiting && state.room_code && (
               <button
                 type="button"
                 onClick={copyCode}
-                className="bg-gray-900 border border-gray-700 rounded-xl px-4 py-2 flex items-center gap-3 hover:border-blue-500/50"
+                className="rounded-xl border border-tv-primary/30 bg-tv-primary/10 px-4 py-2 flex items-center gap-3 hover:border-tv-primary/50"
               >
-                <span className="text-[10px] text-gray-400">房间码</span>
-                <span className="text-2xl font-mono font-bold text-blue-400 tracking-widest">
-                  {state.room_code}
-                </span>
-                {copied ? <Check className="w-4 h-4 text-green-400" /> : <Copy className="w-4 h-4 text-gray-400" />}
+                <span className="text-[10px] text-foreground-muted">房间码</span>
+                <span className="text-xl font-mono font-bold text-tv-primary tracking-widest">{state.room_code}</span>
+                {copied ? <Check className="w-4 h-4 text-success" /> : <Copy className="w-4 h-4 text-foreground-muted" />}
               </button>
             )}
 
             {!waiting && state.current_round && (
-              <div className="text-right">
-                <p className="text-xs text-gray-400">本轮提交</p>
-                <p className="text-sm font-bold text-green-400">
+              <div className="rounded-lg border border-tv-user/30 bg-tv-user/10 px-3 py-1.5 text-center">
+                <p className="text-[10px] text-foreground-muted">本轮提交</p>
+                <p className="text-sm font-bold text-tv-user">
                   {submittedSet.size}/{state.current_round.total_teams}
                 </p>
               </div>
@@ -291,6 +294,12 @@ export default function TechVentureControl() {
             </div>
           </div>
         </div>
+        {!waiting && (
+          <TvRoundStepper
+            currentRoundNo={state.current_round?.round_no}
+            matchStatus={state.match_status}
+          />
+        )}
       </div>
 
       {error && (

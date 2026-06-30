@@ -118,7 +118,7 @@
 
 ### 3.1 FST / 浮生记 / trading
 
-> PRD：`docs/prd/PRD-FST.md`
+> PRD：`docs/engines/fst/PRD.md` · 导航：`docs/engines/fst/README.md`
 > 配置：`B/../content/game-configs/fstrading.yaml`
 
 | 功能 | 文件 | 关键符号 | 状态 |
@@ -149,7 +149,7 @@
 
 ### 3.2 TECH / 创想大赢家 / techventure
 
-> PRD：`docs/prd/PRD-TECH.md`
+> PRD：`docs/engines/tech/PRD.md` · 导航：`docs/engines/tech/README.md`
 > 配置：`B/../content/game-configs/techventure-v1.yaml`
 
 | 功能 | 文件 | 关键符号 | 状态 |
@@ -166,7 +166,7 @@
 
 ### 3.3 OPS / 生产经营销售 / ops_sim
 
-> PRD：`docs/prd/PRD-OPS.md`
+> PRD：`docs/engines/ops/PRD.md` · 导航：`docs/engines/ops/README.md`
 > 配置：`B/../content/game-configs/ops-sim-v1.yaml`（规划中）
 
 | 功能 | 文件 | 关键符号 | 状态 |
@@ -407,9 +407,9 @@
 | **CLAUDE 指引** | `CLAUDE.md` | Claude Code 会话入口 | ✅ |
 | **Agent 入口** | `agent.md` | 通用 AI 工具入口 | ✅ |
 | **代码地图** | `CODE_MAP.md` | 本文 | ✅ |
-| **FST PRD** | `docs/prd/PRD-FST.md` | 浮生记引擎规范 | ✅ |
-| **TECH PRD** | `docs/prd/PRD-TECH.md` | 创想大赢家引擎规范 | ✅ |
-| **OPS PRD** | `docs/prd/PRD-OPS.md` | 生产经营销售引擎规范 | ✅ |
+| **FST PRD** | `docs/engines/fst/PRD.md` | 浮生记引擎规范 | ✅ |
+| **TECH PRD** | `docs/engines/tech/PRD.md` | 创想大赢家引擎规范 | ✅ |
+| **OPS PRD** | `docs/engines/ops/PRD.md` | 生产经营销售引擎规范 | ✅ |
 | **引擎开发手册** | `docs/ENGINE.md` | 全栈引擎开发规范 | ✅ |
 | **Arena 架构** | `webapp/backend/app/domains/arena/ARCHITECTURE.md` | Arena 域架构 | ✅ |
 | **Career 设计** | `webapp/backend/app/domains/career/DESIGN.md` | Career 域设计 | ✅ |
@@ -446,7 +446,7 @@
 |-------------|--------|
 | 整个项目是什么 | `00-PROJECT.md` → `01-PRODUCT.md` |
 | 当前做到哪了 | `03-ENGINEERING.md` §AI_DEFAULT |
-| 某个引擎怎么玩 | `docs/prd/PRD-*.md` |
+| 某个引擎怎么玩 | `docs/engines/<fst|tech|ops>/README.md` |
 | 域边界规则 | `.cursor/rules/blueprint-coding.mdc` |
 | Phase 能不能做 | `04-ROADMAP.md` §Phase 门控 |
 | 新增引擎 Checklist | `docs/prd/README.md` §设计约束 |

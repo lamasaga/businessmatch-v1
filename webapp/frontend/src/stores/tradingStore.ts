@@ -12,23 +12,28 @@ interface TradingState {
   gameState: GameState | null;
   loading: boolean;
   error: string | null;
+  lastActionHint: string | null;
 
-  fetchGameState: (eventId: number) => Promise<GameState | null>;
+  fetchGameState: (eventId: number, options?: { silent?: boolean }) => Promise<GameState | null>;
   submitRtsAction: (
     eventId: number,
     actionType: string,
     payload: Record<string, unknown>
   ) => Promise<RtsActionResponse>;
   clearError: () => void;
+  clearActionHint: () => void;
 }
 
 export const useTradingStore = create<TradingState>((set) => ({
   gameState: null,
   loading: false,
   error: null,
+  lastActionHint: null,
 
-  fetchGameState: async (eventId) => {
-    set({ loading: true, error: null });
+  fetchGameState: async (eventId, options) => {
+    if (!options?.silent) {
+      set({ loading: true, error: null });
+    }
     try {
       const response = await api.get(`/api/v1/trading/events/${eventId}/state`);
       const gameState = response.data.data as GameState;
@@ -42,7 +47,7 @@ export const useTradingStore = create<TradingState>((set) => ({
   },
 
   submitRtsAction: async (eventId, actionType, payload) => {
-    set({ loading: true, error: null });
+    set({ error: null });
     try {
       const response = await api.post(`/api/v1/trading/events/${eventId}/actions`, {
         action_type: actionType,
@@ -50,17 +55,18 @@ export const useTradingStore = create<TradingState>((set) => ({
       });
       const result = response.data.data as RtsActionResponse;
       if (result.game_state) {
-        set({ gameState: result.game_state, loading: false });
-      } else {
-        set({ loading: false });
+        set({ gameState: result.game_state, lastActionHint: result.message || null });
+      } else if (result.message) {
+        set({ lastActionHint: result.message });
       }
       return result;
     } catch (err: unknown) {
-      const msg = (err as { message?: string }).message || '提交失败';
-      set({ error: msg, loading: false });
+      const msg = (err as { message?: string }).message || '操作失败';
+      set({ error: msg });
       throw err;
     }
   },
 
   clearError: () => set({ error: null }),
+  clearActionHint: () => set({ lastActionHint: null }),
 }));

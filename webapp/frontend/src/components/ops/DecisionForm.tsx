@@ -8,6 +8,8 @@ interface Props {
   category: OpsCategoryConfig;
   currentRound: OpsRound | null;
   hasSubmitted: boolean;
+  isPractice?: boolean;
+  isOfficial?: boolean;
   onSubmit: (payload: {
     production_quantity: number;
     unit_price: number;
@@ -19,7 +21,7 @@ interface Props {
   submitting: boolean;
 }
 
-export default function DecisionForm({ team, cities, category, currentRound, hasSubmitted, onSubmit, submitting }: Props) {
+export default function DecisionForm({ team, cities, category, currentRound, hasSubmitted, isPractice, onSubmit, submitting }: Props) {
   const [production, setProduction] = useState(0);
   const [unitPrice, setUnitPrice] = useState(() => category?.base_price || 100);
   const [marketing, setMarketing] = useState(0);
@@ -77,7 +79,11 @@ export default function DecisionForm({ team, cities, category, currentRound, has
           <Check className="w-6 h-6 text-success" />
         </div>
         <div className="text-lg font-bold text-success">已提交 R{currentRound?.round_number} 决策</div>
-        <p className="text-sm text-foreground-muted mt-1">请等待组织者结算或进入下一轮</p>
+        <p className="text-sm text-foreground-muted mt-1">
+          {isPractice
+            ? 'AI 对手已补齐，点击右侧「进入下一回合」推进结算。'
+            : '请等待教师截止并结算本轮。'}
+        </p>
       </div>
     );
   }
@@ -91,8 +97,17 @@ export default function DecisionForm({ team, cities, category, currentRound, has
           </div>
           <h2 className="text-lg font-bold">R{currentRound?.round_number} 运营决策</h2>
         </div>
-        <div className={`text-sm font-bold px-3 py-1 rounded-full ${remaining >= 0 ? 'bg-success/15 text-success' : 'bg-danger/15 text-danger'}`}>
-          剩余现金 ¥{remaining.toLocaleString()}
+        <div className="flex flex-col sm:flex-row sm:items-center gap-2">
+          <div className={`text-sm font-bold px-3 py-1 rounded-full ${remaining >= 0 ? 'bg-success/15 text-success' : 'bg-danger/15 text-danger'}`}>
+            剩余现金 ¥{remaining.toLocaleString()}
+          </div>
+          <button
+            type="submit"
+            disabled={submitting || remaining < -0.01}
+            className="inline-flex items-center justify-center gap-2 rounded-xl bg-ops-primary px-4 py-2 text-sm font-bold text-white hover:bg-ops-primary/90 disabled:opacity-50 shadow-[0_8px_18px_rgba(37,99,235,0.18)] transition-all"
+          >
+            {submitting ? '提交中...' : <><span>提交本轮</span><ArrowRight className="w-4 h-4" /></>}
+          </button>
         </div>
       </div>
 

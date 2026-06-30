@@ -9,14 +9,14 @@ interface Props {
 export default function RankingPanel({ ranking, myTeamId }: Props) {
   if (!ranking.length) {
     return (
-      <div className="rounded-2xl border border-border-subtle bg-background-secondary p-6 text-center text-foreground-muted">
+      <div className="rounded-2xl border border-border-subtle bg-white p-6 text-center text-foreground-muted shadow-sm">
         暂无排名数据
       </div>
     );
   }
 
   return (
-    <div className="rounded-2xl border border-ops-primary/20 bg-background-secondary/60 p-6 space-y-3">
+    <div className="rounded-2xl border border-ops-primary/20 bg-white p-6 space-y-3 shadow-sm">
       <div className="flex items-center gap-3">
         <div className="w-10 h-10 rounded-xl bg-ops-primary/15 border border-ops-primary/30 flex items-center justify-center">
           <Trophy className="w-5 h-5 text-ops-primary" />
@@ -43,7 +43,7 @@ export default function RankingPanel({ ranking, myTeamId }: Props) {
               <tr
                 key={entry.team_id}
                 className={`border-b border-border-subtle last:border-0 transition-colors ${
-                  entry.team_id === myTeamId ? 'bg-ops-primary/10' : 'hover:bg-white/5'
+                  entry.team_id === myTeamId ? 'bg-ops-primary/10' : 'hover:bg-ops-primary/5'
                 }`}
               >
                 <td className="py-2 pl-2">

@@ -24,7 +24,7 @@ def run_ai_decisions_and_settle(db: Session, match: ArenaMatch, tv_round: TvRoun
     config_id = match.game_config_id or "techventure-v1"
     cfg = get_cfg(config_id)
     defaults = cfg.get("defaults", {})
-    total_rounds = defaults.get("rounds", 4)
+    total_rounds = defaults.get("rounds", 6)
 
     ai_teams = (
         db.query(ArenaTeam)

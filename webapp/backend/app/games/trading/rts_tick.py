@@ -12,9 +12,10 @@ from app.domains.arena.models import ArenaMatch, ArenaParticipant
 from app.domains.arena.config_json import persist_match_config
 from app.domains.career.services.rewards import settle_match_rewards
 from app.games.trading import TradingRound, RoundStatus
-from app.games.trading.rts_actions import advance_transits, apply_pending_actions, natural_pool_tick
+from app.games.trading.rts_actions import advance_transits, apply_distributors, apply_pending_actions, natural_pool_tick
 from app.games.trading.rts_ai import enqueue_ai_actions
 from app.games.trading.rts_config import is_rts_mode
+from app.games.trading.rts_events import advance_market_events
 from app.games.trading.rts_state import (
     build_price_snapshot,
     get_rts_runtime,
@@ -129,6 +130,8 @@ def advance_one_tick(db: Session, event: ArenaMatch) -> bool:
         .filter(ArenaParticipant.event_id == event.id)
         .all()
     )
+    cash_at_tick_start = {p.id: float(p.cash) for p in participants}
+    assets_at_tick_start = {p.id: float(p.total_assets) for p in participants}
 
     latest = (
         db.query(TradingRound)
@@ -139,8 +142,11 @@ def advance_one_tick(db: Session, event: ArenaMatch) -> bool:
     snapshot = (latest.price_snapshot if latest else {}) or {}
 
     advance_transits(config, participants, next_tick)
+    advance_market_events(rt, config, config_id, event.id)
     apply_pending_actions(db, event, participants, snapshot, rt, next_tick)
     natural_pool_tick(rt, config, config_id)
+    snapshot = build_price_snapshot(rt, config, config_id)
+    apply_distributors(event, participants, snapshot, rt, next_tick)
     snapshot = build_price_snapshot(rt, config, config_id)
 
     if event.match_kind == MatchKind.practice:
@@ -148,10 +154,22 @@ def advance_one_tick(db: Session, event: ArenaMatch) -> bool:
         apply_pending_actions(db, event, participants, snapshot, rt, next_tick)
         natural_pool_tick(rt, config, config_id)
         snapshot = build_price_snapshot(rt, config, config_id)
+        apply_distributors(event, participants, snapshot, rt, next_tick)
+        snapshot = build_price_snapshot(rt, config, config_id)
 
     for p in participants:
         from app.games.trading.rts_actions import _refresh_assets
         _refresh_assets(p, snapshot, config_id, config)
+
+    from app.games.trading.rts_actions import finalize_tick_digests
+    finalize_tick_digests(
+        config,
+        participants,
+        next_tick,
+        config_id,
+        cash_at_tick_start=cash_at_tick_start,
+        assets_at_tick_start=assets_at_tick_start,
+    )
 
     if latest and latest.status == RoundStatus.active:
         latest.status = RoundStatus.completed

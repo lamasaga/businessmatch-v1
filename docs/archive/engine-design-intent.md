@@ -5,7 +5,7 @@
 > **目标**：7 个章节 + 教育目标，30 分钟能写完。
 >
 > **关联文档**：
-> - 推导产物 → `docs/prd/PRD-<引擎>.md`
+> - 推导产物 → `docs/engines/<id>/PRD.md`
 > - 引擎规范 → `docs/ENGINE.md`
 > - 架构约束 → `CLAUDE.md` · `02-ARCHITECTURE.md` · `03-ENGINEERING.md`
 

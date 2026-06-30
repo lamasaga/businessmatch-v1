@@ -1004,9 +1004,9 @@ defaults:
 | `03-ENGINEERING.md` | 开发规范、API 全表、数据表索引 |
 | `04-ROADMAP.md` | Phase 门控、开发节奏 |
 | `docs/ENGINE.md` | 引擎全栈开发手册 |
-| `docs/prd/PRD-FST.md` | 即时制引擎 PRD 范例 |
-| `docs/prd/PRD-TECH.md` | 回合制引擎 PRD 范例 |
-| `docs/prd/PRD-OPS.md` | 复杂回合制引擎 PRD 范例 |
+| `docs/engines/fst/PRD.md` | 即时制引擎 PRD 范例 |
+| `docs/engines/tech/PRD.md` | 回合制引擎 PRD 范例 |
+| `docs/engines/ops/PRD.md` | 复杂回合制引擎 PRD 范例 |
 
 ---
 

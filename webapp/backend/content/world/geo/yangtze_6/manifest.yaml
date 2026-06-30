@@ -1,5 +1,5 @@
 # 长三角六城 · 地理包清单（Phase B · 教学投影）
-geo_pack_version: "0.1.4"
+geo_pack_version: "0.1.5"
 region_id: yangtze_6
 bbox: [118.0, 29.8, 122.5, 33.5]
 projection: equirectangular
@@ -13,9 +13,9 @@ cities:
   - changzhou
 assets:
   basemap_schematic: /assets/fushengji/v1/maps/yangtze_6-schematic.svg
-  basemap_geo_webp: /assets/fushengji/v1/maps/geo/basemap.webp
+  basemap_geo_webp: /assets/fushengji/v1/maps/geo/trade-map-premium.png
   city_icon_pattern: /assets/fushengji/v1/maps/cities/{city_id}.svg
   show_route_lines: "false"
 attribution:
   - "边界：简化行政界，教学用途"
-  - "锚点：WGS84 经纬度，非测绘级"
+  - "锚点：对齐 trade-map-premium 美术底图，非测绘级"

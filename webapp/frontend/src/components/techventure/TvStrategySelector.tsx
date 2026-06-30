@@ -11,13 +11,13 @@ const ROUTE_META: Record<RouteId, { icon: typeof Cpu; color: string; gradient: s
   USER: {
     icon: Users,
     color: 'text-tv-user',
-    gradient: 'from-green-500/20 to-green-600/5',
+    gradient: 'from-slate-400/20 to-slate-500/5',
     badge: '用户至上',
   },
   BRAND: {
     icon: Megaphone,
     color: 'text-tv-brand',
-    gradient: 'from-pink-500/20 to-pink-600/5',
+    gradient: 'from-amber-500/20 to-amber-600/5',
     badge: '品牌声量',
   },
   PATHFINDER: {
@@ -85,12 +85,12 @@ export default function TvStrategySelector({
                 onClick={() => onSelectRoute(rid)}
                 className={`relative text-left rounded-xl border p-3 transition-all duration-300 ${
                   active
-                    ? 'border-tv-primary bg-gradient-to-br from-tv-primary/20 to-purple-900/20 shadow-[0_0_24px_rgba(168,85,247,0.2)]'
+                    ? 'border-tv-primary bg-gradient-to-br from-tv-primary/15 to-white shadow-[0_10px_26px_rgba(37,99,235,0.14)]'
                     : 'border-border-subtle bg-background-secondary/60 hover:border-tv-primary/30 hover:bg-background-hover'
                 } disabled:opacity-50`}
               >
                 {active && (
-                  <div className="absolute top-2 right-2 w-5 h-5 rounded-full bg-tv-primary flex items-center justify-center shadow-[0_0_8px_rgba(168,85,247,0.6)]">
+                  <div className="absolute top-2 right-2 w-5 h-5 rounded-full bg-tv-primary flex items-center justify-center shadow-[0_0_8px_rgba(37,99,235,0.35)]">
                     <Check className="w-3 h-3 text-white" />
                   </div>
                 )}
@@ -103,14 +103,12 @@ export default function TvStrategySelector({
                     <div className={`text-[9px] px-1 py-0.5 rounded bg-background/60 ${meta.color} inline-block`}>{meta.badge}</div>
                   </div>
                 </div>
-                <p className="text-[10px] text-foreground-muted line-clamp-2 mb-2">
+                <p className="text-[10px] text-foreground-muted line-clamp-2 mb-1.5">
                   {cfg?.tagline || '选择本轮主策略方向'}
                 </p>
-                <div className="space-y-1">
-                  <WeightDot label="Tech" value={cfg?.r_tech ?? 0.25} color="bg-tv-tech" />
-                  <WeightDot label="Fit" value={cfg?.r_fit ?? 0.25} color="bg-tv-user" />
-                  <WeightDot label="Show" value={cfg?.r_show ?? 0.25} color="bg-tv-brand" />
-                </div>
+                <p className="text-[10px] leading-relaxed text-foreground-secondary">
+                  {routeIntro(rid, cfg)}
+                </p>
                 {active && routeSwitchCost > 0 && (
                   <p className="text-[9px] text-tv-primary mt-2">切换成本：{routeSwitchCost} 万</p>
                 )}
@@ -141,7 +139,7 @@ export default function TvStrategySelector({
                     locked
                       ? 'border-tv-user/30 bg-tv-user/10 text-tv-user'
                       : open
-                        ? 'border-tv-primary/50 bg-tv-primary/15 text-tv-primary shadow-[0_0_10px_rgba(168,85,247,0.15)]'
+                        ? 'border-tv-primary/50 bg-tv-primary/10 text-tv-primary shadow-[0_8px_18px_rgba(37,99,235,0.12)]'
                         : 'border-border-subtle bg-background-secondary text-foreground-muted hover:border-tv-primary/30'
                   } disabled:opacity-60`}
                 >
@@ -159,14 +157,13 @@ export default function TvStrategySelector({
   );
 }
 
-function WeightDot({ label, value, color }: { label: string; value: number; color: string }) {
-  return (
-    <div className="flex items-center gap-1.5">
-      <span className="text-[9px] w-7 text-foreground-muted">{label}</span>
-      <div className="flex-1 h-1 rounded-full bg-background overflow-hidden">
-        <div className={`h-full rounded-full ${color}`} style={{ width: `${Math.round(value * 100)}%` }} />
-      </div>
-      <span className="text-[9px] w-6 text-right text-foreground-muted">{Math.round(value * 100)}%</span>
-    </div>
-  );
+function routeIntro(route: RouteId, cfg?: TvRouteConfig) {
+  if (cfg?.brief) return cfg.brief;
+  const fallback: Record<RouteId, string> = {
+    TECH: '适合用研发能力建立长期壁垒，前期投入更重，后期增长更稳。',
+    USER: '适合围绕用户场景做深体验，用更高匹配度换取稳定口碑。',
+    BRAND: '适合快速打开市场声量，让产品更容易被看见和讨论。',
+    PATHFINDER: '适合避开拥挤路线，在细分机会里争取差异化红利。',
+  };
+  return fallback[route];
 }

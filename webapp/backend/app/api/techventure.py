@@ -1,5 +1,7 @@
 """TechVenture 参赛端 API — 学生前端调用"""
 
+from datetime import datetime, timezone, timedelta
+
 from fastapi import APIRouter, Depends, status
 from pydantic import BaseModel, Field
 from sqlalchemy.orm import Session
@@ -10,7 +12,7 @@ from app.db.database import get_db
 from app.domains.arena.models.match import ArenaMatch
 from app.domains.arena.models.participant import ArenaParticipant
 from app.domains.arena.models.team import ArenaTeam
-from app.domains.arena.enums import MatchStatus
+from app.domains.arena.enums import MatchStatus, MatchKind
 from app.games.techventure.models import (
     TvTeamState, TvRound, TvSubmission, TvSnapshot, TvNews,
 )
@@ -82,13 +84,24 @@ def _team_state_dict(state: TvTeamState, team: ArenaTeam) -> dict:
     }
 
 
-def _round_dict(r: TvRound) -> dict:
+def _round_deadline(r: TvRound, match: ArenaMatch, cfg: dict) -> str | None:
+    if match.match_kind != MatchKind.official or not r.opened_at:
+        return None
+    minutes = cfg.get("defaults", {}).get("submit_timeout_minutes", 8)
+    return (r.opened_at + timedelta(minutes=minutes)).isoformat()
+
+
+def _round_dict(r: TvRound, match: ArenaMatch | None = None, cfg: dict | None = None) -> dict:
+    ended_at = None
+    if match and cfg:
+        ended_at = _round_deadline(r, match, cfg)
     return {
         "id": r.id,
         "round_no": r.round_no,
         "status": r.status.value,
         "event_id_r3": r.event_id_r3.value if hasattr(r.event_id_r3, "value") else r.event_id_r3,
         "opened_at": r.opened_at.isoformat() if r.opened_at else None,
+        "ended_at": ended_at,
         "settled_at": r.settled_at.isoformat() if r.settled_at else None,
     }
 
@@ -233,10 +246,13 @@ def get_state(
     cfg = get_cfg(match.game_config_id or "techventure-v1")
 
     return ApiResponse.ok(data={
+        "match_id": match.id,
+        "match_kind": match.match_kind.value if match.match_kind else "official",
         "match_status": match.status.value,
+        "title": match.title,
         "team": _team_state_dict(state, team),
-        "rounds": [_round_dict(r) for r in rounds],
-        "current_round": _round_dict(current_rd) if current_rd else None,
+        "rounds": [_round_dict(r, match, cfg) for r in rounds],
+        "current_round": _round_dict(current_rd, match, cfg) if current_rd else None,
         "has_submitted": has_submitted,
         "last_snapshot": last_snapshot,
         "routes": cfg.get("routes", {}),
@@ -263,12 +279,14 @@ def poll(
         has_submitted = sub is not None
 
     state = db.query(TvTeamState).filter(TvTeamState.team_id == team.id).first()
+    cfg = get_cfg(match.game_config_id or "techventure-v1")
     return ApiResponse.ok(data={
         "match_status": match.status.value,
-        "current_round": _round_dict(current_rd) if current_rd else None,
+        "current_round": _round_dict(current_rd, match, cfg) if current_rd else None,
         "has_submitted": has_submitted,
         "budget": state.budget if state else 0,
         "last_rank": state.last_rank if state else None,
+        "weighted_total": state.weighted_total if state else 0,
     })
 
 
@@ -304,6 +322,13 @@ def submit_decision(
     if not current_rd:
         raise BusinessException("当前无开放轮次", code=ErrorCode.BAD_REQUEST, status_code=400)
 
+    cfg = get_cfg(match.game_config_id or "techventure-v1")
+
+    if match.match_kind == MatchKind.official:
+        deadline_iso = _round_deadline(current_rd, match, cfg)
+        if deadline_iso and datetime.now(timezone.utc) > datetime.fromisoformat(deadline_iso):
+            raise BusinessException("当前轮次已截止", code=ErrorCode.BAD_REQUEST, status_code=400)
+
     existing = db.query(TvSubmission).filter(
         TvSubmission.round_id == current_rd.id,
         TvSubmission.team_id == team.id,
@@ -315,7 +340,6 @@ def submit_decision(
     if not state:
         raise BusinessException("队伍状态异常", code=ErrorCode.NOT_FOUND, status_code=404)
 
-    cfg = get_cfg(match.game_config_id or "techventure-v1")
     defaults = cfg.get("defaults", {})
     route_switch_cost = defaults.get("route_switch_cost", 5)
     city_expand_cost = defaults.get("city_expand_cost", 10)
@@ -352,13 +376,19 @@ def submit_decision(
     )
     db.add(sub)
 
-    from app.domains.arena.enums import MatchKind
     if match.match_kind == MatchKind.practice:
         from app.games.techventure.practice_flow import run_ai_decisions_and_settle
         run_ai_decisions_and_settle(db, match, current_rd)
 
     db.commit()
-    return ApiResponse.ok(data={"submitted": True, "round_no": current_rd.round_no})
+    db.refresh(match)
+    next_rd = _current_round(event_id, db)
+    return ApiResponse.ok(data={
+        "submitted": True,
+        "round_no": current_rd.round_no,
+        "match_status": match.status.value,
+        "next_round_no": next_rd.round_no if next_rd else None,
+    })
 
 
 @router.get("/events/{event_id}/leaderboard", response_model=ApiResponse[list])
@@ -370,11 +400,12 @@ def leaderboard(
     states = db.query(TvTeamState).filter(TvTeamState.event_id == event_id).all()
     teams_db = {s.team_id: db.query(ArenaTeam).get(s.team_id) for s in states}
     board = []
-    for s in sorted(states, key=lambda x: -x.weighted_total):
+    for rank, s in enumerate(sorted(states, key=lambda x: -x.weighted_total), start=1):
         t = teams_db.get(s.team_id)
         if not t:
             continue
         board.append({
+            "rank": rank,
             "team_id": s.team_id,
             "team_name": t.team_name,
             "product_name": (t.metadata_ or {}).get("product_name", ""),

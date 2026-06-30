@@ -97,16 +97,44 @@ export interface OpsSnapshot {
   };
 }
 
+export interface OpsNewsItem {
+  kind: string;
+  headline: string;
+  body?: string;
+}
+
+export interface OpsTeamPeer {
+  team_id: number;
+  team_name: string;
+  product_name?: string | null;
+  category?: OpsCategory | null;
+  target_segment?: OpsSegment | null;
+  has_positioned: boolean;
+  is_ai: boolean;
+}
+
+export interface OpsThemePack {
+  id?: string;
+  name?: string;
+}
+
 export interface OpsGameState {
+  match_id?: number;
+  match_kind?: 'practice' | 'official';
   match_status: string;
   phase: OpsPhase;
+  room_code?: string;
+  title?: string;
   team: OpsTeamState;
+  teams_peers?: OpsTeamPeer[];
   rounds: OpsRound[];
   current_round: OpsRound | null;
   has_submitted: boolean;
   can_advance?: boolean;
   last_snapshot: OpsSnapshot | null;
+  last_news?: OpsNewsItem[];
   auction_items: OpsAuctionItemState[];
+  theme_pack?: OpsThemePack;
   config: {
     product_categories: Record<string, OpsCategoryConfig>;
     consumer_segments: Record<string, OpsSegmentConfig>;

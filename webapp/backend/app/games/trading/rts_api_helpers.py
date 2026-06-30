@@ -14,7 +14,13 @@ from app.games.trading.rts_logistics import (
     player_can_trade,
     storage_capacity,
 )
-from app.games.trading.rts_state import get_rts_runtime, player_state, seconds_until_next_tick
+from app.games.trading.rts_state import (
+    get_rts_runtime,
+    player_state,
+    seconds_until_next_tick,
+    seconds_until_next_tick_float,
+    tick_progress,
+)
 
 
 def build_rts_markets(
@@ -60,11 +66,21 @@ def build_rts_markets(
                 bid = int(row.get("bid", 0))
                 pool = float(row.get("pool", 0))
                 pressure = float(row.get("pressure", 0))
+                production = float(row.get("production", 0))
+                consumption = float(row.get("consumption", 0))
+                demand_gap = float(row.get("demand_gap", 0))
+                supply_state = str(row.get("supply_state", "balanced"))
+                city_role = str(row.get("city_role", "neutral"))
             else:
                 ask = int(row)
                 bid = int(ask * 0.92)
                 pool = 0
                 pressure = 0
+                production = 0
+                consumption = 0
+                demand_gap = 0
+                supply_state = "balanced"
+                city_role = "neutral"
 
             trend = "stable"
             trend_pct = 0.0
@@ -90,6 +106,11 @@ def build_rts_markets(
                 "trend_percent": trend_pct,
                 "pool_qty": pool,
                 "pressure": pressure,
+                "production": production,
+                "consumption": consumption,
+                "demand_gap": demand_gap,
+                "supply_state": supply_state,
+                "city_role": city_role,
             })
         markets.append({
             "city": ck,
@@ -161,25 +182,61 @@ def build_rts_capacity(participant: ArenaParticipant, event: ArenaMatch) -> dict
     }
 
 
-def build_rts_meta(event: ArenaMatch, participant: ArenaParticipant) -> Dict[str, Any]:
+def build_rts_meta(
+    event: ArenaMatch,
+    participant: ArenaParticipant,
+    *,
+    price_snapshot: Optional[dict] = None,
+) -> Dict[str, Any]:
     config = event.config or {}
+    config_id = event.game_config_id or "fstrading"
     rt = get_rts_runtime(config)
     ps = player_state(config, participant.id)
     tick = int(rt.get("tick", 0))
     total = int(rt.get("total_ticks", 120))
     transit = ps.get("transit")
     can_trade = player_can_trade(transit, tick) and rt.get("phase") in ("warmup", "running")
+    interval = int(rt.get("tick_interval_sec", 5))
+    remaining = seconds_until_next_tick_float(rt)
+
+    from app.games.trading.rts_action_present import format_pending_action
+
+    snapshot = price_snapshot or {}
+    pending_raw = [
+        a for a in (rt.get("pending_actions") or [])
+        if a.get("participant_id") == participant.id
+    ]
+    pending = [
+        format_pending_action(
+            a,
+            config=config,
+            config_id=config_id,
+            snapshot=snapshot,
+            city=participant.current_city,
+        )
+        for a in pending_raw
+    ]
+
+    digest = ps.get("last_tick_digest") or None
 
     return {
         "mode": "rts",
         "tick": tick,
         "total_ticks": total,
         "phase": rt.get("phase", "warmup"),
-        "tick_interval_sec": int(rt.get("tick_interval_sec", 5)),
+        "tick_interval_sec": interval,
         "seconds_until_next_tick": seconds_until_next_tick(rt),
+        "ms_until_next_tick": int(round(remaining * 1000)),
+        "tick_progress": round(tick_progress(rt), 4),
+        "settlement_locked": remaining < 0.6,
+        "last_tick_at": rt.get("last_tick_at"),
         "duration_minutes": int(config.get("duration_minutes", 10)),
         "duration_preset": config.get("duration_preset", "standard"),
         "transit": transit,
         "can_trade": can_trade,
         "vehicles_available": vehicle_defs(config, event.game_config_id or "fstrading"),
+        "distributors": ps.get("distributors") or [],
+        "market_events": rt.get("market_events") or [],
+        "pending_actions": pending,
+        "last_tick_digest": digest,
     }

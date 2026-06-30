@@ -2,7 +2,7 @@
 
 > **定位**：编码任务的唯一事实源——AI_DEFAULT、API/路由全表、赛事引擎规范、开发流程。
 > **关联**：`02-ARCHITECTURE.md`（技术架构）· `01-PRODUCT.md`（产品定义）
-> **最后更新**：2026-06-23
+> **最后更新**：2026-06-30
 > **关联决策**：`docs/decisions/011-npc-role-ip-and-multi-facet.md` · `docs/decisions/013-per-engine-identity.md`
 
 ---
@@ -21,6 +21,7 @@
 | 安全配置 | `SECRET_KEY` 必须从环境变量 / `.env` 读取；参考 `webapp/backend/.env.example` |
 | 测试命令 | 后端：`cd webapp/backend && ./venv/Scripts/python -m pytest tests/test_auth.py -v` |
 | 默认 Phase | **Phase A**（商赛引擎闭环）；未指定时不抢跑 World/OPC |
+| FST 呈现层 | 玩家界面只用**游戏日/日期**；HUD `FstDayClock`；禁止拍/tick 文案 → [`00-TERMINOLOGY`](./00-TERMINOLOGY.md) · [`docs/engines/fst/GUIDE.md`](./docs/engines/fst/GUIDE.md) §零 |
 
 ### 功能矩阵
 

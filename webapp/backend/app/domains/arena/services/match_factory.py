@@ -1,14 +1,18 @@
 """创建 Arena 场次 — 正式赛 / 日常练习共用工厂"""
 
+import random
 from typing import Optional
 
 from sqlalchemy.orm import Session
 
+from app.domains.arena.config_json import persist_match_config
 from app.domains.arena.enums import DesignMode, GameEngineId, MatchKind, MatchStatus
 from app.domains.arena.models import ArenaMatch, ArenaParticipant, OrganizerProfile
 from app.domains.arena.utils import generate_room_code
 from app.domains.cybercore.registry import get_game_config
-from app.games.trading.bot_users import ensure_bot_traders
+from app.games.trading.bot_users import ai_levels_for_bots, pick_bot_traders
+from app.games.trading.rts_ai_levels import init_ai_player_levels
+from app.games.trading.rts_config import is_rts_mode
 
 
 def _unique_room_code(db: Session) -> str:
@@ -72,7 +76,7 @@ def create_practice_match(
     cities = config.get("cities") or []
     hubs = config.get("hub_cities") or []
     start_city = hubs[0] if hubs else (cities[0] if cities else "shanghai")
-    ai_count = int(config.get("practice_ai_count", 3))
+    ai_count = int(config.get("practice_ai_count", 7))
 
     match = ArenaMatch(
         organizer_id=platform_organizer.id,
@@ -102,17 +106,12 @@ def create_practice_match(
     )
     db.add(participant)
 
-    bots = ensure_bot_traders(db)
-    import random
-    from app.domains.arena.config_json import persist_match_config
-    from app.games.trading.rts_config import is_rts_mode
-    from app.games.trading.rts_ai_levels import init_ai_player_levels, normalize_ai_slots
-
+    bots = pick_bot_traders(db, ai_count, match.id)
     bot_cities = list(config.get("cities", [start_city]))
-    ai_slots = normalize_ai_slots(config, ai_count)
+    ai_slots = ai_levels_for_bots(bots, config)
     bot_participant_ids: list[int] = []
 
-    for bot in bots[:ai_count]:
+    for bot in bots:
         bp = ArenaParticipant(
             event_id=match.id,
             user_id=bot.id,

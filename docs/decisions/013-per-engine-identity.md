@@ -70,7 +70,7 @@
   - 不要把某个引擎的动效组件未经评审就作为「通用组件」塞进 `components/game/`。
   - 不要在 UI 中默认继承平台的深色主题，除非该引擎 PRD 明确选择深色。
 - **相关阅读**：
-  - `docs/prd/PRD-FST.md` §7.5 视觉与交互设计规范
+  - `docs/engines/fst/PRD.md` §7.5 视觉与交互设计规范
   - `docs/handbooks/engine-polish-playbook.md`
   - `00-PROJECT.md` §产品架构共识
 

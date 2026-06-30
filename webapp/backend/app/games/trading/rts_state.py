@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import copy
+import math
 from datetime import datetime, timezone
 from typing import Any, Dict, List, Optional, Tuple
 
@@ -79,11 +80,12 @@ def build_price_snapshot(
         "tick": runtime.get("tick", 0),
         "phase": runtime.get("phase", "warmup"),
         "events": runtime.get("tick_events", [])[-3:],
+        "market_events": runtime.get("market_events", [])[-5:],
     }}
 
     for ck, cc in cities.items():
         cs = runtime.get("cities", {}).get(ck, {})
-        prices = update_city_prices(ck, cc, products, cs, pricing)
+        prices = update_city_prices(ck, cc, products, cs, pricing, runtime.get("market_events") or [])
         snapshot[ck] = prices
     return snapshot
 
@@ -109,16 +111,29 @@ def ensure_player_registered(event, config: dict, participant_id: int) -> bool:
 
 
 def seconds_until_next_tick(runtime: dict) -> int:
-    interval = int(runtime.get("tick_interval_sec", 5))
+    return int(math.ceil(seconds_until_next_tick_float(runtime)))
+
+
+def seconds_until_next_tick_float(runtime: dict) -> float:
+    interval = float(runtime.get("tick_interval_sec", 5))
     last = runtime.get("last_tick_at")
     if not last:
-        return 0
+        return 0.0
     try:
         last_dt = datetime.fromisoformat(last.replace("Z", "+00:00"))
     except ValueError:
-        return 0
+        return 0.0
     elapsed = (datetime.now(timezone.utc) - last_dt).total_seconds()
-    return max(0, int(interval - elapsed))
+    return max(0.0, interval - elapsed)
+
+
+def tick_progress(runtime: dict) -> float:
+    """0~1，距离下一拍结算的进度（越大越接近结算）。"""
+    interval = float(runtime.get("tick_interval_sec", 5))
+    if interval <= 0:
+        return 0.0
+    remaining = seconds_until_next_tick_float(runtime)
+    return max(0.0, min(1.0, 1.0 - remaining / interval))
 
 
 def should_advance_tick(runtime: dict) -> bool:

@@ -2,11 +2,23 @@
 id: techventure-v1
 engine: techventure
 design_mode: standalone
-version: "1.0.0"
+version: "1.1.0"
 meta:
   name: 创想大赢家 · TechVenture
-  description: 4轮策略商赛——三城布局、三维投入、BQI评分；以队伍为参赛单元
+  description: 6轮策略商赛——三城布局、三维投入、BQI评分；以队伍为参赛单元
   theme: techventure
+  ui_theme:
+    layout: command_console
+    primary: "#2563eb"
+    background: "#f4f7fb"
+    surface: "#ffffff"
+    neutral: "#64748b"
+    accent: "#f59e0b"
+    route_colors:
+      TECH: "#2563eb"
+      USER: "#64748b"
+      BRAND: "#d97706"
+      PATHFINDER: "#f59e0b"
   education_focus:
     - 战略路线选择与取舍
     - 资源分配与投入产出
@@ -14,7 +26,7 @@ meta:
     - 宣言-行动一致性
 
 defaults:
-  rounds: 4
+  rounds: 6
   seed_budget: 100
   round_allowance: 20
   interest_rate: 0.15
@@ -22,7 +34,7 @@ defaults:
   city_expand_cost: 10
   submit_timeout_minutes: 8
   practice_ai_count: 5
-  round_weights: [0.15, 0.20, 0.25, 0.40]
+  round_weights: [0.08, 0.10, 0.14, 0.18, 0.22, 0.28]
   beta: 0.5
   sigma: 0.05
   n_ref: 16

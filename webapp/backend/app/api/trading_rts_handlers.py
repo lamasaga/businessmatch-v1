@@ -2,6 +2,8 @@
 
 from __future__ import annotations
 
+import math
+
 from fastapi import status
 from sqlalchemy.orm import Session
 
@@ -33,7 +35,7 @@ from app.games.trading.round_presenter import round_to_out
 
 
 def _get_standings(event_id: int, db: Session):
-    from app.games.trading.bot_users import bot_display_name
+    from app.games.trading.bot_users import bot_avatar_url, bot_display_name
 
     participants = (
         db.query(ArenaParticipant)
@@ -44,12 +46,14 @@ def _get_standings(event_id: int, db: Session):
     standings = []
     for rank, p in enumerate(participants, 1):
         user = p.user
-        name = bot_display_name(user.username) if getattr(p, "is_ai", 0) else user.username
+        is_ai = bool(getattr(p, "is_ai", 0))
+        name = bot_display_name(user.username) if is_ai else user.username
+        avatar = bot_avatar_url(user.username) if is_ai else user.avatar
         standings.append({
             "rank": rank,
             "user_id": user.id,
             "username": name,
-            "avatar": user.avatar,
+            "avatar": avatar,
             "cash": round(p.cash, 2),
             "inventory_value": round(max(0, p.total_assets - p.cash), 2),
             "total_assets": round(p.total_assets, 2),
@@ -87,7 +91,8 @@ def build_rts_game_state(
     inv_raw = build_rts_inventory(participant, event, current_round)
     inventory = [PlayerInventoryItem(**i) for i in inv_raw]
     cap_raw = build_rts_capacity(participant, event)
-    rts_meta = build_rts_meta(event, participant)
+    snapshot = (current_round.price_snapshot if current_round else {}) or {}
+    rts_meta = build_rts_meta(event, participant, price_snapshot=snapshot)
     rt = get_rts_runtime(event.config or {})
     phase = rt.get("phase", "warmup")
     status_val = event.status.value if hasattr(event.status, "value") else str(event.status)
@@ -158,5 +163,9 @@ def submit_rts_action(
     persist_match_config(event, config)
     db.commit()
 
+    from app.games.trading.rts_state import seconds_until_next_tick_float
+
+    wait_sec = max(1, int(math.ceil(seconds_until_next_tick_float(rt))))
     state = build_rts_game_state(db, event, participant)
-    return RtsActionResult(accepted=True, message=msg or "指令已排队，下 tick 执行", game_state=state)
+    hint = f"指令已排队 · 约 {wait_sec} 秒后执行（今日末统一入账）"
+    return RtsActionResult(accepted=True, message=hint, game_state=state)

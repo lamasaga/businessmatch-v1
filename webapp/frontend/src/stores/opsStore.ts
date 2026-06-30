@@ -7,6 +7,7 @@ import type {
   OpsRankingEntry,
   OpsAuctionItemState,
   OpsSnapshot,
+  OpsNewsItem,
 } from '../types/ops';
 
 interface OpsState {
@@ -18,10 +19,11 @@ interface OpsState {
 
   startPractice: (configId?: string) => Promise<{ event_id: number; team_id: number }>;
   fetchState: (eventId: number) => Promise<void>;
+  fetchFinancials: (eventId: number) => Promise<void>;
   submitPositioning: (eventId: number, payload: OpsPositioningPayload) => Promise<void>;
   submitDecision: (eventId: number, payload: OpsDecisionPayload) => Promise<void>;
   placeBid: (eventId: number, itemId: number, amount: number) => Promise<void>;
-  advancePractice: (eventId: number) => Promise<void>;
+  advancePractice: (eventId: number) => Promise<OpsNewsItem[]>;
   fetchRanking: (eventId: number) => Promise<void>;
   fetchAuctionState: (eventId: number) => Promise<OpsAuctionItemState[]>;
   clearError: () => void;
@@ -34,6 +36,19 @@ function extractErrorMessage(err: unknown, fallback: string): string {
   }
   if (err instanceof Error) return err.message;
   return fallback;
+}
+
+function mergeSnapshots(existing: OpsSnapshot[], incoming: OpsSnapshot[]): OpsSnapshot[] {
+  const map = new Map<number, OpsSnapshot>();
+  for (const s of existing) {
+    const round = s.result?.round_number;
+    if (round != null) map.set(round, s);
+  }
+  for (const s of incoming) {
+    const round = s.result?.round_number;
+    if (round != null) map.set(round, s);
+  }
+  return [...map.values()].sort((a, b) => (a.result?.round_number || 0) - (b.result?.round_number || 0));
 }
 
 export const useOpsStore = create<OpsState>((set) => ({
@@ -83,12 +98,30 @@ export const useOpsStore = create<OpsState>((set) => ({
     }
   },
 
+  fetchFinancials: async (eventId) => {
+    try {
+      const res = await api.get(`/api/v1/ops/events/${eventId}/financials`);
+      const rows = res.data.data as Array<{
+        round_number: number;
+        result: Record<string, unknown>;
+        financial_statements: OpsSnapshot['financial_statements'];
+      }>;
+      const snapshots: OpsSnapshot[] = rows.map((r) => ({
+        result: { ...r.result, round_number: r.round_number },
+        financial_statements: r.financial_statements,
+      }));
+      set((s) => ({ snapshots: mergeSnapshots(s.snapshots, snapshots) }));
+    } catch {
+      /* silent */
+    }
+  },
+
   submitPositioning: async (eventId, payload) => {
     set({ loading: true, error: null });
     try {
       const posRes = await api.post(`/api/v1/ops/events/${eventId}/product-positioning`, payload);
       const res = await api.get(`/api/v1/ops/events/${eventId}/state`);
-      const nextState = res.data.data;
+      const nextState = res.data.data as OpsGameState;
       const advancedPhase = posRes.data.data?.phase;
       if (advancedPhase && nextState) {
         nextState.phase = advancedPhase;
@@ -127,9 +160,24 @@ export const useOpsStore = create<OpsState>((set) => ({
   advancePractice: async (eventId) => {
     set({ loading: true, error: null });
     try {
-      await api.post(`/api/v1/ops/events/${eventId}/practice/advance`);
-      const res = await api.get(`/api/v1/ops/events/${eventId}/state`);
-      set({ gameState: res.data.data, loading: false });
+      const advRes = await api.post(`/api/v1/ops/events/${eventId}/practice/advance`);
+      const news = (advRes.data.data?.news || []) as OpsNewsItem[];
+      const [stateRes] = await Promise.all([
+        api.get(`/api/v1/ops/events/${eventId}/state`),
+        api.get(`/api/v1/ops/events/${eventId}/financials`).catch(() => null),
+      ]);
+      const gameState = stateRes.data.data as OpsGameState;
+      if (news.length) {
+        gameState.last_news = news;
+      }
+      set((s) => {
+        let snapshots = s.snapshots;
+        if (gameState.last_snapshot) {
+          snapshots = mergeSnapshots(snapshots, [gameState.last_snapshot]);
+        }
+        return { gameState, snapshots, loading: false };
+      });
+      return news;
     } catch (err) {
       set({ error: extractErrorMessage(err, '推进失败'), loading: false });
       throw err;

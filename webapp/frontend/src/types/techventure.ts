@@ -22,6 +22,7 @@ export interface TvRound {
   status: 'pending' | 'open' | 'settled';
   event_id_r3: string;
   opened_at: string | null;
+  ended_at?: string | null;
   settled_at: string | null;
 }
 
@@ -49,7 +50,10 @@ export interface TvCityConfig {
 }
 
 export interface TvGameState {
+  match_id?: number;
+  match_kind?: 'practice' | 'official';
   match_status: string;
+  title?: string;
   team: TvTeamState;
   rounds: TvRound[];
   current_round: TvRound | null;
@@ -66,6 +70,7 @@ export interface TvPollData {
   has_submitted: boolean;
   budget: number;
   last_rank: number | null;
+  weighted_total?: number;
 }
 
 export interface TvSubmitPayload {
@@ -78,6 +83,7 @@ export interface TvSubmitPayload {
 }
 
 export interface TvLeaderboardEntry {
+  rank?: number;
   team_id: number;
   team_name: string;
   product_name: string;
@@ -90,6 +96,7 @@ export interface TvLeaderboardEntry {
 export interface TvNewsItem {
   id: number;
   round_id: number;
+  round_no?: number;
   kind: string;
   headline: string;
   body: string;

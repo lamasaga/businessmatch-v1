@@ -2,7 +2,7 @@
 
 > **文档定位**：解决 Phaser / React 前端在地图定位、精灵动画、移动轨迹等视觉实现上「凭感觉调代码」的痛点。  
 > **读者**：前端开发、引擎开发、美术/策划、主理人。  
-> **关联文档**：`docs/handbooks/engine-polish-playbook.md` · `docs/prd/PRD-FST.md` §7.5 · `docs/decisions/013-per-engine-identity.md`  
+> **关联文档**：`docs/handbooks/engine-polish-playbook.md` · `docs/engines/fst/PRD.md` §7.5 · `docs/decisions/013-per-engine-identity.md`  
 > **最后更新**：2026-06-23
 
 ---

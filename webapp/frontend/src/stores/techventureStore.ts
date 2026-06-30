@@ -53,7 +53,9 @@ export const useTechVentureStore = create<TechVentureState>((set) => ({
         const snap = gameState.last_snapshot;
         if (snap) {
           const roundNo = snap.round_no ?? gameState.current_round?.round_no;
-          const exists = nextSnapshots.some((s) => (s.round_no ?? s.round_number) === (snap.round_no ?? snap.round_number));
+          const exists = nextSnapshots.some(
+            (s) => (s.round_no ?? s.round_number) === (snap.round_no ?? snap.round_number),
+          );
           if (!exists) {
             nextSnapshots.push({ ...snap, round_no: snap.round_no ?? snap.round_number ?? roundNo });
             nextSnapshots.sort((a, b) => ((a.round_no as number) || 0) - ((b.round_no as number) || 0));
@@ -76,9 +78,14 @@ export const useTechVentureStore = create<TechVentureState>((set) => ({
           gameState: {
             ...s.gameState,
             match_status: data.match_status,
-            current_round: data.current_round,
+            current_round: data.current_round ?? s.gameState.current_round,
             has_submitted: data.has_submitted,
-            team: { ...s.gameState.team, budget: data.budget, last_rank: data.last_rank },
+            team: {
+              ...s.gameState.team,
+              budget: data.budget,
+              last_rank: data.last_rank,
+              weighted_total: data.weighted_total ?? s.gameState.team.weighted_total,
+            },
           },
         };
       });
@@ -92,7 +99,31 @@ export const useTechVentureStore = create<TechVentureState>((set) => ({
     set({ loading: true, error: null });
     try {
       await api.post(`/api/v1/techventure/events/${eventId}/submit`, payload);
-      set({ loading: false });
+      const [stateRes, lbRes, newsRes] = await Promise.all([
+        api.get(`/api/v1/techventure/events/${eventId}/state`),
+        api.get(`/api/v1/techventure/events/${eventId}/leaderboard`),
+        api.get(`/api/v1/techventure/events/${eventId}/news`),
+      ]);
+      const gameState = stateRes.data.data as TvGameState;
+      set((s) => {
+        let snapshots = [...s.snapshots];
+        const snap = gameState.last_snapshot;
+        if (snap) {
+          const roundNo = snap.round_no ?? snap.round_number;
+          const exists = snapshots.some((x) => (x.round_no ?? x.round_number) === roundNo);
+          if (!exists) {
+            snapshots.push({ ...snap, round_no: roundNo });
+            snapshots.sort((a, b) => ((a.round_no as number) || 0) - ((b.round_no as number) || 0));
+          }
+        }
+        return {
+          gameState,
+          snapshots,
+          leaderboard: lbRes.data.data,
+          news: newsRes.data.data,
+          loading: false,
+        };
+      });
     } catch (err) {
       set({ error: extractErrorMessage(err, '提交失败'), loading: false });
       throw err;

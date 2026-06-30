@@ -276,6 +276,11 @@ export interface ProductPrice {
   sell_qty?: number;
   net_demand?: number;
   pressure?: number;
+  production?: number;
+  consumption?: number;
+  demand_gap?: number;
+  supply_state?: 'severe_shortage' | 'shortage' | 'balanced' | 'surplus' | string;
+  city_role?: 'producer' | 'consumer' | 'hub' | 'import_only' | 'neutral' | string;
 }
 
 export interface CityMarket {
@@ -313,6 +318,22 @@ export interface GameState {
   rts?: RtsMeta;
 }
 
+export interface RtsPendingAction {
+  action_type: string;
+  label: string;
+  detail: string;
+  estimate_cash_delta?: number | null;
+  payload?: Record<string, unknown>;
+}
+
+export interface RtsTickDigest {
+  tick: number;
+  cash_delta: number;
+  assets_delta: number;
+  lines: string[];
+  entries?: Array<Record<string, unknown>>;
+}
+
 export interface RtsMeta {
   mode: string;
   tick: number;
@@ -320,11 +341,19 @@ export interface RtsMeta {
   phase: string;
   tick_interval_sec: number;
   seconds_until_next_tick: number;
+  ms_until_next_tick?: number;
+  tick_progress?: number;
+  settlement_locked?: boolean;
+  last_tick_at?: string;
   duration_minutes?: number;
   duration_preset?: string;
   transit?: { from_city?: string; to_city?: string; arrival_tick?: number } | null;
   can_trade?: boolean;
   vehicles_available?: Record<string, { name?: string; cost?: number; capacity_bonus?: number; speed_bonus?: number }>;
+  distributors?: Array<{ city: string; product_id: string; side: 'buy' | 'sell'; limit_price: number; quantity: number }>;
+  market_events?: Array<Record<string, unknown>>;
+  pending_actions?: RtsPendingAction[];
+  last_tick_digest?: RtsTickDigest | null;
   world?: WorldTradeSlice;
 }
 

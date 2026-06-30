@@ -3,34 +3,36 @@ cities:
   nanjing:
     lng: 118.7969
     lat: 32.0603
-    stage_pct: [0.20, 0.42]
-    stage_offset_px: [45, -45]
+    stage_pct: [0.298, 0.275]
+    stage_offset_px: [0, 0]
     label_offset: [0, -14]
   suzhou:
     lng: 120.5853
     lat: 31.2989
-    stage_pct: [0.56, 0.54]
+    stage_pct: [0.694, 0.792]
+    stage_offset_px: [0, 0]
     label_offset: [-10, 8]
   shanghai:
     lng: 121.4737
     lat: 31.2304
-    stage_pct: [0.78, 0.55]
-    stage_offset_px: [40, -40]
+    stage_pct: [0.786, 0.472]
+    stage_offset_px: [0, 0]
     label_offset: [12, 6]
   nantong:
     lng: 120.8945
     lat: 32.0146
-    stage_pct: [0.66, 0.38]
-    stage_offset_px: [0, -100]
+    stage_pct: [0.675, 0.252]
+    stage_offset_px: [0, 0]
     label_offset: [0, 12]
   hangzhou:
     lng: 120.1551
     lat: 30.2741
-    stage_pct: [0.54, 0.86]
-    stage_offset_px: [30, 0]
+    stage_pct: [0.304, 0.845]
+    stage_offset_px: [0, 0]
     label_offset: [10, 8]
   changzhou:
     lng: 119.9740
     lat: 31.8105
-    stage_pct: [0.44, 0.46]
+    stage_pct: [0.115, 0.512]
+    stage_offset_px: [0, 0]
     label_offset: [-12, 0]

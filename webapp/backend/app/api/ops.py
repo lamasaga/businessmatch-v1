@@ -233,6 +233,33 @@ def _validate_spending(decision: SubmitDecisionRequest, state: OpsTeamState, cfg
     return total, new_cities
 
 
+def _teams_peers(db: Session, event_id: int) -> list[dict[str, Any]]:
+    """参赛端可见的轻量队伍列表（大厅/进度展示）。"""
+    teams_db = db.query(ArenaTeam).filter(ArenaTeam.event_id == event_id).order_by(ArenaTeam.id).all()
+    cards = {
+        c.team_id: c
+        for c in db.query(OpsProductCard).filter(OpsProductCard.event_id == event_id).all()
+    }
+    peers: list[dict[str, Any]] = []
+    for t in teams_db:
+        card = cards.get(t.id)
+        peers.append({
+            "team_id": t.id,
+            "team_name": t.team_name,
+            "product_name": card.product_name if card else None,
+            "category": card.category.value if card and card.category else None,
+            "target_segment": card.target_segment.value if card and card.target_segment else None,
+            "has_positioned": card is not None,
+            "is_ai": bool(t.is_ai),
+        })
+    return peers
+
+
+def _persist_settlement_news(match: ArenaMatch, news: list[dict[str, Any]] | None) -> None:
+    if news:
+        persist_match_config(match, {**(match.config or {}), "ops_last_news": news})
+
+
 def _state_dict(state: OpsTeamState, team: ArenaTeam, cfg: dict[str, Any]) -> dict[str, Any]:
     return {
         "team_id": team.id,
@@ -326,16 +353,27 @@ def get_state(
     if _is_auction_phase(phase):
         auction_items = auction_state_for_event(db, event_id)
 
+    theme_pack = cfg.get("theme_pack") or {}
     return ApiResponse.ok(data={
+        "match_id": match.id,
+        "match_kind": match.match_kind.value if match.match_kind else "official",
         "match_status": match.status.value,
         "phase": phase.value,
+        "room_code": match.room_code,
+        "title": match.title,
         "team": _state_dict(state, team, cfg),
+        "teams_peers": _teams_peers(db, event_id),
         "rounds": [_round_dict(r) for r in rounds],
         "current_round": _round_dict(current_rd),
         "has_submitted": has_submitted,
         "can_advance": _can_practice_advance(db, match, team),
         "last_snapshot": last_snapshot,
+        "last_news": (match.config or {}).get("ops_last_news") or [],
         "auction_items": auction_items,
+        "theme_pack": {
+            "id": theme_pack.get("id"),
+            "name": theme_pack.get("name"),
+        },
         "config": {
             "product_categories": cfg.get("product_categories", {}),
             "consumer_segments": cfg.get("consumer_segments", {}),
@@ -589,6 +627,7 @@ def advance(
             ))
 
         output = settle_ops_round(db, match, current_rd)
+        _persist_settlement_news(match, output.get("news"))
         next_phase = _next_phase_after_round(round_no)
         if next_phase == OpsMatchPhase.auction_b:
             create_auction_items(db, match, "auction_b")
@@ -619,7 +658,7 @@ def advance(
         _ensure_round_open(db, match, next_round)
         _set_match_ops_phase(match, next_phase)
         db.commit()
-        return ApiResponse.ok(data={"phase": next_phase.value, "auction_results": results})
+        return ApiResponse.ok(data={"phase": next_phase.value, "auction_results": results, "news": []})
 
     if phase == OpsMatchPhase.positioning:
         new_phase = _try_advance_from_positioning(db, match, cfg)
@@ -666,6 +705,7 @@ def practice_advance(
         if not _all_teams_submitted(db, event_id, current_rd):
             raise BusinessException("仍有队伍未提交决策", code=ErrorCode.BAD_REQUEST, status_code=400)
         output = settle_ops_round(db, match, current_rd)
+        _persist_settlement_news(match, output.get("news"))
         next_phase = _next_phase_after_round(round_no)
         if next_phase == OpsMatchPhase.auction_b:
             create_auction_items(db, match, "auction_b")

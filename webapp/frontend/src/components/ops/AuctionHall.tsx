@@ -6,6 +6,7 @@ interface Props {
   items: OpsAuctionItemState[];
   teamId?: number;
   cash: number;
+  stage?: 'a' | 'b';
   onBid: (itemId: number, amount: number) => void;
 }
 
@@ -19,7 +20,7 @@ const TYPE_ICON: Record<string, React.ElementType> = {
   legal_protection: Gavel,
 };
 
-export default function AuctionHall({ items, teamId, cash, onBid }: Props) {
+export default function AuctionHall({ items, teamId, cash, stage = 'a', onBid }: Props) {
   const [amounts, setAmounts] = useState<Record<number, string>>({});
 
   const handleBid = (item: OpsAuctionItemState) => {
@@ -53,7 +54,7 @@ export default function AuctionHall({ items, teamId, cash, onBid }: Props) {
           </div>
           <div>
             <h2 className="text-lg font-bold flex items-center gap-2">
-              资源拍卖
+              {stage === 'b' ? '拍卖 B · 战略资源' : '拍卖 A · 基础资源'}
               <span className="px-1.5 py-0.5 rounded bg-ops-auction/15 text-ops-auction text-[10px] font-bold uppercase tracking-wide">Live</span>
             </h2>
             <p className="text-xs text-foreground-muted">可用现金 ¥{cash.toLocaleString()} · 出价后立即扣款</p>

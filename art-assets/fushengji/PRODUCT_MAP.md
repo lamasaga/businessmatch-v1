@@ -6,11 +6,17 @@
 | produce | 生鲜 | `items/produce.svg` | apple-core |
 | raw_materials | 原材料 | `items/raw_materials.svg` | ore |
 | energy | 能源 | `items/energy.svg` | gas-pump |
+| chemicals | 化工品 | `items/chemicals.svg` | derived from raw_materials visual style |
+| medicine | 医药 | `items/medicine.svg` | derived from daily_goods visual style |
 | furniture | 家具 | `items/furniture.svg` | armchair (tabler) |
 | textile | 纺织品 | `items/textile.svg` | fur-shirt |
+| apparel | 服装 | `items/apparel.svg` | derived from textile visual style |
+| machinery | 机械 | `items/machinery.svg` | derived from raw_materials visual style |
 | daily_goods | 日用品 | `items/daily_goods.svg` | cardboard-box-closed |
 | appliances | 家电 | `items/appliances.svg` | fridge |
+| digital_device | 数码设备 | `items/digital_device.svg` | derived from appliances visual style |
 | passenger_car | 家用车 | `items/passenger_car.svg` | car |
+| cultural_goods | 文创 | `items/cultural_goods.svg` | derived from luxury visual style |
 | luxury | 奢侈品 | `items/luxury.svg` | diamond (tabler) |
 
 ## 六城节点

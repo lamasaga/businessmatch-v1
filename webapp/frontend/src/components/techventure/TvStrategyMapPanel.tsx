@@ -9,10 +9,10 @@ const ROUTE_ICONS: Record<string, typeof Cpu> = {
 };
 
 const ROUTE_RING: Record<string, string> = {
-  TECH: 'rgb(96, 165, 250)',
-  USER: 'rgb(74, 222, 128)',
-  BRAND: 'rgb(244, 114, 182)',
-  PATHFINDER: 'rgb(250, 204, 21)',
+  TECH: 'rgb(37, 99, 235)',
+  USER: 'rgb(100, 116, 139)',
+  BRAND: 'rgb(217, 119, 6)',
+  PATHFINDER: 'rgb(245, 158, 11)',
 };
 
 /** 三城示意布局（南京 / 合肥 / 杭州） */
@@ -53,8 +53,8 @@ export default function TvStrategyMapPanel({
       <svg viewBox="0 0 500 400" className="w-full h-full flex-1 block" preserveAspectRatio="xMidYMid meet">
         <defs>
           <linearGradient id="tvMapBg" x1="0%" y1="0%" x2="100%" y2="100%">
-            <stop offset="0%" stopColor="rgb(15, 23, 42)" />
-            <stop offset="100%" stopColor="rgb(30, 41, 59)" />
+            <stop offset="0%" stopColor="rgb(255, 255, 255)" />
+            <stop offset="100%" stopColor="rgb(241, 245, 249)" />
           </linearGradient>
         </defs>
         <rect width={500} height={400} fill="url(#tvMapBg)" />
@@ -96,8 +96,8 @@ export default function TvStrategyMapPanel({
                 cx={p.x}
                 cy={p.y}
                 r={open ? 28 : 22}
-                fill={open ? 'rgba(45, 212, 191, 0.2)' : 'rgba(15, 23, 42, 0.6)'}
-                stroke={open ? 'rgb(45, 212, 191)' : 'rgb(148, 163, 184)'}
+                fill={open ? 'rgba(37, 99, 235, 0.12)' : 'rgba(255, 255, 255, 0.92)'}
+                stroke={open ? 'rgb(37, 99, 235)' : 'rgb(148, 163, 184)'}
                 strokeWidth={open ? 3 : 2}
               />
               <text
@@ -130,8 +130,8 @@ export default function TvStrategyMapPanel({
               onClick={() => onSelectRoute(rid)}
               className={`flex items-center gap-1 px-2 py-1 rounded-lg text-[10px] border transition-colors ${
                 active
-                  ? 'border-primary bg-primary/20 text-foreground'
-                  : 'border-border-subtle bg-background/80 text-foreground-muted hover:border-foreground-muted'
+                  ? 'border-tv-primary bg-tv-primary/10 text-foreground'
+                  : 'border-border-subtle bg-white/90 text-foreground-muted hover:border-foreground-muted'
               } disabled:opacity-50`}
               style={active ? { boxShadow: `0 0 0 1px ${ROUTE_RING[rid]}` } : undefined}
             >

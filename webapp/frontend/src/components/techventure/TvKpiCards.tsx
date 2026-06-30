@@ -1,4 +1,4 @@
-import { BarChart3, Sparkles, TrendingUp, Activity, Target, Trophy } from 'lucide-react';
+import { BarChart3, Sparkles, TrendingUp, Activity, Target, Trophy, TrendingDown } from 'lucide-react';
 import {
   ResponsiveContainer,
   LineChart,
@@ -26,7 +26,7 @@ interface Props {
 export default function TvKpiCards({ snap, history = [] }: Props) {
   if (!snap) {
     return (
-      <div className="rounded-xl border border-tv-primary/20 bg-background-secondary/60 p-6 text-xs text-foreground-muted text-center flex flex-col items-center gap-2">
+      <div className="rounded-xl border border-tv-primary/20 bg-white p-6 text-xs text-foreground-muted text-center flex flex-col items-center gap-2 shadow-sm">
         <Activity className="w-6 h-6 text-tv-primary/50" />
         <p>首轮结算后显示数据仪表盘</p>
       </div>
@@ -55,38 +55,47 @@ export default function TvKpiCards({ snap, history = [] }: Props) {
     { subject: 'BQI', A: bqi, fullMark: Math.max(bqi * 1.2, 10) },
   ];
 
+  const prev = history.length >= 2 ? history[history.length - 2] : null;
+  const delta = (key: string, current: number) => {
+    if (!prev) return null;
+    const prevVal = Number((prev[key] as number) || 0);
+    const d = current - prevVal;
+    if (Math.abs(d) < 0.01) return null;
+    return d;
+  };
+
   return (
     <div className="space-y-3">
       {/* KPI 卡 */}
       <div className="grid grid-cols-3 gap-2">
-        <KpiCard label="Tech" value={tech.toFixed(2)} icon={BarChart3} color="tv-tech" />
-        <KpiCard label="Fit" value={fit.toFixed(2)} icon={Target} color="tv-user" />
-        <KpiCard label="Show" value={show.toFixed(2)} icon={Sparkles} color="tv-brand" />
-        <KpiCard label="BQI" value={bqi.toFixed(2)} icon={Activity} color="tv-primary" />
-        <KpiCard label="声量" value={attention.toFixed(1)} icon={TrendingUp} color="tv-pathfinder" />
+        <KpiCard label="Tech" value={tech.toFixed(2)} delta={delta('tech', tech)} icon={BarChart3} color="tv-tech" />
+        <KpiCard label="Fit" value={fit.toFixed(2)} delta={delta('fit', fit) ?? delta('fit_total', fit)} icon={Target} color="tv-user" />
+        <KpiCard label="Show" value={show.toFixed(2)} delta={delta('show', show) ?? delta('show_total', show)} icon={Sparkles} color="tv-brand" />
+        <KpiCard label="BQI" value={bqi.toFixed(2)} delta={delta('bqi', bqi)} icon={Activity} color="tv-primary" />
+        <KpiCard label="声量" value={attention.toFixed(1)} delta={delta('eff_attention', attention)} icon={TrendingUp} color="tv-pathfinder" />
         <KpiCard label="排名" value={`#${rank}`} icon={Trophy} color="tv-primary" />
       </div>
 
       {/* 趋势图 */}
       {trendData.length > 1 && (
-        <div className="rounded-xl border border-tv-primary/20 bg-background-secondary/60 p-3">
+        <div className="rounded-xl border border-tv-primary/20 bg-white p-3 shadow-sm">
           <h3 className="text-xs font-bold flex items-center gap-1.5 mb-2 text-foreground-secondary">
             <TrendingUp className="w-3.5 h-3.5 text-tv-primary" /> 数据迭代趋势
           </h3>
           <div className="h-40">
             <ResponsiveContainer width="100%" height="100%">
               <LineChart data={trendData} margin={{ top: 4, right: 8, left: -20, bottom: 0 }}>
-                <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.05)" />
-                <XAxis dataKey="round" stroke="#8a8a92" fontSize={10} tickLine={false} axisLine={false} />
-                <YAxis stroke="#8a8a92" fontSize={10} tickLine={false} axisLine={false} />
+                <CartesianGrid strokeDasharray="3 3" stroke="rgba(100,116,139,0.16)" />
+                <XAxis dataKey="round" stroke="#64748b" fontSize={10} tickLine={false} axisLine={false} />
+                <YAxis stroke="#64748b" fontSize={10} tickLine={false} axisLine={false} />
                 <Tooltip
-                  contentStyle={{ background: '#141416', border: '1px solid rgba(168,85,247,0.2)', borderRadius: '12px' }}
+                  contentStyle={{ background: '#ffffff', border: '1px solid rgba(100,116,139,0.2)', borderRadius: '12px', color: '#111827' }}
                   itemStyle={{ fontSize: '12px' }}
                 />
                 <Legend iconType="circle" wrapperStyle={{ fontSize: '10px', paddingTop: '4px' }} />
-                <Line type="monotone" dataKey="tech" name="Tech" stroke="#3b82f6" strokeWidth={2} dot={{ r: 2 }} activeDot={{ r: 4 }} />
-                <Line type="monotone" dataKey="bqi" name="BQI" stroke="#a855f7" strokeWidth={2} dot={{ r: 2 }} activeDot={{ r: 4 }} />
-                <Line type="monotone" dataKey="attention" name="声量" stroke="#eab308" strokeWidth={2} dot={{ r: 2 }} activeDot={{ r: 4 }} />
+                <Line type="monotone" dataKey="tech" name="Tech" stroke="#2563eb" strokeWidth={2} dot={{ r: 2 }} activeDot={{ r: 4 }} />
+                <Line type="monotone" dataKey="bqi" name="BQI" stroke="#d97706" strokeWidth={2} dot={{ r: 2 }} activeDot={{ r: 4 }} />
+                <Line type="monotone" dataKey="attention" name="声量" stroke="#64748b" strokeWidth={2} dot={{ r: 2 }} activeDot={{ r: 4 }} />
               </LineChart>
             </ResponsiveContainer>
           </div>
@@ -94,26 +103,26 @@ export default function TvKpiCards({ snap, history = [] }: Props) {
       )}
 
       {/* 雷达图 */}
-      <div className="rounded-xl border border-tv-primary/20 bg-background-secondary/60 p-3">
+      <div className="rounded-xl border border-tv-primary/20 bg-white p-3 shadow-sm">
         <h3 className="text-xs font-bold flex items-center gap-1.5 mb-1 text-foreground-secondary">
           <Target className="w-3.5 h-3.5 text-tv-primary" /> 产品五维画像
         </h3>
         <div className="h-48">
           <ResponsiveContainer width="100%" height="100%">
             <RadarChart cx="50%" cy="50%" outerRadius="70%" data={radarData}>
-              <PolarGrid stroke="rgba(255,255,255,0.08)" />
-              <PolarAngleAxis dataKey="subject" stroke="#b4b4be" fontSize={10} />
-              <PolarRadiusAxis angle={30} domain={[0, 'auto']} stroke="#8a8a92" fontSize={9} />
+              <PolarGrid stroke="rgba(100,116,139,0.18)" />
+              <PolarAngleAxis dataKey="subject" stroke="#475569" fontSize={10} />
+              <PolarRadiusAxis angle={30} domain={[0, 'auto']} stroke="#64748b" fontSize={9} />
               <Radar
                 name="当前产品"
                 dataKey="A"
-                stroke="#a855f7"
+                stroke="#2563eb"
                 strokeWidth={2}
-                fill="#a855f7"
-                fillOpacity={0.25}
+                fill="#2563eb"
+                fillOpacity={0.16}
               />
               <Tooltip
-                contentStyle={{ background: '#141416', border: '1px solid rgba(168,85,247,0.2)', borderRadius: '12px' }}
+                contentStyle={{ background: '#ffffff', border: '1px solid rgba(100,116,139,0.2)', borderRadius: '12px', color: '#111827' }}
                 itemStyle={{ fontSize: '12px' }}
               />
             </RadarChart>
@@ -127,11 +136,13 @@ export default function TvKpiCards({ snap, history = [] }: Props) {
 function KpiCard({
   label,
   value,
+  delta,
   icon: Icon,
   color,
 }: {
   label: string;
   value: string | number;
+  delta?: number | null;
   icon: React.ElementType;
   color: 'tv-tech' | 'tv-user' | 'tv-brand' | 'tv-primary' | 'tv-pathfinder';
 }) {
@@ -143,12 +154,18 @@ function KpiCard({
     'tv-pathfinder': { text: 'text-tv-pathfinder', bg: 'bg-tv-pathfinder/15', border: 'border-tv-pathfinder/30' },
   }[color];
   return (
-    <div className={`rounded-xl border ${styles.border} bg-background/60 p-2.5 text-center`}>
+    <div className={`rounded-xl border ${styles.border} bg-white p-2.5 text-center shadow-sm`}>
       <div className={`w-6 h-6 rounded-lg ${styles.bg} flex items-center justify-center mx-auto mb-1`}>
         <Icon className={`w-3.5 h-3.5 ${styles.text}`} />
       </div>
       <p className="text-[9px] text-foreground-muted">{label}</p>
       <p className={`text-sm font-bold tabular-nums ${styles.text}`}>{value}</p>
+      {delta != null && (
+        <p className={`text-[9px] flex items-center justify-center gap-0.5 mt-0.5 ${delta >= 0 ? 'text-success' : 'text-danger'}`}>
+          {delta >= 0 ? <TrendingUp className="w-2.5 h-2.5" /> : <TrendingDown className="w-2.5 h-2.5" />}
+          {delta >= 0 ? '+' : ''}{delta.toFixed(2)}
+        </p>
+      )}
     </div>
   );
 }

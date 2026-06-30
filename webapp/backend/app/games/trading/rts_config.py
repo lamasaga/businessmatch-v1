@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import copy
 from typing import Any, Dict, List, Tuple
 
 from app.domains.cybercore.registry import get_game_config
@@ -30,14 +31,38 @@ def product_catalog(config: Dict[str, Any], config_id: str) -> Dict[str, Dict[st
 
 def city_catalog(config: Dict[str, Any], config_id: str) -> Dict[str, Dict[str, Any]]:
     """对局城市表：以赛制母本为准，剔除已废弃 id（如 wuxi），补全新城（如 hangzhou）。"""
-    _, cities, _, _ = load_rts_world(config_id)
+    doc = get_game_config(config_id)
+    cities = doc.cities
     canonical = list(cities.keys())
     keys: List[str] = list(config.get("cities") or canonical)
     keys = [k for k in keys if k in cities]
     for cid in canonical:
         if cid not in keys:
             keys.append(cid)
-    return {k: cities[k] for k in keys}
+
+    merged = {k: copy.deepcopy(cities[k]) for k in keys}
+    base_profiles = (doc.model_extra or {}).get("city_product_profiles") or {}
+    profiles = {**base_profiles, **(config.get("city_product_profiles") or {})}
+    for city_id, product_profiles in profiles.items():
+        if city_id not in merged or not isinstance(product_profiles, dict):
+            continue
+        city = merged[city_id]
+        production = city.setdefault("production", {})
+        consumption = city.setdefault("consumption", {})
+        demand_profile = city.setdefault("demand_profile", {})
+        product_roles = city.setdefault("product_roles", {})
+        for product_id, profile in product_profiles.items():
+            if not isinstance(profile, dict):
+                continue
+            if "production" in profile:
+                production[product_id] = profile["production"]
+            if "consumption" in profile:
+                consumption[product_id] = profile["consumption"]
+            if "demand_profile" in profile:
+                demand_profile[product_id] = profile["demand_profile"]
+            if "role" in profile:
+                product_roles[product_id] = profile["role"]
+    return merged
 
 
 def route_key(a: str, b: str) -> str:
@@ -76,6 +101,9 @@ def pricing_config(config: Dict[str, Any]) -> Dict[str, Any]:
         "natural_flow_scale": float(p.get("natural_flow_scale", 0.20)),
         "pool_reversion_rate": float(p.get("pool_reversion_rate", 0.03)),
         "min_pool_ratio": float(p.get("min_pool_ratio", 0.10)),
+        "target_cover_ticks": float(p.get("target_cover_ticks", 6)),
+        "scarcity_elasticity": float(p.get("scarcity_elasticity", 0.32)),
+        "player_elasticity": float(p.get("player_elasticity", 0.18)),
     }
 
 

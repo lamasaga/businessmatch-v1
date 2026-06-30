@@ -3,17 +3,23 @@ version: "0.1.0"
 theme: fushengji-rts
 license_default: CC0-1.0
 
-# 商品十品 → items/（见 PRODUCT_MAP.md）
+# 商品十六品 → items/（见 PRODUCT_MAP.md）
 products:
   grain: items/grain.svg
   produce: items/produce.svg
   raw_materials: items/raw_materials.svg
   energy: items/energy.svg
+  chemicals: items/chemicals.svg
+  medicine: items/medicine.svg
   furniture: items/furniture.svg
   textile: items/textile.svg
+  apparel: items/apparel.svg
+  machinery: items/machinery.svg
   daily_goods: items/daily_goods.svg
   appliances: items/appliances.svg
+  digital_device: items/digital_device.svg
   passenger_car: items/passenger_car.svg
+  cultural_goods: items/cultural_goods.svg
   luxury: items/luxury.svg
 
 cities:
