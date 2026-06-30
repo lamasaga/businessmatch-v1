@@ -1,6 +1,6 @@
 # 浮生记 · 美术资源包（v0.1）
 
-> **对齐**：inspire/赛事设计/浮生记-引擎重设计-PRD §5.2  
+> **对齐**：`docs/prd/PRD-FST.md` v3.2 · 原 inspire/赛事设计 讨论稿已归档
 > **许可**：见 [sources/ATTRIBUTION.md](./sources/ATTRIBUTION.md)  
 > **最后更新**：2026-05-30
 

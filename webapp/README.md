@@ -30,7 +30,7 @@
 - **五域一体**：知识图谱 (Atlas) · 课程学院 (Academy) · 每日任务 (Quest) · 商赛大厅 (Arena) · 成就中心 (Credenti)
 - **三层 AI**：Hermes (生涯导师) · Tyche (市场叙事) · Rival (谈判对手)
 - **赛季成长**：经验等级、五维雷达、连续打卡、徽章认证
-- **交易商赛**：组织者建场 / 学生房间码加入 / **FStrading RTS**（5s tick + WebSocket）→ 结果反馈生涯
+- **交易商赛**：组织者建场 / 学生房间码加入 / **FST RTS**（4 秒/游戏日 + WebSocket）→ 结果反馈生涯
 
 ### 对外演示（推荐）
 
@@ -42,9 +42,9 @@
    - **管理员/教师**: `admin` / `admin123`
 5. 体验完整闭环：
    - `/career` 生涯中枢（经验值、等级）
-   - `/games` 商赛大厅 → **浮生记 · 日常练习**（默认 RTS v2）或房间码加入正式赛
+   - `/games` 商赛大厅 → **浮生记 · 日常练习**（`fstrading`）或房间码加入正式赛
    - `/games/:id/play` FStrading 即时商战（WebSocket 刷新 + 指令排队）
-   - 教师端 http://localhost:5174 营团与商赛控场（RTS 无「推进回合」）
+   - 教师端 http://localhost:5174 营团与商赛控场（FST 自动日推进，无手动「推进回合」）
 
 ### 商业体验营 Phase 1（开发分支）
 
@@ -104,7 +104,7 @@
 | 组织者 | http://localhost:5174 |
 | 学生加入 | http://localhost:5173/games（输入房间码） |
 
-　　演示：组织者 `admin/admin123` 创建比赛 → 学生 `student/student123` 输入房间码 → 组织者端控场推进回合。
+　　演示：组织者 `admin/admin123` 创建比赛 → 学生 `student/student123` 输入房间码 → 教师端控场开赛/结束。
 
 ---
 
@@ -328,23 +328,25 @@ webapp/
 - Hermes 导师轻反思提示
 - 连续打卡统计
 
-### 4. 商赛大厅 (`/games`) — 交易模拟比赛
+### 4. 商赛大厅 (`/games`) — FST 即时物流商战
 
-**核心玩法（《北京浮生记》式倒卖）**：
+**核心玩法（浮生记 / FSTRADING）**：
 
-- **组织者**创建比赛，设置参数（回合数/初始资金/库存上限），生成 **4 位数字房间码**
+- **组织者**创建比赛，设置参数（时长预设/初始资金），生成 **4 位数字房间码**
 - **学生**输入房间码加入比赛
-- **回合制交易**：每回合学生决策（买入/卖出/移动/持有）
-- **价格波动**：供需关系 + 随机事件（丰收/歉收/流行趋势/政策调控/谣言/天灾等）
-- **6 个城市**各有特色：京城（高档品溢价）、沪市（中档活跃）、深市（电子便宜）、蓉城（食品低价）、冰城（波动大）、港城（免税）
-- **10 种商品**分 3 档：低档（水果/蔬菜/日用品）、中档（电子/服装/化妆品）、高档（珠宝/古董/艺术品）
+- **即时制交易**：调度器每 **4 秒**推进 **1 游戏日**；学生提交 buy/sell/move/buy_vehicle，下一日开始时结算
+- **价格波动**：城市供需池 + 随机事件（丰收/工厂满产/物流拥堵等）
+- **长三角六城**（`yangtze_6`）：上海、南京、苏州、杭州、常州、南通等，各有产业角色差异
+- **10 种商品**分上中下游链：粮食、生鲜、原材料、能源、家具、纺织品、日用品、家电、家用车、奢侈品
 
 **比赛流程**：
 ```
 创建比赛 → 生成房间码 → 学生加入 → 组织者开始
-→ 回合1：公布事件 → 学生决策 → 计算价格 → 排行榜
-→ ...（循环）→ 结束比赛 → 经验值发放到生涯
+→ 每日：市场演化 → 执行排队指令 → 定价 → 排行榜
+→ ...（自动推进）→ 结束比赛 → 按 total_assets 排名 → XP 入账
 ```
+
+**契约权威**：[`docs/prd/PRD-FST.md`](../docs/prd/PRD-FST.md)
 
 **页面**：
 | 页面 | 路径 | 说明 |
@@ -449,7 +451,7 @@ webapp/
 | PUT | `/api/v1/organizer/profile` | 更新组织者信息 |
 | GET | `/api/v1/organizer/stats` | 获取统计数据 |
 | GET | `/api/v1/organizer/events` | 我的比赛列表 |
-| GET | `/api/v1/organizer/events/{id}/control` | 控场面板（排行榜/回合） |
+| GET | `/api/v1/organizer/events/{id}/control` | 控场面板（排行榜/当前游戏日） |
 
 ### 比赛 (Competition)
 
@@ -469,10 +471,10 @@ webapp/
 
 | 方法 | 路径 | 说明 |
 |------|------|------|
-| GET | `/api/v1/trading/events/{id}/state` | 游戏状态（**RTS：只读，不推进 tick**） |
-| POST | `/api/v1/trading/events/{id}/actions` | RTS 指令（buy/sell/move/buy_vehicle，下 tick 结算） |
-| WS | `/api/v1/trading/events/{id}/ws?token=` | RTS tick/finished 推送（调度器 commit 后广播） |
-| GET | `/api/v1/trading/events/{id}/history` | tick 价格历史 |
+| GET | `/api/v1/trading/events/{id}/state` | 游戏状态（**RTS：只读，不推进游戏日**） |
+| POST | `/api/v1/trading/events/{id}/actions` | RTS 指令（buy/sell/move/buy_vehicle，下一游戏日结算） |
+| WS | `/api/v1/trading/events/{id}/ws?token=` | 日推进/finished 推送（调度器 commit 后广播；协议字段仍为 `tick`） |
+| GET | `/api/v1/trading/events/{id}/history` | 按游戏日的价格历史 |
 
 ### 日常练习 (Practice)
 
@@ -496,8 +498,8 @@ webapp/
 | Phase 7 | 生涯五域 + 三层 AI MVP | ✅ |
 | Phase 8 | 一人公司孵化器 (OPC) | ✅ |
 | Phase 9 | 整合优化 + Docker 部署 | ✅ |
-| Phase 10 | **交易模拟商赛（组织者+房间码+FStrading RTS）** | ✅ |
-| Phase 11 | **浮生记 RTS v2（调度器+WebSocket+双档 AI）** | ✅ |
+| Phase 10 | **FST 即时商战（组织者+房间码+RTS 调度器）** | ✅ |
+| Phase 11 | **FST 3.2（4 秒/日、日历模型、供需可见与叙事 HUD 分阶段）** | 🟡 |
 
 ---
 

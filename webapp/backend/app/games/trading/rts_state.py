@@ -50,9 +50,9 @@ def init_rts_runtime(
             "sell_tick": {},
         }
 
-    total = int(match_config.get("total_ticks", 120))
-    warmup = int(match_config.get("warmup_ticks", 6))
-    interval = int(match_config.get("tick_interval_sec", 5))
+    total = int(match_config.get("total_ticks", match_config.get("total_days", 150)))
+    warmup = int(match_config.get("warmup_ticks", match_config.get("warmup_days", 6)))
+    interval = int(match_config.get("tick_interval_sec", match_config.get("day_interval_sec", 4)))
 
     return {
         "tick": 0,
@@ -89,8 +89,8 @@ def build_price_snapshot(
 
 
 def phase_for_tick(tick: int, runtime: dict) -> str:
-    total = int(runtime.get("total_ticks", 120))
-    warmup = int(runtime.get("warmup_ticks", 6))
+    total = int(runtime.get("total_ticks", runtime.get("total_days", 150)))
+    warmup = int(runtime.get("warmup_ticks", runtime.get("warmup_days", 6)))
     if tick >= total:
         return "finished"
     if tick < warmup:
@@ -109,7 +109,7 @@ def ensure_player_registered(event, config: dict, participant_id: int) -> bool:
 
 
 def seconds_until_next_tick(runtime: dict) -> int:
-    interval = int(runtime.get("tick_interval_sec", 5))
+    interval = int(runtime.get("tick_interval_sec", runtime.get("day_interval_sec", 4)))
     last = runtime.get("last_tick_at")
     if not last:
         return 0

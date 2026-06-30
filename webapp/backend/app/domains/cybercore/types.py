@@ -37,13 +37,26 @@ class GameConfigDocument(BaseModel):
         if overrides:
             base.update(overrides)
         if base.get("mode") == "rts":
+            # FST 3.2：PRD 对外用 day_*，运行时内部仍映射为 tick_*（见 docs/prd/PRD-FST.md §3.3）
+            if base.get("day_interval_sec") is not None:
+                base.setdefault("tick_interval_sec", int(base["day_interval_sec"]))
+            if base.get("warmup_days") is not None:
+                base.setdefault("warmup_ticks", int(base["warmup_days"]))
+            if base.get("total_days") is not None:
+                base.setdefault("total_ticks", int(base["total_days"]))
             presets = base.get("duration_presets") or {}
             preset_key = base.get("duration_preset") or "standard"
             if preset_key in presets:
                 p = presets[preset_key]
-                base["total_ticks"] = int(p.get("total_ticks", 120))
+                if p.get("days") is not None:
+                    base["total_ticks"] = int(p["days"])
+                else:
+                    base["total_ticks"] = int(p.get("total_ticks", 150))
                 base["duration_minutes"] = int(p.get("minutes", 10))
             else:
-                base.setdefault("total_ticks", 120)
+                base.setdefault("total_ticks", int(base.get("total_days", 150)))
                 base.setdefault("duration_minutes", 10)
+            base.setdefault("tick_interval_sec", int(base.get("day_interval_sec", 4)))
+            base.setdefault("warmup_ticks", int(base.get("warmup_days", 6)))
+            base.setdefault("start_date", "07-01")
         return base

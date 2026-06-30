@@ -67,7 +67,7 @@ export default function TradingRTSView({ gameState, eventId, onRefresh }: Props)
   const vehicles = cap?.vehicles ?? [];
   const maxVehicles = cap?.max_vehicles ?? 3;
   const tick = rts?.tick ?? 0;
-  const totalTicks = rts?.total_ticks ?? 120;
+  const totalTicks = rts?.total_ticks ?? 150;
   const phase = rts?.phase ?? 'warmup';
   const transit = rts?.transit as { from_city?: string; to_city?: string; arrival_tick?: number } | null | undefined;
   const vehicleDefs = (rts?.vehicles_available ?? {}) as Record<string, { name?: string; cost?: number; capacity_bonus?: number; speed_bonus?: number }>;
@@ -139,14 +139,14 @@ export default function TradingRTSView({ gameState, eventId, onRefresh }: Props)
               <p className="text-[11px] text-foreground-muted">
                 {gameState.is_practice ? '单人练习' : '正式对局'}
                 {' · '}
-                每 {rts?.tick_interval_sec ?? 5}s 一 tick
+                每 {rts?.tick_interval_sec ?? 4} 秒 · 1 游戏日
               </p>
             </div>
           </div>
 
           <div className="flex items-center gap-4 flex-wrap text-sm">
             <div className="text-center">
-              <p className="text-[10px] text-foreground-muted uppercase tracking-wide">Tick</p>
+              <p className="text-[10px] text-foreground-muted uppercase tracking-wide">游戏日</p>
               <p className="font-bold tabular-nums">
                 {tick}/{totalTicks}
                 <span className="text-xs font-normal text-foreground-muted ml-1">
@@ -288,7 +288,7 @@ export default function TradingRTSView({ gameState, eventId, onRefresh }: Props)
         <div className="grid grid-cols-1 xl:grid-cols-12 gap-3 max-h-[38vh] xl:max-h-[32vh] overflow-y-auto xl:overflow-visible">
           {!isFinished && isPlaying && (
             <div className="xl:col-span-5 glass-card p-3">
-              <h3 className="text-xs font-semibold text-foreground-muted mb-2">操作 · 下 tick 执行</h3>
+              <h3 className="text-xs font-semibold text-foreground-muted mb-2">操作 · 下一游戏日执行</h3>
               {!canAct && transit && (
                 <p className="text-xs text-warning mb-2">运输途中，到达后可交易</p>
               )}

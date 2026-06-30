@@ -68,7 +68,7 @@ export default function SoloPracticeSection({ onError }: Props) {
           </div>
           <div className="flex-1">
             <h3 className="font-semibold text-foreground flex items-center gap-2">
-              FStrading · 单人练习
+              FST · 浮生记 · 单人练习
               <Sparkles className="w-4 h-4 text-accent-teal" />
             </h3>
             <p className="text-sm text-foreground-muted mt-1">

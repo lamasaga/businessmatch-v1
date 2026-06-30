@@ -6,7 +6,7 @@ import { useOrganizerStore } from '../stores/organizerStore';
 type GamePreset = 'fstrading' | 'techventure' | 'ops';
 
 const PRESET_META: Record<GamePreset, { label: string; subtitle: string; game_config_id: string; game_type: string }> = {
-  fstrading: { label: 'FStrading', subtitle: '长三角六城十品即时商战 · 5 秒 tick', game_config_id: 'fstrading', game_type: 'trading' },
+  fstrading: { label: '浮生记 FST', subtitle: '长三角六城十品即时商战 · 4 秒/游戏日', game_config_id: 'fstrading', game_type: 'trading' },
   techventure: { label: '创想大赢家', subtitle: '4 轮三城策略 · 队伍制 · BQI 评分', game_config_id: 'techventure-v1', game_type: 'techventure' },
   ops: { label: '生产经营销售赛', subtitle: '6 轮运营 + 双拍卖 · 队伍制 · 净资产排名', game_config_id: 'ops-sim-v1', game_type: 'ops_sim' },
 };
@@ -121,8 +121,8 @@ export default function CreateEventPage() {
               }`}
             >
               <Zap className={`w-5 h-5 mb-2 ${gamePreset === 'fstrading' ? 'text-emerald-400' : 'text-foreground-muted'}`} />
-              <p className="font-semibold">FStrading</p>
-              <p className="text-xs text-foreground-muted mt-1">长三角六城十品即时商战 · 5 秒 tick</p>
+              <p className="font-semibold">浮生记 FST</p>
+              <p className="text-xs text-foreground-muted mt-1">长三角六城十品即时商战 · 4 秒/游戏日</p>
             </button>
             <button
               type="button"

@@ -27,7 +27,7 @@
 | **表前缀** | 无（不在数据库中持久化） |
 | **后端路由前缀** | 无 |
 | **前端路由** | 本地文件 `scripts/pop-simulator/index.html` |
-| **参考文档** | `docs/engineering-academy/70-POP机制与社会模拟/`、`docs/engineering-academy/80-POP拟真城市/` |
+| **参考文档** | `docs/archive/engineering-academy/70-POP机制与社会模拟/`、`docs/archive/engineering-academy/80-POP拟真城市/` |
 | **目标学段** | 设计师、教师、高中生及以上 |
 | **单局时长** | 5~30 分钟（自由运行） |
 
@@ -515,7 +515,7 @@ POP-SIM 是纯浏览器端工具，不连接后端数据库。所有状态保存
 选择 **纯静态 HTML + 原生 JavaScript + Canvas + Chart.js（CDN）**，原因：
 - 工具独立运行，不依赖项目构建流程或后端服务。
 - 教师/学生可直接用浏览器打开文件使用。
-- 便于快速迭代和嵌入到 `docs/engineering-academy/` 文档中。
+- 便于快速迭代和嵌入到 `docs/archive/engineering-academy/` 文档中。
 
 ### 8.2 组件清单
 
@@ -667,7 +667,7 @@ const actions = {
 | `scripts/pop-simulator/style.css` | 样式 |
 | `scripts/pop-simulator/simulator.js`（内置 `PRESETS`） | 默认预设配置 |
 
-> 注：本次实现按需求置于 `scripts/pop-simulator/`；如需迁移到 `docs/engineering-academy/pop-simulator/`，直接复制上述 4 个文件即可。
+> 注：本次实现按需求置于 `scripts/pop-simulator/`；如需迁移到 `docs/archive/engineering-academy/pop-simulator/`，直接复制上述 4 个文件即可。
 
 ### 10.2 可复用模式
 
@@ -727,5 +727,5 @@ const actions = {
 ---
 
 *商识唯智 · POP 拟真城市模拟器 PRD v1.0*
-*基于 `docs/engineering-academy/70-POP机制与社会模拟/` 与 `docs/engineering-academy/80-POP拟真城市/` 设计*
-*规范来源：`docs/prd/prd-writing-guide.md`、`02-ARCHITECTURE.md`、`04-ROADMAP.md`*
+*基于 `docs/archive/engineering-academy/70-POP机制与社会模拟/` 与 `docs/archive/engineering-academy/80-POP拟真城市/` 设计*
+*规范来源：`docs/prd/prd-写作指南.md`、`02-ARCHITECTURE.md`、`04-ROADMAP.md`*

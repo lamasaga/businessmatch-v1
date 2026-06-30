@@ -18,13 +18,12 @@
 - [`prd/`](./prd/README.md) — 产品需求文档（PRD）与 BDD
 - [`handbooks/`](./handbooks/README.md) — 具体任务的实现手册
 - [`角色背景/`](./角色背景/README.md) — NPC 角色 IP、故事背景与视觉形象
-- [`engineering-academy/`](./engineering-academy/00-README.md) — 教程与学习材料
-- [`archive/`](./archive/README.md) — 归档资料
+- [`archive/`](./archive/README.md) — 归档资料（含原 `engineering-academy/` 教程）
 
  ## 新增文档指引
 
  - 架构选型 → `decisions/`
  - 产品需求 → `prd/`
  - 实现教程/操作步骤 → `handbooks/` 或根目录（若为核心类别）
- - 学习材料 → `engineering-academy/`
+ - 学习材料 → `archive/engineering-academy/`
  - 历史/不再活跃 → `archive/`

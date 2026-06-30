@@ -138,12 +138,12 @@ flowchart TB
 |------|------|------|
 | **平台壳** | React + Tailwind + 成熟 UI 底座 + `game-ui` | 生涯、教师端、大厅、**匹配队列** |
 | **对局入口** | 统一 **Game Shell** 全屏路由（如 `/games/.../play`） | 所有赛制同一「进游戏」体验 |
-| **对局运行时 A** | **Phaser 3** + React HUD  overlay | **有地图/空间/实时移动**的引擎（浮生记 RTS、未来产销沙盘等） |
+| **对局运行时 A** | **Phaser 3** + React HUD  overlay | **有地图/空间/实时移动**的引擎（FST 目标运行时；**当前局内为 React+SVG**） |
 | **对局运行时 B** | **React 全屏 + game-ui**（无 Phaser） | **面板/策略型**引擎（TechVenture、金融投研等） |
 
 　　**选型原则**：不是全站二选一，而是 **`game-config` 声明 `runtime: phaser \| react-game`**，Game Shell 按引擎加载对应运行时。  
 　　**为何不用纯 Phaser**：策略三栏、表格决策类用 React 更快、更易接 Hermes 复盘面板。  
-　　**为何不用纯 React**：地图、商队、tick 可视化需要 Canvas 游戏循环与精灵，Phaser 更贴「网页游戏」手感。
+　　**为何不用纯 React**：地图、商队、**游戏日**可视化需要 Canvas 游戏循环与精灵，Phaser 更贴「网页游戏」手感（FST 当前以 React+SVG 过渡实现，见 `docs/prd/PRD-FST.md` §8.1）。
 
 ```text
 平台页(React) --点击「进入比赛」--> Game Shell(全屏)

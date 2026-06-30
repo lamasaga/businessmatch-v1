@@ -2,10 +2,10 @@
 id: fstrading
 engine: trading
 design_mode: standalone
-version: "3.0.0"
+version: "3.2.0"
 meta:
-  name: FStrading
-  description: 5 秒 tick 即时商战；长三角六城；城市参数来自 content/world/yangtze_6
+  name: 浮生记
+  description: 4 秒一日的即时长三角物流商战；城市参数来自 content/world/yangtze_6
   theme: fstrading
   world_region_id: yangtze_6
   world_pack_version: "0.1.2"
@@ -17,25 +17,32 @@ meta:
 
 defaults:
   mode: rts
-  tick_interval_sec: 5
+  day_interval_sec: 4
+  tick_interval_sec: 4
+  start_date: "07-01"
   duration_preset: standard
   duration_presets:
     short:
       label: 快速局
       minutes: 8
-      total_ticks: 96
+      days: 120
+      total_ticks: 120
     standard:
       label: 标准局
       minutes: 10
-      total_ticks: 120
+      days: 150
+      total_ticks: 150
     long:
       label: 完整局
       minutes: 12
-      total_ticks: 144
+      days: 180
+      total_ticks: 180
     classroom:
       label: 课堂局
       minutes: 20
-      total_ticks: 240
+      days: 300
+      total_ticks: 300
+  warmup_days: 6
   warmup_ticks: 6
   initial_capital: 50000
   storage_capacity_base: 99
@@ -129,21 +136,35 @@ defaults:
         hold: 0.40
 
   pricing:
-    mode: pool_ask_bid
+    mode: supply_demand_v2
     min_spread: 0.08
-    # 8 人局：价格对“缺货/囤货”更敏感，但城市不会在前 10 tick 快速断供
+    # 8 人局：价格对“缺货/囤货”更敏感，但城市不会在前 10 日快速断供
     elasticity: 0.28
     reference_pool: 400
     absorption_cap_per_tick: 40
-    # 自然供需流量缩放（prod-cons）每 tick 只推进一小步，避免 5s tick 把城市池抽干
+    # 自然供需流量缩放（prod-cons）每日只推进一小步
     natural_flow_scale: 0.20
     # 均值回归：池子偏离 target_pool 时，会缓慢拉回（防长期为 0）
     pool_reversion_rate: 0.03
     # 最低库存（按 target_pool 比例），避免出现“池为 0 但价格几乎不动”的反直觉体验
     min_pool_ratio: 0.12
+    target_cover_days: 6
+    scarcity_elasticity: 0.32
+    player_elasticity: 0.18
+    opportunity_routes_min: 4
+    opportunity_profit_floor: 0.08
   logistics:
+    min_travel_days: 2
     min_travel_ticks: 2
     move_cost_per_edge: 800
+    congestion_enabled: true
+  contracts:
+    enabled: true
+    max_open: 5
+    min_premium_rate: 0.12
+    max_premium_rate: 0.35
+  history:
+    price_window_days: 30
   world:
     region_id: yangtze_6
     behavior_pack: default_yrd
@@ -252,7 +273,7 @@ event_types:
   - { type: auto_fair, name: 车展季, desc: 家用车需求上升, target_products: [passenger_car], impact_range: [0.18, 0.35] }
   - { type: tech_launch, name: 新品发布, desc: 家电需求曲线右移, target_products: [appliances], impact_range: [0.18, 0.35] }
   - { type: luxury_fair, name: 高端展会, desc: 上海等消费枢纽奢侈品需求上升, target_products: [luxury], impact_range: [0.20, 0.40] }
-  - { type: logistics_jam, name: 物流拥堵, desc: 本 tick 全图移动时间 +1, global: true, impact_range: [1, 1] }
+  - { type: logistics_jam, name: 物流拥堵, desc: 本日全图移动时间 +1, global: true, impact_range: [1, 1] }
   - { type: cold_chain_break, name: 冷链中断, desc: 生鲜消费与产出波动加剧, target_products: [produce], impact_range: [-0.25, 0.25] }
 
 rewards:

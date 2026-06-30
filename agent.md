@@ -51,7 +51,7 @@
 | 练习 / 正式、`game_config_id` | [`01-PRODUCT.md`](./01-PRODUCT.md) §赛事体系 |
 | 域边界、新赛制 checklist | [blueprint-coding.mdc](./.cursor/rules/blueprint-coding.mdc) · [`arena/ARCHITECTURE.md`](./webapp/backend/app/domains/arena/ARCHITECTURE.md) |
 | Phase 门控 | [`04-ROADMAP.md`](./04-ROADMAP.md) §Phase 门控 · blueprint §7 |
-| RTS tick 推进 | ADR-005 · blueprint §4 |
+| RTS 日推进 | ADR-005 · PRD-FST · blueprint §4 |
 
 　　当前默认 **Phase A（商赛引擎闭环）**：未明确要求时，不抢跑 World 域表、OPC LangGraph、全站无约束 LLM 聊天。
 
@@ -78,7 +78,7 @@
 1. **单库单进程** — 禁止第二套 SQLite/API  
 2. **域边界** — 跨域只经 API 或域事件  
 3. **新赛制** — `game-configs/*.yaml` + `games/<engine>/`；禁止克隆整文件  
-4. **RTS** — 仅调度器推进 tick；HTTP 只读  
+4. **RTS（FST）** — 仅调度器推进游戏日（4 秒/日）；HTTP 只读。见 [`docs/prd/PRD-FST.md`](./docs/prd/PRD-FST.md)  
 5. **XP** — `grant_xp` / `settle_match_rewards`；幂等  
 6. **双前端** — 学生端 / 教师端分离；新功能接 API，不扩 mock  
 7. **AI 产品** — 规则优先、LLM 渐进、教师不替代（见 `inspire/81-` 产品框架，入口经 `00-PROJECT.md`）

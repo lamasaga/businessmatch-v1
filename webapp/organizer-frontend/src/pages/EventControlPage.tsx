@@ -172,7 +172,7 @@ export default function EventControlPage() {
           )}
           {isPlaying && (
             <p className="text-sm text-success">
-              FStrading 已自动每 5 秒推进 tick；学生提交指令后下 tick 结算。
+              FST 已自动每 4 秒推进 1 游戏日；学生提交指令后下一游戏日结算。
             </p>
           )}
         </div>

@@ -82,6 +82,6 @@ def pricing_config(config: Dict[str, Any]) -> Dict[str, Any]:
 def logistics_config(config: Dict[str, Any]) -> Dict[str, Any]:
     lg = config.get("logistics") or {}
     return {
-        "min_travel_ticks": int(lg.get("min_travel_ticks", 2)),
+        "min_travel_ticks": int(lg.get("min_travel_ticks", lg.get("min_travel_days", 2))),
         "move_cost_per_edge": int(lg.get("move_cost_per_edge", 800)),
     }

@@ -494,7 +494,7 @@ total_assets = cash + sum(inventory[pid] * current_city_bid[pid])
 
 | 瓶颈 | 影响 | 缓解方案 |
 |------|------|----------|
-| 行锁竞争 | `maybe_advance_rts` 每 5 秒加锁 | 锁持有时间 < 100ms |
+| 行锁竞争 | `maybe_advance_rts` 每 4 秒加锁（1 游戏日） | 锁持有时间 < 100ms |
 
 **写作检查点**：
 - [ ] 表前缀是否与 Chapter 1 中声明的一致？

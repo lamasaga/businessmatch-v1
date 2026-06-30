@@ -777,9 +777,9 @@ Phase 5：维护
 
 | 文档 | 用途 |
 |------|------|
-| `docs/prd/prd-writing-guide.md` | PRD 写作指南 |
+| `docs/prd/prd-写作指南.md` | PRD 写作指南 |
 | `docs/prd/bdd-career-ledger-phase-a.md` | BDD 文档范例 |
-| `docs/prd/prd-career-ledger-phase-a.md` | PRD 范例（BDD 的来源） |
+| `docs/prd/prd-生涯模式-phase-a.md` | PRD 范例（BDD 的来源） |
 | `00-TERMINOLOGY.md` | 统一术语表 |
 | `03-ENGINEERING.md` | 开发规范 |
 
@@ -846,4 +846,4 @@ Feature（每个文件一个）
 ---
 
 *商识唯智 · BDD 写作指南 v1.0*
-*本指南与 `docs/prd/prd-writing-guide.md`、`03-ENGINEERING.md` 同步维护*
+*本指南与 `docs/prd/prd-写作指南.md`、`03-ENGINEERING.md` 同步维护*

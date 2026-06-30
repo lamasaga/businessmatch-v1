@@ -532,4 +532,4 @@ And 模拟器继续正常运行
 ---
 
 *商识唯智 · POP 拟真城市模拟器 BDD v1.0*
-*基于 `docs/prd/PRD-POP模拟器.md` 与 `docs/prd/bdd-writing-guide.md` 生成*
+*基于 `docs/prd/PRD-POP模拟器.md` 与 `docs/prd/bdd-写作指南.md` 生成*

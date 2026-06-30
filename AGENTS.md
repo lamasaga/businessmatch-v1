@@ -112,15 +112,15 @@ docker compose up -d --build
 
 建场流程：`get_game_config(game_config_id)` → `merged_match_config(overrides)` → 写入 `match.config` 快照。
 
-### RTS 实时架构（FStrading）
+### RTS 实时架构（FST / 浮生记）
 
-交易赛事采用**调度器单写者（scheduler-single-writer）**模式。HTTP 端点只读，不推进 tick。
+交易赛事采用**调度器单写者（scheduler-single-writer）**模式。HTTP 端点只读，不推进游戏日。契约见 [`docs/prd/PRD-FST.md`](./docs/prd/PRD-FST.md)。
 
 | 规则 | 说明 |
 |------|------|
-| Tick 推进 | **仅** `rts_scheduler.py` → `maybe_advance_rts` |
+| 日推进 | **仅** `rts_scheduler.py` → `maybe_advance_rts`（默认 4 秒/游戏日） |
 | HTTP `/state` | 只读。GET 处理程序中不写不推进 |
-| HTTP `/actions` | 队列命令；下一 tick 结算。不立即推进 |
+| HTTP `/actions` | 队列命令；**下一游戏日**结算。不立即推进 |
 | WS 广播 | 先 `commit`，后 `broadcast`；commit 前不发 `finished` |
 | 回合制推进 | 练习赛在 `practice_flow.py` 中原子推进（人类决策 + AI 决策 + 推进，同一事务） |
 

@@ -103,7 +103,7 @@
 | `/career/start` | 生涯开局 | ✅ |
 | `/career/debrief/:id` | 赛后复盘 | UI+mock |
 | `/games` | 商赛大厅 | ✅ |
-| `/games/:id/play` | FStrading 局内（Phaser3） | ✅ |
+| `/games/:id/play` | FST 局内（React+SVG，Phaser 预留） | ✅ |
 | `/games/:id/techventure` | TechVenture 局内 | ✅ |
 | `/games/:id/ops` | OPS 局内 | 🟡 6+2 基础 |
 | `/wiki` | 知识图谱 | ✅ |
@@ -149,12 +149,14 @@
 
 | # | 引擎 ID | 产品名 | 状态 | `game_config_id` |
 |---|---------|--------|------|------------------|
-| 1 | **trading** | 浮生记（贸易） | ✅ 已搭建：RTS 即时制 | `fstrading` |
+| 1 | **trading** | FST / 浮生记（贸易） | ✅ RTS 即时制（`fstrading` v3.2） | `fstrading` |
 | 2 | **techventure** | TechVenture（创投） | ✅ 已搭建：队伍策略四端 | `techventure-v1` |
 | 3 | **ops_sim** | OPS 产销运营赛 | 🟡 6+2 基础落地：经济模型、双拍卖、练习推进已实现，正式赛需深测 | `ops-sim-v1` |
 | 4 | **finance-lab** | 金融投研实验室 | 🟡 方向已定：投研/交易模拟 | `finance-lab-v1` |
 | 5 | **engine5** | 引擎五 | ⚪ 占位 | `engine5-v1` |
 | 6 | **engine6** | 引擎六 | ⚪ 占位 | `engine6-v1` |
+
+**产品契约**：FST → [`docs/prd/PRD-FST.md`](./docs/prd/PRD-FST.md) · TechVenture → `PRD-TECH.md` · OPS → `PRD-OPS.md`
 
 ---
 
@@ -168,7 +170,7 @@
 
 | 运行时 | 适用引擎 | 技术 |
 |--------|----------|------|
-| `phaser` | trading（浮生记 RTS）等地图/空间/实时移动引擎 | **Phaser 3** Canvas + React HUD overlay |
+| `phaser` | FST 等地图/空间/实时移动引擎（**当前 FST 局内为 React+SVG 实现，Phaser 占位**） | **Phaser 3** Canvas + React HUD overlay |
 | `react-game` | techventure、ops_sim、finance-lab 等策略/面板引擎 | **React 全屏** + `game-ui` 组件库 |
 
 **目录**：`webapp/frontend/src/games/<engine-id>/`
@@ -267,7 +269,7 @@ capabilities:
 1. **单库单进程** — 禁止第二套 SQLite/API
 2. **域边界** — 跨域只经 API 或域事件
 3. **新赛制** — `game-configs/*.yaml` + `games/<engine>/`；禁止克隆整文件
-4. **RTS** — 仅调度器推进 tick；HTTP 只读
+4. **RTS** — 仅调度器推进游戏日（内部字段 `tick`）；HTTP 只读。契约见 [`docs/prd/PRD-FST.md`](./docs/prd/PRD-FST.md)
 5. **XP** — `grant_xp` / `settle_match_rewards`；幂等
 6. **双前端** — 学生端/教师端分离；新功能接 API，不扩 mock
 7. **Phase 门控默认** — 未明确要求时，不建 World 域表、OPC LangGraph；参考 `04-ROADMAP.md` §八

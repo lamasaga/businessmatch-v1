@@ -1,6 +1,6 @@
 # 商识唯智 · 赛事引擎 PRD/BDD/SPEC 文档集
 
-> **最后更新**：2026-06-16
+> **最后更新**：2026-06-25
 > **文档定位**：本目录只收录后续赛事引擎开发会直接依赖的产品契约、行为契约与技术契约。
 
 ---
@@ -14,7 +14,7 @@
 | 3 | `SPEC-<ENGINE>.md` | 定义 API、状态机、数据结构、工程 Gap | 开发落地以 SPEC 为准 |
 | 4 | `../ENGINE.md` | 通用引擎技术规范 | 所有引擎共享约束 |
 
-　　`docs/engineering-academy/` 是教学解释材料，`docs/archive/` 是历史与远期预研，均不作为默认开发契约。`inspire/` 是构想与复盘库，只有被本目录或 `03-ENGINEERING.md` 吸收后，才进入实现依据。
+　　`docs/archive/engineering-academy/` 是教学解释材料（自原 `docs/engineering-academy/` 迁入），`docs/archive/` 其余为历史与远期预研，均不作为默认开发契约。`inspire/` 是构想与复盘库，只有被本目录或 `03-ENGINEERING.md` 吸收后，才进入实现依据。
 
 ---
 
@@ -50,7 +50,7 @@
 |------|----------|------|------|
 | [BDD-OPS.md](./BDD-OPS.md) | [PRD-OPS.md](./PRD-OPS.md) | 🟡 P0 验收契约 | 覆盖无教师练习全流程、6+2 阶段推进、OPS 首期联调回归 |
 
-　　FST 与 TECH 已有可运行实现，本轮仅做口径校准，暂不补 BDD。新增大改动时再按 `bdd-writing-guide.md` 生成对应 BDD。
+　　FST 与 TECH 已有可运行实现，本轮仅做口径校准，暂不补 BDD。新增大改动时再按 `bdd-写作指南.md` 生成对应 BDD。
 
 ---
 

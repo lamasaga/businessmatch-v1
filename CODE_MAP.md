@@ -124,7 +124,7 @@
 | 功能 | 文件 | 关键符号 | 状态 |
 |------|------|----------|------|
 | **模型** | `B/games/trading/models.py` | `TradingRound`, `TradingDecision`, `TradingPrice` | ✅ |
-| **Tick 推进** | `B/games/trading/rts_tick.py` | `advance_one_tick()`, `_finish_rts_match()` | ✅ |
+| **日推进** | `B/games/trading/rts_tick.py` | `advance_one_tick()`（内部 1 tick = 1 游戏日）, `_finish_rts_match()` | ✅ |
 | **调度器** | `B/games/trading/rts_scheduler.py` | `RtsScheduler`, `maybe_advance_rts()` | ✅ |
 | **定价** | `B/games/trading/rts_pricing.py` | `build_price_snapshot()` | ✅ |
 | **Action 执行** | `B/games/trading/rts_actions.py` | `apply_pending_actions()` | ✅ |
@@ -426,7 +426,7 @@
 |-----------|--------|
 | TechVenture 结算公式 | `B/games/techventure/v6_engine.py` → `settle_round()` |
 | FST 定价逻辑 | `B/games/trading/rts_pricing.py` → `build_price_snapshot()` |
-| FST tick 间隔 | `B/games/trading/rts_scheduler.py` + `fstrading.yaml` |
+| FST 日推进间隔 | `B/games/trading/rts_scheduler.py` + `fstrading.yaml`（`day_interval_sec=4`） |
 | 新增 API 路由 | `B/main.py` 挂载 + `B/api/` 新建模块 |
 | 新增数据库表 | `B/db/init_db.py` 导入模型 |
 | 用户登录/注册 | `B/api/auth.py` + `B/models/user.py` |

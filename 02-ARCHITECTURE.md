@@ -26,7 +26,7 @@
 | `identity` | `models/user.py` + `api/auth.py` | 用户、JWT | ✅ |
 | `arena` | `domains/arena/` + `api/{competitions,trading,organizer,practice}.py` | 场次、房间码、match_kind | ✅ |
 | `cybercore` | `domains/cybercore/` + `content/game-configs/` | 加载赛制 YAML | ✅ |
-| `games/trading` | `games/trading/*.py` | 回合制 + RTS 结算 | ✅ |
+| `games/trading` | `games/trading/*.py` | FST RTS 结算（`fstrading` v3.2） | ✅ |
 | `games/techventure` | `games/techventure/*.py` | 队伍策略赛 v6 引擎 | ✅ |
 | `career` | `domains/career/` | `xp_events` 幂等账本 | 🟡 有表，前端仍 mock |
 | `academy` | `api/courses.py` | 课程列表 | 🟡 硬编码 |
@@ -155,7 +155,7 @@ webapp/frontend/src/games/<engine-id>/
 
 仓库中存在 `engine_client.py` 等独立进程相关代码，属于**远期预留**（Phase C+ 可选能力）。当前 Phase A/B 采用同进程原因：
 - 单进程避免分布式调试复杂度
-- 避免 HTTP 序列化开销（tick 5s 内完成结算）
+- 避免 HTTP 序列化开销（FST 默认 4 秒/游戏日内完成结算）
 - `games/<engine>/` 已可直接 `import` 调用
 
 若未来确需独立部署，只需在 `engine_client.py` 中切换「本地导入」与「HTTP 调用」两种模式，无需重构引擎内核。
@@ -208,13 +208,15 @@ webapp/
 
 ---
 
-## 七、RTS 实时架构（浮生记）
+## 七、RTS 实时架构（FST / 浮生记）
+
+契约权威：[`docs/prd/PRD-FST.md`](./docs/prd/PRD-FST.md)（4 秒/游戏日；API 内部字段名仍为 `tick`）。
 
 | 规则 | 说明 |
 |------|------|
-| Tick 推进 | **仅** `rts_scheduler.py` → `maybe_advance_rts` |
+| 日推进 | **仅** `rts_scheduler.py` → `maybe_advance_rts` |
 | HTTP `/state` | 只读，不写不推进 |
-| HTTP `/actions` | 队列命令，下 tick 结算 |
+| HTTP `/actions` | 队列命令，**下一游戏日**结算 |
 | WS 广播 | `commit` 后 `broadcast` |
 
 ---

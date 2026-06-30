@@ -2,7 +2,7 @@
 
 | 文件 | engine | 说明 |
 |------|--------|------|
-| `fstrading.yaml` | `trading` | **FStrading** 即时商战（`mode: rts`）：5s tick、ask/bid、体积仓储、车辆、长三角六城；**仅 `rts_scheduler` 推进** |
+| `fstrading.yaml` | `trading` | **FST / 浮生记** 即时商战（`mode: rts`）：**4 秒/游戏日**、ask/bid、体积仓储、车辆、长三角六城；契约见 `docs/prd/PRD-FST.md` |
 
 ## 已废弃（别名指向 `fstrading`）
 

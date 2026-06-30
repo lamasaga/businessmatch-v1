@@ -33,7 +33,7 @@ async def _tick_loop(match_id: int) -> None:
                 event = db.query(ArenaMatch).filter(ArenaMatch.id == match_id).first()
                 if not event or event.status != MatchStatus.playing or not is_rts_mode(event.config):
                     break
-                interval = int((event.config or {}).get("tick_interval_sec", 5))
+                interval = int((event.config or {}).get("tick_interval_sec", (event.config or {}).get("day_interval_sec", 4)))
                 advanced, finished = maybe_advance_rts(db, event)
                 if advanced or finished:
                     db.commit()

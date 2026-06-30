@@ -1,18 +1,19 @@
 # 浮生记 RTS 引擎指南
 
-> 引擎标识：`engine: fstrading` · 配置文件：`content/game-configs/fstrading.yaml` · 路径：`webapp/backend/app/games/trading/`
+> **教学说明**：本指南解释 FST 引擎实现；**产品契约以 [`docs/prd/PRD-FST.md`](../../../prd/PRD-FST.md) v3.2 为准**（4 秒/游戏日、日历模型、供需可见目标）。
+> **引擎标识**：`engine: trading` · **配置 ID**：`fstrading` · 路径：`webapp/backend/app/games/trading/`
 > 玩法形态：**实时制（RTS）跨城贸易套利**，玩家在不同城市之间买卖商品、运输、扩张车队，AI 商人同台竞争。
 
 ---
 
 ## 一、引擎定位与核心体验
 
-浮生记 RTS 是一个**实时推进、离散 tick、服务器权威**的商品贸易模拟器。
+浮生记 RTS 是一个**实时推进、离散游戏日、服务器权威**的商品贸易模拟器。
 
-- **时间轴**：比赛由固定间隔（默认 5 秒）的 tick 组成，总 tick 数约 120。
-- **玩家目标**：通过在多城市之间低买高卖，最大化总资产。
+- **时间轴**：比赛由固定间隔（默认 **4 秒/游戏日**）推进，标准局约 **150 日**（内部 API 字段仍为 `tick`）。
+- **玩家目标**：通过在多城市之间低买高卖，最大化**总资产**（`total_assets`）。
 - **核心策略**：跨城套利、车队扩张、路线规划、库存管理。
-- **实时感**：玩家提交指令后，下一个 tick 统一结算；每 tick 服务器通过 WebSocket 广播状态更新。
+- **实时感**：玩家提交指令后，下一游戏日统一结算；每步服务器通过 WebSocket 广播状态更新。
 
 ---
 
@@ -22,8 +23,8 @@
 
 | 文件 | 职责 | 关键函数/类 |
 |------|------|------------|
-| `rts_scheduler.py` | **调度器**：唯一推进 tick 的入口 | `_tick_loop`, `maybe_advance_rts`, `start_rts_scheduler` |
-| `rts_tick.py` | **Tick 推进**：一个 tick 内的完整结算流程 | `advance_one_tick`, `create_rts_first_round`, `finish_rts_match` |
+| `rts_scheduler.py` | **调度器**：唯一推进游戏日的入口 | `_day_loop` / `_tick_loop`, `maybe_advance_rts`, `start_rts_scheduler` |
+| `rts_tick.py` | **日推进**：一个游戏日内的完整结算流程 | `advance_one_tick`, `create_rts_first_round`, `finish_rts_match` |
 | `rts_pricing.py` | **定价引擎**：供需、池压、买卖价计算 | `structural_mid`, `pool_pressure`, `calc_ask_bid`, `natural_pool_tick` |
 | `rts_actions.py` | **指令系统**：玩家操作提交、排队、执行 | `queue_action`, `apply_pending_actions`, `_execute_one`, `advance_transits` |
 | `rts_state.py` | **运行时状态**：管理 `match.config["rts_runtime"]` | `init_rts_runtime`, `build_price_snapshot`, `player_state` |
@@ -55,7 +56,7 @@ begin_match()  ──► create_rts_first_round()
     ↓
 start_rts_scheduler(event_id)
     ↓
-_tick_loop() 每 5 秒一次
+_tick_loop() 每 4 秒一次（1 游戏日）
     ↓
 maybe_advance_rts()  ──► advance_one_tick()
     ↓

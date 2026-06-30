@@ -166,7 +166,7 @@ def build_rts_meta(event: ArenaMatch, participant: ArenaParticipant) -> Dict[str
     rt = get_rts_runtime(config)
     ps = player_state(config, participant.id)
     tick = int(rt.get("tick", 0))
-    total = int(rt.get("total_ticks", 120))
+    total = int(rt.get("total_ticks", rt.get("total_days", 150)))
     transit = ps.get("transit")
     can_trade = player_can_trade(transit, tick) and rt.get("phase") in ("warmup", "running")
 
@@ -175,7 +175,7 @@ def build_rts_meta(event: ArenaMatch, participant: ArenaParticipant) -> Dict[str
         "tick": tick,
         "total_ticks": total,
         "phase": rt.get("phase", "warmup"),
-        "tick_interval_sec": int(rt.get("tick_interval_sec", 5)),
+        "tick_interval_sec": int(rt.get("tick_interval_sec", rt.get("day_interval_sec", 4))),
         "seconds_until_next_tick": seconds_until_next_tick(rt),
         "duration_minutes": int(config.get("duration_minutes", 10)),
         "duration_preset": config.get("duration_preset", "standard"),

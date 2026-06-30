@@ -1,4 +1,4 @@
-"""市场定价配置 — FStrading（RTS pool_ask_bid）"""
+"""市场定价配置 — FST / FStrading（RTS，PRD-FST §9）"""
 
 from __future__ import annotations
 
