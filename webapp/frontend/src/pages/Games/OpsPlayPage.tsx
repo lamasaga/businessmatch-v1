@@ -33,6 +33,7 @@ import TeamStatusBar from '../../components/ops/TeamStatusBar';
 import RoundCountdown from '../../components/ops/RoundCountdown';
 import AdvanceActionBar from '../../components/ops/AdvanceActionBar';
 import SettlementBrief from '../../components/ops/SettlementBrief';
+import { useRefreshCareerOnMatchFinish } from '../../hooks/useRefreshCareerOnMatchFinish';
 
 type OpsMenu = 'decision' | 'auction' | 'finance' | 'ranking' | 'brief';
 
@@ -72,6 +73,8 @@ export default function OpsPlayPage() {
   useEffect(() => {
     setActiveMenu(menuForPhase(gameState?.phase));
   }, [gameState?.phase]);
+
+  useRefreshCareerOnMatchFinish(gameState?.match_status === 'finished');
 
   const handlePositioning = async (payload: OpsPositioningPayload) => {
     setSubmitting(true);

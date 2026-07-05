@@ -3,6 +3,7 @@ import { useParams } from 'react-router-dom';
 import { useTradingStore } from '../../stores/tradingStore';
 import TradingRTSView from './TradingRTSView';
 import { connectRtsWebSocket } from '../../lib/rtsWebSocket';
+import { useRefreshCareerOnMatchFinish } from '../../hooks/useRefreshCareerOnMatchFinish';
 import { Loader2 } from 'lucide-react';
 
 export default function TradingGamePage() {
@@ -32,6 +33,8 @@ export default function TradingGamePage() {
       clearInterval(fallback);
     };
   }, [eventId, refresh]);
+
+  useRefreshCareerOnMatchFinish(gameState?.event.status === 'finished');
 
   if (!gameState) {
     return (

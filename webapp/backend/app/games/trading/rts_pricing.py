@@ -73,7 +73,10 @@ def calc_ask_bid(
     ask = mid * (1 + half + pressure * elast)
     bid = mid * (1 - half + pressure * elast * 0.6)
     bid = min(bid, ask * (1 - spread))
-    return max(1, int(round(ask))), max(1, int(round(bid)))
+    ask_i = max(1, int(round(ask)))
+    bid_i = max(1, int(round(bid)))
+    bid_i = min(bid_i, max(1, int(ask_i * (1 - spread))))
+    return ask_i, bid_i
 
 
 def tick_pool_delta(

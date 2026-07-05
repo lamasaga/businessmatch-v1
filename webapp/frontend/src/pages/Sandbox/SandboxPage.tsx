@@ -109,6 +109,14 @@ export default function SandboxPage() {
         </div>
       )}
 
+      <div className="mx-6 mt-4 rounded-lg border border-amber-500/25 bg-amber-500/5 px-4 py-3 text-sm text-foreground-secondary">
+        <p className="font-medium text-foreground mb-1">非 Phase A 交付范围</p>
+        <p className="text-xs sm:text-sm">
+          赛事工坊已移出 Phase A 验收。本页为内部 MVP 骨架，日常改赛制请直接编辑{' '}
+          <code className="font-mono">content/game-configs/*.yaml</code>。完整热试跑能力规划见 B4+ backlog（inspire/89-）。
+        </p>
+      </div>
+
       {/* 三栏主布局 */}
       <div className="flex h-[calc(100vh-60px)]">
         {/* ========== 左栏：配置编辑器 ========== */}

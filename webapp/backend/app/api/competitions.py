@@ -16,7 +16,7 @@ from app.domains.arena.services.teaching_group_service import (
 from app.domains.arena.serializers import event_to_out
 from app.domains.arena.services.match_factory import create_official_match
 from app.domains.arena.services.match_lifecycle import begin_match
-from app.domains.career.services.rewards import settle_match_rewards
+from app.domains.career.services.rewards import finalize_match_rewards
 from app.games.trading import TradingRound, RoundStatus
 
 EventStatus = MatchStatus
@@ -25,7 +25,7 @@ CompetitionParticipant = ArenaParticipant
 GameType = GameEngineId
 from app.schemas.trading_competition import (
     CompetitionEventCreate, CompetitionEventOut, CompetitionEventUpdate,
-    CompetitionEventDetail, JoinCompetitionRequest, ParticipantOut,
+    CompetitionEventDetail, JoinCompetitionRequest, JoinCompetitionResult, ParticipantOut,
     MyCompetitionStatus, GameConfig,
 )
 from app.core.response import ApiResponse, BusinessException, ErrorCode
@@ -84,7 +84,7 @@ def get_competition(event_id: int, db: Session = Depends(get_db)):
     return ApiResponse.ok(data=_event_to_out(event, db))
 
 
-@router.post("/join", response_model=ApiResponse[ParticipantOut])
+@router.post("/join", response_model=ApiResponse[JoinCompetitionResult])
 def join_competition(
     data: JoinCompetitionRequest,
     current_user: User = Depends(get_current_active_user),
@@ -102,23 +102,29 @@ def join_competition(
             status_code=status.HTTP_404_NOT_FOUND,
         )
 
-    if event.status not in [EventStatus.draft, EventStatus.registration]:
-        raise BusinessException(
-            message="比赛已开始或已结束，无法加入",
-            code=ErrorCode.BAD_REQUEST,
-            status_code=status.HTTP_400_BAD_REQUEST,
-        )
-
-    # 检查是否已加入
+    # 已加入：幂等返回，便于房间码重复进入大厅
     existing = db.query(CompetitionParticipant).filter(
         CompetitionParticipant.event_id == event.id,
         CompetitionParticipant.user_id == current_user.id,
     ).first()
     if existing:
+        return ApiResponse.ok(
+            data=JoinCompetitionResult(
+                participant=_participant_to_out(existing, db),
+                event_id=event.id,
+                game_config_id=event.game_config_id or "",
+                event_status=event.status.value if event.status else "registration",
+                title=event.title or f"商赛 #{event.id}",
+                already_joined=True,
+            ),
+            message="您已在比赛中",
+        )
+
+    if event.status not in [EventStatus.draft, EventStatus.registration]:
         raise BusinessException(
-            message="您已经加入了这场比赛",
-            code=ErrorCode.DUPLICATE_ENTRY,
-            status_code=status.HTTP_409_CONFLICT,
+            message="比赛已开始或已结束，无法加入",
+            code=ErrorCode.BAD_REQUEST,
+            status_code=status.HTTP_400_BAD_REQUEST,
         )
 
     # 检查人数上限
@@ -163,7 +169,17 @@ def join_competition(
     db.commit()
     db.refresh(participant)
 
-    return ApiResponse.ok(data=_participant_to_out(participant, db))
+    return ApiResponse.ok(
+        data=JoinCompetitionResult(
+            participant=_participant_to_out(participant, db),
+            event_id=event.id,
+            game_config_id=event.game_config_id or "",
+            event_status=event.status.value if event.status else "registration",
+            title=event.title or f"商赛 #{event.id}",
+            already_joined=False,
+        ),
+        message="加入成功",
+    )
 
 
 @router.post("/{event_id}/leave", response_model=ApiResponse[dict])
@@ -424,7 +440,7 @@ def end_competition(
         for rank, p in enumerate(participants, 1):
             p.final_rank = rank
             p.status = ParticipantStatus.joined
-        settle_match_rewards(db, event, participants)
+        finalize_match_rewards(db, event, participants)
         event.current_round = event.config.get("rounds", 10) if event.config else 10
         event.status = EventStatus.finished
         event.ends_at = func.now()

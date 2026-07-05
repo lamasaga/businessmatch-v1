@@ -1,6 +1,6 @@
 import { create } from 'zustand';
 import { api } from '../lib/api';
-import type { CompetitionEvent, Participant } from '../types';
+import type { CompetitionEvent, Participant, JoinCompetitionResult } from '../types';
 
 interface CompetitionState {
   events: CompetitionEvent[];
@@ -24,8 +24,8 @@ interface CompetitionState {
       decision_time?: number;
     };
   }) => Promise<CompetitionEvent>;
-  joinEvent: (roomCode: string) => Promise<number>;
-  getMyStatus: (eventId: number) => Promise<void>;
+  joinEvent: (roomCode: string) => Promise<JoinCompetitionResult>;
+  getMyStatus: (eventId: number) => Promise<boolean>;
   startEvent: (eventId: number) => Promise<void>;
   endEvent: (eventId: number) => Promise<void>;
   startPractice: () => Promise<CompetitionEvent>;
@@ -80,11 +80,12 @@ export const useCompetitionStore = create<CompetitionState>((set) => ({
     set({ loading: true, error: null });
     try {
       const response = await api.post('/api/v1/competitions/join', { room_code: roomCode });
-      const participant = response.data.data;
-      set({ myParticipant: participant, loading: false });
-      return participant.event_id as number;
-    } catch (err: any) {
-      set({ error: err.message || '加入比赛失败', loading: false });
+      const result = response.data.data as JoinCompetitionResult;
+      set({ myParticipant: result.participant, loading: false });
+      return result;
+    } catch (err: unknown) {
+      const msg = (err as { message?: string }).message || '加入比赛失败';
+      set({ error: msg, loading: false });
       throw err;
     }
   },
@@ -97,9 +98,13 @@ export const useCompetitionStore = create<CompetitionState>((set) => ({
         currentEvent: data.event,
         myParticipant: data.participant,
         isOrganizer: data.is_organizer,
+        error: null,
       });
-    } catch (err: any) {
-      set({ error: err.message });
+      return true;
+    } catch (err: unknown) {
+      const msg = (err as { message?: string }).message || '加载比赛状态失败';
+      set({ error: msg });
+      return false;
     }
   },
 

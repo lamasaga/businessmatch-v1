@@ -1,7 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { useCompetitionStore } from '../../stores/competitionStore';
-import { api } from '../../lib/api';
 import {
   Trophy, Search, Users, Clock, ArrowRight,
   TrendingUp, MapPin, Zap,
@@ -20,9 +19,16 @@ function lobbyRoute(eventId: number, configId?: string): string {
   return `/games/${eventId}/lobby`;
 }
 
+function resolveRouteAfterJoin(eventId: number, configId?: string, eventStatus?: string): string {
+  const play = gameRoute(eventId, configId);
+  const lobby = lobbyRoute(eventId, configId);
+  if (eventStatus === 'playing' || eventStatus === 'finished') return play;
+  return lobby;
+}
+
 export default function GamesPage() {
   const navigate = useNavigate();
-  const { events, fetchEvents, joinEvent, loading } = useCompetitionStore();
+  const { events, fetchEvents, joinEvent, getMyStatus, loading } = useCompetitionStore();
   const [roomCode, setRoomCode] = useState('');
   const [joinError, setJoinError] = useState('');
   const [activeTab, setActiveTab] = useState<'public' | 'my'>('public');
@@ -38,14 +44,10 @@ export default function GamesPage() {
     }
     setJoinError('');
     try {
-      const eventId = await joinEvent(roomCode);
-      const ev = events.find((e) => e.id === eventId);
-      let configId = ev?.game_config_id;
-      if (!configId) {
-        const res = await api.get(`/api/v1/competitions/${eventId}`);
-        configId = res.data.data?.game_config_id;
-      }
-      navigate(lobbyRoute(eventId, configId));
+      const result = await joinEvent(roomCode);
+      await fetchEvents();
+      await getMyStatus(result.event_id);
+      navigate(resolveRouteAfterJoin(result.event_id, result.game_config_id, result.event_status));
     } catch (err: unknown) {
       const message = err instanceof Error ? err.message : '加入失败';
       setJoinError(message);

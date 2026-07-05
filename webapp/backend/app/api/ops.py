@@ -639,9 +639,8 @@ def advance(
             _set_match_ops_phase(match, OpsMatchPhase.finished)
             match.status = MatchStatus.finished
             ranking = final_ranking(db, match)
-            participants = db.query(ArenaParticipant).filter(ArenaParticipant.event_id == event_id).all()
-            from app.domains.career.services.rewards import settle_match_rewards
-            settle_match_rewards(db, match, participants)
+            from app.domains.career.services.rewards import finalize_match_rewards
+            finalize_match_rewards(db, match)
             db.commit()
             return ApiResponse.ok(data={"phase": OpsMatchPhase.finished.value, "ranking": ranking})
 
@@ -712,9 +711,8 @@ def practice_advance(
         elif next_phase == OpsMatchPhase.finished:
             _set_match_ops_phase(match, OpsMatchPhase.finished)
             match.status = MatchStatus.finished
-            participants = db.query(ArenaParticipant).filter(ArenaParticipant.event_id == event_id).all()
-            from app.domains.career.services.rewards import settle_match_rewards
-            settle_match_rewards(db, match, participants)
+            from app.domains.career.services.rewards import finalize_match_rewards
+            finalize_match_rewards(db, match)
             db.commit()
             return ApiResponse.ok(data={
                 "phase": OpsMatchPhase.finished.value,

@@ -6,7 +6,10 @@ __pycache__/
 *.pyd
 .DS_Store
 .obsidian/
+.claude/
+.superpowers/
 *.db
+*.db.backup.*
 node_modules/
 # 美术资源原始包解压（精选 SVG 已保留在 art-assets/fushengji 子目录）
 art-assets/fushengji/sources/_extract*/

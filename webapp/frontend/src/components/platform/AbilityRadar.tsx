@@ -1,4 +1,5 @@
 import { DEMO_CAREER } from '../../data/mockPlatform';
+import type { CareerRadar } from '../../stores/careerStore';
 
 const labels = [
   { key: 'financial', label: '财务' },
@@ -8,15 +9,19 @@ const labels = [
   { key: 'ethical', label: '伦理' },
 ] as const;
 
-export default function AbilityRadar() {
-  const abilities = DEMO_CAREER.abilities;
+type Props = {
+  radar?: CareerRadar | null;
+};
+
+export default function AbilityRadar({ radar }: Props) {
+  const abilities = radar ?? DEMO_CAREER.abilities;
   const cx = 120;
   const cy = 120;
   const r = 80;
   const angleStep = (2 * Math.PI) / labels.length;
 
   const points = labels.map((_, i) => {
-    const val = abilities[labels[i].key] / 100;
+    const val = (abilities[labels[i].key as keyof typeof abilities] ?? 50) / 100;
     const angle = -Math.PI / 2 + i * angleStep;
     return {
       x: cx + r * val * Math.cos(angle),
@@ -39,40 +44,30 @@ export default function AbilityRadar() {
               })
               .join(' ')}
             fill="none"
-            stroke="rgba(255,255,255,0.08)"
-            strokeWidth="1"
+            stroke="currentColor"
+            strokeOpacity={0.12}
           />
         ))}
-        {labels.map((l, i) => {
-          const angle = -Math.PI / 2 + i * angleStep;
-          const x2 = cx + r * Math.cos(angle);
-          const y2 = cy + r * Math.sin(angle);
-          return (
-            <line
-              key={l.key}
-              x1={cx}
-              y1={cy}
-              x2={x2}
-              y2={y2}
-              stroke="rgba(255,255,255,0.06)"
-            />
-          );
-        })}
-        <polygon points={polygon} fill="rgba(212,168,83,0.25)" stroke="#d4a853" strokeWidth="2" />
-        {labels.map((l, i) => {
+        <polygon
+          points={polygon}
+          fill="rgba(46, 195, 229, 0.22)"
+          stroke="var(--primary, #2ec3e5)"
+          strokeWidth={2}
+        />
+        {labels.map((item, i) => {
           const angle = -Math.PI / 2 + i * angleStep;
           const lx = cx + (r + 22) * Math.cos(angle);
           const ly = cy + (r + 22) * Math.sin(angle);
           return (
             <text
-              key={l.key}
+              key={item.key}
               x={lx}
               y={ly}
               textAnchor="middle"
               dominantBaseline="middle"
-              className="fill-foreground-muted text-[10px]"
+              className="fill-foreground-muted text-[11px]"
             >
-              {l.label}
+              {item.label}
             </text>
           );
         })}

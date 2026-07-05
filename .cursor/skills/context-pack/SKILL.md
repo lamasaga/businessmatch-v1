@@ -67,5 +67,5 @@ description: >-
 | 生涯 / XP | ADR-007 · `domains/career/DESIGN.md` |
 | 教师端 / 营团 | `01-PRODUCT.md` §四 · `03-ENGINEERING.md` AI_DEFAULT |
 | 拟真城市内容包 | ADR-010 · `content/world/` · `domains/cybercore/world_loader.py` |
-| 赛事工坊 / Sandbox | `domains/sandbox/` · `content/game-configs/README.md` |
+| 赛事工坊 / Sandbox | ⏸️ 非 Phase A；按需 `@` `domains/sandbox/` · `content/game-configs/README.md` · inspire/89- |
 | 新 ADR 编写 | `docs/decisions/README.md` · `_template.md` · `adr-writing.mdc` |

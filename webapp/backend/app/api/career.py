@@ -244,3 +244,91 @@ def get_recent_matches(
         )
 
     return ApiResponse.ok(data=data)
+
+
+@router.get("/matches/{match_id}/debrief", response_model=ApiResponse[dict])
+def get_match_debrief(
+    match_id: int,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_active_user),
+):
+    """规则模板赛后复盘（Phase A：零 LLM）"""
+    match = db.query(ArenaMatch).filter(ArenaMatch.id == match_id).first()
+    if not match:
+        raise BusinessException(
+            message="比赛不存在",
+            code=ErrorCode.NOT_FOUND,
+            status_code=status.HTTP_404_NOT_FOUND,
+        )
+
+    participant = (
+        db.query(ArenaParticipant)
+        .filter(
+            ArenaParticipant.event_id == match_id,
+            ArenaParticipant.user_id == current_user.id,
+            ArenaParticipant.is_ai == 0,
+        )
+        .first()
+    )
+    if not participant:
+        raise BusinessException(
+            message="您未参与该场比赛",
+            code=ErrorCode.FORBIDDEN,
+            status_code=status.HTTP_403_FORBIDDEN,
+        )
+
+    rank = int(participant.final_rank or 0)
+    total = int(match.max_players or 0)
+    match_kind_value = match.match_kind.value if match.match_kind else "practice"
+    xp_row = (
+        db.query(XpEvent.amount)
+        .filter(XpEvent.user_id == current_user.id, XpEvent.match_id == match_id)
+        .first()
+    )
+    xp_earned = int(xp_row[0]) if xp_row else int(participant.experience_earned or 0)
+    from app.domains.career.services.rewards import _calc_gold, _calc_diamond
+
+    gold_earned = _calc_gold(match_kind_value, rank) if rank > 0 else 0
+    diamond_earned = _calc_diamond(match_kind_value) if rank > 0 else 0
+
+    kind_label = "练习局" if match_kind_value == "practice" else "正式赛"
+    if rank == 1:
+        narrative = f"你在本场{kind_label}中夺得冠军，总资产 ¥{int(participant.total_assets or 0):,}，决策节奏与仓位管理表现突出。"
+    elif rank > 0 and total > 0 and rank <= max(1, total // 2):
+        narrative = f"你本场{kind_label}排名第 {rank}，处于上游梯队；可复盘高毛利路线与周转效率。"
+    elif rank > 0:
+        narrative = f"你本场{kind_label}排名第 {rank}，仍有提升空间；建议关注跨城套利与库存周转。"
+    else:
+        narrative = f"本场{kind_label}已结束；完赛数据已入账，可结合资产变化回顾关键决策。"
+
+    facts = [
+        f"赛制：{match.game_config_id or '未知'} · {kind_label}",
+        f"名次：{rank or '—'} / {total or '—'}",
+        f"终局总资产：¥{int(participant.total_assets or 0):,}",
+        f"经验 +{xp_earned} · 金币 +{gold_earned} · 钻石 +{diamond_earned}",
+    ]
+
+    suggestions = []
+    if match_kind_value == "practice":
+        suggestions.append("尝试在正式赛中验证今日练出的路线。")
+    if rank and rank > 3:
+        suggestions.append("优先复盘「买入城市 / 卖出城市」与在途时间。")
+    suggestions.append("前往商赛大厅继续练习或加入教师房间码对局。")
+
+    return ApiResponse.ok(
+        data={
+            "match_id": match_id,
+            "match_title": match.title or f"商赛 #{match_id}",
+            "match_kind": match_kind_value,
+            "rank": rank,
+            "total_teams": total,
+            "narrative": narrative,
+            "facts": facts,
+            "suggestions": suggestions,
+            "rewards": {
+                "xp": xp_earned,
+                "gold": gold_earned,
+                "diamond": diamond_earned,
+            },
+        }
+    )

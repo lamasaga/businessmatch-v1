@@ -2,7 +2,7 @@
 
 > **定位**：技术栈、系统边界、域分包、智能体 Worker 列表、记忆架构。
 > **关联**：`01-PRODUCT.md`（产品定义）· `03-ENGINEERING.md`（API/路由详表）
-> **最后更新**：2026-06-06
+> **最后更新**：2026-07-05
 
 ---
 
@@ -31,7 +31,7 @@
 | `career` | `domains/career/` | `xp_events` 幂等账本 | 🟡 有表，前端仍 mock |
 | `academy` | `api/courses.py` | 课程列表 | 🟡 硬编码 |
 | `opc` | `api/opc.py` | 一人公司 CRUD | ✅ 演示级 |
-| `sandbox` | `domains/sandbox/` | 赛事工坊（热 YAML 编辑） | 🟡 MVP |
+| `sandbox` | `domains/sandbox/` | 赛事工坊（热 YAML 编辑） | ⏸️ 非 PA；B4+ backlog |
 
 **铁律**：
 - 一个库、一个 API 进程
@@ -98,7 +98,7 @@ webapp/frontend/src/games/<engine-id>/
 | 商赛 | `/games` | 大厅、lobby、play |
 | 五域 | `/wiki`, `/courses`, `/quests`, `/achievements` | 部分 mock |
 | OPC | `/opc/*` | 公司、员工、任务 |
-| 赛事工坊 | `/sandbox` | YAML 热编辑、试跑 |
+| 赛事工坊 | `/sandbox` | YAML 热编辑、试跑（⏸️ 非 Phase A 交付） |
 
 ---
 

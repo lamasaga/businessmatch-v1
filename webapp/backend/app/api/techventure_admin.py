@@ -323,6 +323,8 @@ def settle_current_round(
             if team:
                 team.final_rank = i + 1
         match.status = MatchStatus.finished
+        from app.domains.career.services.rewards import finalize_match_rewards
+        finalize_match_rewards(db, match)
 
     db.commit()
     return ApiResponse.ok(data={

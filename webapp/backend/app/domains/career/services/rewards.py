@@ -4,8 +4,8 @@ from typing import Dict, List, Optional
 
 from sqlalchemy.orm import Session
 
-from app.domains.arena.enums import MatchKind
-from app.domains.arena.models import ArenaMatch, ArenaParticipant
+from app.domains.arena.enums import GameEngineId, MatchKind
+from app.domains.arena.models import ArenaMatch, ArenaParticipant, ArenaTeam
 from app.domains.career.models.xp_event import XpEvent
 from app.domains.cybercore.registry import get_game_config
 from app.domains.cybercore.types import RewardTier
@@ -115,6 +115,90 @@ def _grant_resource(
         user.diamond += diamond
 
 
+def _finish_idempotency_key(match_id: int, user_id: int) -> str:
+    return f"match:{match_id}:user:{user_id}:finish"
+
+
+def sync_participants_for_settlement(
+    db: Session,
+    match: ArenaMatch,
+    participants: List[ArenaParticipant],
+) -> List[ArenaParticipant]:
+    """将队伍制引擎终局资产/名次写回 ArenaParticipant，供生涯结算使用。"""
+    engine = match.game_type
+
+    if engine == GameEngineId.techventure:
+        from app.games.techventure.models import TvTeamState
+
+        states = {
+            s.team_id: s
+            for s in db.query(TvTeamState).filter(TvTeamState.event_id == match.id).all()
+        }
+        team_ids = sorted(
+            states.keys(),
+            key=lambda tid: float(states[tid].weighted_total or 0),
+            reverse=True,
+        )
+        rank_map = {tid: i + 1 for i, tid in enumerate(team_ids)}
+        teams = {
+            t.id: t
+            for t in db.query(ArenaTeam).filter(ArenaTeam.event_id == match.id).all()
+        }
+        for p in participants:
+            if not p.team_id or p.team_id not in states:
+                continue
+            st = states[p.team_id]
+            p.total_assets = float(st.weighted_total or 0)
+            rank = rank_map.get(p.team_id)
+            if rank:
+                p.final_rank = rank
+                team = teams.get(p.team_id)
+                if team:
+                    team.final_rank = rank
+
+    elif engine == GameEngineId.ops_sim:
+        from app.games.ops_sim.models import OpsTeamState
+        from app.games.ops_sim.settle import final_ranking
+
+        ranking = final_ranking(db, match)
+        rank_map = {row["team_id"]: row["rank"] for row in ranking}
+        assets_map = {row["team_id"]: float(row["net_assets"] or 0) for row in ranking}
+        teams = {
+            t.id: t
+            for t in db.query(ArenaTeam).filter(ArenaTeam.event_id == match.id).all()
+        }
+        for p in participants:
+            if not p.team_id:
+                continue
+            if p.team_id in assets_map:
+                p.total_assets = assets_map[p.team_id]
+            rank = rank_map.get(p.team_id)
+            if rank:
+                p.final_rank = rank
+                team = teams.get(p.team_id)
+                if team:
+                    team.final_rank = rank
+
+    db.flush()
+    return participants
+
+
+def finalize_match_rewards(
+    db: Session,
+    match: ArenaMatch,
+    participants: Optional[List[ArenaParticipant]] = None,
+) -> None:
+    """同步终局数据并发放 XP / 金币 / 钻石（三引擎统一入口）。"""
+    if participants is None:
+        participants = (
+            db.query(ArenaParticipant)
+            .filter(ArenaParticipant.event_id == match.id)
+            .all()
+        )
+    synced = sync_participants_for_settlement(db, match, participants)
+    settle_match_rewards(db, match, synced)
+
+
 def settle_match_rewards(
     db: Session,
     match: ArenaMatch,
@@ -129,6 +213,11 @@ def settle_match_rewards(
     for p in ranked:
         if p.is_ai:
             continue
+
+        finish_key = _finish_idempotency_key(match.id, p.user_id)
+        if db.query(XpEvent).filter(XpEvent.idempotency_key == finish_key).first():
+            continue
+
         human_rank += 1
 
         # 1. XP 发放
@@ -140,7 +229,7 @@ def settle_match_rewards(
             amount=exp,
             match_kind=match.match_kind,
             source="match.finish",
-            idempotency_key=f"match:{match.id}:user:{p.user_id}:finish",
+            idempotency_key=finish_key,
             match_id=match.id,
             meta=f"rank={human_rank}",
         )

@@ -59,8 +59,35 @@ export interface CareerApiProfile {
   stats: CareerStats;
 }
 
+export interface CareerRecentMatch {
+  match_id: number;
+  match_title: string;
+  match_kind: string;
+  game_config_id?: string;
+  finished_at?: string | null;
+  final_rank: number;
+  total_participants?: number;
+  xp_earned: number;
+  gold_earned: number;
+  diamond_earned: number;
+  total_assets?: number;
+}
+
+export interface CareerDebrief {
+  match_id: number;
+  match_title: string;
+  match_kind: string;
+  rank: number;
+  total_teams: number;
+  narrative: string;
+  facts: string[];
+  suggestions: string[];
+  rewards: { xp: number; gold: number; diamond: number };
+}
+
 interface CareerState {
   profile: CareerApiProfile | null;
+  recentMatches: CareerRecentMatch[];
   loading: boolean;
   error: string | null;
   // 本地状态：标记是否已进入生涯模式（未登录用户也可本地体验）
@@ -70,6 +97,8 @@ interface CareerState {
   completedQuests: string[];
   // actions
   fetchProfile: () => Promise<void>;
+  fetchRecentMatches: (limit?: number) => Promise<void>;
+  fetchDebrief: (matchId: number) => Promise<CareerDebrief | null>;
   startCareer: () => Promise<boolean>;
   setCareerActive: (active: boolean) => void;
   resetDemo: () => void;
@@ -83,6 +112,7 @@ export const useCareerStore = create<CareerState>()(
   persist(
     (set, get) => ({
       profile: null,
+      recentMatches: [],
       loading: false,
       error: null,
       careerActive: false,
@@ -116,14 +146,39 @@ export const useCareerStore = create<CareerState>()(
           } else {
             throw new Error('接口未返回数据');
           }
-        } catch (err: any) {
-          console.warn('[career] 读取生涯档案失败，降级到本地数据：', err?.message || err);
+        } catch (err: unknown) {
+          const msg = (err as { message?: string }).message || '读取生涯档案失败';
+          console.warn('[career] 读取生涯档案失败：', msg);
           set({
-            profile: buildFallbackProfile(),
+            profile: null,
             loading: false,
-            error: err?.message || '数据同步中',
+            error: msg,
             careerActive: get().careerActive || false,
           });
+        }
+      },
+
+      fetchRecentMatches: async (limit = 5) => {
+        if (!isAuth()) {
+          set({ recentMatches: [] });
+          return;
+        }
+        try {
+          const res = await api.get('/api/v1/career/recent-matches', { params: { limit } });
+          set({ recentMatches: (res.data?.data as CareerRecentMatch[]) || [] });
+        } catch (err: unknown) {
+          console.warn('[career] 近期比赛加载失败', err);
+          set({ recentMatches: [] });
+        }
+      },
+
+      fetchDebrief: async (matchId: number) => {
+        if (!isAuth()) return null;
+        try {
+          const res = await api.get(`/api/v1/career/matches/${matchId}/debrief`);
+          return res.data?.data as CareerDebrief;
+        } catch {
+          return null;
         }
       },
 

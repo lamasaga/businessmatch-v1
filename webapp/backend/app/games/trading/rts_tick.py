@@ -10,7 +10,7 @@ from sqlalchemy.orm import Session
 from app.domains.arena.enums import MatchKind, MatchStatus
 from app.domains.arena.models import ArenaMatch, ArenaParticipant
 from app.domains.arena.config_json import persist_match_config
-from app.domains.career.services.rewards import settle_match_rewards
+from app.domains.career.services.rewards import finalize_match_rewards
 from app.games.trading import TradingRound, RoundStatus
 from app.games.trading.rts_actions import advance_transits, apply_distributors, apply_pending_actions, natural_pool_tick
 from app.games.trading.rts_ai import enqueue_ai_actions
@@ -222,7 +222,7 @@ def _finish_rts_match(db: Session, event: ArenaMatch, participants: list) -> Non
         p.final_rank = rank
         p.status = ParticipantStatus.joined
 
-    settle_match_rewards(db, event, ranked)
+    finalize_match_rewards(db, event, ranked)
     event.status = MatchStatus.finished
     event.ends_at = _utc_now_dt()
     config = event.config or {}

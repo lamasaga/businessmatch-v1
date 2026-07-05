@@ -1226,7 +1226,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ApiResponse_ParticipantOut_'
+                $ref: '#/components/schemas/ApiResponse_JoinCompetitionResult_'
         '422':
           description: Validation Error
           content:
@@ -5246,6 +5246,35 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/HTTPValidationError'
+  /api/v1/career/matches/{match_id}/debrief:
+    get:
+      tags:
+      - 生涯模式
+      summary: Get Match Debrief
+      description: 规则模板赛后复盘（Phase A：零 LLM）
+      operationId: get_match_debrief_api_v1_career_matches__match_id__debrief_get
+      security:
+      - OAuth2PasswordBearer: []
+      parameters:
+      - name: match_id
+        in: path
+        required: true
+        schema:
+          type: integer
+          title: Match Id
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponse_dict_'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
   /:
     get:
       summary: Root
@@ -5851,6 +5880,26 @@ components:
           - type: 'null'
       type: object
       title: ApiResponse[GameState]
+    ApiResponse_JoinCompetitionResult_:
+      properties:
+        success:
+          type: boolean
+          title: Success
+          default: true
+        code:
+          type: integer
+          title: Code
+          default: 0
+        message:
+          type: string
+          title: Message
+          default: success
+        data:
+          anyOf:
+          - $ref: '#/components/schemas/JoinCompetitionResult'
+          - type: 'null'
+      type: object
+      title: ApiResponse[JoinCompetitionResult]
     ApiResponse_List_AIEmployeeOut__:
       properties:
         success:
@@ -6479,26 +6528,6 @@ components:
           - type: 'null'
       type: object
       title: ApiResponse[OrganizerStats]
-    ApiResponse_ParticipantOut_:
-      properties:
-        success:
-          type: boolean
-          title: Success
-          default: true
-        code:
-          type: integer
-          title: Code
-          default: 0
-        message:
-          type: string
-          title: Message
-          default: success
-        data:
-          anyOf:
-          - $ref: '#/components/schemas/ParticipantOut'
-          - type: 'null'
-      type: object
-      title: ApiResponse[ParticipantOut]
     ApiResponse_RtsActionResult_:
       properties:
         success:
@@ -8082,16 +8111,22 @@ components:
           type: array
           title: Products
           default:
-          - fruit
-          - vegetable
-          - daily
-          - electronics
-          - clothing
-          - cosmetics
-          - jewelry
-          - antique
-          - art
-          - snack
+          - grain
+          - produce
+          - raw_materials
+          - energy
+          - chemicals
+          - medicine
+          - furniture
+          - textile
+          - apparel
+          - machinery
+          - daily_goods
+          - appliances
+          - digital_device
+          - passenger_car
+          - cultural_goods
+          - luxury
       additionalProperties: true
       type: object
       title: GameConfig
@@ -8271,6 +8306,35 @@ components:
       required:
       - room_code
       title: JoinCompetitionRequest
+    JoinCompetitionResult:
+      properties:
+        participant:
+          $ref: '#/components/schemas/ParticipantOut'
+        event_id:
+          type: integer
+          title: Event Id
+        game_config_id:
+          type: string
+          title: Game Config Id
+        event_status:
+          type: string
+          title: Event Status
+        title:
+          type: string
+          title: Title
+        already_joined:
+          type: boolean
+          title: Already Joined
+          default: false
+      type: object
+      required:
+      - participant
+      - event_id
+      - game_config_id
+      - event_status
+      - title
+      title: JoinCompetitionResult
+      description: 加入比赛结果（含跳转所需场次元数据）
     JoinTeamRequest:
       properties:
         team_id:
@@ -8885,6 +8949,26 @@ components:
           type: number
           title: Pressure
           default: 0.0
+        production:
+          type: number
+          title: Production
+          default: 0.0
+        consumption:
+          type: number
+          title: Consumption
+          default: 0.0
+        demand_gap:
+          type: number
+          title: Demand Gap
+          default: 0.0
+        supply_state:
+          type: string
+          title: Supply State
+          default: balanced
+        city_role:
+          type: string
+          title: City Role
+          default: neutral
       type: object
       required:
       - product_id

@@ -15,12 +15,18 @@ export default function GameLobbyPage() {
     currentEvent, myParticipant, isOrganizer,
     getMyStatus, startEvent, loading, error
   } = useCompetitionStore();
-  useState(false);
+  const [statusFailed, setStatusFailed] = useState(false);
 
   const eventId = Number(id);
 
   useEffect(() => {
-    getMyStatus(eventId);
+    let cancelled = false;
+    void getMyStatus(eventId).then((ok) => {
+      if (!cancelled) setStatusFailed(!ok);
+    });
+    return () => {
+      cancelled = true;
+    };
   }, [eventId, getMyStatus]);
 
   // Auto-refresh every 3 seconds during registration/playing
@@ -63,6 +69,21 @@ export default function GameLobbyPage() {
   const handleEnterGame = () => {
     navigate(gameRoute);
   };
+
+  if (statusFailed && !currentEvent) {
+    return (
+      <div className="max-w-md mx-auto text-center py-16 space-y-4">
+        <p className="text-foreground-muted text-sm">{error || '无法加载比赛大厅'}</p>
+        <button
+          type="button"
+          onClick={() => navigate('/games')}
+          className="text-primary text-sm font-medium hover:underline"
+        >
+          返回商赛大厅
+        </button>
+      </div>
+    );
+  }
 
   if (!currentEvent) {
     return (

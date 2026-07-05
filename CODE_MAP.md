@@ -1,6 +1,6 @@
 # CODE_MAP.md — 商识唯智 · 功能到文件速查
 
-> **最后更新**：2026-06-07
+> **最后更新**：2026-07-05
 > **维护纪律**：新增/删除/重命名文件后须同步更新本文件（`docs-align-before-push.mdc` 强制）。
 > **使用方式**：按功能域查表 → 拿到文件路径和关键符号 → 直接跳转。
 
@@ -167,15 +167,17 @@
 ### 3.3 OPS / 生产经营销售 / ops_sim
 
 > PRD：`docs/engines/ops/PRD.md` · 导航：`docs/engines/ops/README.md`
-> 配置：`B/../content/game-configs/ops-sim-v1.yaml`（规划中）
+> 配置：`B/../content/game-configs/ops-sim-v1.yaml`
 
 | 功能 | 文件 | 关键符号 | 状态 |
 |------|------|----------|------|
-| **结算引擎** | `B/games/ops_sim/engine.py` | `settle_round()` | 🔴 |
-| **模型** | `B/games/ops_sim/models.py` | — | 🔴 |
-| **AI** | `B/games/ops_sim/ai.py` | — | 🔴 |
-| **配置** | `B/games/ops_sim/config.py` | — | 🔴 |
-| **前端占位** | `F/games/ops-sim/` | `index.tsx`, `GameHUD.tsx`, `useGameState.ts`, `GameScene.ts` | 🟡 |
+| **结算引擎** | `B/games/ops_sim/engine.py` | `settle_round()` | ✅ |
+| **DB 编排** | `B/games/ops_sim/settle.py` | `settle_ops_round()`, `final_ranking()` | ✅ |
+| **模型** | `B/games/ops_sim/models.py` | `OpsTeamState`, `OpsRound`, `OpsSubmission`, `OpsSnapshot` | ✅ |
+| **AI** | `B/games/ops_sim/ai.py` | `generate_ai_decision()`, `generate_ai_bid()` | ✅ |
+| **配置** | `B/games/ops_sim/config.py` | `get_cfg()` | ✅ |
+| **拍卖** | `B/games/ops_sim/auction.py` | `create_auction_items()`, `settle_auction_stage()` | ✅ |
+| **前端局内页** | `F/pages/Games/OpsPlayPage.tsx` + `F/components/ops/` | 决策、拍卖、排行榜、财务面板 | 🟡 正式赛深测中 |
 
 ### 3.4 FIN / 金融投资 / finance_lab
 
@@ -235,19 +237,21 @@
 
 ---
 
-## 7. Sandbox / 沙盒
+## 7. Sandbox / 沙盒（⏸️ 非 Phase A）
+
+> 代码保留 MVP 骨架；PA 验收不包含赛事工坊。改赛制默认直接编辑 `content/game-configs/*.yaml`。
 
 | 功能 | 文件 | 关键符号 | 状态 |
 |------|------|----------|------|
-| **沙盒模型** | `B/domains/sandbox/models.py` | — | 🟡 |
-| **沙盒 API** | `B/domains/sandbox/api.py` | `/api/v1/sandbox` | 🟡 |
-| **AI 引擎** | `B/domains/sandbox/services/ai_engine.py` | — | 🟡 |
-| **调试器** | `B/domains/sandbox/services/debugger.py` | — | 🟡 |
-| **市场模拟** | `B/domains/sandbox/services/market_sim.py` | — | 🟡 |
-| **运行器** | `B/domains/sandbox/services/runner.py` | — | 🟡 |
-| **热配置** | `B/domains/sandbox/services/hot_config.py` | — | 🟡 |
-| **前端页面** | `F/pages/Sandbox/SandboxPage.tsx` | — | 🟡 |
-| **前端 Store** | `F/stores/sandboxStore.ts` | — | 🟡 |
+| **沙盒模型** | `B/domains/sandbox/models.py` | — | ⏸️ backlog |
+| **沙盒 API** | `B/domains/sandbox/api.py` | `/api/v1/sandbox` | ⏸️ backlog |
+| **AI 引擎** | `B/domains/sandbox/services/ai_engine.py` | — | ⏸️ backlog |
+| **调试器** | `B/domains/sandbox/services/debugger.py` | — | ⏸️ backlog |
+| **市场模拟** | `B/domains/sandbox/services/market_sim.py` | — | ⏸️ backlog |
+| **运行器** | `B/domains/sandbox/services/runner.py` | — | ⏸️ backlog |
+| **热配置** | `B/domains/sandbox/services/hot_config.py` | — | ⏸️ backlog |
+| **前端页面** | `F/pages/Sandbox/SandboxPage.tsx` | — | ⏸️ backlog |
+| **前端 Store** | `F/stores/sandboxStore.ts` | — | ⏸️ backlog |
 
 ---
 
@@ -381,7 +385,7 @@
 |------|------|------|------|
 | 浮生记 | `B/../content/game-configs/fstrading.yaml` | FST / trading | ✅ |
 | 创想大赢家 | `B/../content/game-configs/techventure-v1.yaml` | TECH / techventure | ✅ |
-| 生产经营销售 | `B/../content/game-configs/ops-sim-v1.yaml` | OPS / ops_sim | 🔴 |
+| 生产经营销售 | `B/../content/game-configs/ops-sim-v1.yaml` | OPS / ops_sim | ✅ |
 | 金融投资 | — | FIN / finance_lab | 🔴 |
 
 ### 10.2 CyberCore 配置系统

@@ -21,11 +21,12 @@ import AbilityRadar from '../../components/platform/AbilityRadar';
 import AthenaPanel from '../../components/platform/AthenaPanel';
 
 export default function CareerPage() {
-  const { profile, loading, error, careerActive, fetchProfile } = useCareerStore();
+  const { profile, recentMatches, loading, error, careerActive, fetchProfile, fetchRecentMatches } = useCareerStore();
 
   useEffect(() => {
-    fetchProfile();
-  }, [fetchProfile]);
+    void fetchProfile();
+    void fetchRecentMatches(5);
+  }, [fetchProfile, fetchRecentMatches]);
 
   if (!careerActive) {
     return <Navigate to="/career/start" replace />;
@@ -46,11 +47,21 @@ export default function CareerPage() {
   const p = profile;
   if (!p) {
     return (
-      <div className="flex items-center justify-center h-96 text-foreground-muted text-sm">
-        暂无生涯数据
+      <div className="flex flex-col items-center justify-center h-96 gap-3 text-center px-4">
+        <p className="text-foreground-muted text-sm">{error || '暂无生涯数据'}</p>
+        <button
+          type="button"
+          onClick={() => void fetchProfile()}
+          className="text-sm text-primary font-medium hover:underline"
+        >
+          重试加载
+        </button>
       </div>
     );
   }
+
+  const latestMatchId = recentMatches[0]?.match_id;
+  const debriefTo = latestMatchId ? `/career/debrief/${latestMatchId}` : '/games';
 
   const xpPct = p.user.next_level_xp > 0
     ? (p.user.experience / p.user.next_level_xp) * 100
@@ -82,10 +93,10 @@ export default function CareerPage() {
             {p.user.diamond}
           </div>
           <Link
-            to="/career/debrief/demo"
+            to={debriefTo}
             className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-primary/10 text-primary border border-primary/20 text-sm font-medium hover:bg-primary/15 transition-colors"
           >
-            查看最近复盘
+            {latestMatchId ? '查看最近复盘' : '去商赛大厅'}
             <ChevronRight className="w-4 h-4" />
           </Link>
         </div>
@@ -130,8 +141,10 @@ export default function CareerPage() {
               </ul>
             </li>
           </ul>
-          <p className="text-sm text-foreground-muted border-l-2 border-primary/40 pl-3 italic leading-relaxed">
-            第 3 章 · 你从「旁观者」走向「洞察者」：在回合制商赛中决策一致率亮眼，导师建议下月尝试新赛制。
+          <p className="text-sm text-foreground-muted border-l-2 border-primary/40 pl-3 leading-relaxed">
+            近 7 日参与 {p.resources.total_matches_7d} 场 · 获得 {p.resources.total_earned_7d} XP。
+            {p.stats.practice_count > 0 && ` 练习 ${p.stats.practice_count} 场`}
+            {p.stats.official_count > 0 && ` · 正式 ${p.stats.official_count} 场`}
           </p>
         </article>
 
@@ -170,11 +183,11 @@ export default function CareerPage() {
           <div className="flex items-center justify-between p-3 rounded-xl bg-background-secondary/50">
             <span className="flex items-center gap-2 text-sm text-foreground-secondary">
               <Network className="w-4 h-4 text-accent-teal" />
-              知识图谱
+              近 7 日 XP
             </span>
-            <span className="text-sm font-semibold text-foreground">18/48</span>
+            <span className="text-sm font-semibold text-foreground">{p.resources.total_earned_7d}</span>
           </div>
-          <AbilityRadar />
+          <AbilityRadar radar={p.radar} />
         </article>
       </section>
 
@@ -259,7 +272,7 @@ export default function CareerPage() {
             { label: '对局场次', value: String(p.resources.total_matches_7d) },
             { label: '金币余额', value: String(p.user.gold) },
             { label: '钻石余额', value: String(p.user.diamond) },
-            { label: '知识节点', value: '7' },
+            { label: '近 7 日 XP', value: String(p.resources.total_earned_7d) },
             { label: '累计经验', value: String(p.stats.total_xp_earned) },
           ].map((stat) => (
             <div key={stat.label} className="text-center p-3 rounded-xl bg-background-secondary/50">
@@ -269,6 +282,28 @@ export default function CareerPage() {
           ))}
         </div>
       </section>
+
+      {recentMatches.length > 0 && (
+        <section className="glass-card p-6">
+          <h2 className="text-sm font-bold text-foreground uppercase tracking-wide mb-4">近期对局</h2>
+          <ul className="space-y-2">
+            {recentMatches.map((m) => (
+              <li key={m.match_id}>
+                <Link
+                  to={`/career/debrief/${m.match_id}`}
+                  className="flex flex-wrap items-center gap-x-3 gap-y-1 rounded-xl border border-border-subtle px-4 py-3 hover:bg-background-hover/50 transition-colors"
+                >
+                  <span className="font-medium text-sm text-foreground">{m.match_title}</span>
+                  <span className="text-xs text-foreground-muted">
+                    {m.match_kind === 'practice' ? '练习' : '正式'} · 第 {m.final_rank || '—'} 名
+                  </span>
+                  <span className="text-xs text-primary ml-auto">+{m.xp_earned} XP</span>
+                </Link>
+              </li>
+            ))}
+          </ul>
+        </section>
+      )}
 
       <AthenaPanel floating />
     </div>

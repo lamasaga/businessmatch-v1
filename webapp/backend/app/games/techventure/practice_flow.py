@@ -78,3 +78,5 @@ def run_ai_decisions_and_settle(db: Session, match: ArenaMatch, tv_round: TvRoun
             if team:
                 team.final_rank = i + 1
         match.status = MatchStatus.finished
+        from app.domains.career.services.rewards import finalize_match_rewards
+        finalize_match_rewards(db, match)

@@ -2,7 +2,7 @@
 
 > **定位**：编码任务的唯一事实源——AI_DEFAULT、API/路由全表、赛事引擎规范、开发流程。
 > **关联**：`02-ARCHITECTURE.md`（技术架构）· `01-PRODUCT.md`（产品定义）
-> **最后更新**：2026-06-30
+> **最后更新**：2026-07-05
 > **关联决策**：`docs/decisions/011-npc-role-ip-and-multi-facet.md` · `docs/decisions/013-per-engine-identity.md`
 
 ---
@@ -20,7 +20,7 @@
 | API 字段级 | `webapp/contracts/openapi/bundled.yaml` 或 DEBUG `/openapi.json` |
 | 安全配置 | `SECRET_KEY` 必须从环境变量 / `.env` 读取；参考 `webapp/backend/.env.example` |
 | 测试命令 | 后端：`cd webapp/backend && ./venv/Scripts/python -m pytest tests/test_auth.py -v` |
-| 默认 Phase | **Phase A**（商赛引擎闭环）；未指定时不抢跑 World/OPC |
+| 默认 Phase | **Phase A 验收已通过** → 可启动 **Phase B1**；未指定时仍不抢跑 World/OPC；**赛事工坊非 PA 范围** |
 | FST 呈现层 | 玩家界面只用**游戏日/日期**；HUD `FstDayClock`；禁止拍/tick 文案 → [`00-TERMINOLOGY`](./00-TERMINOLOGY.md) · [`docs/engines/fst/GUIDE.md`](./docs/engines/fst/GUIDE.md) §零 |
 
 ### 功能矩阵
@@ -28,14 +28,14 @@
 | 模块 | 后端 | 前端 | 成熟度 |
 |------|------|------|--------|
 | 认证 | ✅ | ✅ | 生产雏形；`SECRET_KEY` 改为环境变量读取；已补 `tests/test_auth.py` 覆盖注册/登录/刷新/角色权限 |
-| 生涯中枢 `/career` | `xp_events` ✅ / `users.gold,diamond` 新增 | UI+mock | **Phase A 收尾项** |
+| 生涯中枢 `/career` | `xp_events` + `career_profiles` + 近期对局 + 规则复盘 | 真实 API | ✅ Phase A 已验收 |
 | 商赛大厅 `/games` | ✅ | ✅ | 可用 |
 | 浮生记 RTS | ✅ WS | ✅ 全屏 | **当前主力** |
 | TechVenture | ✅ | ✅ 全屏·无地图 | 四端控场 |
 | OPS 产销运营 | ✅ 6+2 基础 | ✅ 6+2 基础 | 经济模型、双拍卖、无教师练习推进已落地；正式赛倒计时需端到端深测 |
 | 教师端 :5174 | ✅ | ✅ | 独立端（目录 `organizer-frontend`） |
 | 体验营营团 P1 | ✅ | 🟡 | 营团+赛季编排 |
-| 赛事工坊 `/sandbox` | ✅ | ✅ | 内存会话·热 YAML |
+| 赛事工坊 `/sandbox` | 🟡 MVP 骨架 | 🟡 未进侧栏 | ⏸️ **非 Phase A**；搁置 B4+ backlog |
 | OPC `/opc/*` | ✅ CRUD | ✅ | 数据层，无 Agent |
 | Wiki/课程 | ✅ | ✅ | 可用 |
 
@@ -45,9 +45,9 @@
 |---|------|------|------|
 | E1 | 生涯页与登录 XP 脱节 | Career 读账本 + `GET /career/profile` | ✅ 已修复 |
 | E2 | 生涯域不完整，缺聚合 API | 新建 `api/career.py` | ✅ 已修复 |
-| E3 | 房间码加入后可能无法跳转大厅 | 前端路由 bug | 🟡 待复测 |
+| E3 | 房间码加入后可能无法跳转大厅 | 幂等 join + 返回赛制元数据 + 自动路由 | ✅ 已修复 |
 | E4 | DB 依赖 lifespan 初始化 | 架构债 | 🔴 B4 前评估 |
-| E5 | 正式赛结束与 debrief 未打通 | Hermes-Debrief 规则模板 | 🔴 B3 实现 |
+| E5 | LLM 复盘未上线 | 当前为规则模板 debrief；Hermes-Debrief LLM 留待 B3 | 🟡 B3 演进 |
 | E6 | OPS 6+2 重写后端到端复测不足 | 正式赛倒计时、教师控场、练习赛全流程浏览器验证 | 🟡 P0 复测 |
 
 ### 对齐度
@@ -55,7 +55,7 @@
 | 组件 | 对齐度 | 说明 |
 |------|--------|------|
 | Arena | 🟢 88% | 正式赛、练习赛、RTS、营团均可用；OPS 首期已接入 |
-| Career Hub | 🟢 85% | `xp_events` + `users.gold/diamond` + `career_profiles` + `api/career.py` + 前端对接已完成；家园/成就仍 mock |
+| Career Hub | 🟢 92% | 账本/近期对局/规则复盘已对接；家园/成就仍 B2+ |
 | OPC | 🟡 45% | CRUD + 前端 UI，无 Agent |
 | Hermes/Tyche/Rival | 🔴 15～25% | 规则占位，B3 起规则模板 |
 | Credenti | 🔴 20% | 前端 mock，无后端表 |
@@ -83,11 +83,11 @@
 | techventure | `/techventure` | games/techventure | ✅ |
 | techventure_admin | `/techventure` | arena | ✅ |
 | ops | `/ops` | games/ops_sim | 🟡 6+2 基础落地 |
-| sandbox | `/sandbox` | sandbox+cybercore | 🟡 |
+| sandbox | `/sandbox` | sandbox+cybercore | ⏸️ 非 PA；MVP 骨架保留 |
 | camp_groups | `/camp-groups` | arena | 🟡 |
 | camp_summer | `/camp-summer` | arena | 🟡 |
 | engine_callbacks | `/engine-callbacks` | arena | ✅ |
-| career | `/career` | career | 🟡 Phase A 收尾 |
+| career | `/career` | career | ✅ |
 
 **新增路由须同步**：`main.py` + 本表 + `02-ARCHITECTURE.md` 域表。
 
@@ -100,9 +100,9 @@
 | 路由 | 页面 | 状态 |
 |------|------|------|
 | `/` | 首页 / 登录 | ✅ |
-| `/career` | 生涯中枢 | UI+mock |
+| `/career` | 生涯中枢 | ✅ 读账本 + 近期对局 |
+| `/career/debrief/:id` | 赛后复盘 | ✅ 规则模板 |
 | `/career/start` | 生涯开局 | ✅ |
-| `/career/debrief/:id` | 赛后复盘 | UI+mock |
 | `/games` | 商赛大厅 | ✅ |
 | `/games/:id/play` | FStrading 局内（Phaser3） | ✅ |
 | `/games/:id/techventure` | TechVenture 局内 | ✅ |
@@ -112,7 +112,7 @@
 | `/activities` | 日常活动（Quest） | ✅ |
 | `/achievements` | 成就中心 | mock |
 | `/opc/*` | 一人公司 | ✅ |
-| `/sandbox` | 赛事工坊 | ✅ |
+| `/sandbox` | 赛事工坊（内部工具） | ⏸️ 非 PA 验收 |
 | `/camp` | 体验营入营 | ✅ |
 | `/showcase` | 新手指引 | ✅ |
 

@@ -241,6 +241,15 @@ export interface Participant {
   joined_at: string;
 }
 
+export interface JoinCompetitionResult {
+  participant: Participant;
+  event_id: number;
+  game_config_id: string;
+  event_status: string;
+  title: string;
+  already_joined: boolean;
+}
+
 export interface TradingRound {
   id: number;
   event_id: number;

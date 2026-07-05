@@ -150,6 +150,16 @@ class JoinCompetitionRequest(BaseModel):
     room_code: str = Field(..., min_length=4, max_length=4, pattern=r"^\d{4}$")
 
 
+class JoinCompetitionResult(BaseModel):
+    """加入比赛结果（含跳转所需场次元数据）"""
+    participant: ParticipantOut
+    event_id: int
+    game_config_id: str
+    event_status: str
+    title: str
+    already_joined: bool = False
+
+
 class MyCompetitionStatus(BaseModel):
     event: CompetitionEventOut
     participant: Optional[ParticipantOut]

@@ -25,6 +25,7 @@
 
  | 目录 | 重要性 | 说明 |
  |------|--------|------|
+ | [curriculum/](./curriculum/README.md) | P0（课程设计） | 从商学/经济学知识组织反推夏令营课程与未来赛事引擎 |
  | [**engines/**](./engines/README.md) | **P0** | 三赛事引擎产品+实现契约 |
  | [decisions/](./decisions/README.md) | P0（架构变更时） | ADR |
  | [prd/](./prd/README.md) | P1 | Career、POP、教师端、写作指南 |
@@ -36,6 +37,7 @@
  ## 新增文档指引
 
  - **三引擎 PRD/BDD/SPEC/指南** → `engines/<fst|tech|ops>/`
+ - 课程知识体系 / 夏令营编排 / 课程到赛制映射 → `curriculum/`
  - 架构选型 → `decisions/`
  - Career / POP / 教师端等产品需求 → `prd/`
  - 实现教程/操作步骤 → `handbooks/`

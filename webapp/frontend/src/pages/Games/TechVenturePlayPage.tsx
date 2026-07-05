@@ -45,6 +45,7 @@ import TvRoundStepper from '../../components/techventure/TvRoundStepper';
 import TvRoundCountdown from '../../components/techventure/TvRoundCountdown';
 import TvBudgetPanel from '../../components/techventure/TvBudgetPanel';
 import TvCityInvestPanel from '../../components/techventure/TvCityInvestPanel';
+import { useRefreshCareerOnMatchFinish } from '../../hooks/useRefreshCareerOnMatchFinish';
 
 type TechMenu = 'strategy' | 'investment' | 'market' | 'intel' | 'rank';
 
@@ -128,6 +129,8 @@ export default function TechVenturePlayPage() {
     const timer = setInterval(() => { poll(eventId); }, 5000);
     return () => clearInterval(timer);
   }, [eventId, poll, gameState?.match_status]);
+
+  useRefreshCareerOnMatchFinish(gameState?.match_status === 'finished');
 
   const cfg = gameState?.defaults || {};
   const routesCfg = gameState?.routes || {};
