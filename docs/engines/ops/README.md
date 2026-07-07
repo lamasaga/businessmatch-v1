@@ -1,6 +1,6 @@
 # OPS · 生产经营销售赛（6 轮运营 + 2 轮拍卖）
 
-> **引擎标识**：`engine: ops_sim` · **配置**：`ops-sim-v1` · **最后更新**：2026-06-28
+> **引擎标识**：`engine: ops_sim` · **配置**：`ops-sim-v1` · **最后更新**：2026-07-07
 
 ---
 
@@ -9,13 +9,16 @@
 | # | 文档 | 用途 |
 |---|------|------|
 | 1 | [PRD.md](./PRD.md) | 产品契约：阶段、决策、拍卖、胜负 |
-| 2 | [BDD.md](./BDD.md) | **验收契约**：无教师练习、6+2 推进 |
-| 3 | [SPEC.md](./SPEC.md) | API、phase、payload、P0 Gap |
-| 4 | [SPEC-ECONOMY.md](./SPEC-ECONOMY.md) | 生产/份额/广告/财务公式 |
-| 5 | [GUIDE.md](./GUIDE.md) | 引擎目录与联调 |
-| 6 | [../../../03-ENGINEERING.md](../../../03-ENGINEERING.md) | API 表与实现快照 |
+| 2 | [PRD-EDU.md](./PRD-EDU.md) | 教育版产品契约：显式思考、预测、解释卡、复盘和教师讲评 |
+| 3 | [UI-ITERATION-WORKFLOW.md](./UI-ITERATION-WORKFLOW.md) | UI 快速讨论、原型和实现迭代流程 |
+| 4 | [BDD.md](./BDD.md) | **验收契约**：无教师练习、6+2 推进 |
+| 5 | [SPEC.md](./SPEC.md) | API、phase、payload、P0 Gap |
+| 6 | [SPEC-ECONOMY.md](./SPEC-ECONOMY.md) | 生产/份额/广告/财务公式 |
+| 7 | [GUIDE.md](./GUIDE.md) | 引擎目录与联调 |
+| 8 | [../../../03-ENGINEERING.md](../../../03-ENGINEERING.md) | API 表与实现快照 |
 | — | [../MATH-MODELS.md](../MATH-MODELS.md) §三 | **公式总表（OPS）** |
 | — | [SPEC-ECONOMY.md](./SPEC-ECONOMY.md) | OPS 完整经济契约（比总表更细） |
+| — | [../../curriculum/OPS-12岁商业公司管理教学项目.md](../../curriculum/OPS-12岁商业公司管理教学项目.md) | 12 岁左右学生的低龄版课程组织方案 |
 
 ## 代码落点
 

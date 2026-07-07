@@ -1,0 +1,36 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024" role="img" aria-labelledby="title desc">
+  <title id="title">Engine icon sheet</title>
+  <desc id="desc">Four premium engine SVG icons for FST, TechVenture, OPS, and finance portfolio views.</desc>
+  <defs>
+    <linearGradient id="sheet_bg" x1="0" y1="0" x2="1024" y2="1024" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#14212a"/>
+      <stop offset="1" stop-color="#07090c"/>
+    </linearGradient>
+    <filter id="tile_shadow" x="-20%" y="-20%" width="140%" height="140%" color-interpolation-filters="sRGB">
+      <feDropShadow dx="0" dy="16" stdDeviation="18" flood-color="#000000" flood-opacity="0.34"/>
+    </filter>
+  </defs>
+  <rect width="1024" height="1024" fill="url(#sheet_bg)"/>
+  <g font-family="Inter, Microsoft YaHei, Arial, sans-serif" fill="#e2e8f0">
+    <g transform="translate(64 64)" filter="url(#tile_shadow)">
+      <rect width="416" height="416" rx="24" fill="#111820" stroke="#334155"/>
+      <image href="../icons/engine-fst-trade.svg" x="80" y="48" width="256" height="256"/>
+      <text x="208" y="346" text-anchor="middle" font-size="28" font-weight="700">engine-fst-trade</text>
+    </g>
+    <g transform="translate(544 64)" filter="url(#tile_shadow)">
+      <rect width="416" height="416" rx="24" fill="#111820" stroke="#334155"/>
+      <image href="../icons/engine-techventure.svg" x="80" y="48" width="256" height="256"/>
+      <text x="208" y="346" text-anchor="middle" font-size="28" font-weight="700">engine-techventure</text>
+    </g>
+    <g transform="translate(64 544)" filter="url(#tile_shadow)">
+      <rect width="416" height="416" rx="24" fill="#111820" stroke="#334155"/>
+      <image href="../icons/engine-ops-market.svg" x="80" y="48" width="256" height="256"/>
+      <text x="208" y="346" text-anchor="middle" font-size="28" font-weight="700">engine-ops-market</text>
+    </g>
+    <g transform="translate(544 544)" filter="url(#tile_shadow)">
+      <rect width="416" height="416" rx="24" fill="#111820" stroke="#334155"/>
+      <image href="../icons/engine-finance-portfolio.svg" x="80" y="48" width="256" height="256"/>
+      <text x="208" y="346" text-anchor="middle" font-size="28" font-weight="700">finance-portfolio</text>
+    </g>
+  </g>
+</svg>

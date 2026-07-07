@@ -1,0 +1,27 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1320 980" role="img" aria-labelledby="title desc">
+  <title id="title">Frame component sheet</title>
+  <desc id="desc">Four premium SVG frames for panels, metric cards, event banners, and modals.</desc>
+  <rect width="1320" height="980" fill="#0a0d12"/>
+  <g font-family="Inter, Microsoft YaHei, Arial, sans-serif" fill="#e2e8f0">
+    <g transform="translate(60 60)">
+      <rect width="560" height="390" rx="24" fill="#111820" stroke="#334155"/>
+      <image href="../frames/frame-glass-panel.svg" x="20" y="30" width="520" height="293"/>
+      <text x="280" y="355" text-anchor="middle" font-size="28" font-weight="700">frame-glass-panel</text>
+    </g>
+    <g transform="translate(700 60)">
+      <rect width="560" height="390" rx="24" fill="#111820" stroke="#334155"/>
+      <image href="../frames/frame-metric-card.svg" x="70" y="46" width="420" height="260"/>
+      <text x="280" y="355" text-anchor="middle" font-size="28" font-weight="700">frame-metric-card</text>
+    </g>
+    <g transform="translate(60 530)">
+      <rect width="560" height="390" rx="24" fill="#111820" stroke="#334155"/>
+      <image href="../frames/frame-event-banner.svg" x="20" y="98" width="520" height="154"/>
+      <text x="280" y="355" text-anchor="middle" font-size="28" font-weight="700">frame-event-banner</text>
+    </g>
+    <g transform="translate(700 530)">
+      <rect width="560" height="390" rx="24" fill="#111820" stroke="#334155"/>
+      <image href="../frames/frame-modal-shell.svg" x="90" y="24" width="380" height="285"/>
+      <text x="280" y="355" text-anchor="middle" font-size="28" font-weight="700">frame-modal-shell</text>
+    </g>
+  </g>
+</svg>

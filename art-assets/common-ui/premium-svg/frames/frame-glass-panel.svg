@@ -1,0 +1,24 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 360" role="img" aria-labelledby="title desc">
+  <title id="title">Dark glass panel frame</title>
+  <desc id="desc">Reusable SVG frame for dashboard panels, match cards, and HUD modules.</desc>
+  <defs>
+    <linearGradient id="fgp_fill" x1="58" y1="42" x2="582" y2="318" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#24303c" stop-opacity="0.95"/>
+      <stop offset="1" stop-color="#090c11" stop-opacity="0.95"/>
+    </linearGradient>
+    <linearGradient id="fgp_edge" x1="48" y1="48" x2="592" y2="312" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#ffffff" stop-opacity="0.45"/>
+      <stop offset="0.52" stop-color="#2dd4a0" stop-opacity="0.55"/>
+      <stop offset="1" stop-color="#60a5fa" stop-opacity="0.55"/>
+    </linearGradient>
+    <filter id="fgp_shadow" x="20" y="20" width="600" height="320" color-interpolation-filters="sRGB">
+      <feDropShadow dx="0" dy="18" stdDeviation="18" flood-color="#000000" flood-opacity="0.34"/>
+    </filter>
+  </defs>
+  <rect x="48" y="48" width="544" height="264" rx="16" fill="url(#fgp_fill)" filter="url(#fgp_shadow)"/>
+  <rect x="52" y="52" width="536" height="256" rx="12" fill="none" stroke="url(#fgp_edge)" stroke-width="4"/>
+  <path d="M72 86h190M72 118h118" stroke="#e2e8f0" stroke-width="10" stroke-linecap="round" stroke-opacity="0.28"/>
+  <path d="M568 74v54M541 101h54" stroke="#2dd4a0" stroke-width="6" stroke-linecap="round" stroke-opacity="0.62"/>
+  <path d="M72 281h496" stroke="#ffffff" stroke-width="3" stroke-opacity="0.08"/>
+  <path d="M70 63h66M504 297h66" stroke="#f6c344" stroke-width="5" stroke-linecap="round" stroke-opacity="0.72"/>
+</svg>

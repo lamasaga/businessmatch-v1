@@ -1,0 +1,19 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 192 192" role="img" aria-labelledby="title desc">
+  <title id="title">Champion badge</title>
+  <desc id="desc">Reusable SVG badge for winning teams, final ranking, official honors, and match trophies.</desc>
+  <defs>
+    <linearGradient id="bc_fill" x1="42" y1="22" x2="151" y2="166" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#fff0a8"/>
+      <stop offset="0.5" stop-color="#f6c344"/>
+      <stop offset="1" stop-color="#b7791f"/>
+    </linearGradient>
+    <filter id="bc_shadow" x="14" y="14" width="164" height="164" color-interpolation-filters="sRGB">
+      <feDropShadow dx="0" dy="11" stdDeviation="10" flood-color="#451a03" flood-opacity="0.30"/>
+    </filter>
+  </defs>
+  <path d="M96 17l23 19 30-2 10 28 24 17-13 27 3 30-30 8-23 20-24-17-24 17-23-20-30-8 3-30-13-27 24-17 10-28 30 2z" fill="url(#bc_fill)" filter="url(#bc_shadow)"/>
+  <circle cx="96" cy="91" r="47" fill="#111820" fill-opacity="0.86" stroke="#fff7d6" stroke-width="6"/>
+  <path d="M71 74h50v23c0 18-11 32-25 32S71 115 71 97z" fill="#f6c344"/>
+  <path d="M64 80H50v12c0 16 9 27 23 31M128 80h14v12c0 16-9 27-23 31" fill="none" stroke="#f6c344" stroke-width="8" stroke-linecap="round"/>
+  <path d="M87 128h18v17H87zM73 149h46" stroke="#f6c344" stroke-width="8" stroke-linecap="round"/>
+</svg>

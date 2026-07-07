@@ -1,0 +1,25 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" role="img" aria-labelledby="title desc">
+  <title id="title">Camp activity icon</title>
+  <desc id="desc">Premium SVG icon for summer camp groups, activity rooms, and guided business challenges.</desc>
+  <defs>
+    <linearGradient id="pcamp_bg" x1="30" y1="28" x2="227" y2="230" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#202d2d"/>
+      <stop offset="1" stop-color="#0a0d0e"/>
+    </linearGradient>
+    <linearGradient id="pcamp_tent" x1="65" y1="72" x2="190" y2="193" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#fff0a8"/>
+      <stop offset="0.55" stop-color="#d4a853"/>
+      <stop offset="1" stop-color="#8b5c1d"/>
+    </linearGradient>
+    <filter id="pcamp_shadow" x="8" y="8" width="240" height="240" color-interpolation-filters="sRGB">
+      <feDropShadow dx="0" dy="14" stdDeviation="12" flood-color="#000000" flood-opacity="0.32"/>
+    </filter>
+  </defs>
+  <rect x="18" y="18" width="220" height="220" rx="44" fill="url(#pcamp_bg)" filter="url(#pcamp_shadow)"/>
+  <path d="M62 191h132" stroke="#7b8491" stroke-width="10" stroke-linecap="round" stroke-opacity="0.38"/>
+  <path d="M72 186l56-108 56 108z" fill="url(#pcamp_tent)" stroke="#f6c344" stroke-width="6" stroke-linejoin="round"/>
+  <path d="M128 78v108M128 186l-25-52h50z" fill="#111820" fill-opacity="0.72"/>
+  <path d="M128 51v35" stroke="#2dd4a0" stroke-width="8" stroke-linecap="round"/>
+  <path d="M128 54h47l-12 18 12 18h-47z" fill="#60a5fa"/>
+  <path d="M82 111c-10-5-20-3-29 5M174 111c10-5 20-3 29 5" fill="none" stroke="#2dd4a0" stroke-width="7" stroke-linecap="round" stroke-opacity="0.8"/>
+</svg>

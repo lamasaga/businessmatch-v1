@@ -1,0 +1,25 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 480 160" role="img" aria-labelledby="title desc">
+  <title id="title">Secondary glass button shell</title>
+  <desc id="desc">Reusable premium SVG button plate for secondary actions in dark glass user interfaces.</desc>
+  <defs>
+    <linearGradient id="bsg_fill" x1="28" y1="28" x2="450" y2="132" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#26313d" stop-opacity="0.96"/>
+      <stop offset="1" stop-color="#0b0f14" stop-opacity="0.96"/>
+    </linearGradient>
+    <linearGradient id="bsg_edge" x1="24" y1="28" x2="456" y2="132" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#94a3b8"/>
+      <stop offset="0.5" stop-color="#2dd4a0"/>
+      <stop offset="1" stop-color="#60a5fa"/>
+    </linearGradient>
+    <filter id="bsg_shadow" x="4" y="4" width="472" height="152" color-interpolation-filters="sRGB">
+      <feDropShadow dx="0" dy="14" stdDeviation="12" flood-color="#000000" flood-opacity="0.34"/>
+    </filter>
+  </defs>
+  <rect x="24" y="28" width="432" height="104" rx="22" fill="url(#bsg_fill)" filter="url(#bsg_shadow)"/>
+  <rect x="26" y="30" width="428" height="100" rx="20" fill="none" stroke="url(#bsg_edge)" stroke-width="4" stroke-opacity="0.72"/>
+  <rect x="38" y="42" width="404" height="76" rx="15" fill="#ffffff" fill-opacity="0.04"/>
+  <circle cx="84" cy="80" r="27" fill="#0d131b" stroke="#2dd4a0" stroke-width="5"/>
+  <path d="M74 80h20M84 70v20" stroke="#2dd4a0" stroke-width="7" stroke-linecap="round"/>
+  <path d="M136 70h196M136 92h126" stroke="#e2e8f0" stroke-width="10" stroke-linecap="round" stroke-opacity="0.56"/>
+  <path d="M383 80h32" stroke="#60a5fa" stroke-width="9" stroke-linecap="round"/>
+</svg>

@@ -1,0 +1,24 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" role="img" aria-labelledby="title desc">
+  <title id="title">Academy learning icon</title>
+  <desc id="desc">Premium SVG icon for courses, learning modules, teaching plans, and knowledge maps.</desc>
+  <defs>
+    <linearGradient id="pac_bg" x1="30" y1="26" x2="225" y2="228" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#26333e"/>
+      <stop offset="1" stop-color="#0c0d11"/>
+    </linearGradient>
+    <linearGradient id="pac_blue" x1="61" y1="63" x2="186" y2="190" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#93c5fd"/>
+      <stop offset="1" stop-color="#2563eb"/>
+    </linearGradient>
+    <filter id="pac_shadow" x="8" y="8" width="240" height="240" color-interpolation-filters="sRGB">
+      <feDropShadow dx="0" dy="14" stdDeviation="12" flood-color="#000000" flood-opacity="0.33"/>
+    </filter>
+  </defs>
+  <rect x="18" y="18" width="220" height="220" rx="44" fill="url(#pac_bg)" filter="url(#pac_shadow)"/>
+  <path d="M66 84c22-10 42-8 62 8 20-16 40-18 62-8v92c-22-10-42-8-62 8-20-16-40-18-62-8z" fill="#151d27" stroke="#d4a853" stroke-width="8" stroke-linejoin="round"/>
+  <path d="M128 92v92" stroke="#d4a853" stroke-width="6" stroke-linecap="round" stroke-opacity="0.55"/>
+  <path d="M79 105h31M79 128h35M146 105h31M146 128h27" stroke="#ffffff" stroke-width="7" stroke-linecap="round" stroke-opacity="0.52"/>
+  <path d="M128 47l73 28-73 29-73-29z" fill="url(#pac_blue)"/>
+  <path d="M179 83v39" stroke="#60a5fa" stroke-width="8" stroke-linecap="round"/>
+  <circle cx="179" cy="128" r="10" fill="#2dd4a0"/>
+</svg>

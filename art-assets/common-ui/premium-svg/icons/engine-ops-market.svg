@@ -1,0 +1,24 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" role="img" aria-labelledby="title desc">
+  <title id="title">OPS operating market icon</title>
+  <desc id="desc">Premium SVG icon for production, operations, bidding resources, and market execution.</desc>
+  <defs>
+    <linearGradient id="eom_bg" x1="30" y1="24" x2="228" y2="231" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#2f3440"/>
+      <stop offset="1" stop-color="#0a0b0f"/>
+    </linearGradient>
+    <linearGradient id="eom_amber" x1="62" y1="62" x2="194" y2="192" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#fde68a"/>
+      <stop offset="1" stop-color="#d97706"/>
+    </linearGradient>
+    <filter id="eom_shadow" x="8" y="8" width="240" height="240" color-interpolation-filters="sRGB">
+      <feDropShadow dx="0" dy="14" stdDeviation="12" flood-color="#000000" flood-opacity="0.32"/>
+    </filter>
+  </defs>
+  <rect x="18" y="18" width="220" height="220" rx="44" fill="url(#eom_bg)" filter="url(#eom_shadow)"/>
+  <path d="M67 184V96l43 22V93l47 25V84l34 17v83z" fill="#151d27" stroke="#60a5fa" stroke-width="7" stroke-linejoin="round"/>
+  <path d="M82 139h22M82 162h22M126 139h22M126 162h22M168 139h16M168 162h16" stroke="#ffffff" stroke-width="7" stroke-linecap="round" stroke-opacity="0.45"/>
+  <path d="M96 75h58l15 31H81z" fill="url(#eom_amber)" stroke="#f6c344" stroke-width="6" stroke-linejoin="round"/>
+  <circle cx="180" cy="84" r="20" fill="#111820" stroke="#2dd4a0" stroke-width="7"/>
+  <path d="M170 84h20M180 74v20" stroke="#2dd4a0" stroke-width="6" stroke-linecap="round"/>
+  <path d="M64 199h128" stroke="#7b8491" stroke-width="10" stroke-linecap="round" stroke-opacity="0.36"/>
+</svg>

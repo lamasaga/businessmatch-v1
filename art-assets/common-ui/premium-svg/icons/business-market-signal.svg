@@ -1,0 +1,25 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" role="img" aria-labelledby="title desc">
+  <title id="title">Market signal icon</title>
+  <desc id="desc">Premium SVG icon for demand, price trends, city market signals, and opportunity scanning.</desc>
+  <defs>
+    <linearGradient id="bms_bg" x1="28" y1="27" x2="228" y2="230" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#1c2f39"/>
+      <stop offset="1" stop-color="#080c10"/>
+    </linearGradient>
+    <linearGradient id="bms_signal" x1="62" y1="174" x2="193" y2="70" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#2dd4a0"/>
+      <stop offset="1" stop-color="#60a5fa"/>
+    </linearGradient>
+    <filter id="bms_shadow" x="8" y="8" width="240" height="240" color-interpolation-filters="sRGB">
+      <feDropShadow dx="0" dy="14" stdDeviation="12" flood-color="#000000" flood-opacity="0.33"/>
+    </filter>
+  </defs>
+  <rect x="18" y="18" width="220" height="220" rx="44" fill="url(#bms_bg)" filter="url(#bms_shadow)"/>
+  <path d="M63 179h130" stroke="#7b8491" stroke-width="9" stroke-linecap="round" stroke-opacity="0.38"/>
+  <path d="M75 161l33-36 31 19 42-56" fill="none" stroke="url(#bms_signal)" stroke-width="12" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M181 88h-34M181 88v34" fill="none" stroke="#60a5fa" stroke-width="9" stroke-linecap="round"/>
+  <circle cx="76" cy="161" r="11" fill="#101820" stroke="#2dd4a0" stroke-width="6"/>
+  <circle cx="108" cy="125" r="11" fill="#101820" stroke="#2dd4a0" stroke-width="6"/>
+  <circle cx="139" cy="144" r="11" fill="#101820" stroke="#60a5fa" stroke-width="6"/>
+  <path d="M81 86c27-23 67-23 94 0M102 105c15-12 37-12 52 0" fill="none" stroke="#d4a853" stroke-width="8" stroke-linecap="round" stroke-opacity="0.88"/>
+</svg>

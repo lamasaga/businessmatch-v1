@@ -1,0 +1,24 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" role="img" aria-labelledby="title desc">
+  <title id="title">Tech venture engine icon</title>
+  <desc id="desc">Premium SVG icon for startup simulation, product roadmaps, R and D, and market launch.</desc>
+  <defs>
+    <linearGradient id="etv_bg" x1="27" y1="27" x2="228" y2="229" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#1b2a40"/>
+      <stop offset="1" stop-color="#080b12"/>
+    </linearGradient>
+    <linearGradient id="etv_blue" x1="72" y1="49" x2="177" y2="186" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#93c5fd"/>
+      <stop offset="0.52" stop-color="#3b82f6"/>
+      <stop offset="1" stop-color="#1e40af"/>
+    </linearGradient>
+    <filter id="etv_shadow" x="8" y="8" width="240" height="240" color-interpolation-filters="sRGB">
+      <feDropShadow dx="0" dy="14" stdDeviation="12" flood-color="#000000" flood-opacity="0.34"/>
+    </filter>
+  </defs>
+  <rect x="18" y="18" width="220" height="220" rx="44" fill="url(#etv_bg)" filter="url(#etv_shadow)"/>
+  <path d="M124 51c35 14 55 43 60 86l-43 43c-42-5-71-25-86-60 28-4 47-19 69-69z" fill="url(#etv_blue)" stroke="#93c5fd" stroke-width="6" stroke-linejoin="round"/>
+  <circle cx="142" cy="93" r="17" fill="#0c1220" stroke="#2dd4a0" stroke-width="7"/>
+  <path d="M83 147l-25 38 39-24M143 202l18-38 23 29" fill="#f6c344" stroke="#d4a853" stroke-width="6" stroke-linejoin="round"/>
+  <path d="M92 90H66M82 112H55M164 164v27M143 174v25" stroke="#2dd4a0" stroke-width="8" stroke-linecap="round"/>
+  <path d="M103 153l-28 28" stroke="#ffffff" stroke-width="7" stroke-linecap="round" stroke-opacity="0.52"/>
+</svg>

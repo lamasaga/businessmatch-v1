@@ -1,0 +1,26 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 190" role="img" aria-labelledby="title desc">
+  <title id="title">Event banner frame</title>
+  <desc id="desc">Reusable SVG frame for news events, match warnings, settlement notices, and opportunity banners.</desc>
+  <defs>
+    <linearGradient id="feb_fill" x1="34" y1="34" x2="606" y2="156" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#1f2937"/>
+      <stop offset="0.55" stop-color="#111827"/>
+      <stop offset="1" stop-color="#0b0f14"/>
+    </linearGradient>
+    <linearGradient id="feb_accent" x1="34" y1="34" x2="606" y2="156" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#f59e0b"/>
+      <stop offset="0.52" stop-color="#d4a853"/>
+      <stop offset="1" stop-color="#2dd4a0"/>
+    </linearGradient>
+    <filter id="feb_shadow" x="12" y="12" width="616" height="166" color-interpolation-filters="sRGB">
+      <feDropShadow dx="0" dy="12" stdDeviation="12" flood-color="#000000" flood-opacity="0.30"/>
+    </filter>
+  </defs>
+  <path d="M44 34h552l-22 61 22 61H44l22-61z" fill="url(#feb_fill)" filter="url(#feb_shadow)"/>
+  <path d="M44 34h552M44 156h552" stroke="url(#feb_accent)" stroke-width="5" stroke-linecap="round"/>
+  <circle cx="92" cy="95" r="32" fill="#f59e0b"/>
+  <path d="M92 74v28M92 116h.1" stroke="#111827" stroke-width="10" stroke-linecap="round"/>
+  <path d="M144 78h250M144 111h168" stroke="#f8fafc" stroke-width="12" stroke-linecap="round" stroke-opacity="0.42"/>
+  <path d="M484 70h52l21 25-21 25h-52l-21-25z" fill="#2dd4a0" fill-opacity="0.88"/>
+  <path d="M498 95h26" stroke="#063327" stroke-width="8" stroke-linecap="round"/>
+</svg>

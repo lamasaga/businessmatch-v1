@@ -1,0 +1,23 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" role="img" aria-labelledby="title desc">
+  <title id="title">Inventory warehouse icon</title>
+  <desc id="desc">Premium SVG icon for inventory, stock pressure, warehouse capacity, and operations planning.</desc>
+  <defs>
+    <linearGradient id="binv_bg" x1="28" y1="26" x2="228" y2="230" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#2b2f38"/>
+      <stop offset="1" stop-color="#090a0d"/>
+    </linearGradient>
+    <linearGradient id="binv_box" x1="68" y1="84" x2="185" y2="194" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#fde68a"/>
+      <stop offset="1" stop-color="#d97706"/>
+    </linearGradient>
+    <filter id="binv_shadow" x="8" y="8" width="240" height="240" color-interpolation-filters="sRGB">
+      <feDropShadow dx="0" dy="14" stdDeviation="12" flood-color="#000000" flood-opacity="0.32"/>
+    </filter>
+  </defs>
+  <rect x="18" y="18" width="220" height="220" rx="44" fill="url(#binv_bg)" filter="url(#binv_shadow)"/>
+  <path d="M58 104l70-42 70 42v84H58z" fill="#151d27" stroke="#60a5fa" stroke-width="8" stroke-linejoin="round"/>
+  <path d="M84 129h43v59H84zM129 129h43v59h-43zM106 101h43v43h-43z" fill="url(#binv_box)" stroke="#f6c344" stroke-width="5"/>
+  <path d="M128 62v47M58 188h140" stroke="#7b8491" stroke-width="9" stroke-linecap="round" stroke-opacity="0.38"/>
+  <path d="M98 151h15M142 151h15M120 119h16" stroke="#111820" stroke-width="6" stroke-linecap="round" stroke-opacity="0.6"/>
+  <path d="M54 103h148" stroke="#2dd4a0" stroke-width="8" stroke-linecap="round"/>
+</svg>

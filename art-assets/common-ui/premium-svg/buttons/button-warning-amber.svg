@@ -1,0 +1,20 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 480 160" role="img" aria-labelledby="title desc">
+  <title id="title">Warning amber button shell</title>
+  <desc id="desc">Reusable premium SVG button plate for risk, auction, event, and time-sensitive actions.</desc>
+  <defs>
+    <linearGradient id="bwa_fill" x1="24" y1="28" x2="456" y2="132" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#fed7aa"/>
+      <stop offset="0.42" stop-color="#f59e0b"/>
+      <stop offset="1" stop-color="#b45309"/>
+    </linearGradient>
+    <filter id="bwa_shadow" x="4" y="4" width="472" height="152" color-interpolation-filters="sRGB">
+      <feDropShadow dx="0" dy="14" stdDeviation="12" flood-color="#451a03" flood-opacity="0.34"/>
+    </filter>
+  </defs>
+  <rect x="24" y="28" width="432" height="104" rx="18" fill="url(#bwa_fill)" filter="url(#bwa_shadow)"/>
+  <path d="M36 42h408v76H36z" fill="none" stroke="#fff7ed" stroke-width="3" stroke-opacity="0.52"/>
+  <path d="M65 100l20-42 21 42z" fill="#111820" fill-opacity="0.86"/>
+  <path d="M85 73v13M85 97h.1" stroke="#f59e0b" stroke-width="8" stroke-linecap="round"/>
+  <path d="M136 70h192M136 92h136" stroke="#431407" stroke-width="10" stroke-linecap="round" stroke-opacity="0.55"/>
+  <path d="M366 80h48M401 61l19 19-19 19" fill="none" stroke="#431407" stroke-width="9" stroke-linecap="round" stroke-linejoin="round" stroke-opacity="0.76"/>
+</svg>

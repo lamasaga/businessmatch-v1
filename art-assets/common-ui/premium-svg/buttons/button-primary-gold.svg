@@ -1,0 +1,26 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 480 160" role="img" aria-labelledby="title desc">
+  <title id="title">Primary gold button shell</title>
+  <desc id="desc">Reusable premium SVG button plate for primary actions such as submit, confirm, and start.</desc>
+  <defs>
+    <linearGradient id="bpg_fill" x1="38" y1="28" x2="442" y2="132" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#fff0a8"/>
+      <stop offset="0.48" stop-color="#f6c344"/>
+      <stop offset="1" stop-color="#b7791f"/>
+    </linearGradient>
+    <linearGradient id="bpg_glow" x1="44" y1="24" x2="436" y2="138" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#ffffff" stop-opacity="0.78"/>
+      <stop offset="0.45" stop-color="#ffffff" stop-opacity="0.08"/>
+      <stop offset="1" stop-color="#ffffff" stop-opacity="0"/>
+    </linearGradient>
+    <filter id="bpg_shadow" x="4" y="4" width="472" height="152" color-interpolation-filters="sRGB">
+      <feDropShadow dx="0" dy="14" stdDeviation="12" flood-color="#000000" flood-opacity="0.32"/>
+    </filter>
+  </defs>
+  <rect x="24" y="28" width="432" height="104" rx="22" fill="url(#bpg_fill)" filter="url(#bpg_shadow)"/>
+  <rect x="35" y="39" width="410" height="82" rx="16" fill="none" stroke="#fff7d6" stroke-width="3" stroke-opacity="0.62"/>
+  <path d="M43 48c74-22 202-22 365 0" fill="none" stroke="url(#bpg_glow)" stroke-width="12" stroke-linecap="round"/>
+  <circle cx="84" cy="80" r="28" fill="#111820" fill-opacity="0.88"/>
+  <path d="M75 80h18M84 71v18" stroke="#f6c344" stroke-width="7" stroke-linecap="round"/>
+  <path d="M136 70h216M136 92h152" stroke="#3b2c11" stroke-width="10" stroke-linecap="round" stroke-opacity="0.52"/>
+  <path d="M388 64l22 16-22 16" fill="none" stroke="#3b2c11" stroke-width="10" stroke-linecap="round" stroke-linejoin="round" stroke-opacity="0.78"/>
+</svg>

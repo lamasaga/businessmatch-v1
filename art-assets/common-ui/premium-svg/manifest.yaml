@@ -1,0 +1,127 @@
+version: "0.1.0"
+status: source-svg
+generated_at: "2026-07-07"
+
+principles:
+  runtime_uses_single_svg: true
+  sheets_are_preview_only: true
+  preferred_runtime_copy_to:
+    - webapp/frontend/public/assets/common-ui/premium-svg/
+    - webapp/organizer-frontend/public/assets/common-ui/premium-svg/
+
+palette:
+  honor_gold: "#d4a853"
+  reward_gold: "#f6c344"
+  growth_teal: "#2dd4a0"
+  organizer_blue: "#2563eb"
+  ops_blue: "#3b82f6"
+  event_amber: "#f59e0b"
+  hud_black: "#080b10"
+  hud_panel: "#111820"
+
+asset_groups:
+  icons:
+    - key: platform-career
+      file: icons/platform-career.svg
+      recommended_for: [career, xp, student_profile, progression]
+    - key: platform-arena
+      file: icons/platform-arena.svg
+      recommended_for: [official_match, ranking, arena_entry, awards]
+    - key: platform-academy
+      file: icons/platform-academy.svg
+      recommended_for: [courses, wiki, teaching_plan, knowledge_map]
+    - key: platform-camp
+      file: icons/platform-camp.svg
+      recommended_for: [camp, activity, group_room, guided_challenge]
+    - key: engine-fst-trade
+      file: icons/engine-fst-trade.svg
+      recommended_for: [fst, trading, route, transport]
+    - key: engine-techventure
+      file: icons/engine-techventure.svg
+      recommended_for: [techventure, startup, rnd, launch]
+    - key: engine-ops-market
+      file: icons/engine-ops-market.svg
+      recommended_for: [ops, production, operation, auction]
+    - key: engine-finance-portfolio
+      file: icons/engine-finance-portfolio.svg
+      recommended_for: [finance, portfolio, settlement, risk]
+    - key: business-cashflow
+      file: icons/business-cashflow.svg
+      recommended_for: [cash, revenue, cost, liquidity]
+    - key: business-inventory
+      file: icons/business-inventory.svg
+      recommended_for: [inventory, warehouse, capacity, goods]
+    - key: business-market-signal
+      file: icons/business-market-signal.svg
+      recommended_for: [market, demand, price_trend, opportunity]
+    - key: business-contract
+      file: icons/business-contract.svg
+      recommended_for: [contract, deal, city_entry, partnership]
+  buttons:
+    - key: button-primary-gold
+      file: buttons/button-primary-gold.svg
+      recommended_for: [start, submit, confirm, primary_action]
+    - key: button-secondary-glass
+      file: buttons/button-secondary-glass.svg
+      recommended_for: [secondary_action, dark_hud, back, details]
+    - key: button-ops-blue
+      file: buttons/button-ops-blue.svg
+      recommended_for: [organizer, ops_panel, admin_action]
+    - key: button-warning-amber
+      file: buttons/button-warning-amber.svg
+      recommended_for: [risk, auction, event, urgent_action]
+  frames:
+    - key: frame-glass-panel
+      file: frames/frame-glass-panel.svg
+      recommended_for: [hud_panel, match_card, dark_dashboard]
+    - key: frame-metric-card
+      file: frames/frame-metric-card.svg
+      recommended_for: [kpi, finance, resource_counter]
+    - key: frame-event-banner
+      file: frames/frame-event-banner.svg
+      recommended_for: [event, news, warning, opportunity]
+    - key: frame-modal-shell
+      file: frames/frame-modal-shell.svg
+      recommended_for: [modal, confirmation, settlement_detail]
+  indicators:
+    - key: indicator-success
+      file: indicators/indicator-success.svg
+      recommended_for: [success, completed, accepted]
+    - key: indicator-warning
+      file: indicators/indicator-warning.svg
+      recommended_for: [warning, risk, shortage]
+    - key: indicator-danger
+      file: indicators/indicator-danger.svg
+      recommended_for: [danger, failed, blocked]
+    - key: indicator-info
+      file: indicators/indicator-info.svg
+      recommended_for: [info, hint, neutral_feedback]
+  badges:
+    - key: badge-champion
+      file: badges/badge-champion.svg
+      recommended_for: [winner, rank, trophy, honor]
+    - key: badge-xp
+      file: badges/badge-xp.svg
+      recommended_for: [xp, career_reward, progression]
+    - key: badge-official
+      file: badges/badge-official.svg
+      recommended_for: [official_match, verified_room, organizer_approved]
+    - key: badge-reward
+      file: badges/badge-reward.svg
+      recommended_for: [reward, bonus, unlock]
+
+preview_sheets:
+  - file: sheets/sheet-01-platform-icons.svg
+    contains: [platform-career, platform-arena, platform-academy, platform-camp]
+  - file: sheets/sheet-02-engine-icons.svg
+    contains: [engine-fst-trade, engine-techventure, engine-ops-market, engine-finance-portfolio]
+  - file: sheets/sheet-03-business-icons.svg
+    contains: [business-cashflow, business-inventory, business-market-signal, business-contract]
+  - file: sheets/sheet-04-buttons.svg
+    contains: [button-primary-gold, button-secondary-glass, button-ops-blue, button-warning-amber]
+  - file: sheets/sheet-05-frames.svg
+    contains: [frame-glass-panel, frame-metric-card, frame-event-banner, frame-modal-shell]
+  - file: sheets/sheet-06-indicators.svg
+    contains: [indicator-success, indicator-warning, indicator-danger, indicator-info]
+  - file: sheets/sheet-07-badges.svg
+    contains: [badge-champion, badge-xp, badge-official, badge-reward]

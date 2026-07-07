@@ -1,0 +1,23 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 560 420" role="img" aria-labelledby="title desc">
+  <title id="title">Modal shell frame</title>
+  <desc id="desc">Reusable SVG frame for confirmations, detailed reports, team setup, and official match dialogs.</desc>
+  <defs>
+    <linearGradient id="fms_fill" x1="56" y1="46" x2="504" y2="374" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#f8fafc"/>
+      <stop offset="1" stop-color="#dbe3ee"/>
+    </linearGradient>
+    <filter id="fms_shadow" x="16" y="16" width="528" height="388" color-interpolation-filters="sRGB">
+      <feDropShadow dx="0" dy="18" stdDeviation="16" flood-color="#0f172a" flood-opacity="0.26"/>
+    </filter>
+  </defs>
+  <rect x="56" y="46" width="448" height="328" rx="16" fill="url(#fms_fill)" filter="url(#fms_shadow)"/>
+  <rect x="60" y="50" width="440" height="320" rx="12" fill="none" stroke="#cbd5e1" stroke-width="3"/>
+  <path d="M60 108h440" stroke="#2563eb" stroke-width="6" stroke-linecap="round"/>
+  <circle cx="92" cy="78" r="10" fill="#ef4444"/>
+  <circle cx="124" cy="78" r="10" fill="#f59e0b"/>
+  <circle cx="156" cy="78" r="10" fill="#2dd4a0"/>
+  <path d="M96 146h220M96 180h326M96 214h280" stroke="#334155" stroke-width="12" stroke-linecap="round" stroke-opacity="0.35"/>
+  <rect x="96" y="274" width="142" height="48" rx="10" fill="#e2e8f0" stroke="#cbd5e1" stroke-width="3"/>
+  <rect x="270" y="274" width="154" height="48" rx="10" fill="#2563eb"/>
+  <path d="M128 298h74M307 298h80" stroke="#ffffff" stroke-width="10" stroke-linecap="round" stroke-opacity="0.72"/>
+</svg>

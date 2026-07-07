@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 160 160" role="img" aria-labelledby="title desc">
+  <title id="title">Success indicator</title>
+  <desc id="desc">Reusable SVG status indicator for completed actions, accepted decisions, and positive feedback.</desc>
+  <defs>
+    <linearGradient id="is_fill" x1="33" y1="28" x2="126" y2="132" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#8ff3d0"/>
+      <stop offset="1" stop-color="#2dd4a0"/>
+    </linearGradient>
+    <filter id="is_shadow" x="14" y="14" width="132" height="132" color-interpolation-filters="sRGB">
+      <feDropShadow dx="0" dy="10" stdDeviation="9" flood-color="#064e3b" flood-opacity="0.28"/>
+    </filter>
+  </defs>
+  <circle cx="80" cy="80" r="56" fill="url(#is_fill)" filter="url(#is_shadow)"/>
+  <circle cx="80" cy="80" r="43" fill="none" stroke="#ffffff" stroke-width="5" stroke-opacity="0.55"/>
+  <path d="M53 81l18 18 38-43" fill="none" stroke="#063327" stroke-width="12" stroke-linecap="round" stroke-linejoin="round"/>
+</svg>

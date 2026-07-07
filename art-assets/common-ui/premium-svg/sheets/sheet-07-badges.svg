@@ -1,0 +1,27 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 900" role="img" aria-labelledby="title desc">
+  <title id="title">Badge sheet</title>
+  <desc id="desc">Four premium SVG badges for champion, XP, official match, and reward states.</desc>
+  <rect width="900" height="900" fill="#0a0d12"/>
+  <g font-family="Inter, Microsoft YaHei, Arial, sans-serif" fill="#e2e8f0">
+    <g transform="translate(80 80)">
+      <rect width="320" height="320" rx="24" fill="#111820" stroke="#334155"/>
+      <image href="../badges/badge-champion.svg" x="64" y="36" width="192" height="192"/>
+      <text x="160" y="266" text-anchor="middle" font-size="24" font-weight="700">badge-champion</text>
+    </g>
+    <g transform="translate(500 80)">
+      <rect width="320" height="320" rx="24" fill="#111820" stroke="#334155"/>
+      <image href="../badges/badge-xp.svg" x="64" y="36" width="192" height="192"/>
+      <text x="160" y="266" text-anchor="middle" font-size="24" font-weight="700">badge-xp</text>
+    </g>
+    <g transform="translate(80 500)">
+      <rect width="320" height="320" rx="24" fill="#111820" stroke="#334155"/>
+      <image href="../badges/badge-official.svg" x="64" y="36" width="192" height="192"/>
+      <text x="160" y="266" text-anchor="middle" font-size="24" font-weight="700">badge-official</text>
+    </g>
+    <g transform="translate(500 500)">
+      <rect width="320" height="320" rx="24" fill="#111820" stroke="#334155"/>
+      <image href="../badges/badge-reward.svg" x="64" y="36" width="192" height="192"/>
+      <text x="160" y="266" text-anchor="middle" font-size="24" font-weight="700">badge-reward</text>
+    </g>
+  </g>
+</svg>

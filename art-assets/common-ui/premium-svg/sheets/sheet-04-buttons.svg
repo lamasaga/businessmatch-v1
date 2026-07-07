@@ -1,0 +1,27 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 820" role="img" aria-labelledby="title desc">
+  <title id="title">Button shell sheet</title>
+  <desc id="desc">Four premium reusable SVG button shells for primary, secondary, OPS blue, and warning actions.</desc>
+  <rect width="1200" height="820" fill="#0a0d12"/>
+  <g font-family="Inter, Microsoft YaHei, Arial, sans-serif" fill="#e2e8f0">
+    <g transform="translate(80 88)">
+      <rect width="480" height="260" rx="24" fill="#111820" stroke="#334155"/>
+      <image href="../buttons/button-primary-gold.svg" x="0" y="32" width="480" height="160"/>
+      <text x="240" y="224" text-anchor="middle" font-size="28" font-weight="700">button-primary-gold</text>
+    </g>
+    <g transform="translate(640 88)">
+      <rect width="480" height="260" rx="24" fill="#111820" stroke="#334155"/>
+      <image href="../buttons/button-secondary-glass.svg" x="0" y="32" width="480" height="160"/>
+      <text x="240" y="224" text-anchor="middle" font-size="28" font-weight="700">button-secondary-glass</text>
+    </g>
+    <g transform="translate(80 468)">
+      <rect width="480" height="260" rx="24" fill="#111820" stroke="#334155"/>
+      <image href="../buttons/button-ops-blue.svg" x="0" y="32" width="480" height="160"/>
+      <text x="240" y="224" text-anchor="middle" font-size="28" font-weight="700">button-ops-blue</text>
+    </g>
+    <g transform="translate(640 468)">
+      <rect width="480" height="260" rx="24" fill="#111820" stroke="#334155"/>
+      <image href="../buttons/button-warning-amber.svg" x="0" y="32" width="480" height="160"/>
+      <text x="240" y="224" text-anchor="middle" font-size="28" font-weight="700">button-warning-amber</text>
+    </g>
+  </g>
+</svg>

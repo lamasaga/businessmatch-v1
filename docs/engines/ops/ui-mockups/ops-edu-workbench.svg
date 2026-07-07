@@ -1,0 +1,296 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 960" role="img" aria-labelledby="title desc">
+  <title id="title">OPS Edu 学生端经营工作台 UI 原型</title>
+  <desc id="desc">面向教育版 OPS 的学生端界面草图，展示情报、目标、预测、经营决策、解释和复盘闭环。</desc>
+  <defs>
+    <linearGradient id="pageBg" x1="0" y1="0" x2="1440" y2="960" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#f8fafc"/>
+      <stop offset="1" stop-color="#e8eef7"/>
+    </linearGradient>
+    <linearGradient id="blue" x1="0" y1="0" x2="1" y2="1">
+      <stop stop-color="#60a5fa"/>
+      <stop offset="1" stop-color="#2563eb"/>
+    </linearGradient>
+    <linearGradient id="gold" x1="0" y1="0" x2="1" y2="1">
+      <stop stop-color="#fde68a"/>
+      <stop offset="1" stop-color="#d97706"/>
+    </linearGradient>
+    <filter id="softShadow" x="-10%" y="-10%" width="120%" height="120%" color-interpolation-filters="sRGB">
+      <feDropShadow dx="0" dy="12" stdDeviation="14" flood-color="#0f172a" flood-opacity="0.10"/>
+    </filter>
+    <style>
+      .font { font-family: "Microsoft YaHei", "PingFang SC", Inter, Arial, sans-serif; }
+      .h1 { font-size: 26px; font-weight: 800; fill: #0f172a; }
+      .h2 { font-size: 18px; font-weight: 800; fill: #0f172a; }
+      .h3 { font-size: 15px; font-weight: 800; fill: #1e293b; }
+      .body { font-size: 13px; fill: #64748b; }
+      .small { font-size: 11px; fill: #64748b; }
+      .tiny { font-size: 10px; fill: #94a3b8; }
+      .label { font-size: 12px; font-weight: 700; fill: #334155; }
+      .white { fill: #ffffff; }
+      .blueText { fill: #2563eb; }
+      .greenText { fill: #059669; }
+      .amberText { fill: #d97706; }
+      .redText { fill: #dc2626; }
+      .card { fill: #ffffff; stroke: #dbe4f0; stroke-width: 1; filter: url(#softShadow); }
+      .softCard { fill: #f8fafc; stroke: #e2e8f0; stroke-width: 1; }
+      .line { stroke: #e2e8f0; stroke-width: 1; }
+      .pillText { font-size: 12px; font-weight: 800; }
+    </style>
+  </defs>
+
+  <rect width="1440" height="960" fill="url(#pageBg)"/>
+
+  <g class="font">
+    <!-- Top bar -->
+    <rect x="32" y="24" width="1376" height="78" rx="20" fill="#ffffff" stroke="#dbe4f0" filter="url(#softShadow)"/>
+    <rect x="56" y="44" width="42" height="42" rx="12" fill="url(#blue)"/>
+    <path d="M69 70h17M69 59h25M69 81h21" stroke="#ffffff" stroke-width="4" stroke-linecap="round"/>
+    <text x="116" y="58" class="h1">OPS Edu 公司经营学习赛</text>
+    <text x="116" y="83" class="body">校园新品公司挑战 · R2 运营决策 · 先预测，再提交</text>
+
+    <g transform="translate(720 42)">
+      <rect width="140" height="42" rx="13" fill="#eff6ff" stroke="#bfdbfe"/>
+      <text x="18" y="18" class="tiny">当前阶段</text>
+      <text x="18" y="34" class="label blueText">R2 经营决策</text>
+    </g>
+    <g transform="translate(884 42)">
+      <rect width="132" height="42" rx="13" fill="#f0fdf4" stroke="#bbf7d0"/>
+      <text x="18" y="18" class="tiny">现金</text>
+      <text x="18" y="34" class="label greenText">¥ 72,400</text>
+    </g>
+    <g transform="translate(1040 42)">
+      <rect width="132" height="42" rx="13" fill="#fff7ed" stroke="#fed7aa"/>
+      <text x="18" y="18" class="tiny">库存</text>
+      <text x="18" y="34" class="label amberText">180 件</text>
+    </g>
+    <g transform="translate(1196 42)">
+      <rect width="174" height="42" rx="13" fill="#f8fafc" stroke="#e2e8f0"/>
+      <text x="18" y="18" class="tiny">倒计时</text>
+      <text x="18" y="34" class="label">12:36 · 教师控场</text>
+    </g>
+
+    <!-- Left stepper -->
+    <rect x="32" y="126" width="246" height="802" rx="22" class="card"/>
+    <text x="58" y="164" class="h2">学习步骤</text>
+    <text x="58" y="188" class="body">每轮都完成一次经营思考</text>
+
+    <g transform="translate(56 222)">
+      <rect width="198" height="58" rx="14" fill="#eff6ff" stroke="#bfdbfe"/>
+      <circle cx="24" cy="29" r="14" fill="#2563eb"/>
+      <text x="20" y="34" font-size="14" font-weight="800" fill="#ffffff">1</text>
+      <text x="52" y="24" class="label blueText">看情报</text>
+      <text x="52" y="43" class="small">现金、库存、市场提示</text>
+    </g>
+    <g transform="translate(56 296)">
+      <rect width="198" height="58" rx="14" fill="#f0fdf4" stroke="#bbf7d0"/>
+      <circle cx="24" cy="29" r="14" fill="#059669"/>
+      <text x="20" y="34" font-size="14" font-weight="800" fill="#ffffff">2</text>
+      <text x="52" y="24" class="label greenText">定目标</text>
+      <text x="52" y="43" class="small">本轮想解决什么问题</text>
+    </g>
+    <g transform="translate(56 370)">
+      <rect width="198" height="58" rx="14" fill="#ffffff" stroke="#dbe4f0"/>
+      <circle cx="24" cy="29" r="14" fill="#d97706"/>
+      <text x="20" y="34" font-size="14" font-weight="800" fill="#ffffff">3</text>
+      <text x="52" y="24" class="label amberText">做预测</text>
+      <text x="52" y="43" class="small">销量、利润、库存</text>
+    </g>
+    <g transform="translate(56 444)">
+      <rect width="198" height="58" rx="14" fill="#ffffff" stroke="#dbe4f0"/>
+      <circle cx="24" cy="29" r="14" fill="#64748b"/>
+      <text x="20" y="34" font-size="14" font-weight="800" fill="#ffffff">4</text>
+      <text x="52" y="24" class="label">做决策</text>
+      <text x="52" y="43" class="small">生产、价格、广告</text>
+    </g>
+    <g transform="translate(56 518)">
+      <rect width="198" height="58" rx="14" fill="#ffffff" stroke="#dbe4f0"/>
+      <circle cx="24" cy="29" r="14" fill="#64748b"/>
+      <text x="20" y="34" font-size="14" font-weight="800" fill="#ffffff">5</text>
+      <text x="52" y="24" class="label">解释复盘</text>
+      <text x="52" y="43" class="small">找偏差，下轮调整</text>
+    </g>
+
+    <rect x="56" y="624" width="198" height="254" rx="16" fill="#0f172a"/>
+    <text x="76" y="654" font-size="16" font-weight="800" fill="#ffffff">小队角色</text>
+    <text x="76" y="682" class="small white" opacity="0.82">CEO：主持讨论</text>
+    <text x="76" y="708" class="small white" opacity="0.82">财务官：看现金</text>
+    <text x="76" y="734" class="small white" opacity="0.82">生产经理：看库存</text>
+    <text x="76" y="760" class="small white" opacity="0.82">营销经理：看顾客</text>
+    <text x="76" y="786" class="small white" opacity="0.82">记录员：写理由</text>
+    <rect x="76" y="820" width="158" height="34" rx="10" fill="#1d4ed8"/>
+    <text x="108" y="842" font-size="12" font-weight="800" fill="#ffffff">打开公司会议卡</text>
+
+    <!-- Center main area -->
+    <rect x="302" y="126" width="790" height="802" rx="22" class="card"/>
+    <text x="334" y="164" class="h2">R2 运营决策工作台</text>
+    <text x="334" y="188" class="body">先说明目标和预测，再填写经营数字。系统会在结算后对比你的判断。</text>
+
+    <!-- Intel row -->
+    <g transform="translate(334 216)">
+      <rect width="724" height="96" rx="18" fill="#f8fafc" stroke="#dbe4f0"/>
+      <text x="22" y="32" class="h3">经营情报</text>
+      <g transform="translate(22 48)">
+        <rect width="158" height="30" rx="10" fill="#eff6ff"/>
+        <text x="14" y="20" class="small blueText">上轮销量 230 件</text>
+      </g>
+      <g transform="translate(194 48)">
+        <rect width="158" height="30" rx="10" fill="#fff7ed"/>
+        <text x="14" y="20" class="small amberText">库存偏高 180 件</text>
+      </g>
+      <g transform="translate(366 48)">
+        <rect width="158" height="30" rx="10" fill="#fef2f2"/>
+        <text x="14" y="20" class="small redText">价格高于均价 12%</text>
+      </g>
+      <g transform="translate(538 48)">
+        <rect width="158" height="30" rx="10" fill="#f0fdf4"/>
+        <text x="14" y="20" class="small greenText">顾客偏好：实用型</text>
+      </g>
+    </g>
+
+    <!-- Goal card -->
+    <g transform="translate(334 336)">
+      <rect width="350" height="184" rx="18" fill="#ffffff" stroke="#dbe4f0"/>
+      <text x="22" y="34" class="h3">本轮目标</text>
+      <text x="22" y="57" class="small">选择一个最重要的经营目标</text>
+      <g transform="translate(22 78)">
+        <rect width="92" height="36" rx="12" fill="#2563eb"/>
+        <text x="23" y="24" class="pillText" fill="#ffffff">清库存</text>
+      </g>
+      <g transform="translate(124 78)">
+        <rect width="92" height="36" rx="12" fill="#f8fafc" stroke="#dbe4f0"/>
+        <text x="22" y="24" class="pillText" fill="#334155">保利润</text>
+      </g>
+      <g transform="translate(226 78)">
+        <rect width="92" height="36" rx="12" fill="#f8fafc" stroke="#dbe4f0"/>
+        <text x="22" y="24" class="pillText" fill="#334155">冲销量</text>
+      </g>
+      <rect x="22" y="132" width="306" height="34" rx="12" fill="#eff6ff"/>
+      <text x="38" y="154" class="small blueText">目标提示：库存偏高时，不一定要继续扩产。</text>
+    </g>
+
+    <!-- Prediction card -->
+    <g transform="translate(708 336)">
+      <rect width="350" height="184" rx="18" fill="#ffffff" stroke="#dbe4f0"/>
+      <text x="22" y="34" class="h3">提交前预测</text>
+      <text x="22" y="57" class="small">先写判断，结算后系统会对比</text>
+      <g transform="translate(22 78)">
+        <text x="0" y="0" class="label">预计销量</text>
+        <rect x="0" y="14" width="92" height="30" rx="10" fill="#f8fafc" stroke="#dbe4f0"/>
+        <text x="27" y="34" class="small">偏低</text>
+        <rect x="104" y="14" width="92" height="30" rx="10" fill="#2563eb"/>
+        <text x="132" y="34" class="small white">中等</text>
+        <rect x="208" y="14" width="92" height="30" rx="10" fill="#f8fafc" stroke="#dbe4f0"/>
+        <text x="236" y="34" class="small">偏高</text>
+      </g>
+      <g transform="translate(22 138)">
+        <rect width="142" height="28" rx="9" fill="#f0fdf4"/>
+        <text x="14" y="19" class="small greenText">预计：本轮赚钱</text>
+        <rect x="156" width="150" height="28" rx="9" fill="#fff7ed"/>
+        <text x="170" y="19" class="small amberText">库存：会减少</text>
+      </g>
+    </g>
+
+    <!-- Decision form -->
+    <g transform="translate(334 544)">
+      <rect width="724" height="236" rx="18" fill="#ffffff" stroke="#dbe4f0"/>
+      <text x="22" y="34" class="h3">经营决策</text>
+      <text x="22" y="57" class="small">数字不是答案，理由才是经营思考</text>
+
+      <g transform="translate(22 82)">
+        <rect width="160" height="118" rx="16" fill="#f8fafc" stroke="#e2e8f0"/>
+        <text x="18" y="28" class="label">生产数量</text>
+        <text x="18" y="60" font-size="26" font-weight="800" fill="#0f172a">220</text>
+        <text x="76" y="60" class="small">件</text>
+        <rect x="18" y="78" width="124" height="8" rx="4" fill="#dbeafe"/>
+        <rect x="18" y="78" width="74" height="8" rx="4" fill="#2563eb"/>
+        <text x="18" y="104" class="tiny">理由：库存偏高，少做一点</text>
+      </g>
+      <g transform="translate(198 82)">
+        <rect width="160" height="118" rx="16" fill="#f8fafc" stroke="#e2e8f0"/>
+        <text x="18" y="28" class="label">价格档位</text>
+        <text x="18" y="60" font-size="26" font-weight="800" fill="#0f172a">中</text>
+        <text x="54" y="60" class="small">¥128</text>
+        <rect x="18" y="78" width="36" height="24" rx="8" fill="#ffffff" stroke="#dbe4f0"/>
+        <text x="30" y="94" class="tiny">低</text>
+        <rect x="62" y="78" width="36" height="24" rx="8" fill="#2563eb"/>
+        <text x="74" y="94" class="tiny white">中</text>
+        <rect x="106" y="78" width="36" height="24" rx="8" fill="#ffffff" stroke="#dbe4f0"/>
+        <text x="118" y="94" class="tiny">高</text>
+      </g>
+      <g transform="translate(374 82)">
+        <rect width="160" height="118" rx="16" fill="#f8fafc" stroke="#e2e8f0"/>
+        <text x="18" y="28" class="label">广告投入</text>
+        <text x="18" y="60" font-size="26" font-weight="800" fill="#0f172a">¥ 6k</text>
+        <rect x="18" y="78" width="124" height="8" rx="4" fill="#fed7aa"/>
+        <rect x="18" y="78" width="86" height="8" rx="4" fill="#d97706"/>
+        <text x="18" y="104" class="tiny">理由：让更多顾客知道</text>
+      </g>
+      <g transform="translate(550 82)">
+        <rect width="152" height="118" rx="16" fill="#f8fafc" stroke="#e2e8f0"/>
+        <text x="18" y="28" class="label">质量改进</text>
+        <text x="18" y="60" font-size="26" font-weight="800" fill="#0f172a">¥ 3k</text>
+        <rect x="18" y="78" width="116" height="8" rx="4" fill="#bbf7d0"/>
+        <rect x="18" y="78" width="50" height="8" rx="4" fill="#059669"/>
+        <text x="18" y="104" class="tiny">理由：预算有限，轻投入</text>
+      </g>
+    </g>
+
+    <!-- Confirmation footer -->
+    <g transform="translate(334 804)">
+      <rect width="724" height="86" rx="18" fill="#0f172a"/>
+      <text x="24" y="32" font-size="16" font-weight="800" fill="#ffffff">团队确认</text>
+      <text x="24" y="58" class="small white" opacity="0.82">本轮目标是清库存，但广告投入较高；预计剩余现金 ¥61,400，风险可控。</text>
+      <rect x="544" y="22" width="154" height="42" rx="13" fill="url(#gold)"/>
+      <text x="582" y="49" font-size="14" font-weight="900" fill="#431407">提交本轮</text>
+    </g>
+
+    <!-- Right side teaching panel -->
+    <rect x="1116" y="126" width="292" height="802" rx="22" class="card"/>
+    <text x="1144" y="164" class="h2">教学引导</text>
+    <text x="1144" y="188" class="body">教师可选择显示或隐藏</text>
+
+    <g transform="translate(1144 222)">
+      <rect width="236" height="128" rx="18" fill="#eff6ff" stroke="#bfdbfe"/>
+      <text x="18" y="32" class="h3 blueText">本轮提示</text>
+      <text x="18" y="58" class="small">你们上轮卖得不少，但仓库仍有剩货。</text>
+      <text x="18" y="82" class="small">思考：这轮应继续扩产，还是先消化库存？</text>
+      <text x="18" y="106" class="small blueText">建议讨论 2 分钟后再提交。</text>
+    </g>
+
+    <g transform="translate(1144 372)">
+      <rect width="236" height="150" rx="18" fill="#fff7ed" stroke="#fed7aa"/>
+      <text x="18" y="32" class="h3 amberText">风险雷达</text>
+      <text x="18" y="60" class="small">库存压力</text>
+      <rect x="92" y="51" width="110" height="8" rx="4" fill="#fed7aa"/>
+      <rect x="92" y="51" width="84" height="8" rx="4" fill="#d97706"/>
+      <text x="18" y="88" class="small">现金安全</text>
+      <rect x="92" y="79" width="110" height="8" rx="4" fill="#bbf7d0"/>
+      <rect x="92" y="79" width="72" height="8" rx="4" fill="#059669"/>
+      <text x="18" y="116" class="small">价格偏高</text>
+      <rect x="92" y="107" width="110" height="8" rx="4" fill="#fecaca"/>
+      <rect x="92" y="107" width="92" height="8" rx="4" fill="#dc2626"/>
+    </g>
+
+    <g transform="translate(1144 544)">
+      <rect width="236" height="166" rx="18" fill="#f8fafc" stroke="#dbe4f0"/>
+      <text x="18" y="32" class="h3">上轮解释卡</text>
+      <rect x="18" y="50" width="200" height="34" rx="10" fill="#ffffff" stroke="#e2e8f0"/>
+      <text x="30" y="72" class="small">价格偏高，顾客减少</text>
+      <rect x="18" y="92" width="200" height="34" rx="10" fill="#ffffff" stroke="#e2e8f0"/>
+      <text x="30" y="114" class="small">库存增加，占用现金</text>
+      <rect x="18" y="134" width="200" height="18" rx="9" fill="#eff6ff"/>
+      <text x="30" y="147" class="tiny blueText">下轮建议：少做货或提高广告效率</text>
+    </g>
+
+    <g transform="translate(1144 732)">
+      <rect width="236" height="128" rx="18" fill="#f0fdf4" stroke="#bbf7d0"/>
+      <text x="18" y="32" class="h3 greenText">结算后复盘</text>
+      <text x="18" y="58" class="small">1. 实际销量和预测差多少？</text>
+      <text x="18" y="82" class="small">2. 最大原因是什么？</text>
+      <text x="18" y="106" class="small">3. 下一轮只改一件事，改什么？</text>
+    </g>
+
+    <!-- Bottom annotation -->
+    <text x="36" y="950" class="tiny">OPS Edu UI mockup · 学生端经营工作台 · 重点：显式思考、预测、解释卡、复盘闭环</text>
+  </g>
+</svg>

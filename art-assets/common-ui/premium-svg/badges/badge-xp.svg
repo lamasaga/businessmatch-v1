@@ -1,0 +1,19 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 192 192" role="img" aria-labelledby="title desc">
+  <title id="title">XP badge</title>
+  <desc id="desc">Reusable SVG badge for experience gain, career rewards, progression, and student achievements.</desc>
+  <defs>
+    <linearGradient id="bxp_fill" x1="34" y1="27" x2="157" y2="165" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#93c5fd"/>
+      <stop offset="0.5" stop-color="#2dd4a0"/>
+      <stop offset="1" stop-color="#0f766e"/>
+    </linearGradient>
+    <filter id="bxp_shadow" x="14" y="14" width="164" height="164" color-interpolation-filters="sRGB">
+      <feDropShadow dx="0" dy="11" stdDeviation="10" flood-color="#064e3b" flood-opacity="0.30"/>
+    </filter>
+  </defs>
+  <rect x="28" y="28" width="136" height="136" rx="34" fill="url(#bxp_fill)" filter="url(#bxp_shadow)"/>
+  <rect x="40" y="40" width="112" height="112" rx="24" fill="#0b1220" fill-opacity="0.82"/>
+  <path d="M96 51l13 27 30 4-22 21 5 30-26-14-27 14 5-30-22-21 31-4z" fill="#f6c344"/>
+  <path d="M60 147h72M60 123h36" stroke="#dbeafe" stroke-width="9" stroke-linecap="round" stroke-opacity="0.62"/>
+  <path d="M138 122v26M125 135h26" stroke="#2dd4a0" stroke-width="8" stroke-linecap="round"/>
+</svg>

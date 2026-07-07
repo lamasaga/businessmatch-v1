@@ -1,8 +1,57 @@
 version: "0.1.0"
 status: concept
-generated_at: "2026-06-28"
+generated_at: "2026-07-07"
 
 kits:
+  premium_svg:
+    file: premium-svg/manifest.yaml
+    tone: "premium source SVG, dark glass HUD, gold actions, teal feedback, blue organizer panels"
+    recommended_for:
+      - common_ui
+      - student_home
+      - arena_entry
+      - fst_trading
+      - techventure
+      - ops_dashboard
+      - organizer
+      - settlement
+    runtime_policy:
+      use_single_svg_assets: true
+      sheets_are_preview_only: true
+    asset_groups:
+      icons:
+        - platform-career
+        - platform-arena
+        - platform-academy
+        - platform-camp
+        - engine-fst-trade
+        - engine-techventure
+        - engine-ops-market
+        - engine-finance-portfolio
+        - business-cashflow
+        - business-inventory
+        - business-market-signal
+        - business-contract
+      buttons:
+        - button-primary-gold
+        - button-secondary-glass
+        - button-ops-blue
+        - button-warning-amber
+      frames:
+        - frame-glass-panel
+        - frame-metric-card
+        - frame-event-banner
+        - frame-modal-shell
+      indicators:
+        - indicator-success
+        - indicator-warning
+        - indicator-danger
+        - indicator-info
+      badges:
+        - badge-champion
+        - badge-xp
+        - badge-official
+        - badge-reward
   academy_dashboard:
     file: academy-dashboard/academy-dashboard-kit-sheet.png
     tone: "bright, restrained, teacher-friendly, premium dashboard"

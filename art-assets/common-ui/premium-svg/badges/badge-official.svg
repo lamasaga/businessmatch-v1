@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 192 192" role="img" aria-labelledby="title desc">
+  <title id="title">Official match badge</title>
+  <desc id="desc">Reusable SVG badge for official competitions, verified rooms, organizer approval, and tournament mode.</desc>
+  <defs>
+    <linearGradient id="bo_fill" x1="37" y1="22" x2="155" y2="168" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#dbeafe"/>
+      <stop offset="0.52" stop-color="#60a5fa"/>
+      <stop offset="1" stop-color="#1d4ed8"/>
+    </linearGradient>
+    <filter id="bo_shadow" x="14" y="14" width="164" height="164" color-interpolation-filters="sRGB">
+      <feDropShadow dx="0" dy="11" stdDeviation="10" flood-color="#172554" flood-opacity="0.30"/>
+    </filter>
+  </defs>
+  <path d="M96 22l55 24v45c0 41-22 67-55 82-33-15-55-41-55-82V46z" fill="url(#bo_fill)" filter="url(#bo_shadow)" stroke="#eff6ff" stroke-width="5" stroke-linejoin="round"/>
+  <path d="M67 96l20 20 42-50" fill="none" stroke="#0b1220" stroke-width="14" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M62 139h68" stroke="#eff6ff" stroke-width="8" stroke-linecap="round" stroke-opacity="0.58"/>
+</svg>

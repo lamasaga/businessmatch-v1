@@ -1,0 +1,24 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" role="img" aria-labelledby="title desc">
+  <title id="title">Business contract icon</title>
+  <desc id="desc">Premium SVG icon for contracts, deals, city entry, partnerships, and official commitments.</desc>
+  <defs>
+    <linearGradient id="bct_bg" x1="29" y1="25" x2="228" y2="231" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#26313b"/>
+      <stop offset="1" stop-color="#090b0f"/>
+    </linearGradient>
+    <linearGradient id="bct_paper" x1="75" y1="58" x2="175" y2="191" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#f8fafc"/>
+      <stop offset="1" stop-color="#cbd5e1"/>
+    </linearGradient>
+    <filter id="bct_shadow" x="8" y="8" width="240" height="240" color-interpolation-filters="sRGB">
+      <feDropShadow dx="0" dy="14" stdDeviation="12" flood-color="#000000" flood-opacity="0.32"/>
+    </filter>
+  </defs>
+  <rect x="18" y="18" width="220" height="220" rx="44" fill="url(#bct_bg)" filter="url(#bct_shadow)"/>
+  <path d="M76 57h80l28 29v112H76z" fill="url(#bct_paper)" stroke="#60a5fa" stroke-width="7" stroke-linejoin="round"/>
+  <path d="M156 58v29h28" fill="#93c5fd" stroke="#60a5fa" stroke-width="7" stroke-linejoin="round"/>
+  <path d="M96 102h54M96 124h66M96 146h40" stroke="#334155" stroke-width="8" stroke-linecap="round" stroke-opacity="0.72"/>
+  <path d="M77 171l22-22c7-7 18-7 25 0l8 8 8-8c7-7 18-7 25 0l22 22-20 20-23-23-12 12-12-12-23 23z" fill="#d4a853" stroke="#111820" stroke-width="6" stroke-linejoin="round"/>
+  <circle cx="177" cy="177" r="18" fill="#2dd4a0" stroke="#111820" stroke-width="6"/>
+  <path d="M168 177l7 7 13-17" fill="none" stroke="#08221b" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"/>
+</svg>

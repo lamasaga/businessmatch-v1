@@ -1,6 +1,6 @@
 # 三赛事引擎 · 美术资源导航
 
-> **最后更新**：2026-06-28  
+> **最后更新**：2026-07-07
 > **原则**：设计期归档在 `art-assets/`，运行时拷贝到 `webapp/frontend/public/assets/`（或组织者端对应路径）。
 
 ---
@@ -13,6 +13,15 @@
 | **TECH** | [tech/](./tech/README.md) | `public/assets/techventure/v1/`（规划） | 🟡 占位 |
 | **OPS** | [ops/](./ops/README.md) | `public/assets/ops/v1/`（规划） | 🟡 占位 |
 | **共用** | [../common-ui/](../common-ui/README.md) | `public/assets/common-ui/` | 🟢 kit sheet 已收录 |
+| **Premium SVG** | [premium-svg/](./premium-svg/README.md) | `public/assets/common-ui/premium-svg/`（建议） | 🟢 单件 SVG 源资产 |
+
+---
+
+## Premium SVG 资产包
+
+　　`premium-svg/` 是当前主界面和赛事引擎的可复用 SVG 素材包。正式运行时引用以单件 SVG 为主，包含图标、按钮壳、面板边框、状态指示、奖励徽章；`premium-svg/sheets/` 只作为四宫格预览板，每张 4 个资产，便于美术评审和快速选型。
+
+　　这组素材延续平台暗色玻璃 HUD、金色主操作、青绿色成长反馈、蓝色组织者/OPS 面板、琥珀色风险事件的视觉语言，可作为后续 TECH、OPS、FST 新页面素材的统一起点。
 
 ---
 

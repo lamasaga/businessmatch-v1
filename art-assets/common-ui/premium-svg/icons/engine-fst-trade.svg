@@ -1,0 +1,26 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" role="img" aria-labelledby="title desc">
+  <title id="title">FST trade route icon</title>
+  <desc id="desc">Premium SVG icon for real-time trading, city routes, transport, and arbitrage decisions.</desc>
+  <defs>
+    <linearGradient id="eft_bg" x1="28" y1="25" x2="225" y2="232" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#22313a"/>
+      <stop offset="1" stop-color="#090b10"/>
+    </linearGradient>
+    <linearGradient id="eft_route" x1="58" y1="172" x2="195" y2="75" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#2dd4a0"/>
+      <stop offset="1" stop-color="#2ec3e5"/>
+    </linearGradient>
+    <filter id="eft_shadow" x="8" y="8" width="240" height="240" color-interpolation-filters="sRGB">
+      <feDropShadow dx="0" dy="14" stdDeviation="12" flood-color="#000000" flood-opacity="0.33"/>
+    </filter>
+  </defs>
+  <rect x="18" y="18" width="220" height="220" rx="44" fill="url(#eft_bg)" filter="url(#eft_shadow)"/>
+  <path d="M67 169c32-50 73-25 121-91" fill="none" stroke="url(#eft_route)" stroke-width="13" stroke-linecap="round" stroke-dasharray="2 22"/>
+  <circle cx="66" cy="170" r="24" fill="#111820" stroke="#2dd4a0" stroke-width="8"/>
+  <circle cx="188" cy="78" r="24" fill="#111820" stroke="#2ec3e5" stroke-width="8"/>
+  <path d="M57 161h24v18H57zM170 68h36v21h-36z" fill="#d4a853"/>
+  <path d="M82 152h41c8 0 15 6 15 14v17H74v-23c0-4 4-8 8-8z" fill="#f6c344"/>
+  <circle cx="92" cy="186" r="8" fill="#101820"/>
+  <circle cx="124" cy="186" r="8" fill="#101820"/>
+  <path d="M151 102h30l-15-20z" fill="#ffffff" fill-opacity="0.36"/>
+</svg>
